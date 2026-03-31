@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Precificação</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f5f5f7;color:#1d1d1f;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e5e5e7;padding:18px 24px;text-align:center}
+.header h1{font-size:1.35rem;font-weight:700}
+.header p{font-size:.82rem;color:#6e6e73;margin-top:3px}
+.container{max-width:660px;margin:0 auto;padding:18px 14px 40px}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6e6e73;margin-bottom:13px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:.8rem;color:#3d3d3f;margin-bottom:4px;font-weight:500}
+.field input{width:100%;padding:9px 11px;border:1.5px solid #e5e5e7;border-radius:10px;font-size:.93rem;color:#1d1d1f;background:#fafafa;transition:border .2s}
+.field input:focus{outline:none;border-color:#0071e3;background:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.btn{width:100%;padding:13px;background:#0071e3;color:#fff;border:none;border-radius:12px;font-size:.98rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#0062c4}
+
+/* Peso card */
+.peso-info{background:#f0f7ff;border:1px solid #cce0ff;border-radius:10px;padding:10px 13px;margin-top:10px;font-size:.83rem}
+.peso-info strong{color:#0071e3}
+.peso-info span{color:#6e6e73}
+
+/* Tabela de frete */
+.frete-table-wrap{overflow-x:auto;margin-top:10px}
+.frete-table{width:100%;border-collapse:collapse;font-size:.75rem}
+.frete-table th{background:#f5f5f7;padding:6px 7px;text-align:center;font-weight:600;color:#3d3d3f;border:1px solid #e5e5e7;white-space:nowrap}
+.frete-table td{padding:5px 7px;text-align:center;border:1px solid #e5e5e7;color:#3d3d3f}
+.frete-table tr.active-row td{background:#fff3cd;font-weight:600}
+.frete-table td.peso-col{font-weight:600;text-align:left;white-space:nowrap;background:#f0f7ff;color:#0071e3}
+.frete-table td.frete-opt{cursor:pointer;transition:background .15s;color:#1d1d1f}
+.frete-table td.frete-opt:hover{background:#e8f4ff;color:#0071e3;font-weight:600}
+.frete-table td.frete-selected{background:#0071e3 !important;color:#fff !important;font-weight:700;border-radius:4px}
+
+/* Items */
+.item-list{display:flex;flex-direction:column;gap:6px}
+.item-row{display:grid;grid-template-columns:1fr 34px;gap:6px;align-items:center}
+.add-item{background:none;border:1.5px dashed #c7c7cc;color:#6e6e73;border-radius:10px;padding:7px;font-size:.8rem;cursor:pointer;width:100%;margin-top:6px;transition:all .2s}
+.add-item:hover{border-color:#0071e3;color:#0071e3}
+.remove-btn{background:#ff3b301a;border:none;color:#ff3b30;width:34px;height:36px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:none;align-items:center;justify-content:center}
+
+/* Resultados */
+#results-section{display:none}
+.result-hero{background:linear-gradient(135deg,#0071e3,#00c6fb);border-radius:18px;padding:22px 20px 18px;text-align:center;color:#fff;margin-bottom:14px}
+.result-hero .label{font-size:.82rem;opacity:.8;margin-bottom:2px}
+.result-hero .price{font-size:2.8rem;font-weight:700;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:2px}
+.kpi{background:rgba(255,255,255,.18);border-radius:12px;padding:10px 6px;backdrop-filter:blur(4px)}
+.kpi .kl{font-size:.68rem;opacity:.85;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.kpi .kv{font-size:1.25rem;font-weight:700}
+.kpi .ks{font-size:.65rem;opacity:.75;margin-top:1px}
+.kpi.kok{background:rgba(52,199,89,.35)}
+.kpi.kwarn{background:rgba(255,149,0,.35)}
+.kpi.kbad{background:rgba(255,59,48,.35)}
+
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.metric{background:#fff;border-radius:14px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.metric .m-label{font-size:.7rem;color:#6e6e73;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.metric .m-value{font-size:1.3rem;font-weight:700}
+.metric .m-ref{font-size:.68rem;margin-top:2px;color:#6e6e73}
+.ok{color:#34c759}.warn{color:#ff9500}.bad{color:#ff3b30}
+
+.breakdown{background:#fff;border-radius:16px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:14px}
+.breakdown-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6e6e73;margin-bottom:11px}
+.brow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f2f2f7;font-size:.86rem}
+.brow:last-child{border:none}
+.brow.total{font-weight:700;font-size:.93rem;padding-top:9px}
+.btn-reset{width:100%;padding:11px;background:#f5f5f7;color:#1d1d1f;border:none;border-radius:12px;font-size:.93rem;font-weight:600;cursor:pointer;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🧮 Calculadora de Precificação</h1>
+  <p>Preencha os dados e descubra o preço ideal de venda</p>
+</div>
+<div class="container">
+
+<!-- FORMULÁRIO -->
+<div id="form-section">
+
+  <div class="card">
+    <div class="card-title">🛒 Custo dos Produtos</div>
+    <div class="item-list" id="items-list">
+      <div class="item-row">
+        <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
+        <button class="remove-btn" onclick="removeItem(this)">×</button>
+      </div>
+    </div>
+    <button class="add-item" onclick="addItem()">+ Adicionar item</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📦 Dimensões e Peso do Produto</div>
+    <div class="row4">
+      <div class="field"><label>Peso (kg)</label><input type="number" id="peso" placeholder="Ex: 1.5" min="0" step="0.001" oninput="calcPeso()"></div>
+      <div class="field"><label>Comp. (cm)</label><input type="number" id="comp" placeholder="Ex: 30" min="0" step="0.1" oninput="calcPeso()"></div>
+      <div class="field"><label>Larg. (cm)</label><input type="number" id="larg" placeholder="Ex: 20" min="0" step="0.1" oninput="calcPeso()"></div>
+      <div class="field"><label>Alt. (cm)</label><input type="number" id="alt" placeholder="Ex: 15" min="0" step="0.1" oninput="calcPeso()"></div>
+    </div>
+    <div class="peso-info" id="peso-info" style="display:none">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+        <span>⚖️ Peso real: <strong id="pi-real">—</strong></span>
+        <span>📐 Peso vol.: <strong id="pi-vol">—</strong></span>
+        <span>✅ Peso usado: <strong id="pi-usado">—</strong></span>
+      </div>
+    </div>
+    <div style="font-size:.72rem;color:#6e6e73;margin-top:8px">Peso volumétrico = Comp × Larg × Alt ÷ 6000. Usa-se o maior entre real e volumétrico.</div>
+
+    <!-- TABELA DE FRETE -->
+    <div id="frete-section" style="display:none;margin-top:14px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6e6e73;margin-bottom:6px">🚚 Selecione o frete — clique na faixa de preço do seu produto</div>
+      <div class="frete-table-wrap">
+        <table class="frete-table" id="frete-table"></table>
+      </div>
+      <div id="frete-selecionado" style="display:none;margin-top:8px;background:#e8f4ff;border:1.5px solid #0071e3;border-radius:10px;padding:9px 13px;font-size:.85rem;color:#0071e3;font-weight:600">
+        ✅ Frete selecionado: <span id="frete-sel-val">—</span> <span style="color:#6e6e73;font-weight:400">— será incluído no cálculo automaticamente</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 Outros Custos</div>
+    <div class="row2">
+      <div class="field"><label>Taxa fixa canal (R$)</label><input type="number" id="taxa_fixa" value="0" min="0" step="0.01"></div>
+      <div class="field"><label>Insumos / Outros (R$)</label><input type="number" id="insumos" value="0" min="0" step="0.01"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Percentuais</div>
+    <div class="row2">
+      <div class="field"><label>🏛️ Impostos (%)</label><input type="number" id="impostos" value="0" min="0" max="100" step="0.1"></div>
+      <div class="field"><label>🏷️ Comissão Marketplace (%)</label><input type="number" id="comissao" value="0" min="0" max="100" step="0.1"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>🤝 Comissão Afiliados (%)</label><input type="number" id="afiliados" value="0" min="0" max="100" step="0.1"></div>
+      <div class="field"><label>💎 Margem de Lucro desejada (%)</label><input type="number" id="margem" value="0" min="0" max="100" step="0.1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📈 Projeção de Vendas</div>
+    <div class="field"><label>Quantidade de unidades compradas</label><input type="number" id="quantidade" value="1" min="1" step="1" placeholder="Ex: 100"></div>
+    <div style="font-size:.72rem;color:#6e6e73;margin-top:4px">O investimento total será calculado automaticamente: custo unitário × quantidade.</div>
+  </div>
+
+  <button class="btn" onclick="calcular()">Calcular Precificação →</button>
+</div>
+
+<!-- RESULTADOS -->
+<div id="results-section">
+  <div class="result-hero">
+    <div class="label">Preço ideal de venda</div>
+    <div class="price" id="res-preco">—</div>
+    <div class="kpis">
+      <div class="kpi" id="kpi-markup">
+        <div class="kl">Markup</div>
+        <div class="kv" id="kv-markup">—</div>
+        <div class="ks">meta &gt;1,50</div>
+      </div>
+      <div class="kpi" id="kpi-roi">
+        <div class="kl">ROI</div>
+        <div class="kv" id="kv-roi">—</div>
+        <div class="ks">meta &gt;10%</div>
+      </div>
+      <div class="kpi" id="kpi-margem">
+        <div class="kl">Margem</div>
+        <div class="kv" id="kv-margem">—</div>
+        <div class="ks">meta &gt;10%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <div class="breakdown-title">Detalhamento do Preço</div>
+    <div class="brow"><span>Custo dos produtos</span><span id="bd-custo">—</span></div>
+    <div class="brow"><span>Frete</span><span id="bd-frete">—</span></div>
+    <div class="brow"><span>Taxa fixa + Insumos</span><span id="bd-outros">—</span></div>
+    <div class="brow"><span>Base de cálculo</span><span id="bd-base">—</span></div>
+    <div class="brow"><span>Impostos</span><span id="bd-imp">—</span></div>
+    <div class="brow"><span>Comissão marketplace</span><span id="bd-com">—</span></div>
+    <div class="brow"><span>Comissão afiliados</span><span id="bd-afi">—</span></div>
+    <div class="brow"><span>Margem de lucro</span><span id="bd-mar">—</span></div>
+    <div class="brow total"><span>Preço de venda</span><span id="bd-preco">—</span></div>
+  </div>
+
+  <div class="breakdown">
+    <div class="breakdown-title">💼 Projeção — <span id="proj-qtd">—</span> unidades</div>
+    <div class="brow"><span>Custo unitário</span><span id="proj-cunit">—</span></div>
+    <div class="brow"><span>Investimento total (custo × qtd)</span><span id="proj-inv">—</span></div>
+    <div class="brow"><span>Faturamento esperado</span><span id="proj-fat">—</span></div>
+    <div class="brow"><span>Lucro por unidade (payout)</span><span id="proj-payout">—</span></div>
+    <div class="brow"><span>Lucro bruto esperado</span><span id="proj-lb">—</span></div>
+    <div class="brow total"><span>Caixa esperado</span><span id="proj-caixa">—</span></div>
+  </div>
+
+  <button class="btn-reset" onclick="resetar()">← Refazer cálculo</button>
+</div>
+
+</div>
+<script>
+const pesoFaixas=[[0,.3],[.3,.5],[.5,1],[1,1.5],[1.5,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,11],[11,13],[13,15],[15,17],[17,20],[20,25],[25,30],[30,40],[40,50],[50,60],[60,70],[70,80],[80,90],[90,100],[100,125],[125,150],[150,Infinity]];
+const pesoLabels=['Até 0,3 kg','0,3 – 0,5 kg','0,5 – 1 kg','1 – 1,5 kg','1,5 – 2 kg','2 – 3 kg','3 – 4 kg','4 – 5 kg','5 – 6 kg','6 – 7 kg','7 – 8 kg','8 – 9 kg','9 – 11 kg','11 – 13 kg','13 – 15 kg','15 – 17 kg','17 – 20 kg','20 – 25 kg','25 – 30 kg','30 – 40 kg','40 – 50 kg','50 – 60 kg','60 – 70 kg','70 – 80 kg','80 – 90 kg','90 – 100 kg','100 – 125 kg','125 – 150 kg','+ 150 kg'];
+const precoFaixas=[0,19,49,79,100,120,150,200];
+const precoLabels=['R$0–18,99','R$19–48,99','R$49–78,99','R$79–99,99','R$100–119,99','R$120–149,99','R$150–199,99','R$200+'];
+const T=[
+  [5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],
+  [5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],
+  [6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],
+  [6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],
+  [6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],
+  [6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],
+  [6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],
+  [6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],
+  [6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],
+  [6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],
+  [6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],
+  [6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],
+  [7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],
+  [7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],
+  [7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],
+  [7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],
+  [7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],
+  [7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],
+  [7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],
+  [7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],
+  [7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],
+  [8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],
+  [8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],
+  [8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],
+  [8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],
+  [8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],
+  [8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],
+  [8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],
+  [8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]
+];
+
+function getPesoIdx(p){
+  for(let i=0;i<pesoFaixas.length;i++) if(p<=pesoFaixas[i][1]) return i;
+  return pesoFaixas.length-1;
+}
+function getPrecoIdx(p){
+  let ci=0;
+  for(let i=0;i<precoFaixas.length;i++) if(p>=precoFaixas[i]) ci=i;
+  return ci;
+}
+function getFrete(pesoKg,preco){ return T[getPesoIdx(pesoKg)][getPrecoIdx(preco)]; }
+
+let pesoUsado=0, freteSelecionado=0;
+
+function calcPeso(){
+  const pr=parseFloat(document.getElementById('peso').value)||0;
+  const c=parseFloat(document.getElementById('comp').value)||0;
+  const l=parseFloat(document.getElementById('larg').value)||0;
+  const a=parseFloat(document.getElementById('alt').value)||0;
+  const pv=(c*l*a)/6000;
+  pesoUsado=Math.max(pr,pv);
+  freteSelecionado=0;
+  document.getElementById('frete-selecionado').style.display='none';
+
+  const info=document.getElementById('peso-info');
+  const fs=document.getElementById('frete-section');
+  if(pr>0||pv>0){
+    info.style.display='block';
+    document.getElementById('pi-real').textContent=pr>0?pr.toFixed(3)+' kg':'—';
+    document.getElementById('pi-vol').textContent=pv>0?pv.toFixed(3)+' kg':'—';
+    document.getElementById('pi-usado').textContent=pesoUsado.toFixed(3)+' kg'+(pv>pr&&pv>0?' (volumétrico)':' (real)');
+    fs.style.display='block';
+    renderFreteTable(-1);
+  } else {
+    info.style.display='none';
+    fs.style.display='none';
+  }
+}
+
+function renderFreteTable(selCol){
+  const pi=getPesoIdx(pesoUsado);
+  const tbl=document.getElementById('frete-table');
+  let html='<thead><tr><th class="peso-col">Peso do produto</th>';
+  for(let c=0;c<precoLabels.length;c++) html+=`<th>${precoLabels[c]}</th>`;
+  html+='</tr></thead><tbody>';
+  const rows=[pi-1, pi, pi+1].filter(r=>r>=0&&r<pesoLabels.length);
+  for(const r of rows){
+    const isActive=r===pi;
+    html+=`<tr style="${isActive?'':'opacity:.55'}"><td class="peso-col" style="${isActive?'':'color:#6e6e73;background:#fafafa'}">${pesoLabels[r]}${isActive?' ✅':''}</td>`;
+    for(let c=0;c<precoLabels.length;c++){
+      const sel=isActive&&c===selCol;
+      const val=T[r][c].toFixed(2).replace('.',',');
+      if(isActive){
+        html+=`<td class="frete-opt${sel?' frete-selected':''}" onclick="selecionarFrete(${c},${T[r][c]})">R$ ${val}</td>`;
+      } else {
+        html+=`<td style="font-size:.75rem;color:#aaa">R$ ${val}</td>`;
+      }
+    }
+    html+='</tr>';
+  }
+  html+='</tbody>';
+  tbl.innerHTML=html;
+}
+
+function selecionarFrete(col, val){
+  freteSelecionado=val;
+  renderFreteTable(col);
+  const sel=document.getElementById('frete-selecionado');
+  sel.style.display='block';
+  document.getElementById('frete-sel-val').textContent='R$ '+val.toFixed(2).replace('.',',');
+}
+
+function sumItems(){ return[...document.querySelectorAll('.item-input')].reduce((s,e)=>s+(parseFloat(e.value)||0),0); }
+
+function addItem(){
+  const list=document.getElementById('items-list');
+  if(list.children.length>=10)return;
+  const n=list.children.length+1;
+  const d=document.createElement('div');
+  d.className='item-row';
+  d.innerHTML=`<input type="number" class="item-input" placeholder="Custo item ${n} (R$)" min="0" step="0.01"><button class="remove-btn" onclick="removeItem(this)" style="display:flex">×</button>`;
+  list.appendChild(d);
+  list.children[0].querySelector('.remove-btn').style.display='flex';
+}
+function removeItem(btn){
+  btn.parentElement.remove();
+  const rows=document.querySelectorAll('.item-row');
+  if(rows.length===1) rows[0].querySelector('.remove-btn').style.display='none';
+}
+
+function fmt(v){ return'R$ '+v.toFixed(2).replace('.',','); }
+function fmtP(v){ return v.toFixed(2).replace('.',',')+' %'; }
+
+function kpiClass(ok,warn){ return ok?'kok':warn?'kwarn':'kbad'; }
+
+function calcular(){
+  const custo=sumItems();
+  const taxa=parseFloat(document.getElementById('taxa_fixa').value)||0;
+  const ins=parseFloat(document.getElementById('insumos').value)||0;
+  const pI=(parseFloat(document.getElementById('impostos').value)||0)/100;
+  const pC=(parseFloat(document.getElementById('comissao').value)||0)/100;
+  const pA=(parseFloat(document.getElementById('afiliados').value)||0)/100;
+  const pM=(parseFloat(document.getElementById('margem').value)||0)/100;
+  const qtd=parseInt(document.getElementById('quantidade').value)||1;
+
+  const fator=1-pI-pC-pA-pM;
+  if(fator<=0){alert('A soma dos percentuais é ≥ 100%. Revise os valores.');return;}
+
+  const frete=freteSelecionado;
+  const preco=(custo+frete+taxa+ins)/fator;
+
+  const base=custo+frete+taxa+ins;
+  const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
+  const payout=preco-base-vI-vC-vA;
+  const markup=custo>0?preco/custo:0;
+  const investimento=custo*qtd;
+  const roi=investimento>0?(payout*qtd/investimento)*100:0;
+  const margemPct=pM*100;
+
+  // Hero
+  document.getElementById('res-preco').textContent=fmt(preco);
+
+  // KPIs no hero
+  document.getElementById('kv-markup').textContent=markup.toFixed(2).replace('.',',');
+  document.getElementById('kpi-markup').className='kpi '+kpiClass(markup>=1.5,markup>=1.2);
+  document.getElementById('kv-roi').textContent=fmtP(roi);
+  document.getElementById('kpi-roi').className='kpi '+kpiClass(roi>=10,roi>=5);
+  document.getElementById('kv-margem').textContent=fmtP(margemPct);
+  document.getElementById('kpi-margem').className='kpi '+kpiClass(margemPct>=10,margemPct>=5);
+
+  // Detalhamento
+  document.getElementById('bd-custo').textContent=fmt(custo);
+  document.getElementById('bd-frete').textContent=fmt(frete);
+  document.getElementById('bd-outros').textContent=fmt(taxa+ins);
+  document.getElementById('bd-base').textContent=fmt(base);
+  document.getElementById('bd-imp').textContent=fmt(vI)+' ('+fmtP(pI*100)+')';
+  document.getElementById('bd-com').textContent=fmt(vC)+' ('+fmtP(pC*100)+')';
+  document.getElementById('bd-afi').textContent=fmt(vA)+' ('+fmtP(pA*100)+')';
+  document.getElementById('bd-mar').textContent=fmt(vM)+' ('+fmtP(pM*100)+')';
+  document.getElementById('bd-preco').textContent=fmt(preco);
+
+  // Projeção
+  document.getElementById('proj-qtd').textContent=qtd;
+  document.getElementById('proj-cunit').textContent=fmt(custo);
+  document.getElementById('proj-inv').textContent=fmt(investimento);
+  document.getElementById('proj-fat').textContent=fmt(preco*qtd);
+  document.getElementById('proj-payout').textContent=fmt(payout);
+  document.getElementById('proj-lb').textContent=fmt(payout*qtd);
+  document.getElementById('proj-caixa').textContent=fmt(investimento+payout*qtd);
+
+  document.getElementById('form-section').style.display='none';
+  document.getElementById('results-section').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function resetar(){
+  document.getElementById('form-section').style.display='block';
+  document.getElementById('results-section').style.display='none';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
