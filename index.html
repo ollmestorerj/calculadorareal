@@ -6,104 +6,77 @@
 <title>Calculadora REAL | RealEcom</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+:root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6}
 body{font-family:'Segoe UI',sans-serif;background:#0d0a14;color:#f0f0f0;min-height:100vh}
-
-/* HEADER */
 .header{background:#110e1a;border-bottom:1px solid #1e1a2e;padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:16px}
-.logo-wrap{display:flex;align-items:center;gap:12px}
-/* Logo SVG inline replicando o símbolo da RealEcom */
-.logo-icon{width:40px;height:40px;flex-shrink:0}
-.brand{display:flex;flex-direction:column}
-.brand-name{font-size:1.35rem;font-weight:800;line-height:1}
-.brand-name .r{color:#6B21A8}.brand-name .e{color:#F97316}.brand-name .com{color:#fff}
-.brand-sub{font-size:.7rem;color:#F97316;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
-
-/* LAYOUT */
+.logo-wrap{display:flex;align-items:center;gap:13px}
+.brand-name{font-size:1.3rem;font-weight:900;letter-spacing:.04em;line-height:1}
+.brand-name .w{color:#fff}.brand-name .o{color:var(--o)}
+.brand-sub{font-size:.68rem;color:var(--o);opacity:.65;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
 .main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 72px)}
 @media(max-width:800px){.main-layout{grid-template-columns:1fr}}
 .left-panel{border-right:1px solid #1e1a2e;padding:18px 16px;overflow-y:auto}
 .right-panel{padding:18px 16px;overflow-y:auto;background:#0a0812}
-
-/* CARDS FORM */
 .card{background:#140f20;border:1px solid #1e1a2e;border-radius:14px;padding:15px;margin-bottom:11px}
 .card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:11px}
 .field{margin-bottom:9px}
 .field label{display:block;font-size:.76rem;color:#6b5f8a;margin-bottom:3px;font-weight:500}
 .field input{width:100%;padding:9px 12px;border:1.5px solid #1e1a2e;border-radius:9px;font-size:.9rem;color:#f0f0f0;background:#1a1428;transition:border .2s}
-.field input:focus{outline:none;border-color:#F97316;background:#1e1830}
+.field input:focus{outline:none;border-color:var(--o);background:#1e1830}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
 @media(max-width:480px){.row4{grid-template-columns:1fr 1fr}}
 .note{font-size:.68rem;color:#3a3050;margin-top:4px}
-
-/* ITEMS */
 .item-list{display:flex;flex-direction:column;gap:5px}
 .item-row{display:grid;grid-template-columns:1fr 32px;gap:5px;align-items:center}
 .add-item{background:none;border:1.5px dashed #1e1a2e;color:#4a3f6b;border-radius:9px;padding:6px;font-size:.76rem;cursor:pointer;width:100%;margin-top:5px;transition:all .2s}
-.add-item:hover{border-color:#F97316;color:#F97316}
+.add-item:hover{border-color:var(--o);color:var(--o)}
 .remove-btn{background:#ff3b3018;border:none;color:#ff3b30;width:32px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
-
-/* FRETE */
 .toggle-row{display:flex;gap:7px;margin-bottom:9px}
 .toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid #1e1a2e;background:#1a1428;color:#4a3f6b;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
-.toggle-btn.active{border-color:#F97316;color:#F97316;background:#F9731610}
+.toggle-btn.active{border-color:var(--o);color:var(--o);background:#F0A07010}
 .peso-info{background:#1a1428;border:1px solid #1e1a2e;border-radius:9px;padding:9px 11px;margin-top:7px;font-size:.78rem;display:none;flex-wrap:wrap;gap:10px}
-.peso-info .pi{color:#6b5f8a}.peso-info .pi strong{color:#F97316}
+.peso-info .pi{color:#6b5f8a}.peso-info .pi strong{color:var(--o)}
 .frete-wrap{overflow-x:auto;margin-top:9px}
 .ft{width:100%;border-collapse:collapse;font-size:.68rem}
 .ft th{background:#1a1428;padding:5px 4px;text-align:center;font-weight:600;color:#4a3f6b;border:1px solid #1e1a2e;white-space:nowrap}
 .ft td{padding:5px 4px;text-align:center;border:1px solid #170f26;color:#6b5f8a}
-.ft td.pcol{font-weight:600;text-align:left;white-space:nowrap;background:#1a1428;color:#F97316;padding-left:6px}
-.ft td.fopt{cursor:pointer;transition:all .15s}.ft td.fopt:hover{background:#F9731618;color:#F97316;font-weight:600}
-.ft td.fsel{background:#F97316!important;color:#000!important;font-weight:700}
+.ft td.pcol{font-weight:600;text-align:left;white-space:nowrap;background:#1a1428;color:var(--o);padding-left:6px}
+.ft td.fopt{cursor:pointer;transition:all .15s}.ft td.fopt:hover{background:#F0A07018;color:var(--o);font-weight:600}
+.ft td.fsel{background:var(--o)!important;color:#000!important;font-weight:700}
 .ft tr.dim{opacity:.35}
-.frete-badge{background:#F9731610;border:1px solid #F9731640;border-radius:9px;padding:7px 11px;font-size:.79rem;color:#F97316;font-weight:600;margin-top:7px;display:none}
-
-/* BTN */
-.btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,#6B21A8,#F97316);color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;letter-spacing:.03em;position:relative}
+.frete-badge{background:#F0A07010;border:1px solid #F0A07040;border-radius:9px;padding:7px 11px;font-size:.79rem;color:var(--o);font-weight:600;margin-top:7px;display:none}
+.btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;letter-spacing:.03em;position:relative}
 .btn-calc:hover{opacity:.88}
-.btn-calc.pulse{animation:pa 1.1s ease-in-out infinite;box-shadow:0 0 0 0 #F9731655}
-@keyframes pa{0%{box-shadow:0 0 0 0 #F9731655}70%{box-shadow:0 0 0 10px #F9731600}100%{box-shadow:0 0 0 0 #F9731600}}
+.btn-calc.pulse{animation:pa 1.1s ease-in-out infinite}
+@keyframes pa{0%{box-shadow:0 0 0 0 #F0A07055}70%{box-shadow:0 0 0 10px #F0A07000}100%{box-shadow:0 0 0 0 #F0A07000}}
 .pdot{display:none;width:7px;height:7px;background:#fff;border-radius:50%;position:absolute;top:9px;right:13px;animation:db .8s ease-in-out infinite}
 .btn-calc.pulse .pdot{display:inline-block}
 @keyframes db{0%,100%{opacity:1}50%{opacity:.15}}
 .btn-reset{width:100%;padding:10px;background:#140f20;color:#6b5f8a;border:1px solid #1e1a2e;border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
-.btn-reset:hover{border-color:#F97316;color:#F97316}
-
-/* RESULTADO VAZIO */
+.btn-reset:hover{border-color:var(--o);color:var(--o)}
 .right-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;opacity:.2;text-align:center;gap:10px}
 .right-empty .bi{font-size:3.2rem}.right-empty p{font-size:.82rem;color:#888;line-height:1.6}
-
-/* DOIS CARDS DE PREÇO LADO A LADO */
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 @media(max-width:480px){.price-grid{grid-template-columns:1fr}}
-
-.price-card{border-radius:16px;padding:16px 14px;text-align:center;position:relative;overflow:hidden}
-/* Card calculado — sempre verde */
+.price-card{border-radius:16px;padding:16px 14px;text-align:center}
 .price-card.calc{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
-/* Card ML — varia por comparação */
 .price-card.ml-cheaper{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
 .price-card.ml-pricier{background:linear-gradient(145deg,#7f1d1d,#991b1b);border:1px solid #ef444455}
 .price-card.ml-equal{background:linear-gradient(145deg,#1e1a2e,#2d2060);border:1px solid #6B21A855}
 .price-card.ml-none{background:linear-gradient(145deg,#1a1428,#201640);border:1px solid #1e1a2e}
-
 .pc-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:6px}
-.pc-price{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.pc-price{font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
 .pc-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.15);font-size:.69rem;font-weight:700;letter-spacing:.04em;margin-bottom:10px}
 .pc-kpis{display:flex;justify-content:space-around;gap:4px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px;margin-top:2px}
 .pc-kpi{flex:1;text-align:center}
 .pc-kpi .pkl{font-size:.6rem;opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.pc-kpi .pkv{font-size:.95rem;font-weight:800}
+.pc-kpi .pkv{font-size:.92rem;font-weight:800}
 .pc-kpi .pks{font-size:.58rem;opacity:.5;margin-top:1px}
-
-/* EXPLICAÇÃO */
-.explain-box{background:#140f20;border:1px solid #1e1a2e;border-radius:12px;padding:14px;margin-bottom:11px;font-size:.8rem;line-height:1.6;color:#8a7aaa}
-.explain-box strong{color:#F97316}
+.explain-box{background:#140f20;border:1px solid #1e1a2e;border-radius:12px;padding:14px;margin-bottom:11px;font-size:.8rem;line-height:1.65;color:#8a7aaa}
 .explain-box .ex-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:8px}
-
-/* BREAKDOWN */
 .breakdown{background:#140f20;border:1px solid #1e1a2e;border-radius:13px;padding:15px;margin-bottom:10px}
 .bd-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:10px}
 .brow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1a1428;font-size:.8rem}
@@ -113,27 +86,18 @@ input[type=number]{-moz-appearance:textfield}
 </style>
 </head>
 <body>
-
 <div class="header">
-  <div class="logo-wrap">
-    <!-- Logo SVG símbolo RealEcom -->
-    <svg class="logo-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Coroa -->
-      <path d="M28 26 L32 18 L40 24 L48 18 L52 26 L28 26Z" fill="#F97316"/>
-      <rect x="27" y="26" width="26" height="4" rx="2" fill="#F97316"/>
-      <!-- C com seta -->
-      <path d="M52 44 C52 52.8 44.8 60 36 60 C27.2 60 20 52.8 20 44 C20 35.2 27.2 28 36 28 C41 28 45.4 30.3 48.2 34" stroke="#F97316" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-      <path d="M45 28 L52 34 L46 38" stroke="#F97316" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <div class="brand">
-      <div class="brand-name"><span class="r">real</span><span class="e">ê</span><span class="com">com</span></div>
-      <div class="brand-sub">Calculadora REAL</div>
+  <div style="text-align:center">
+    <div style="font-size:1.6rem;font-weight:900;letter-spacing:.06em;line-height:1">
+      <span style="color:#fff">CALCULADORA </span><span style="color:#F0A070">REAL</span>
+    </div>
+    <div style="font-size:.8rem;font-weight:700;letter-spacing:.18em;margin-top:3px">
+      <span style="color:#6B21A8">real</span><span style="color:#F0A070">ê</span><span style="color:#6B21A8">com</span>
     </div>
   </div>
 </div>
 
 <div class="main-layout">
-<!-- ===== ESQUERDA: FORMULÁRIO ===== -->
 <div class="left-panel">
 
   <div class="card">
@@ -148,7 +112,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="card">
-    <div class="card-title">📦 Custo de Frete</div>
+    <div class="card-title">📦 Custo de Frete & Outros</div>
     <div class="toggle-row">
       <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')">📐 Por Dimensões</button>
       <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')">✏️ Manual</button>
@@ -174,15 +138,10 @@ input[type=number]{-moz-appearance:textfield}
     </div>
     <div id="tab-manual" style="display:none">
       <div class="field"><label>Valor do frete (R$)</label><input type="number" id="frete-manual" placeholder="Ex: 15.90" min="0" step="0.01" oninput="markDirty()"></div>
-      <div class="note">Use quando já souber o valor exato do frete.</div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">💰 Outros Custos</div>
-    <div class="row2">
-      <div class="field"><label>Taxa fixa canal (R$)</label><input type="number" id="taxa_fixa" placeholder="0" min="0" step="0.01" oninput="markDirty()"></div>
-      <div class="field"><label>Insumos / Outros (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01" oninput="markDirty()"></div>
+    <div style="border-top:1px solid #1e1a2e;margin-top:12px;padding-top:12px">
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:9px">📦 Insumos & Outros Custos</div>
+      <div class="field"><label>Insumos / Embalagem / Outros (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01" oninput="markDirty()"></div>
     </div>
   </div>
 
@@ -210,18 +169,14 @@ input[type=number]{-moz-appearance:textfield}
   <button class="btn-calc" id="btn-calc" onclick="calcular()">⚡ Calcular Precificação <span class="pdot"></span></button>
 </div>
 
-<!-- ===== DIREITA: RESULTADO ===== -->
 <div class="right-panel">
   <div class="right-empty" id="right-empty">
     <div class="bi">🧮</div>
-    <p>Preencha os dados ao lado<br>e clique em <strong style="color:#F97316">Calcular</strong><br>para ver o resultado aqui</p>
+    <p>Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong><br>para ver o resultado aqui</p>
   </div>
 
   <div id="right-result" style="display:none">
-
-    <!-- DOIS CARDS DE PREÇO -->
     <div class="price-grid">
-      <!-- Card Preço Calculado (sempre verde) -->
       <div class="price-card calc">
         <div class="pc-tag">🎯 Preço Ideal Calculado</div>
         <div class="pc-price" id="pc-preco">R$ —</div>
@@ -232,13 +187,11 @@ input[type=number]{-moz-appearance:textfield}
           <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="pc-mg">—</div><div class="pks">&gt;10%</div></div>
         </div>
       </div>
-
-      <!-- Card Preço Médio ML -->
       <div class="price-card ml-none" id="pc-ml-card">
         <div class="pc-tag" id="pc-ml-tag">💛 Preço Médio ML</div>
         <div class="pc-price" id="pc-ml-preco">—</div>
-        <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1)">Informe o preço médio</div>
-        <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.3">
+        <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1);color:#6b5f8a">Informe o preço médio</div>
+        <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
           <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div><div class="pks">&gt;1,50</div></div>
           <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div><div class="pks">&gt;10%</div></div>
           <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="ml-mg">—</div><div class="pks">&gt;10%</div></div>
@@ -246,13 +199,11 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
 
-    <!-- EXPLICAÇÃO DO COMPARATIVO -->
-    <div class="explain-box" id="explain-box">
+    <div class="explain-box">
       <div class="ex-title">📖 Entenda os dois preços</div>
       <span id="explain-text">Preencha o Preço Médio ML para ver a comparação aqui.</span>
     </div>
 
-    <!-- DETALHAMENTO -->
     <div class="breakdown">
       <div class="bd-title">Detalhamento do Preço Calculado</div>
       <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
@@ -266,9 +217,8 @@ input[type=number]{-moz-appearance:textfield}
       <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
     </div>
 
-    <!-- PROJEÇÃO -->
     <div class="breakdown">
-      <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:#F97316">—</span> unidades</div>
+      <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unidades</div>
       <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
       <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
       <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
@@ -290,6 +240,9 @@ const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119',
 const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
 
 let pesoUsado=0,freteSel=0,freteMode='dim';
+
+function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 
 function markDirty(){
   const btn=document.getElementById('btn-calc');
@@ -337,7 +290,7 @@ function renderTable(selCol){
 function selFrete(col,val){
   freteSel=val;renderTable(col);
   document.getElementById('frete-badge').style.display='block';
-  document.getElementById('frete-val').textContent='R$ '+val.toFixed(2).replace('.',',');
+  document.getElementById('frete-val').textContent=fmt(val);
   markDirty();
 }
 function switchFrete(mode){
@@ -362,23 +315,11 @@ function removeItem(btn){
   if(rows.length===1)rows[0].querySelector('.remove-btn').style.display='none';
   markDirty();
 }
-function fmt(v){return'R$ '+v.toFixed(2).replace('.',',');}
-function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
-
-function calcKpis(preco,custo,base,pM,inv,qtd){
-  const vI=preco*(parseFloat(document.getElementById('impostos').value)||0)/100;
-  const vC=preco*(parseFloat(document.getElementById('comissao').value)||0)/100;
-  const vA=preco*(parseFloat(document.getElementById('afiliados').value)||0)/100;
-  const payout=preco-base-vI-vC-vA;
-  const markup=custo>0?preco/custo:0;
-  const roi=inv>0?(payout*qtd/inv)*100:0;
-  return{markup,roi,margem:pM*100,payout};
-}
 
 function calcular(){
   const custo=sumItems();
   const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
-  const taxa=parseFloat(document.getElementById('taxa_fixa').value)||0;
+  const taxa=0;
   const ins=parseFloat(document.getElementById('insumos').value)||0;
   const pI=(parseFloat(document.getElementById('impostos').value)||0)/100;
   const pC=(parseFloat(document.getElementById('comissao').value)||0)/100;
@@ -398,66 +339,53 @@ function calcular(){
   const inv=custo*qtd;
   const roi=inv>0?(payout*qtd/inv)*100:0;
 
-  // Card calculado
   document.getElementById('pc-preco').textContent=fmt(preco);
   document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
   document.getElementById('pc-roi').textContent=fmtP(roi);
   document.getElementById('pc-mg').textContent=fmtP(pM*100);
 
-  // Card ML + comparativo
   const mlCard=document.getElementById('pc-ml-card');
   const explainEl=document.getElementById('explain-text');
   if(precoML>0){
-    // KPIs SE vendido ao preço ML
-    const mlBase=base; // custos são os mesmos
     const mlvI=precoML*pI,mlvC=precoML*pC,mlvA=precoML*pA,mlvM=precoML*pM;
-    const mlPayout=precoML-mlBase-mlvI-mlvC-mlvA;
+    const mlPayout=precoML-base-mlvI-mlvC-mlvA;
     const mlMarkup=custo>0?precoML/custo:0;
     const mlRoi=inv>0?(mlPayout*qtd/inv)*100:0;
-
     document.getElementById('pc-ml-preco').textContent=fmt(precoML);
     document.getElementById('ml-mk').textContent=mlMarkup.toFixed(2).replace('.',',');
     document.getElementById('ml-roi').textContent=fmtP(mlRoi);
     document.getElementById('ml-mg').textContent=fmtP(mlvM/precoML*100);
     document.getElementById('pc-ml-kpis').style.opacity='1';
-
-    const diff=precoML-preco;
-    const pct=Math.abs((diff/preco)*100).toFixed(1);
-    const cheaper=diff<0; // ML é menor que nosso preço → difícil competir
-    const equal=Math.abs(diff)<0.01;
-
-    if(equal){
+    const diff=precoML-preco,pct=Math.abs((diff/preco)*100).toFixed(1);
+    if(Math.abs(diff)<0.01){
       mlCard.className='price-card ml-equal';
       document.getElementById('pc-ml-badge').style.cssText='background:rgba(139,92,246,.25);color:#c4b5fd';
       document.getElementById('pc-ml-badge').textContent='= Igual ao seu preço calculado';
       document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
-      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> é <strong>igual</strong> ao seu preço ideal calculado. Isso significa que o mercado já está precificando exatamente no seu ponto de equilíbrio. Você pode vender nesse preço e ter a margem que definiu.`;
-    } else if(diff>0){
-      // ML é MAIS CARO que nosso preço → ótimo, temos espaço
+      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> é <strong>igual</strong> ao seu preço ideal calculado. O mercado já está precificando exatamente no seu ponto de equilíbrio. Você pode vender nesse preço e ter a margem que definiu.`;
+    }else if(diff>0){
       mlCard.className='price-card ml-cheaper';
       document.getElementById('pc-ml-badge').style.cssText='background:rgba(74,222,128,.2);color:#4ade80';
       document.getElementById('pc-ml-badge').textContent=`✅ ${pct}% acima do seu custo mínimo`;
       document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
-      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> está <strong style="color:#4ade80">${pct}% acima</strong> do seu preço mínimo calculado (${fmt(preco)}). <br><br>Isso é ótimo! Significa que o mercado aceita pagar mais do que você precisa para cobrir seus custos. Você tem duas opções: <strong>vender no preço calculado</strong> e ser mais competitivo, ou <strong>vender próximo ao preço médio</strong> para aumentar sua margem real.`;
-    } else {
-      // ML é MAIS BARATO que nosso preço → atenção
+      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> está <strong style="color:#4ade80">${pct}% acima</strong> do seu preço mínimo calculado (${fmt(preco)}). Ótimo! O mercado aceita pagar mais do que você precisa para cobrir seus custos. Você pode <strong>vender no preço calculado</strong> e ser mais competitivo, ou <strong>vender mais próximo ao preço médio</strong> para aumentar sua margem real.`;
+    }else{
       mlCard.className='price-card ml-pricier';
       document.getElementById('pc-ml-badge').style.cssText='background:rgba(239,68,68,.2);color:#f87171';
       document.getElementById('pc-ml-badge').textContent=`⚠️ ${pct}% abaixo do seu custo mínimo`;
       document.getElementById('pc-ml-tag').textContent='⚠️ Preço Médio ML';
-      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> está <strong style="color:#f87171">${pct}% abaixo</strong> do seu preço mínimo calculado (${fmt(preco)}). <br><br>Atenção: se você vender no preço médio do mercado, <strong>não vai cobrir todos os seus custos</strong> com a margem que definiu. Você precisa ou <strong>reduzir custos</strong>, ou <strong>ajustar a margem</strong>, ou encontrar um diferencial para justificar um preço mais alto.`;
+      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> está <strong style="color:#f87171">${pct}% abaixo</strong> do seu preço mínimo calculado (${fmt(preco)}). Atenção: se vender no preço médio do mercado, <strong>não vai cobrir todos os seus custos</strong> com a margem definida. Você precisa reduzir custos, ajustar a margem, ou encontrar um diferencial para justificar um preço mais alto.`;
     }
-  } else {
+  }else{
     mlCard.className='price-card ml-none';
     document.getElementById('pc-ml-preco').textContent='—';
     document.getElementById('pc-ml-badge').style.cssText='background:rgba(255,255,255,.08);color:#6b5f8a';
     document.getElementById('pc-ml-badge').textContent='Informe o preço médio';
     document.getElementById('pc-ml-kpis').style.opacity='.25';
-    document.getElementById('ml-mk').textContent='—';document.getElementById('ml-roi').textContent='—';document.getElementById('ml-mg').textContent='—';
-    explainEl.innerHTML=`O <strong>preço ideal calculado</strong> é o valor mínimo que você deve cobrar para cobrir todos os seus custos (produto, frete, taxas, impostos) e ainda ter a margem de lucro que definiu. <br><br>Preencha o campo <strong style="color:#F97316">Preço Médio ML</strong> para ver como seu produto se posiciona em relação à concorrência.`;
+    ['ml-mk','ml-roi','ml-mg'].forEach(id=>document.getElementById(id).textContent='—');
+    explainEl.innerHTML=`O <strong>preço ideal calculado</strong> é o valor mínimo que você deve cobrar para cobrir todos os seus custos (produto, frete, taxas, impostos) e ainda ter a margem de lucro que definiu. <br><br>Preencha o campo <strong style="color:var(--o)">Preço Médio ML</strong> para ver como seu produto se posiciona em relação à concorrência.`;
   }
 
-  // Detalhamento
   document.getElementById('bd-custo').textContent=fmt(custo);
   document.getElementById('bd-frete').textContent=fmt(frete);
   document.getElementById('bd-outros').textContent=fmt(taxa+ins);
@@ -467,8 +395,6 @@ function calcular(){
   document.getElementById('bd-afi').textContent=fmt(vA)+' ('+fmtP(pA*100)+')';
   document.getElementById('bd-mar').textContent=fmt(vM)+' ('+fmtP(pM*100)+')';
   document.getElementById('bd-preco').textContent=fmt(preco);
-
-  // Projeção
   document.getElementById('proj-qtd').textContent=qtd;
   document.getElementById('proj-cu').textContent=fmt(custo);
   document.getElementById('proj-inv').textContent=fmt(inv);
@@ -479,7 +405,6 @@ function calcular(){
 
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
-
   const btn=document.getElementById('btn-calc');
   btn.classList.remove('pulse');
   btn.innerHTML='✅ Calculado! <span class="pdot"></span>';
