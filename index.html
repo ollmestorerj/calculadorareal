@@ -3,93 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Precificação</title>
+<title>Calculadora REAL | RealEcom</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',sans-serif;background:#f5f5f7;color:#1d1d1f;min-height:100vh}
-.header{background:#fff;border-bottom:1px solid #e5e5e7;padding:18px 24px;text-align:center}
-.header h1{font-size:1.35rem;font-weight:700}
-.header p{font-size:.82rem;color:#6e6e73;margin-top:3px}
-.container{max-width:660px;margin:0 auto;padding:18px 14px 40px}
-.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
-.card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6e6e73;margin-bottom:13px}
-.field{margin-bottom:11px}
-.field label{display:block;font-size:.8rem;color:#3d3d3f;margin-bottom:4px;font-weight:500}
-.field input{width:100%;padding:9px 11px;border:1.5px solid #e5e5e7;border-radius:10px;font-size:.93rem;color:#1d1d1f;background:#fafafa;transition:border .2s}
-.field input:focus{outline:none;border-color:#0071e3;background:#fff}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
-.btn{width:100%;padding:13px;background:#0071e3;color:#fff;border:none;border-radius:12px;font-size:.98rem;font-weight:600;cursor:pointer;transition:background .2s}
-.btn:hover{background:#0062c4}
+body{font-family:'Segoe UI',sans-serif;background:#0d0a14;color:#f0f0f0;min-height:100vh}
 
-/* Peso card */
-.peso-info{background:#f0f7ff;border:1px solid #cce0ff;border-radius:10px;padding:10px 13px;margin-top:10px;font-size:.83rem}
-.peso-info strong{color:#0071e3}
-.peso-info span{color:#6e6e73}
+/* HEADER */
+.header{background:#110e1a;border-bottom:1px solid #1e1a2e;padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:16px}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+/* Logo SVG inline replicando o símbolo da RealEcom */
+.logo-icon{width:40px;height:40px;flex-shrink:0}
+.brand{display:flex;flex-direction:column}
+.brand-name{font-size:1.35rem;font-weight:800;line-height:1}
+.brand-name .r{color:#6B21A8}.brand-name .e{color:#F97316}.brand-name .com{color:#fff}
+.brand-sub{font-size:.7rem;color:#F97316;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
 
-/* Tabela de frete */
-.frete-table-wrap{overflow-x:auto;margin-top:10px}
-.frete-table{width:100%;border-collapse:collapse;font-size:.75rem}
-.frete-table th{background:#f5f5f7;padding:6px 7px;text-align:center;font-weight:600;color:#3d3d3f;border:1px solid #e5e5e7;white-space:nowrap}
-.frete-table td{padding:5px 7px;text-align:center;border:1px solid #e5e5e7;color:#3d3d3f}
-.frete-table tr.active-row td{background:#fff3cd;font-weight:600}
-.frete-table td.peso-col{font-weight:600;text-align:left;white-space:nowrap;background:#f0f7ff;color:#0071e3}
-.frete-table td.frete-opt{cursor:pointer;transition:background .15s;color:#1d1d1f}
-.frete-table td.frete-opt:hover{background:#e8f4ff;color:#0071e3;font-weight:600}
-.frete-table td.frete-selected{background:#0071e3 !important;color:#fff !important;font-weight:700;border-radius:4px}
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 72px)}
+@media(max-width:800px){.main-layout{grid-template-columns:1fr}}
+.left-panel{border-right:1px solid #1e1a2e;padding:18px 16px;overflow-y:auto}
+.right-panel{padding:18px 16px;overflow-y:auto;background:#0a0812}
 
-/* Items */
-.item-list{display:flex;flex-direction:column;gap:6px}
-.item-row{display:grid;grid-template-columns:1fr 34px;gap:6px;align-items:center}
-.add-item{background:none;border:1.5px dashed #c7c7cc;color:#6e6e73;border-radius:10px;padding:7px;font-size:.8rem;cursor:pointer;width:100%;margin-top:6px;transition:all .2s}
-.add-item:hover{border-color:#0071e3;color:#0071e3}
-.remove-btn{background:#ff3b301a;border:none;color:#ff3b30;width:34px;height:36px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:none;align-items:center;justify-content:center}
+/* CARDS FORM */
+.card{background:#140f20;border:1px solid #1e1a2e;border-radius:14px;padding:15px;margin-bottom:11px}
+.card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:11px}
+.field{margin-bottom:9px}
+.field label{display:block;font-size:.76rem;color:#6b5f8a;margin-bottom:3px;font-weight:500}
+.field input{width:100%;padding:9px 12px;border:1.5px solid #1e1a2e;border-radius:9px;font-size:.9rem;color:#f0f0f0;background:#1a1428;transition:border .2s}
+.field input:focus{outline:none;border-color:#F97316;background:#1e1830}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+@media(max-width:480px){.row4{grid-template-columns:1fr 1fr}}
+.note{font-size:.68rem;color:#3a3050;margin-top:4px}
 
-/* Resultados */
-#results-section{display:none}
-.result-hero{background:linear-gradient(135deg,#0071e3,#00c6fb);border-radius:18px;padding:22px 20px 18px;text-align:center;color:#fff;margin-bottom:14px}
-.result-hero .label{font-size:.82rem;opacity:.8;margin-bottom:2px}
-.result-hero .price{font-size:2.8rem;font-weight:700;margin-bottom:14px}
-.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:2px}
-.kpi{background:rgba(255,255,255,.18);border-radius:12px;padding:10px 6px;backdrop-filter:blur(4px)}
-.kpi .kl{font-size:.68rem;opacity:.85;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
-.kpi .kv{font-size:1.25rem;font-weight:700}
-.kpi .ks{font-size:.65rem;opacity:.75;margin-top:1px}
-.kpi.kok{background:rgba(52,199,89,.35)}
-.kpi.kwarn{background:rgba(255,149,0,.35)}
-.kpi.kbad{background:rgba(255,59,48,.35)}
+/* ITEMS */
+.item-list{display:flex;flex-direction:column;gap:5px}
+.item-row{display:grid;grid-template-columns:1fr 32px;gap:5px;align-items:center}
+.add-item{background:none;border:1.5px dashed #1e1a2e;color:#4a3f6b;border-radius:9px;padding:6px;font-size:.76rem;cursor:pointer;width:100%;margin-top:5px;transition:all .2s}
+.add-item:hover{border-color:#F97316;color:#F97316}
+.remove-btn{background:#ff3b3018;border:none;color:#ff3b30;width:32px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
 
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.metric{background:#fff;border-radius:14px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.metric .m-label{font-size:.7rem;color:#6e6e73;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.metric .m-value{font-size:1.3rem;font-weight:700}
-.metric .m-ref{font-size:.68rem;margin-top:2px;color:#6e6e73}
-.ok{color:#34c759}.warn{color:#ff9500}.bad{color:#ff3b30}
+/* FRETE */
+.toggle-row{display:flex;gap:7px;margin-bottom:9px}
+.toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid #1e1a2e;background:#1a1428;color:#4a3f6b;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
+.toggle-btn.active{border-color:#F97316;color:#F97316;background:#F9731610}
+.peso-info{background:#1a1428;border:1px solid #1e1a2e;border-radius:9px;padding:9px 11px;margin-top:7px;font-size:.78rem;display:none;flex-wrap:wrap;gap:10px}
+.peso-info .pi{color:#6b5f8a}.peso-info .pi strong{color:#F97316}
+.frete-wrap{overflow-x:auto;margin-top:9px}
+.ft{width:100%;border-collapse:collapse;font-size:.68rem}
+.ft th{background:#1a1428;padding:5px 4px;text-align:center;font-weight:600;color:#4a3f6b;border:1px solid #1e1a2e;white-space:nowrap}
+.ft td{padding:5px 4px;text-align:center;border:1px solid #170f26;color:#6b5f8a}
+.ft td.pcol{font-weight:600;text-align:left;white-space:nowrap;background:#1a1428;color:#F97316;padding-left:6px}
+.ft td.fopt{cursor:pointer;transition:all .15s}.ft td.fopt:hover{background:#F9731618;color:#F97316;font-weight:600}
+.ft td.fsel{background:#F97316!important;color:#000!important;font-weight:700}
+.ft tr.dim{opacity:.35}
+.frete-badge{background:#F9731610;border:1px solid #F9731640;border-radius:9px;padding:7px 11px;font-size:.79rem;color:#F97316;font-weight:600;margin-top:7px;display:none}
 
-.breakdown{background:#fff;border-radius:16px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:14px}
-.breakdown-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6e6e73;margin-bottom:11px}
-.brow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f2f2f7;font-size:.86rem}
+/* BTN */
+.btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,#6B21A8,#F97316);color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;letter-spacing:.03em;position:relative}
+.btn-calc:hover{opacity:.88}
+.btn-calc.pulse{animation:pa 1.1s ease-in-out infinite;box-shadow:0 0 0 0 #F9731655}
+@keyframes pa{0%{box-shadow:0 0 0 0 #F9731655}70%{box-shadow:0 0 0 10px #F9731600}100%{box-shadow:0 0 0 0 #F9731600}}
+.pdot{display:none;width:7px;height:7px;background:#fff;border-radius:50%;position:absolute;top:9px;right:13px;animation:db .8s ease-in-out infinite}
+.btn-calc.pulse .pdot{display:inline-block}
+@keyframes db{0%,100%{opacity:1}50%{opacity:.15}}
+.btn-reset{width:100%;padding:10px;background:#140f20;color:#6b5f8a;border:1px solid #1e1a2e;border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
+.btn-reset:hover{border-color:#F97316;color:#F97316}
+
+/* RESULTADO VAZIO */
+.right-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;opacity:.2;text-align:center;gap:10px}
+.right-empty .bi{font-size:3.2rem}.right-empty p{font-size:.82rem;color:#888;line-height:1.6}
+
+/* DOIS CARDS DE PREÇO LADO A LADO */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:480px){.price-grid{grid-template-columns:1fr}}
+
+.price-card{border-radius:16px;padding:16px 14px;text-align:center;position:relative;overflow:hidden}
+/* Card calculado — sempre verde */
+.price-card.calc{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
+/* Card ML — varia por comparação */
+.price-card.ml-cheaper{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
+.price-card.ml-pricier{background:linear-gradient(145deg,#7f1d1d,#991b1b);border:1px solid #ef444455}
+.price-card.ml-equal{background:linear-gradient(145deg,#1e1a2e,#2d2060);border:1px solid #6B21A855}
+.price-card.ml-none{background:linear-gradient(145deg,#1a1428,#201640);border:1px solid #1e1a2e}
+
+.pc-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:6px}
+.pc-price{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.pc-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.15);font-size:.69rem;font-weight:700;letter-spacing:.04em;margin-bottom:10px}
+.pc-kpis{display:flex;justify-content:space-around;gap:4px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px;margin-top:2px}
+.pc-kpi{flex:1;text-align:center}
+.pc-kpi .pkl{font-size:.6rem;opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.pc-kpi .pkv{font-size:.95rem;font-weight:800}
+.pc-kpi .pks{font-size:.58rem;opacity:.5;margin-top:1px}
+
+/* EXPLICAÇÃO */
+.explain-box{background:#140f20;border:1px solid #1e1a2e;border-radius:12px;padding:14px;margin-bottom:11px;font-size:.8rem;line-height:1.6;color:#8a7aaa}
+.explain-box strong{color:#F97316}
+.explain-box .ex-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:8px}
+
+/* BREAKDOWN */
+.breakdown{background:#140f20;border:1px solid #1e1a2e;border-radius:13px;padding:15px;margin-bottom:10px}
+.bd-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:10px}
+.brow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1a1428;font-size:.8rem}
 .brow:last-child{border:none}
-.brow.total{font-weight:700;font-size:.93rem;padding-top:9px}
-.btn-reset{width:100%;padding:11px;background:#f5f5f7;color:#1d1d1f;border:none;border-radius:12px;font-size:.93rem;font-weight:600;cursor:pointer;margin-top:4px}
+.brow .bl{color:#4a3f6b}.brow .br{color:#c4b5fd;font-weight:600}
+.brow.total{padding-top:9px}.brow.total .bl{color:#8b7faa;font-weight:700}.brow.total .br{color:#fff;font-weight:800;font-size:.92rem}
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>🧮 Calculadora de Precificação</h1>
-  <p>Preencha os dados e descubra o preço ideal de venda</p>
-</div>
-<div class="container">
 
-<!-- FORMULÁRIO -->
-<div id="form-section">
+<div class="header">
+  <div class="logo-wrap">
+    <!-- Logo SVG símbolo RealEcom -->
+    <svg class="logo-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Coroa -->
+      <path d="M28 26 L32 18 L40 24 L48 18 L52 26 L28 26Z" fill="#F97316"/>
+      <rect x="27" y="26" width="26" height="4" rx="2" fill="#F97316"/>
+      <!-- C com seta -->
+      <path d="M52 44 C52 52.8 44.8 60 36 60 C27.2 60 20 52.8 20 44 C20 35.2 27.2 28 36 28 C41 28 45.4 30.3 48.2 34" stroke="#F97316" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <path d="M45 28 L52 34 L46 38" stroke="#F97316" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="brand">
+      <div class="brand-name"><span class="r">real</span><span class="e">ê</span><span class="com">com</span></div>
+      <div class="brand-sub">Calculadora REAL</div>
+    </div>
+  </div>
+</div>
+
+<div class="main-layout">
+<!-- ===== ESQUERDA: FORMULÁRIO ===== -->
+<div class="left-panel">
 
   <div class="card">
     <div class="card-title">🛒 Custo dos Produtos</div>
     <div class="item-list" id="items-list">
       <div class="item-row">
-        <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
+        <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01" oninput="markDirty()">
         <button class="remove-btn" onclick="removeItem(this)">×</button>
       </div>
     </div>
@@ -97,163 +148,156 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f5f7;color:#1d1d1f;min-heig
   </div>
 
   <div class="card">
-    <div class="card-title">📦 Dimensões e Peso do Produto</div>
-    <div class="row4">
-      <div class="field"><label>Peso (kg)</label><input type="number" id="peso" placeholder="Ex: 1.5" min="0" step="0.001" oninput="calcPeso()"></div>
-      <div class="field"><label>Comp. (cm)</label><input type="number" id="comp" placeholder="Ex: 30" min="0" step="0.1" oninput="calcPeso()"></div>
-      <div class="field"><label>Larg. (cm)</label><input type="number" id="larg" placeholder="Ex: 20" min="0" step="0.1" oninput="calcPeso()"></div>
-      <div class="field"><label>Alt. (cm)</label><input type="number" id="alt" placeholder="Ex: 15" min="0" step="0.1" oninput="calcPeso()"></div>
+    <div class="card-title">📦 Custo de Frete</div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')">📐 Por Dimensões</button>
+      <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')">✏️ Manual</button>
     </div>
-    <div class="peso-info" id="peso-info" style="display:none">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
-        <span>⚖️ Peso real: <strong id="pi-real">—</strong></span>
-        <span>📐 Peso vol.: <strong id="pi-vol">—</strong></span>
-        <span>✅ Peso usado: <strong id="pi-usado">—</strong></span>
+    <div id="tab-dim">
+      <div class="row4">
+        <div class="field"><label>Peso (kg)</label><input type="number" id="peso" placeholder="1.5" min="0" step="0.001" oninput="calcPeso();markDirty()"></div>
+        <div class="field"><label>Comp. (cm)</label><input type="number" id="comp" placeholder="30" min="0" step="0.1" oninput="calcPeso();markDirty()"></div>
+        <div class="field"><label>Larg. (cm)</label><input type="number" id="larg" placeholder="20" min="0" step="0.1" oninput="calcPeso();markDirty()"></div>
+        <div class="field"><label>Alt. (cm)</label><input type="number" id="alt" placeholder="15" min="0" step="0.1" oninput="calcPeso();markDirty()"></div>
       </div>
+      <div class="peso-info" id="peso-info">
+        <span class="pi">⚖️ Real: <strong id="pi-real">—</strong></span>
+        <span class="pi">📐 Vol.: <strong id="pi-vol">—</strong></span>
+        <span class="pi">✅ Usado: <strong id="pi-usado">—</strong></span>
+      </div>
+      <div id="frete-section" style="display:none;margin-top:9px">
+        <div style="font-size:.66rem;color:#3a3050;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600">Clique na faixa de preço para selecionar</div>
+        <div class="frete-wrap"><table class="ft" id="frete-table"></table></div>
+        <div class="frete-badge" id="frete-badge">✅ Frete: <span id="frete-val">—</span></div>
+      </div>
+      <div class="note">Peso vol. = C × L × A ÷ 6000. Usa-se o maior.</div>
     </div>
-    <div style="font-size:.72rem;color:#6e6e73;margin-top:8px">Peso volumétrico = Comp × Larg × Alt ÷ 6000. Usa-se o maior entre real e volumétrico.</div>
-
-    <!-- TABELA DE FRETE -->
-    <div id="frete-section" style="display:none;margin-top:14px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6e6e73;margin-bottom:6px">🚚 Selecione o frete — clique na faixa de preço do seu produto</div>
-      <div class="frete-table-wrap">
-        <table class="frete-table" id="frete-table"></table>
-      </div>
-      <div id="frete-selecionado" style="display:none;margin-top:8px;background:#e8f4ff;border:1.5px solid #0071e3;border-radius:10px;padding:9px 13px;font-size:.85rem;color:#0071e3;font-weight:600">
-        ✅ Frete selecionado: <span id="frete-sel-val">—</span> <span style="color:#6e6e73;font-weight:400">— será incluído no cálculo automaticamente</span>
-      </div>
+    <div id="tab-manual" style="display:none">
+      <div class="field"><label>Valor do frete (R$)</label><input type="number" id="frete-manual" placeholder="Ex: 15.90" min="0" step="0.01" oninput="markDirty()"></div>
+      <div class="note">Use quando já souber o valor exato do frete.</div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-title">💰 Outros Custos</div>
     <div class="row2">
-      <div class="field"><label>Taxa fixa canal (R$)</label><input type="number" id="taxa_fixa" value="0" min="0" step="0.01"></div>
-      <div class="field"><label>Insumos / Outros (R$)</label><input type="number" id="insumos" value="0" min="0" step="0.01"></div>
+      <div class="field"><label>Taxa fixa canal (R$)</label><input type="number" id="taxa_fixa" placeholder="0" min="0" step="0.01" oninput="markDirty()"></div>
+      <div class="field"><label>Insumos / Outros (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01" oninput="markDirty()"></div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-title">📊 Percentuais</div>
     <div class="row2">
-      <div class="field"><label>🏛️ Impostos (%)</label><input type="number" id="impostos" value="0" min="0" max="100" step="0.1"></div>
-      <div class="field"><label>🏷️ Comissão Marketplace (%)</label><input type="number" id="comissao" value="0" min="0" max="100" step="0.1"></div>
+      <div class="field"><label>🏛️ Impostos (%)</label><input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1" oninput="markDirty()"></div>
+      <div class="field"><label>🏷️ Comissão Marketplace (%)</label><input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1" oninput="markDirty()"></div>
     </div>
     <div class="row2">
-      <div class="field"><label>🤝 Comissão Afiliados (%)</label><input type="number" id="afiliados" value="0" min="0" max="100" step="0.1"></div>
-      <div class="field"><label>💎 Margem de Lucro desejada (%)</label><input type="number" id="margem" value="0" min="0" max="100" step="0.1"></div>
+      <div class="field"><label>🤝 Comissão Afiliados (%)</label><input type="number" id="afiliados" placeholder="0" min="0" max="100" step="0.1" oninput="markDirty()"></div>
+      <div class="field"><label>💎 Margem de Lucro (%)</label><input type="number" id="margem" placeholder="0" min="0" max="100" step="0.1" oninput="markDirty()"></div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">📈 Projeção de Vendas</div>
-    <div class="field"><label>Quantidade de unidades compradas</label><input type="number" id="quantidade" value="1" min="1" step="1" placeholder="Ex: 100"></div>
-    <div style="font-size:.72rem;color:#6e6e73;margin-top:4px">O investimento total será calculado automaticamente: custo unitário × quantidade.</div>
+    <div class="card-title">📈 Projeção & Comparativo</div>
+    <div class="row2">
+      <div class="field"><label>Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1" oninput="markDirty()"></div>
+      <div class="field"><label>💛 Preço Médio ML (R$)</label><input type="number" id="preco-ml" placeholder="Opcional" min="0" step="0.01" oninput="markDirty()"></div>
+    </div>
+    <div class="note">Preencha o preço médio do ML para ver o comparativo ao lado.</div>
   </div>
 
-  <button class="btn" onclick="calcular()">Calcular Precificação →</button>
+  <button class="btn-calc" id="btn-calc" onclick="calcular()">⚡ Calcular Precificação <span class="pdot"></span></button>
 </div>
 
-<!-- RESULTADOS -->
-<div id="results-section">
-  <div class="result-hero">
-    <div class="label">Preço ideal de venda</div>
-    <div class="price" id="res-preco">—</div>
-    <div class="kpis">
-      <div class="kpi" id="kpi-markup">
-        <div class="kl">Markup</div>
-        <div class="kv" id="kv-markup">—</div>
-        <div class="ks">meta &gt;1,50</div>
+<!-- ===== DIREITA: RESULTADO ===== -->
+<div class="right-panel">
+  <div class="right-empty" id="right-empty">
+    <div class="bi">🧮</div>
+    <p>Preencha os dados ao lado<br>e clique em <strong style="color:#F97316">Calcular</strong><br>para ver o resultado aqui</p>
+  </div>
+
+  <div id="right-result" style="display:none">
+
+    <!-- DOIS CARDS DE PREÇO -->
+    <div class="price-grid">
+      <!-- Card Preço Calculado (sempre verde) -->
+      <div class="price-card calc">
+        <div class="pc-tag">🎯 Preço Ideal Calculado</div>
+        <div class="pc-price" id="pc-preco">R$ —</div>
+        <div class="pc-badge" style="background:rgba(74,222,128,.2);color:#4ade80">✅ Seu preço mínimo seguro</div>
+        <div class="pc-kpis">
+          <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="pc-mk">—</div><div class="pks">&gt;1,50</div></div>
+          <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="pc-roi">—</div><div class="pks">&gt;10%</div></div>
+          <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="pc-mg">—</div><div class="pks">&gt;10%</div></div>
+        </div>
       </div>
-      <div class="kpi" id="kpi-roi">
-        <div class="kl">ROI</div>
-        <div class="kv" id="kv-roi">—</div>
-        <div class="ks">meta &gt;10%</div>
-      </div>
-      <div class="kpi" id="kpi-margem">
-        <div class="kl">Margem</div>
-        <div class="kv" id="kv-margem">—</div>
-        <div class="ks">meta &gt;10%</div>
+
+      <!-- Card Preço Médio ML -->
+      <div class="price-card ml-none" id="pc-ml-card">
+        <div class="pc-tag" id="pc-ml-tag">💛 Preço Médio ML</div>
+        <div class="pc-price" id="pc-ml-preco">—</div>
+        <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1)">Informe o preço médio</div>
+        <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.3">
+          <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div><div class="pks">&gt;1,50</div></div>
+          <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div><div class="pks">&gt;10%</div></div>
+          <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="ml-mg">—</div><div class="pks">&gt;10%</div></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="breakdown">
-    <div class="breakdown-title">Detalhamento do Preço</div>
-    <div class="brow"><span>Custo dos produtos</span><span id="bd-custo">—</span></div>
-    <div class="brow"><span>Frete</span><span id="bd-frete">—</span></div>
-    <div class="brow"><span>Taxa fixa + Insumos</span><span id="bd-outros">—</span></div>
-    <div class="brow"><span>Base de cálculo</span><span id="bd-base">—</span></div>
-    <div class="brow"><span>Impostos</span><span id="bd-imp">—</span></div>
-    <div class="brow"><span>Comissão marketplace</span><span id="bd-com">—</span></div>
-    <div class="brow"><span>Comissão afiliados</span><span id="bd-afi">—</span></div>
-    <div class="brow"><span>Margem de lucro</span><span id="bd-mar">—</span></div>
-    <div class="brow total"><span>Preço de venda</span><span id="bd-preco">—</span></div>
-  </div>
+    <!-- EXPLICAÇÃO DO COMPARATIVO -->
+    <div class="explain-box" id="explain-box">
+      <div class="ex-title">📖 Entenda os dois preços</div>
+      <span id="explain-text">Preencha o Preço Médio ML para ver a comparação aqui.</span>
+    </div>
 
-  <div class="breakdown">
-    <div class="breakdown-title">💼 Projeção — <span id="proj-qtd">—</span> unidades</div>
-    <div class="brow"><span>Custo unitário</span><span id="proj-cunit">—</span></div>
-    <div class="brow"><span>Investimento total (custo × qtd)</span><span id="proj-inv">—</span></div>
-    <div class="brow"><span>Faturamento esperado</span><span id="proj-fat">—</span></div>
-    <div class="brow"><span>Lucro por unidade (payout)</span><span id="proj-payout">—</span></div>
-    <div class="brow"><span>Lucro bruto esperado</span><span id="proj-lb">—</span></div>
-    <div class="brow total"><span>Caixa esperado</span><span id="proj-caixa">—</span></div>
-  </div>
+    <!-- DETALHAMENTO -->
+    <div class="breakdown">
+      <div class="bd-title">Detalhamento do Preço Calculado</div>
+      <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
+      <div class="brow"><span class="bl">Frete</span><span class="br" id="bd-frete">—</span></div>
+      <div class="brow"><span class="bl">Taxa fixa + Insumos</span><span class="br" id="bd-outros">—</span></div>
+      <div class="brow"><span class="bl">Base de cálculo</span><span class="br" id="bd-base">—</span></div>
+      <div class="brow"><span class="bl">Impostos</span><span class="br" id="bd-imp">—</span></div>
+      <div class="brow"><span class="bl">Comissão marketplace</span><span class="br" id="bd-com">—</span></div>
+      <div class="brow"><span class="bl">Comissão afiliados</span><span class="br" id="bd-afi">—</span></div>
+      <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
+      <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
+    </div>
 
-  <button class="btn-reset" onclick="resetar()">← Refazer cálculo</button>
+    <!-- PROJEÇÃO -->
+    <div class="breakdown">
+      <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:#F97316">—</span> unidades</div>
+      <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
+      <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
+      <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
+      <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
+      <div class="brow"><span class="bl">Lucro bruto esperado</span><span class="br" id="proj-lb">—</span></div>
+      <div class="brow total"><span class="bl">Caixa esperado</span><span class="br" id="proj-cx">—</span></div>
+    </div>
+
+    <button class="btn-reset" onclick="resetar()">← Novo Cálculo</button>
+  </div>
+</div>
 </div>
 
-</div>
 <script>
-const pesoFaixas=[[0,.3],[.3,.5],[.5,1],[1,1.5],[1.5,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,11],[11,13],[13,15],[15,17],[17,20],[20,25],[25,30],[30,40],[40,50],[50,60],[60,70],[70,80],[80,90],[90,100],[100,125],[125,150],[150,Infinity]];
-const pesoLabels=['Até 0,3 kg','0,3 – 0,5 kg','0,5 – 1 kg','1 – 1,5 kg','1,5 – 2 kg','2 – 3 kg','3 – 4 kg','4 – 5 kg','5 – 6 kg','6 – 7 kg','7 – 8 kg','8 – 9 kg','9 – 11 kg','11 – 13 kg','13 – 15 kg','15 – 17 kg','17 – 20 kg','20 – 25 kg','25 – 30 kg','30 – 40 kg','40 – 50 kg','50 – 60 kg','60 – 70 kg','70 – 80 kg','80 – 90 kg','90 – 100 kg','100 – 125 kg','125 – 150 kg','+ 150 kg'];
+const pesoFaixas=[[0,.3],[.3,.5],[.5,1],[1,1.5],[1.5,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,11],[11,13],[13,15],[15,17],[17,20],[20,25],[25,30],[30,40],[40,50],[50,60],[60,70],[70,80],[80,90],[90,100],[100,125],[125,150],[150,1e9]];
+const pesoLabels=['Até 0,3kg','0,3–0,5kg','0,5–1kg','1–1,5kg','1,5–2kg','2–3kg','3–4kg','4–5kg','5–6kg','6–7kg','7–8kg','8–9kg','9–11kg','11–13kg','13–15kg','15–17kg','17–20kg','20–25kg','25–30kg','30–40kg','40–50kg','50–60kg','60–70kg','70–80kg','80–90kg','90–100kg','100–125kg','125–150kg','+150kg'];
 const precoFaixas=[0,19,49,79,100,120,150,200];
-const precoLabels=['R$0–18,99','R$19–48,99','R$49–78,99','R$79–99,99','R$100–119,99','R$120–149,99','R$150–199,99','R$200+'];
-const T=[
-  [5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],
-  [5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],
-  [6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],
-  [6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],
-  [6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],
-  [6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],
-  [6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],
-  [6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],
-  [6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],
-  [6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],
-  [6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],
-  [6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],
-  [7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],
-  [7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],
-  [7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],
-  [7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],
-  [7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],
-  [7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],
-  [7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],
-  [7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],
-  [7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],
-  [8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],
-  [8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],
-  [8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],
-  [8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],
-  [8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],
-  [8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],
-  [8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],
-  [8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]
-];
+const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119','R$120–149','R$150–199','R$200+'];
+const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
 
-function getPesoIdx(p){
-  for(let i=0;i<pesoFaixas.length;i++) if(p<=pesoFaixas[i][1]) return i;
-  return pesoFaixas.length-1;
-}
-function getPrecoIdx(p){
-  let ci=0;
-  for(let i=0;i<precoFaixas.length;i++) if(p>=precoFaixas[i]) ci=i;
-  return ci;
-}
-function getFrete(pesoKg,preco){ return T[getPesoIdx(pesoKg)][getPrecoIdx(preco)]; }
+let pesoUsado=0,freteSel=0,freteMode='dim';
 
-let pesoUsado=0, freteSelecionado=0;
+function markDirty(){
+  const btn=document.getElementById('btn-calc');
+  btn.classList.add('pulse');
+  btn.innerHTML='⚡ Recalcular <span class="pdot"></span>';
+}
+function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
+function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
 
 function calcPeso(){
   const pr=parseFloat(document.getElementById('peso').value)||0;
@@ -261,83 +305,79 @@ function calcPeso(){
   const l=parseFloat(document.getElementById('larg').value)||0;
   const a=parseFloat(document.getElementById('alt').value)||0;
   const pv=(c*l*a)/6000;
-  pesoUsado=Math.max(pr,pv);
-  freteSelecionado=0;
-  document.getElementById('frete-selecionado').style.display='none';
-
-  const info=document.getElementById('peso-info');
-  const fs=document.getElementById('frete-section');
+  pesoUsado=Math.max(pr,pv);freteSel=0;
+  document.getElementById('frete-badge').style.display='none';
+  const pi=document.getElementById('peso-info'),fs=document.getElementById('frete-section');
   if(pr>0||pv>0){
-    info.style.display='block';
+    pi.style.display='flex';
     document.getElementById('pi-real').textContent=pr>0?pr.toFixed(3)+' kg':'—';
     document.getElementById('pi-vol').textContent=pv>0?pv.toFixed(3)+' kg':'—';
-    document.getElementById('pi-usado').textContent=pesoUsado.toFixed(3)+' kg'+(pv>pr&&pv>0?' (volumétrico)':' (real)');
-    fs.style.display='block';
-    renderFreteTable(-1);
-  } else {
-    info.style.display='none';
-    fs.style.display='none';
-  }
+    document.getElementById('pi-usado').textContent=pesoUsado.toFixed(3)+' kg'+(pv>pr&&pv>0?' (vol.)':' (real)');
+    fs.style.display='block';renderTable(-1);
+  }else{pi.style.display='none';fs.style.display='none';}
 }
 
-function renderFreteTable(selCol){
-  const pi=getPesoIdx(pesoUsado);
-  const tbl=document.getElementById('frete-table');
-  let html='<thead><tr><th class="peso-col">Peso do produto</th>';
-  for(let c=0;c<precoLabels.length;c++) html+=`<th>${precoLabels[c]}</th>`;
-  html+='</tr></thead><tbody>';
-  const rows=[pi-1, pi, pi+1].filter(r=>r>=0&&r<pesoLabels.length);
-  for(const r of rows){
-    const isActive=r===pi;
-    html+=`<tr style="${isActive?'':'opacity:.55'}"><td class="peso-col" style="${isActive?'':'color:#6e6e73;background:#fafafa'}">${pesoLabels[r]}${isActive?' ✅':''}</td>`;
+function renderTable(selCol){
+  const pi=getPesoIdx(pesoUsado),tbl=document.getElementById('frete-table');
+  let h='<thead><tr><th>Peso</th>';
+  for(let c=0;c<precoLabels.length;c++) h+=`<th>${precoLabels[c]}</th>`;
+  h+='</tr></thead><tbody>';
+  [pi-1,pi,pi+1].filter(r=>r>=0&&r<pesoLabels.length).forEach(r=>{
+    const isA=r===pi;
+    h+=`<tr${isA?'':' class="dim"'}><td class="pcol">${pesoLabels[r]}${isA?' ✅':''}</td>`;
     for(let c=0;c<precoLabels.length;c++){
-      const sel=isActive&&c===selCol;
-      const val=T[r][c].toFixed(2).replace('.',',');
-      if(isActive){
-        html+=`<td class="frete-opt${sel?' frete-selected':''}" onclick="selecionarFrete(${c},${T[r][c]})">R$ ${val}</td>`;
-      } else {
-        html+=`<td style="font-size:.75rem;color:#aaa">R$ ${val}</td>`;
-      }
+      const sel=isA&&c===selCol,v=T[r][c].toFixed(2).replace('.',',');
+      h+=isA?`<td class="fopt${sel?' fsel':''}" onclick="selFrete(${c},${T[r][c]})">R$${v}</td>`:`<td>R$${v}</td>`;
     }
-    html+='</tr>';
-  }
-  html+='</tbody>';
-  tbl.innerHTML=html;
+    h+='</tr>';
+  });
+  tbl.innerHTML=h+'</tbody>';
 }
 
-function selecionarFrete(col, val){
-  freteSelecionado=val;
-  renderFreteTable(col);
-  const sel=document.getElementById('frete-selecionado');
-  sel.style.display='block';
-  document.getElementById('frete-sel-val').textContent='R$ '+val.toFixed(2).replace('.',',');
+function selFrete(col,val){
+  freteSel=val;renderTable(col);
+  document.getElementById('frete-badge').style.display='block';
+  document.getElementById('frete-val').textContent='R$ '+val.toFixed(2).replace('.',',');
+  markDirty();
 }
-
-function sumItems(){ return[...document.querySelectorAll('.item-input')].reduce((s,e)=>s+(parseFloat(e.value)||0),0); }
-
+function switchFrete(mode){
+  freteMode=mode;
+  document.getElementById('tab-dim').style.display=mode==='dim'?'block':'none';
+  document.getElementById('tab-manual').style.display=mode==='manual'?'block':'none';
+  document.getElementById('btn-dim').className='toggle-btn'+(mode==='dim'?' active':'');
+  document.getElementById('btn-manual').className='toggle-btn'+(mode==='manual'?' active':'');
+  markDirty();
+}
+function sumItems(){return[...document.querySelectorAll('.item-input')].reduce((s,e)=>s+(parseFloat(e.value)||0),0);}
 function addItem(){
   const list=document.getElementById('items-list');
   if(list.children.length>=10)return;
-  const n=list.children.length+1;
-  const d=document.createElement('div');
-  d.className='item-row';
-  d.innerHTML=`<input type="number" class="item-input" placeholder="Custo item ${n} (R$)" min="0" step="0.01"><button class="remove-btn" onclick="removeItem(this)" style="display:flex">×</button>`;
-  list.appendChild(d);
-  list.children[0].querySelector('.remove-btn').style.display='flex';
+  const n=list.children.length+1,d=document.createElement('div');d.className='item-row';
+  d.innerHTML=`<input type="number" class="item-input" placeholder="Custo item ${n} (R$)" min="0" step="0.01" oninput="markDirty()"><button class="remove-btn" onclick="removeItem(this)" style="display:flex">×</button>`;
+  list.appendChild(d);list.children[0].querySelector('.remove-btn').style.display='flex';
 }
 function removeItem(btn){
   btn.parentElement.remove();
   const rows=document.querySelectorAll('.item-row');
-  if(rows.length===1) rows[0].querySelector('.remove-btn').style.display='none';
+  if(rows.length===1)rows[0].querySelector('.remove-btn').style.display='none';
+  markDirty();
 }
+function fmt(v){return'R$ '+v.toFixed(2).replace('.',',');}
+function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 
-function fmt(v){ return'R$ '+v.toFixed(2).replace('.',','); }
-function fmtP(v){ return v.toFixed(2).replace('.',',')+' %'; }
-
-function kpiClass(ok,warn){ return ok?'kok':warn?'kwarn':'kbad'; }
+function calcKpis(preco,custo,base,pM,inv,qtd){
+  const vI=preco*(parseFloat(document.getElementById('impostos').value)||0)/100;
+  const vC=preco*(parseFloat(document.getElementById('comissao').value)||0)/100;
+  const vA=preco*(parseFloat(document.getElementById('afiliados').value)||0)/100;
+  const payout=preco-base-vI-vC-vA;
+  const markup=custo>0?preco/custo:0;
+  const roi=inv>0?(payout*qtd/inv)*100:0;
+  return{markup,roi,margem:pM*100,payout};
+}
 
 function calcular(){
   const custo=sumItems();
+  const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
   const taxa=parseFloat(document.getElementById('taxa_fixa').value)||0;
   const ins=parseFloat(document.getElementById('insumos').value)||0;
   const pI=(parseFloat(document.getElementById('impostos').value)||0)/100;
@@ -345,31 +385,77 @@ function calcular(){
   const pA=(parseFloat(document.getElementById('afiliados').value)||0)/100;
   const pM=(parseFloat(document.getElementById('margem').value)||0)/100;
   const qtd=parseInt(document.getElementById('quantidade').value)||1;
-
+  const precoML=parseFloat(document.getElementById('preco-ml').value)||0;
   const fator=1-pI-pC-pA-pM;
   if(fator<=0){alert('A soma dos percentuais é ≥ 100%. Revise os valores.');return;}
 
-  const frete=freteSelecionado;
-  const preco=(custo+frete+taxa+ins)/fator;
-
   const base=custo+frete+taxa+ins;
+  const preco=base/fator;
+  if(pesoUsado>0&&freteMode==='dim') renderTable(getPrecoIdx(preco));
   const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
   const payout=preco-base-vI-vC-vA;
   const markup=custo>0?preco/custo:0;
-  const investimento=custo*qtd;
-  const roi=investimento>0?(payout*qtd/investimento)*100:0;
-  const margemPct=pM*100;
+  const inv=custo*qtd;
+  const roi=inv>0?(payout*qtd/inv)*100:0;
 
-  // Hero
-  document.getElementById('res-preco').textContent=fmt(preco);
+  // Card calculado
+  document.getElementById('pc-preco').textContent=fmt(preco);
+  document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
+  document.getElementById('pc-roi').textContent=fmtP(roi);
+  document.getElementById('pc-mg').textContent=fmtP(pM*100);
 
-  // KPIs no hero
-  document.getElementById('kv-markup').textContent=markup.toFixed(2).replace('.',',');
-  document.getElementById('kpi-markup').className='kpi '+kpiClass(markup>=1.5,markup>=1.2);
-  document.getElementById('kv-roi').textContent=fmtP(roi);
-  document.getElementById('kpi-roi').className='kpi '+kpiClass(roi>=10,roi>=5);
-  document.getElementById('kv-margem').textContent=fmtP(margemPct);
-  document.getElementById('kpi-margem').className='kpi '+kpiClass(margemPct>=10,margemPct>=5);
+  // Card ML + comparativo
+  const mlCard=document.getElementById('pc-ml-card');
+  const explainEl=document.getElementById('explain-text');
+  if(precoML>0){
+    // KPIs SE vendido ao preço ML
+    const mlBase=base; // custos são os mesmos
+    const mlvI=precoML*pI,mlvC=precoML*pC,mlvA=precoML*pA,mlvM=precoML*pM;
+    const mlPayout=precoML-mlBase-mlvI-mlvC-mlvA;
+    const mlMarkup=custo>0?precoML/custo:0;
+    const mlRoi=inv>0?(mlPayout*qtd/inv)*100:0;
+
+    document.getElementById('pc-ml-preco').textContent=fmt(precoML);
+    document.getElementById('ml-mk').textContent=mlMarkup.toFixed(2).replace('.',',');
+    document.getElementById('ml-roi').textContent=fmtP(mlRoi);
+    document.getElementById('ml-mg').textContent=fmtP(mlvM/precoML*100);
+    document.getElementById('pc-ml-kpis').style.opacity='1';
+
+    const diff=precoML-preco;
+    const pct=Math.abs((diff/preco)*100).toFixed(1);
+    const cheaper=diff<0; // ML é menor que nosso preço → difícil competir
+    const equal=Math.abs(diff)<0.01;
+
+    if(equal){
+      mlCard.className='price-card ml-equal';
+      document.getElementById('pc-ml-badge').style.cssText='background:rgba(139,92,246,.25);color:#c4b5fd';
+      document.getElementById('pc-ml-badge').textContent='= Igual ao seu preço calculado';
+      document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
+      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> é <strong>igual</strong> ao seu preço ideal calculado. Isso significa que o mercado já está precificando exatamente no seu ponto de equilíbrio. Você pode vender nesse preço e ter a margem que definiu.`;
+    } else if(diff>0){
+      // ML é MAIS CARO que nosso preço → ótimo, temos espaço
+      mlCard.className='price-card ml-cheaper';
+      document.getElementById('pc-ml-badge').style.cssText='background:rgba(74,222,128,.2);color:#4ade80';
+      document.getElementById('pc-ml-badge').textContent=`✅ ${pct}% acima do seu custo mínimo`;
+      document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
+      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> está <strong style="color:#4ade80">${pct}% acima</strong> do seu preço mínimo calculado (${fmt(preco)}). <br><br>Isso é ótimo! Significa que o mercado aceita pagar mais do que você precisa para cobrir seus custos. Você tem duas opções: <strong>vender no preço calculado</strong> e ser mais competitivo, ou <strong>vender próximo ao preço médio</strong> para aumentar sua margem real.`;
+    } else {
+      // ML é MAIS BARATO que nosso preço → atenção
+      mlCard.className='price-card ml-pricier';
+      document.getElementById('pc-ml-badge').style.cssText='background:rgba(239,68,68,.2);color:#f87171';
+      document.getElementById('pc-ml-badge').textContent=`⚠️ ${pct}% abaixo do seu custo mínimo`;
+      document.getElementById('pc-ml-tag').textContent='⚠️ Preço Médio ML';
+      explainEl.innerHTML=`O <strong>preço médio do ML (${fmt(precoML)})</strong> está <strong style="color:#f87171">${pct}% abaixo</strong> do seu preço mínimo calculado (${fmt(preco)}). <br><br>Atenção: se você vender no preço médio do mercado, <strong>não vai cobrir todos os seus custos</strong> com a margem que definiu. Você precisa ou <strong>reduzir custos</strong>, ou <strong>ajustar a margem</strong>, ou encontrar um diferencial para justificar um preço mais alto.`;
+    }
+  } else {
+    mlCard.className='price-card ml-none';
+    document.getElementById('pc-ml-preco').textContent='—';
+    document.getElementById('pc-ml-badge').style.cssText='background:rgba(255,255,255,.08);color:#6b5f8a';
+    document.getElementById('pc-ml-badge').textContent='Informe o preço médio';
+    document.getElementById('pc-ml-kpis').style.opacity='.25';
+    document.getElementById('ml-mk').textContent='—';document.getElementById('ml-roi').textContent='—';document.getElementById('ml-mg').textContent='—';
+    explainEl.innerHTML=`O <strong>preço ideal calculado</strong> é o valor mínimo que você deve cobrar para cobrir todos os seus custos (produto, frete, taxas, impostos) e ainda ter a margem de lucro que definiu. <br><br>Preencha o campo <strong style="color:#F97316">Preço Médio ML</strong> para ver como seu produto se posiciona em relação à concorrência.`;
+  }
 
   // Detalhamento
   document.getElementById('bd-custo').textContent=fmt(custo);
@@ -384,22 +470,28 @@ function calcular(){
 
   // Projeção
   document.getElementById('proj-qtd').textContent=qtd;
-  document.getElementById('proj-cunit').textContent=fmt(custo);
-  document.getElementById('proj-inv').textContent=fmt(investimento);
+  document.getElementById('proj-cu').textContent=fmt(custo);
+  document.getElementById('proj-inv').textContent=fmt(inv);
   document.getElementById('proj-fat').textContent=fmt(preco*qtd);
-  document.getElementById('proj-payout').textContent=fmt(payout);
+  document.getElementById('proj-pay').textContent=fmt(payout);
   document.getElementById('proj-lb').textContent=fmt(payout*qtd);
-  document.getElementById('proj-caixa').textContent=fmt(investimento+payout*qtd);
+  document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
 
-  document.getElementById('form-section').style.display='none';
-  document.getElementById('results-section').style.display='block';
-  window.scrollTo(0,0);
+  document.getElementById('right-empty').style.display='none';
+  document.getElementById('right-result').style.display='block';
+
+  const btn=document.getElementById('btn-calc');
+  btn.classList.remove('pulse');
+  btn.innerHTML='✅ Calculado! <span class="pdot"></span>';
+  setTimeout(()=>{btn.innerHTML='⚡ Calcular Precificação <span class="pdot"></span>';},2000);
 }
 
 function resetar(){
-  document.getElementById('form-section').style.display='block';
-  document.getElementById('results-section').style.display='none';
-  window.scrollTo(0,0);
+  document.getElementById('right-empty').style.display='flex';
+  document.getElementById('right-result').style.display='none';
+  const btn=document.getElementById('btn-calc');
+  btn.classList.remove('pulse');
+  btn.innerHTML='⚡ Calcular Precificação <span class="pdot"></span>';
 }
 </script>
 </body>
