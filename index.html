@@ -137,24 +137,35 @@ input[type=number]{-moz-appearance:textfield}
 .dash-header h2 span{color:var(--o)}
 .btn-back{background:var(--card);color:#8b7faa;border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-back:hover{border-color:var(--o);color:var(--o)}
-/* DASHBOARD TABELA */
-.dash-table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border)}
-.dash-table{width:100%;border-collapse:collapse;font-size:.78rem}
-.dash-table thead tr{background:#1a1428}
-.dash-table th{padding:10px 12px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4a3f6b;white-space:nowrap;border-bottom:1px solid var(--border)}
-.dash-table tbody tr{border-bottom:1px solid #170f26;transition:background .15s}
-.dash-table tbody tr:last-child{border-bottom:none}
-.dash-table tbody tr:hover{background:#1a1428}
-.dash-table td{padding:10px 12px;vertical-align:middle;white-space:nowrap}
-.dash-table td.obs-cell{white-space:normal;min-width:160px}
-.dash-table td input.obs-input{background:none;border:none;border-bottom:1px dashed #2a2040;color:#8a7aaa;font-size:.76rem;width:100%;padding:2px 4px;outline:none;font-family:inherit;transition:border .2s}
-.dash-table td input.obs-input:focus{border-bottom-color:var(--o);color:#f0f0f0}
-.tag-green{color:#4ade80;font-weight:800;font-size:.85rem}
-.tag-orange{color:var(--o);font-weight:800;font-size:.85rem}
-.tag-red{color:#f87171;font-weight:800;font-size:.85rem}
-.tag-neutral{color:#c4b5fd;font-weight:600}
-.btn-del-row{background:none;border:none;color:#3a2030;cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:6px;transition:all .2s}
-.btn-del-row:hover{background:#ff3b3020;color:#ff3b30}
+/* DASHBOARD LISTA */
+.dash-list{display:flex;flex-direction:column;gap:6px}
+.dash-item{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border .2s}
+.dash-item:hover{border-color:#2d1a4e}
+.dash-item-main{display:grid;grid-template-columns:1fr auto auto auto auto auto;align-items:center;gap:8px;padding:12px 14px;cursor:pointer}
+@media(max-width:600px){.dash-item-main{grid-template-columns:1fr auto auto auto}}
+.di-name{font-weight:800;color:#fff;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.di-forn{font-size:.7rem;color:#4a3f6b;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.di-pill{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.di-pill.green{background:#052e1688;color:#4ade80;border:1px solid #16a34a44}
+.di-pill.orange{background:#2c150588;color:var(--o);border:1px solid #F0A07044}
+.di-pill.red{background:#7f1d1d88;color:#f87171;border:1px solid #ef444444}
+.di-price{font-size:.88rem;font-weight:700;color:#c4b5fd;white-space:nowrap}
+.di-chevron{color:#4a3f6b;font-size:.8rem;transition:transform .2s;flex-shrink:0}
+.di-chevron.open{transform:rotate(180deg)}
+.dash-item-detail{display:none;border-top:1px solid #1a1428;padding:12px 14px;background:#0f0a1e}
+.dash-item-detail.open{display:block}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:10px}
+.dg-item{background:#1a1428;border-radius:8px;padding:8px 10px}
+.dg-item .dgl{font-size:.6rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.dg-item .dgv{font-size:.85rem;font-weight:700;color:#c4b5fd}
+.dg-item .dgv.green{color:#4ade80}.dg-item .dgv.orange{color:var(--o)}.dg-item .dgv.red{color:#f87171}
+.di-obs{width:100%;background:#140f20;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.76rem;color:#8a7aaa;resize:none;min-height:52px;outline:none;font-family:inherit;transition:border .2s;margin-top:6px}
+.di-obs:focus{border-color:var(--o);color:#f0f0f0}
+.di-obs-label{font-size:.63rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:4px}
+.di-actions{display:flex;justify-content:flex-end;margin-top:8px}
+.btn-del-item{background:none;border:1px solid #2a1a1a;color:#3a2030;border-radius:8px;padding:5px 12px;font-size:.74rem;cursor:pointer;transition:all .2s}
+.btn-del-item:hover{background:#ff3b3018;color:#ff3b30;border-color:#ff3b3044}
+.dash-scroll-hint{display:none}
 </style>
 </head>
 <body>
