@@ -8,37 +8,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e}
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#f0f0f0;min-height:100vh}
-
-/* HEADER */
 .header{background:#110e1a;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
 .header-center{text-align:center;flex:1}
 .brand-name{font-size:1.35rem;font-weight:900;letter-spacing:.05em;line-height:1}
 .brand-name .w{color:#fff}.brand-name .o{color:var(--o)}
 .brand-sub{font-size:.68rem;font-weight:700;letter-spacing:.15em;margin-top:2px}
 .brand-sub .r{color:var(--p)}.brand-sub .e{color:var(--o)}.brand-sub .c{color:var(--p)}
-.btn-dash{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;letter-spacing:.03em;white-space:nowrap;transition:opacity .2s}
-.btn-dash:hover{opacity:.85}
-
-/* PAGES */
+.btn-dash{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;white-space:nowrap}
 .page{display:none}.page.active{display:block}
-
-/* LAYOUT CALC */
 .main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 64px)}
 @media(max-width:800px){.main-layout{grid-template-columns:1fr}}
 .left-panel{border-right:1px solid var(--border);padding:16px 15px;overflow-y:auto}
 .right-panel{padding:16px 15px;overflow-y:auto;background:var(--bg2)}
-
-/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
 .card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:10px}
-
-/* MARGEM DESTAQUE */
 .margem-card{background:linear-gradient(135deg,#1e0a3c,#2d1060);border:1.5px solid var(--p2);border-radius:14px;padding:14px;margin-bottom:10px}
 .margem-card .card-title{color:var(--p2)}
 .margem-card input{border-color:var(--p2)!important;font-size:1.1rem!important;font-weight:700!important;color:#c4b5fd!important;text-align:center}
-.margem-card input:focus{border-color:var(--o)!important;color:#fff!important}
 .margem-hint{font-size:.72rem;color:var(--p2);text-align:center;margin-top:5px;opacity:.8}
-
 .field{margin-bottom:9px}
 .field label{display:block;font-size:.76rem;color:#6b5f8a;margin-bottom:3px;font-weight:500}
 .field input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:#f0f0f0;background:#1a1428;transition:border .2s}
@@ -54,8 +41,6 @@ input[type=number]{-moz-appearance:textfield}
 .add-item{background:none;border:1.5px dashed var(--border);color:#4a3f6b;border-radius:9px;padding:6px;font-size:.76rem;cursor:pointer;width:100%;margin-top:5px;transition:all .2s}
 .add-item:hover{border-color:var(--o);color:var(--o)}
 .remove-btn{background:#ff3b3018;border:none;color:#ff3b30;width:32px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
-
-/* FRETE */
 .toggle-row{display:flex;gap:7px;margin-bottom:9px}
 .toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid var(--border);background:#1a1428;color:#4a3f6b;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
 .toggle-btn.active{border-color:var(--o);color:var(--o);background:#F0A07010}
@@ -70,21 +55,14 @@ input[type=number]{-moz-appearance:textfield}
 .ft td.fsel{background:var(--o)!important;color:#000!important;font-weight:700}
 .ft tr.dim{opacity:.35}
 .frete-badge{background:#F0A07010;border:1px solid #F0A07040;border-radius:9px;padding:7px 11px;font-size:.79rem;color:var(--o);font-weight:600;margin-top:7px;display:none}
-
-/* BTN CALC */
-.btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;letter-spacing:.03em;position:relative}
-.btn-calc:hover{opacity:.88}
+.btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;position:relative}
 .btn-calc.pulse{animation:pa 1.1s ease-in-out infinite}
 @keyframes pa{0%{box-shadow:0 0 0 0 #F0A07055}70%{box-shadow:0 0 0 10px #F0A07000}100%{box-shadow:0 0 0 0 #F0A07000}}
 .pdot{display:none;width:7px;height:7px;background:#fff;border-radius:50%;position:absolute;top:9px;right:13px;animation:db .8s ease-in-out infinite}
 .btn-calc.pulse .pdot{display:inline-block}
 @keyframes db{0%,100%{opacity:1}50%{opacity:.15}}
 .btn-reset{width:100%;padding:10px;background:var(--card);color:#6b5f8a;border:1px solid var(--border);border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
-.btn-reset:hover{border-color:var(--o);color:var(--o)}
-
-/* RESULTADO */
 .right-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;opacity:.2;text-align:center;gap:10px}
-.right-empty .bi{font-size:3rem}.right-empty p{font-size:.82rem;color:#888;line-height:1.6}
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px}
 @media(max-width:480px){.price-grid{grid-template-columns:1fr}}
 .price-card{border-radius:16px;padding:15px 13px;text-align:center}
@@ -97,12 +75,9 @@ input[type=number]{-moz-appearance:textfield}
 .pc-price{font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:5px}
 .pc-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.15);font-size:.67rem;font-weight:700;margin-bottom:9px}
 .pc-kpis{display:flex;justify-content:space-around;border-top:1px solid rgba(255,255,255,.1);padding-top:9px}
-.pc-kpi{flex:1;text-align:center}
 .pc-kpi .pkl{font-size:.58rem;opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
 .pc-kpi .pkv{font-size:.9rem;font-weight:800}
 .pc-kpi .pks{font-size:.56rem;opacity:.45;margin-top:1px}
-
-/* SIMULADOR */
 .sim-card{background:linear-gradient(135deg,#0f0a1e,#1a0f30);border:1.5px solid #2d1a4e;border-radius:14px;padding:14px;margin-bottom:10px}
 .sim-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--p2);margin-bottom:10px}
 .sim-slider{width:100%;accent-color:var(--o);margin:8px 0}
@@ -110,12 +85,8 @@ input[type=number]{-moz-appearance:textfield}
 .sim-kpi{background:#1a1428;border-radius:10px;padding:9px 7px;text-align:center;border:1px solid var(--border)}
 .sim-kpi .sl{font-size:.62rem;color:#6b5f8a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
 .sim-kpi .sv{font-size:1rem;font-weight:800;color:#c4b5fd}
-
-/* EXPLAIN */
 .explain-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;font-size:.79rem;color:#8a7aaa;line-height:1.6}
 .explain-box .ex-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:7px}
-
-/* BREAKDOWN */
 .breakdown{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px;margin-bottom:10px}
 .bd-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:9px}
 .brow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1a1428;font-size:.79rem}
@@ -123,53 +94,39 @@ input[type=number]{-moz-appearance:textfield}
 .brow .bl{color:#4a3f6b}.brow .br{color:#c4b5fd;font-weight:600}
 .brow.total{padding-top:8px}.brow.total .bl{color:#8b7faa;font-weight:700}.brow.total .br{color:#fff;font-weight:800;font-size:.9rem}
 .brow.highlight .br{color:var(--o)}
-
-/* SALVAR PRODUTO */
 .save-card{background:linear-gradient(135deg,#0a1628,#0f2040);border:1.5px solid #1e3a5f;border-radius:14px;padding:14px;margin-bottom:10px}
 .save-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a8fcc;margin-bottom:10px}
-.btn-save{width:100%;padding:11px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:6px;transition:opacity .2s}
-.btn-save:hover{opacity:.85}
-
+.btn-save{width:100%;padding:11px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:6px}
 /* DASHBOARD */
-.dash-page{padding:20px 18px;max-width:1000px;margin:0 auto}
+.dash-page{padding:20px 18px;max-width:900px;margin:0 auto}
 .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .dash-header h2{font-size:1.1rem;font-weight:800;color:#fff}
 .dash-header h2 span{color:var(--o)}
-.btn-back{background:var(--card);color:#8b7faa;border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-back:hover{border-color:var(--o);color:var(--o)}
-/* DASHBOARD LISTA */
-.dash-list{display:flex;flex-direction:column;gap:6px}
-.dash-item{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border .2s}
-.dash-item:hover{border-color:#2d1a4e}
-.dash-item-main{display:grid;grid-template-columns:1fr auto auto auto auto auto;align-items:center;gap:8px;padding:12px 14px;cursor:pointer}
-@media(max-width:600px){.dash-item-main{grid-template-columns:1fr auto auto auto}}
-.di-name{font-weight:800;color:#fff;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.di-forn{font-size:.7rem;color:#4a3f6b;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.di-pill{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap}
-.di-pill.green{background:#052e1688;color:#4ade80;border:1px solid #16a34a44}
-.di-pill.orange{background:#2c150588;color:var(--o);border:1px solid #F0A07044}
-.di-pill.red{background:#7f1d1d88;color:#f87171;border:1px solid #ef444444}
-.di-price{font-size:.88rem;font-weight:700;color:#c4b5fd;white-space:nowrap}
-.di-chevron{color:#4a3f6b;font-size:.8rem;transition:transform .2s;flex-shrink:0}
-.di-chevron.open{transform:rotate(180deg)}
-.dash-item-detail{display:none;border-top:1px solid #1a1428;padding:12px 14px;background:#0f0a1e}
-.dash-item-detail.open{display:block}
-.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:10px}
-.dg-item{background:#1a1428;border-radius:8px;padding:8px 10px}
-.dg-item .dgl{font-size:.6rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
-.dg-item .dgv{font-size:.85rem;font-weight:700;color:#c4b5fd}
-.dg-item .dgv.green{color:#4ade80}.dg-item .dgv.orange{color:var(--o)}.dg-item .dgv.red{color:#f87171}
-.di-obs{width:100%;background:#140f20;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.76rem;color:#8a7aaa;resize:none;min-height:52px;outline:none;font-family:inherit;transition:border .2s;margin-top:6px}
-.di-obs:focus{border-color:var(--o);color:#f0f0f0}
-.di-obs-label{font-size:.63rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:4px}
-.di-actions{display:flex;justify-content:flex-end;margin-top:8px}
-.btn-del-item{background:none;border:1px solid #2a1a1a;color:#3a2030;border-radius:8px;padding:5px 12px;font-size:.74rem;cursor:pointer;transition:all .2s}
-.btn-del-item:hover{background:#ff3b3018;color:#ff3b30;border-color:#ff3b3044}
-.dash-scroll-hint{display:none}
+.btn-back{background:var(--card);color:#8b7faa;border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:.78rem;font-weight:600;cursor:pointer}
+/* PROD CARD */
+.prod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.prod-card-top{padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.prod-name{flex:1;min-width:100px}
+.prod-name h3{font-size:.92rem;font-weight:800;color:#fff;margin-bottom:2px}
+.prod-name p{font-size:.7rem;color:#4a3f6b}
+.prod-metric{text-align:center;min-width:64px}
+.prod-metric .pm-label{font-size:.58rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.prod-metric .pm-value{font-size:.9rem;font-weight:800}
+.prod-card-detail{display:none;padding:14px 16px;background:#0a0812;border-top:1px solid var(--border)}
+.prod-detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.pd-item{background:var(--card);border-radius:9px;padding:9px 11px}
+.pd-item .pdl{font-size:.6rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.pd-item .pdv{font-size:.85rem;font-weight:700;color:#c4b5fd}
+.prod-obs{width:100%;background:#140f20;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.76rem;color:#8a7aaa;resize:none;height:50px;outline:none;font-family:inherit;margin-top:4px;display:block}
+.prod-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.btn-toggle{background:none;border:1px solid var(--border);color:#6b5f8a;border-radius:8px;padding:5px 12px;font-size:.72rem;cursor:pointer}
+.btn-del{background:none;border:1px solid #2a1a1a;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.btn-del:hover{background:#ff3b3018;border-color:#f8717144}
+.btn-del svg{width:16px;height:16px;stroke:#4a3f6b;transition:stroke .2s}
+.btn-del:hover svg{stroke:#f87171}
 </style>
 </head>
 <body>
-
 <div class="header">
   <div style="width:110px"></div>
   <div class="header-center">
@@ -179,22 +136,18 @@ input[type=number]{-moz-appearance:textfield}
   <button class="btn-dash" onclick="showPage('dash')">📊 Dashboard</button>
 </div>
 
-<!-- ===== PÁGINA CALCULADORA ===== -->
+<!-- CALCULADORA -->
 <div id="page-calc" class="page active">
 <div class="main-layout">
 <div class="left-panel">
 
-  <!-- TOGGLE DE MODO -->
-  <div style="display:flex;background:#140f20;border:1px solid #1e1a2e;border-radius:12px;padding:4px;margin-bottom:12px;gap:4px">
-    <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;letter-spacing:.02em">
-      💎 Por Margem
-    </button>
-    <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .25s;background:none;color:#4a3f6b;letter-spacing:.02em">
-      🌐 Pelo Mercado
-    </button>
+  <!-- MODO TOGGLE -->
+  <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:12px;gap:4px">
+    <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff">💎 Por Margem</button>
+    <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:none;color:#4a3f6b">🌐 Pelo Mercado</button>
   </div>
-  <div id="mode-desc" style="background:#140f20;border:1px solid #1e1a2e;border-radius:10px;padding:9px 12px;margin-bottom:11px;font-size:.76rem;color:#6b5f8a;line-height:1.5">
-    <strong style="color:#F0A070">Modo Por Margem:</strong> Defina sua margem de lucro e descubra o preço mínimo ideal de venda.
+  <div id="mode-desc" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:11px;font-size:.76rem;color:#6b5f8a;line-height:1.5">
+    <strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.
   </div>
 
   <div class="card">
@@ -250,23 +203,17 @@ input[type=number]{-moz-appearance:textfield}
     <div class="field"><label>🤝 Comissão Afiliados (%)</label><input type="number" id="afiliados" placeholder="0" min="0" max="100" step="0.1" oninput="markDirty()"></div>
   </div>
 
-  <!-- MARGEM (só no Modo 1) -->
   <div class="margem-card" id="margem-block">
     <div class="card-title">💎 Margem de Lucro Desejada</div>
-    <div class="field">
-      <input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" oninput="markDirty()">
-    </div>
-    <div class="margem-hint">↑ Defina sua meta de lucro em % sobre o preço de venda</div>
+    <div class="field"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" oninput="markDirty()"></div>
+    <div class="margem-hint">↑ Meta de lucro em % sobre o preço de venda</div>
   </div>
 
   <div class="card">
     <div class="card-title">📈 Projeção & Comparativo</div>
     <div class="row2">
       <div class="field"><label>Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1" oninput="markDirty()"></div>
-      <div class="field" id="ml-field">
-        <label id="ml-label">💛 Preço Médio ML (R$)</label>
-        <input type="number" id="preco-ml" placeholder="Opcional" min="0" step="0.01" oninput="markDirty()">
-      </div>
+      <div class="field"><label id="ml-label">💛 Preço Médio ML (R$)</label><input type="number" id="preco-ml" placeholder="Opcional" min="0" step="0.01" oninput="markDirty()"></div>
     </div>
   </div>
 
@@ -275,13 +222,11 @@ input[type=number]{-moz-appearance:textfield}
 
 <div class="right-panel">
   <div class="right-empty" id="right-empty">
-    <div class="bi">🧮</div>
-    <p>Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong></p>
+    <div style="font-size:3rem">🧮</div>
+    <p style="font-size:.82rem;color:#888;line-height:1.6">Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong></p>
   </div>
-
   <div id="right-result" style="display:none">
 
-    <!-- DOIS CARDS -->
     <div class="price-grid" id="price-grid">
       <div class="price-card calc">
         <div class="pc-tag">🎯 Preço Ideal Calculado</div>
@@ -305,17 +250,15 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
 
-    <!-- EXPLICAÇÃO DIRETA -->
     <div class="explain-box">
       <div class="ex-title">📖 Análise</div>
-      <span id="explain-text">Preencha o Preço Médio ML para ver a análise comparativa.</span>
+      <span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span>
     </div>
 
-    <!-- SIMULADOR DE DESCONTO -->
     <div class="sim-card">
       <div class="sim-title">🎯 Simulador de Desconto</div>
       <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#8a7aaa;margin-bottom:2px">
-        <span>Desconto aplicado</span><span id="sim-pct-label" style="color:var(--o);font-weight:700">0%</span>
+        <span>Desconto</span><span id="sim-pct-label" style="color:var(--o);font-weight:700">0%</span>
       </div>
       <input type="range" class="sim-slider" id="sim-slider" min="0" max="40" value="0" step="0.5" oninput="simDesconto()">
       <div class="sim-result">
@@ -325,13 +268,11 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
 
-    <!-- ALERTA FRETE -->
     <div class="breakdown" id="frete-alert-box" style="display:none">
       <div class="bd-title">⚡ Oportunidade de Frete</div>
       <div id="frete-alert-content"></div>
     </div>
 
-    <!-- DETALHAMENTO -->
     <div class="breakdown">
       <div class="bd-title">Detalhamento do Preço</div>
       <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
@@ -345,7 +286,6 @@ input[type=number]{-moz-appearance:textfield}
       <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
     </div>
 
-    <!-- PROJEÇÃO -->
     <div class="breakdown">
       <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unidades</div>
       <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
@@ -358,7 +298,6 @@ input[type=number]{-moz-appearance:textfield}
       <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
     </div>
 
-    <!-- SALVAR NO DASHBOARD -->
     <div class="save-card" id="save-card" style="display:none">
       <div class="save-title">💾 Salvar no Dashboard</div>
       <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
@@ -375,7 +314,7 @@ input[type=number]{-moz-appearance:textfield}
 </div>
 </div>
 
-<!-- ===== PÁGINA DASHBOARD ===== -->
+<!-- DASHBOARD -->
 <div id="page-dash" class="page">
   <div class="dash-page">
     <div class="dash-header">
@@ -396,31 +335,6 @@ const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15
 
 let pesoUsado=0,freteSel=0,freteMode='dim',lastCalc=null,calcMode=1;
 
-function setMode(m){
-  calcMode=m;
-  const b1=document.getElementById('mode-btn-1'),b2=document.getElementById('mode-btn-2');
-  const mb=document.getElementById('margem-block'),desc=document.getElementById('mode-desc');
-  const mlInput=document.getElementById('preco-ml'),mlLabel=document.getElementById('ml-label');
-  if(m===1){
-    b1.style.cssText='flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;letter-spacing:.02em';
-    b2.style.cssText='flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .25s;background:none;color:#4a3f6b;letter-spacing:.02em';
-    mb.style.display='block';
-    document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
-    document.getElementById('pc-ml-card').style.display='block';
-    mlInput.placeholder='Opcional';mlInput.required=false;
-    mlLabel.textContent='💛 Preço Médio ML (R$)';
-    desc.innerHTML='<strong style="color:#F0A070">Modo Por Margem:</strong> Defina sua margem de lucro e descubra o preço mínimo ideal de venda.';
-  }else{
-    b2.style.cssText='flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;letter-spacing:.02em';
-    b1.style.cssText='flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .25s;background:none;color:#4a3f6b;letter-spacing:.02em';
-    mb.style.display='none';
-    mlInput.placeholder='Obrigatório';mlInput.required=true;
-    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171">*</span>';
-    desc.innerHTML='<strong style="color:#F0A070">Modo Pelo Mercado:</strong> Informe o preço médio do ML e descubra qual margem real você teria vendendo nesse valor.';
-  }
-  markDirty();
-}
-
 function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');if(p==='dash')renderDash();}
@@ -428,10 +342,35 @@ function markDirty(){const btn=document.getElementById('btn-calc');btn.classList
 function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
 function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
 
+function setMode(m){
+  calcMode=m;
+  const b1=document.getElementById('mode-btn-1'),b2=document.getElementById('mode-btn-2');
+  const mb=document.getElementById('margem-block');
+  const mlInput=document.getElementById('preco-ml'),mlLabel=document.getElementById('ml-label');
+  if(m===1){
+    b1.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b1.style.color='#fff';
+    b2.style.background='none';b2.style.color='#4a3f6b';
+    mb.style.display='block';
+    mlInput.placeholder='Opcional';
+    mlLabel.textContent='💛 Preço Médio ML (R$)';
+    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
+    document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
+    document.getElementById('pc-ml-card').style.display='block';
+  }else{
+    b2.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b2.style.color='#fff';
+    b1.style.background='none';b1.style.color='#4a3f6b';
+    mb.style.display='none';
+    mlInput.placeholder='Obrigatório';
+    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171">*</span>';
+    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
+  }
+  markDirty();
+}
+
 function calcPeso(){
   const pr=parseFloat(document.getElementById('peso').value)||0;
   const c=parseFloat(document.getElementById('comp').value)||0,l=parseFloat(document.getElementById('larg').value)||0,a=parseFloat(document.getElementById('alt').value)||0;
-  const pv=(c*l*a)/6000; pesoUsado=Math.max(pr,pv); freteSel=0;
+  const pv=(c*l*a)/6000;pesoUsado=Math.max(pr,pv);freteSel=0;
   document.getElementById('frete-badge').style.display='none';
   const pi=document.getElementById('peso-info'),fs=document.getElementById('frete-section');
   if(pr>0||pv>0){
@@ -446,7 +385,7 @@ function calcPeso(){
 function renderTable(selCol){
   const pi=getPesoIdx(pesoUsado),tbl=document.getElementById('frete-table');
   let h='<thead><tr><th>Peso</th>';
-  for(let c=0;c<precoLabels.length;c++) h+=`<th>${precoLabels[c]}</th>`;
+  for(let c=0;c<precoLabels.length;c++)h+=`<th>${precoLabels[c]}</th>`;
   h+='</tr></thead><tbody>';
   [pi-1,pi,pi+1].filter(r=>r>=0&&r<pesoLabels.length).forEach(r=>{
     const isA=r===pi;
@@ -471,21 +410,18 @@ function addItem(){
 }
 function removeItem(btn){btn.parentElement.remove();const rows=document.querySelectorAll('.item-row');if(rows.length===1)rows[0].querySelector('.remove-btn').style.display='none';markDirty();}
 
-// SIMULADOR
 function simDesconto(){
-  if(!lastCalc) return;
+  if(!lastCalc)return;
   const pct=parseFloat(document.getElementById('sim-slider').value)||0;
   document.getElementById('sim-pct-label').textContent=pct.toFixed(1)+'%';
-  const {preco,base,pI,pC,pA,custo}=lastCalc;
-  const precoDesc=preco*(1-pct/100);
-  const vI=precoDesc*pI,vC=precoDesc*pC,vA=precoDesc*pA;
-  const payout=precoDesc-base-vI-vC-vA;
-  const margem=(payout/precoDesc)*100;
-  document.getElementById('sim-preco').textContent=fmt(precoDesc);
-  document.getElementById('sim-margem').textContent=fmtP(margem);
-  document.getElementById('sim-lucro').textContent=fmt(payout);
-  document.getElementById('sim-margem').style.color=margem>=10?'#4ade80':margem>=5?'#F0A070':'#f87171';
-  document.getElementById('sim-lucro').style.color=payout>0?'#c4b5fd':'#f87171';
+  const{preco,base,pI,pC,pA}=lastCalc;
+  const pd=preco*(1-pct/100),vi=pd*pI,vc=pd*pC,va=pd*pA;
+  const pay=pd-base-vi-vc-va,mg=(pay/pd)*100;
+  document.getElementById('sim-preco').textContent=fmt(pd);
+  document.getElementById('sim-margem').textContent=fmtP(mg);
+  document.getElementById('sim-lucro').textContent=fmt(pay);
+  document.getElementById('sim-margem').style.color=mg>=10?'#4ade80':mg>=5?'#F0A070':'#f87171';
+  document.getElementById('sim-lucro').style.color=pay>0?'#c4b5fd':'#f87171';
 }
 
 function calcular(){
@@ -498,11 +434,10 @@ function calcular(){
   const pM=(parseFloat(document.getElementById('margem').value)||0)/100;
   const qtd=parseInt(document.getElementById('quantidade').value)||1;
   const precoML=parseFloat(document.getElementById('preco-ml').value)||0;
+  const base=custo+frete+ins;
 
-  // Modo 2: calcula pelo preço de mercado
   if(calcMode===2){
     if(!precoML){alert('No Modo Pelo Mercado, informe o Preço Médio ML.');return;}
-    const base=custo+frete+ins;
     const vI=precoML*pI,vC=precoML*pC,vA=precoML*pA;
     const payout=precoML-base-vI-vC-vA;
     const margemReal=(payout/precoML)*100;
@@ -510,158 +445,134 @@ function calcular(){
     const inv=custo*qtd;
     const roi=inv>0?(payout*qtd/inv)*100:0;
     lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,qtd,precoML,markup,roi,payout,inv,vI,vC,vA,vM:0};
-    // Card esquerdo mostra o preço ML com a margem real
+    document.getElementById('price-grid').style.gridTemplateColumns='1fr';
+    document.getElementById('pc-ml-card').style.display='none';
+    const calcCard=document.querySelector('.price-card.calc');
+    calcCard.querySelector('.pc-tag').textContent='🌐 Preço Médio do Mercado';
     document.getElementById('pc-preco').textContent=fmt(precoML);
     document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
     document.getElementById('pc-roi').textContent=fmtP(roi);
     document.getElementById('pc-mg').textContent=fmtP(margemReal);
-    document.querySelector('.price-card.calc .pc-tag').textContent='🌐 Preço Médio do Mercado';
-    document.querySelector('.price-card.calc .pc-badge').textContent=margemReal>=10?'✅ Margem saudável':margemReal>=0?'⚠️ Margem baixa':'❌ Prejuízo';
-    document.querySelector('.price-card.calc .pc-badge').style.cssText=margemReal>=10?'background:rgba(74,222,128,.2);color:#4ade80':margemReal>=0?'background:rgba(240,160,112,.2);color:#F0A070':'background:rgba(239,68,68,.2);color:#f87171';
-    // Card direito: custo máximo para manter margem desejada (referência)
-    document.getElementById('price-grid').style.gridTemplateColumns='1fr';
-    document.getElementById('pc-ml-card').style.display='none';
+    const badge=calcCard.querySelector('.pc-badge');
+    badge.textContent=margemReal>=10?'✅ Margem saudável':margemReal>=0?'⚠️ Margem baixa':'❌ Prejuízo';
+    badge.style.cssText=margemReal>=10?'display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:#4ade80;font-size:.67rem;font-weight:700;margin-bottom:9px':margemReal>=0?'display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(240,160,112,.2);color:#F0A070;font-size:.67rem;font-weight:700;margin-bottom:9px':'display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.2);color:#f87171;font-size:.67rem;font-weight:700;margin-bottom:9px';
     document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'#4ade80':margemReal>=0?'#F0A070':'#f87171'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:#f87171">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}`;
-    // Preenche detalhamento e projeção
-    document.getElementById('bd-custo').textContent=fmt(custo);
-    document.getElementById('bd-frete').textContent=fmt(frete);
-    document.getElementById('bd-outros').textContent=fmt(ins);
-    document.getElementById('bd-base').textContent=fmt(base);
-    document.getElementById('bd-imp').textContent=fmt(vI)+' ('+fmtP(pI*100)+')';
-    document.getElementById('bd-com').textContent=fmt(vC)+' ('+fmtP(pC*100)+')';
-    document.getElementById('bd-afi').textContent=fmt(vA)+' ('+fmtP(pA*100)+')';
-    document.getElementById('bd-mar').textContent=fmt(0)+' (calculado automaticamente)';
-    document.getElementById('bd-preco').textContent=fmt(precoML);
-    document.getElementById('proj-qtd').textContent=qtd;
-    document.getElementById('proj-cu').textContent=fmt(custo);
-    document.getElementById('proj-inv').textContent=fmt(inv);
-    document.getElementById('proj-imp').textContent=fmt(vI*qtd);
-    document.getElementById('proj-fat').textContent=fmt(precoML*qtd);
-    document.getElementById('proj-pay').textContent=fmt(payout);
-    document.getElementById('proj-lb').textContent=fmt(payout*qtd);
-    document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+vI*qtd);
-    document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
+    preencherDetalhes(custo,frete,ins,base,precoML*pI,precoML*pC,precoML*pA,precoML*pM,base,precoML,payout,qtd,inv,custo*qtd*pI);
     document.getElementById('save-card').style.display='block';
-    document.getElementById('right-empty').style.display='none';
-    document.getElementById('right-result').style.display='block';
-    document.getElementById('frete-alert-box').style.display='none';
-    document.getElementById('sim-slider').value=0;simDesconto();
-    const btn=document.getElementById('btn-calc');btn.classList.remove('pulse');
-    btn.innerHTML='✅ Calculado! <span class="pdot"></span>';
-    setTimeout(()=>{btn.innerHTML='⚡ Calcular Precificação <span class="pdot"></span>';},2000);
+    finalizarCalculo();
     return;
   }
 
-  // Modo 1 (normal)
-  document.querySelector('.price-card.calc .pc-tag').textContent='🎯 Preço Ideal Calculado';
-  document.querySelector('.price-card.calc .pc-badge').textContent='✅ Preço mínimo seguro';
-  document.querySelector('.price-card.calc .pc-badge').style.cssText='background:rgba(74,222,128,.2);color:#4ade80';
   const fator=1-pI-pC-pA-pM;
   if(fator<=0){alert('A soma dos percentuais é ≥ 100%. Revise os valores.');return;}
-  const base=custo+frete+ins;
   const preco=base/fator;
-  if(pesoUsado>0&&freteMode==='dim') renderTable(getPrecoIdx(preco));
+  if(pesoUsado>0&&freteMode==='dim')renderTable(getPrecoIdx(preco));
   const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
   const payout=preco-base-vI-vC-vA;
   const markup=custo>0?preco/custo:0;
   const inv=custo*qtd;
   const roi=inv>0?(payout*qtd/inv)*100:0;
-
   lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,qtd,precoML,markup,roi,payout,inv,vI,vC,vA,vM};
 
+  document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
+  document.querySelector('.price-card.calc .pc-tag').textContent='🎯 Preço Ideal Calculado';
+  const mainBadge=document.querySelector('.price-card.calc .pc-badge');
+  mainBadge.textContent='✅ Preço mínimo seguro';
+  mainBadge.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:#4ade80;font-size:.67rem;font-weight:700;margin-bottom:9px';
   document.getElementById('pc-preco').textContent=fmt(preco);
   document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
   document.getElementById('pc-roi').textContent=fmtP(roi);
   document.getElementById('pc-mg').textContent=fmtP(pM*100);
 
-  // Reset simulador
-  document.getElementById('sim-slider').value=0;
-  simDesconto();
-
   // Card ML
   const mlCard=document.getElementById('pc-ml-card');
+  mlCard.style.display='block';
   const explainEl=document.getElementById('explain-text');
   let custoIdeal=null;
   if(precoML>0){
-    const mlvI=precoML*pI,mlvC=precoML*pC,mlvA=precoML*pA,mlvM=precoML*pM;
+    const mlvI=precoML*pI,mlvC=precoML*pC,mlvA=precoML*pA;
     const mlPayout=precoML-base-mlvI-mlvC-mlvA;
     const mlMarkup=custo>0?precoML/custo:0;
     const mlRoi=inv>0?(mlPayout*qtd/inv)*100:0;
-    const mlMargemReal=(mlPayout/precoML)*100;
+    const mlMargem=(mlPayout/precoML)*100;
     document.getElementById('pc-ml-preco').textContent=fmt(precoML);
     document.getElementById('ml-mk').textContent=mlMarkup.toFixed(2).replace('.',',');
     document.getElementById('ml-roi').textContent=fmtP(mlRoi);
-    document.getElementById('ml-mg').textContent=fmtP(mlMargemReal);
+    document.getElementById('ml-mg').textContent=fmtP(mlMargem);
     document.getElementById('pc-ml-kpis').style.opacity='1';
     const diff=precoML-preco,pct=Math.abs((diff/preco)*100).toFixed(1);
     if(Math.abs(diff)<0.01){
       mlCard.className='price-card ml-equal';
-      document.getElementById('pc-ml-badge').style.cssText='background:rgba(139,92,246,.25);color:#c4b5fd';
+      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(139,92,246,.25);color:#c4b5fd;font-size:.67rem;font-weight:700;margin-bottom:9px';
       document.getElementById('pc-ml-badge').textContent='= Igual ao preço calculado';
-      explainEl.innerHTML=`Preço médio ML igual ao seu preço mínimo. Você pode vender nesse valor e manter a margem definida.`;
+      explainEl.innerHTML=`Preço médio ML igual ao seu preço mínimo. Você pode vender nesse valor mantendo a margem definida.`;
     }else if(diff>0){
       mlCard.className='price-card ml-cheaper';
-      document.getElementById('pc-ml-badge').style.cssText='background:rgba(74,222,128,.2);color:#4ade80';
+      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:#4ade80;font-size:.67rem;font-weight:700;margin-bottom:9px';
       document.getElementById('pc-ml-badge').textContent=`✅ ${pct}% acima do seu mínimo`;
-      explainEl.innerHTML=`O mercado paga <strong style="color:#4ade80">${pct}% a mais</strong> que seu preço mínimo. Você pode vender mais barato e ser competitivo, ou vender no preço médio e aumentar a margem.`;
+      explainEl.innerHTML=`O mercado paga <strong style="color:#4ade80">${pct}% a mais</strong> que seu preço mínimo. Você pode ser mais competitivo ou vender no preço médio e aumentar a margem.`;
     }else{
       mlCard.className='price-card ml-pricier';
-      document.getElementById('pc-ml-badge').style.cssText='background:rgba(239,68,68,.2);color:#f87171';
+      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.2);color:#f87171;font-size:.67rem;font-weight:700;margin-bottom:9px';
       document.getElementById('pc-ml-badge').textContent=`⚠️ ${pct}% abaixo do seu mínimo`;
       custoIdeal=precoML*fator-frete-ins;
-      const econNec=custo-custoIdeal,pctRed=custo>0?(econNec/custo)*100:0;
-      explainEl.innerHTML=`O preço médio ML está <strong style="color:#f87171">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, você precisaria comprar por no máximo <strong style="color:#4ade80">${fmt(Math.max(custoIdeal,0))}</strong> (redução de ${pctRed.toFixed(1)}% no custo atual).`;
+      explainEl.innerHTML=`Preço médio ML está <strong style="color:#f87171">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, compre por no máximo <strong style="color:#4ade80">${fmt(Math.max(custoIdeal,0))}</strong>.`;
     }
     document.getElementById('save-card').style.display='block';
   }else{
     mlCard.className='price-card ml-none';
     document.getElementById('pc-ml-preco').textContent='—';
-    document.getElementById('pc-ml-badge').style.cssText='background:rgba(255,255,255,.08);color:#6b5f8a';
+    document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:#6b5f8a;font-size:.67rem;font-weight:700;margin-bottom:9px';
     document.getElementById('pc-ml-badge').textContent='Informe o preço médio';
     document.getElementById('pc-ml-kpis').style.opacity='.25';
     ['ml-mk','ml-roi','ml-mg'].forEach(id=>document.getElementById(id).textContent='—');
-    explainEl.innerHTML=`Este é o menor preço que cobre todos os seus custos com a margem definida. Informe o <strong style="color:var(--o)">Preço Médio ML</strong> para ver o comparativo com o mercado.`;
+    explainEl.innerHTML=`Este é o menor preço que cobre todos os seus custos com a margem definida. Informe o <strong style="color:var(--o)">Preço Médio ML</strong> para ver o comparativo.`;
     document.getElementById('save-card').style.display='none';
   }
 
   // Alerta frete
-  const alertBox=document.getElementById('frete-alert-box'),alertContent=document.getElementById('frete-alert-content');
+  const alertBox=document.getElementById('frete-alert-box');
   if(pesoUsado>0&&freteMode==='dim'){
     const piAtual=getPesoIdx(pesoUsado),ciAtual=getPrecoIdx(preco);
     let alerta=null;
     for(let ci=ciAtual-1;ci>=0;ci--){
       const freteNovo=T[piAtual][ci],limitePreco=precoFaixas[ci+1]-0.01;
       const baseNova=custo+freteNovo+ins,precoMinNovo=baseNova/fator;
-      if(precoMinNovo<=limitePreco){alerta={freteNovo,limitePreco,ganhoFrete:frete-freteNovo,faixaLabel:precoLabels[ci]};break;}
+      if(precoMinNovo<=limitePreco){alerta={freteNovo,limitePreco,ganhoFrete:frete-freteNovo};break;}
     }
     if(alerta){
       alertBox.style.display='block';
-      alertContent.innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete se vender até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia no frete</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:9px;font-size:.78rem;color:#8a7aaa">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>. Pode compensar o preço menor.</div>`;
+      document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:#8a7aaa">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong> — pode compensar o preço menor.</div>`;
     }else{alertBox.style.display='none';}
   }else{alertBox.style.display='none';}
 
-  // Detalhamento
+  preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,base,preco,payout,qtd,inv,vI*qtd);
+  finalizarCalculo();
+}
+
+function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,_base,preco,payout,qtd,inv,totalImp){
   document.getElementById('bd-custo').textContent=fmt(custo);
   document.getElementById('bd-frete').textContent=fmt(frete);
   document.getElementById('bd-outros').textContent=fmt(ins);
   document.getElementById('bd-base').textContent=fmt(base);
-  document.getElementById('bd-imp').textContent=fmt(vI)+' ('+fmtP(pI*100)+')';
-  document.getElementById('bd-com').textContent=fmt(vC)+' ('+fmtP(pC*100)+')';
-  document.getElementById('bd-afi').textContent=fmt(vA)+' ('+fmtP(pA*100)+')';
-  document.getElementById('bd-mar').textContent=fmt(vM)+' ('+fmtP(pM*100)+')';
+  document.getElementById('bd-imp').textContent=fmt(vI);
+  document.getElementById('bd-com').textContent=fmt(vC);
+  document.getElementById('bd-afi').textContent=fmt(vA);
+  document.getElementById('bd-mar').textContent=fmt(vM);
   document.getElementById('bd-preco').textContent=fmt(preco);
-
-  // Projeção
   document.getElementById('proj-qtd').textContent=qtd;
   document.getElementById('proj-cu').textContent=fmt(custo);
   document.getElementById('proj-inv').textContent=fmt(inv);
-  document.getElementById('proj-imp').textContent=fmt(vI*qtd);
+  document.getElementById('proj-imp').textContent=fmt(totalImp);
   document.getElementById('proj-fat').textContent=fmt(preco*qtd);
   document.getElementById('proj-pay').textContent=fmt(payout);
   document.getElementById('proj-lb').textContent=fmt(payout*qtd);
-  document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+vI*qtd);
+  document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+totalImp);
   document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
+}
 
+function finalizarCalculo(){
+  document.getElementById('sim-slider').value=0;simDesconto();
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
   const btn=document.getElementById('btn-calc');
@@ -670,23 +581,20 @@ function calcular(){
   setTimeout(()=>{btn.innerHTML='⚡ Calcular Precificação <span class="pdot"></span>';},2000);
 }
 
-// SALVAR PRODUTO
 function salvarProduto(){
-  if(!lastCalc) return;
+  if(!lastCalc)return;
   const nome=document.getElementById('save-nome').value.trim();
   if(!nome){alert('Informe o nome do produto.');return;}
+  const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM;
+  const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
   const prod={
     id:Date.now(),nome,
     forn:document.getElementById('save-forn').value.trim()||'—',
     cod:document.getElementById('save-cod').value.trim()||'—',
-    custoReal:lastCalc.custo,
-    custoIdeal:lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*(1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM)-lastCalc.frete-lastCalc.ins):null,
-    precoCalc:lastCalc.preco,
-    precoML:lastCalc.precoML,
-    markup:lastCalc.markup,
-    roi:lastCalc.roi,
-    margem:lastCalc.pM*100,
-    payout:lastCalc.payout
+    custoReal:lastCalc.custo,custoIdeal,
+    precoCalc:lastCalc.preco,precoML:lastCalc.precoML,
+    markup:lastCalc.markup,roi:lastCalc.roi,
+    margem:lastCalc.pM*100,payout:lastCalc.payout,obs:''
   };
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   prods.unshift(prod);
@@ -697,51 +605,79 @@ function salvarProduto(){
   alert('✅ Produto salvo no Dashboard!');
 }
 
+function salvarObs(id,val){
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const p=prods.find(p=>p.id===id);
+  if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));}
+}
+
 function deletarProduto(id){
-  if(!confirm('Remover este produto?')) return;
+  if(!confirm('Remover este produto?'))return;
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]').filter(p=>p.id!==id);
   localStorage.setItem('realecom_prods',JSON.stringify(prods));
   renderDash();
 }
 
-function salvarObs(id, val){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  const p=prods.find(p=>p.id===id);
-  if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));}
+function toggleDetail(id){
+  const det=document.getElementById('det-'+id);
+  const btn=document.getElementById('tbtn-'+id);
+  const open=det.style.display==='block';
+  det.style.display=open?'none':'block';
+  btn.textContent=open?'+ detalhes':'− fechar';
 }
 
 function renderDash(){
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   const el=document.getElementById('dash-content');
   if(!prods.length){
-    el.innerHTML=`<div class="dash-empty"><div class="de-icon">📦</div><p>Nenhum produto salvo ainda.<br>Faça uma precificação e salve no Dashboard.</p></div>`;
+    el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';
     return;
   }
-  el.innerHTML=`<div class="dash-grid">${prods.map(p=>{
-    const roiCls=p.roi>=10?'green':p.roi>=5?'orange':'red';
-    const mkCls=p.markup>=1.5?'green':p.markup>=1.2?'orange':'red';
-    const mgCls=p.margem>=10?'green':p.margem>=5?'orange':'red';
+  el.innerHTML=prods.map(p=>{
+    const rc=p.roi>=10?'#4ade80':p.roi>=5?'#F0A070':'#f87171';
+    const mc=p.margem>=10?'#4ade80':p.margem>=5?'#F0A070':'#f87171';
+    const mkc=p.markup>=1.5?'#4ade80':p.markup>=1.2?'#F0A070':'#f87171';
     return`<div class="prod-card">
-      <button class="pdel" onclick="deletarProduto(${p.id})">🗑</button>
-      <div class="pname">${p.nome}</div>
-      <div class="pforn">🏭 ${p.forn}</div>
-      <div class="pcod">COD: ${p.cod}</div>
-      <div class="prod-metrics">
-        <div class="pm"><div class="pml">Custo Real</div><div class="pmv">${fmt(p.custoReal)}</div></div>
-        <div class="pm"><div class="pml">Custo Ideal</div><div class="pmv ${p.custoIdeal!==null?'green':''}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
-        <div class="pm"><div class="pml">Preço Calculado</div><div class="pmv">${fmt(p.precoCalc)}</div></div>
-        <div class="pm"><div class="pml">Preço Médio ML</div><div class="pmv orange">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
-        <div class="pm"><div class="pml">ROI</div><div class="pmv ${roiCls}">${fmtP(p.roi)}</div></div>
-        <div class="pm"><div class="pml">Markup</div><div class="pmv ${mkCls}">${p.markup.toFixed(2).replace('.',',')}</div></div>
-        <div class="pm"><div class="pml">Margem</div><div class="pmv ${mgCls}">${fmtP(p.margem)}</div></div>
-        <div class="pm"><div class="pml">Lucro/unid.</div><div class="pmv">${fmt(p.payout)}</div></div>
+      <div class="prod-card-top">
+        <div class="prod-name">
+          <h3>${p.nome}</h3>
+          <p>🏭 ${p.forn} · ${p.cod}</p>
+        </div>
+        <div class="prod-metric">
+          <div class="pm-label">Preço</div>
+          <div class="pm-value" style="color:#c4b5fd">${fmt(p.precoCalc)}</div>
+        </div>
+        <div class="prod-metric">
+          <div class="pm-label">ROI</div>
+          <div class="pm-value" style="color:${rc}">${fmtP(p.roi)}</div>
+        </div>
+        <div class="prod-metric">
+          <div class="pm-label">Margem</div>
+          <div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div>
+        </div>
+        <div class="prod-metric">
+          <div class="pm-label">Markup</div>
+          <div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div>
+        </div>
+        <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
+        <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover produto">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+          </svg>
+        </button>
       </div>
-      <div style="margin-top:10px">
-        <div style="font-size:.65rem;color:#4a3f6b;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">📝 Observações</div>
-        <textarea onchange="salvarObs(${p.id},this.value)" placeholder="Anotações sobre este produto..." style="width:100%;background:#1a1428;border:1px solid #1e1a2e;border-radius:8px;padding:8px 10px;font-size:.78rem;color:#c4b5fd;resize:vertical;min-height:60px;outline:none;font-family:inherit;transition:border .2s" onfocus="this.style.borderColor='#F0A070'" onblur="this.style.borderColor='#1e1a2e'">${p.obs||''}</textarea>
+      <div class="prod-card-detail" id="det-${p.id}">
+        <div class="prod-detail-grid">
+          <div class="pd-item"><div class="pdl">Custo Real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
+          <div class="pd-item"><div class="pdl">Custo Ideal</div><div class="pdv" style="color:${p.custoIdeal!==null?'#4ade80':'#4a3f6b'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
+          <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
+          <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
+        </div>
+        <div style="font-size:.62rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
+        <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
       </div>
     </div>`;
-  }).join('')}</div>`;
+  }).join('');
 }
 
 function resetar(){
