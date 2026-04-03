@@ -152,7 +152,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="card">
-    <div class="card-title">🛒 Custo dos Produtos</div>
+    <div class="card-title">🛒 Custo dos Produtos <span style="color:#f87171;font-size:.65rem;font-weight:600">(obrigatório)</span></div>
     <div class="item-list" id="items-list">
       <div class="item-row">
         <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01" oninput="markDirty()">
@@ -163,7 +163,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="card">
-    <div class="card-title">📦 Frete & Outros Custos</div>
+    <div class="card-title">📦 Frete & Outros Custos <span style="color:#f87171;font-size:.65rem;font-weight:600">(obrigatório)</span></div>
     <div class="toggle-row">
       <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')">📐 Por Dimensões</button>
       <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')">✏️ Manual</button>
@@ -205,7 +205,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="margem-card" id="margem-block">
-    <div class="card-title">💎 Margem de Lucro Desejada</div>
+    <div class="card-title">💎 Margem de Lucro Desejada <span style="color:#f87171;font-size:.65rem;font-weight:600">(obrigatório)</span></div>
     <div class="field"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" oninput="markDirty()"></div>
     <div class="margem-hint">↑ Meta de lucro em % sobre o preço de venda</div>
   </div>
@@ -214,7 +214,7 @@ input[type=number]{-moz-appearance:textfield}
     <div class="card-title">📈 Projeção & Comparativo</div>
     <div class="row2">
       <div class="field"><label>Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1" oninput="markDirty()"></div>
-      <div class="field"><label id="ml-label">💛 Preço Médio ML (R$)</label><input type="number" id="preco-ml" placeholder="Opcional" min="0" step="0.01" oninput="markDirty()"></div>
+      <div class="field"><label id="ml-label">💛 Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Opcional" min="0" step="0.01" oninput="markDirty()"></div>
     </div>
   </div>
 
@@ -373,7 +373,7 @@ function verificarMarca(){
 function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');if(p==='dash')renderDash();}
-function markDirty(){const btn=document.getElementById('btn-calc');btn.classList.add('pulse');btn.innerHTML='⚡ Recalcular <span class="pdot"></span>';}
+function markDirty(){}
 function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
 function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
 
