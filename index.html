@@ -256,18 +256,7 @@ input[type=number]{-moz-appearance:textfield}
       <span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span>
     </div>
 
-    <div class="sim-card">
-      <div class="sim-title">🎯 Simulador de Desconto</div>
-      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#8a7aaa;margin-bottom:2px">
-        <span>Desconto</span><span id="sim-pct-label" style="color:var(--o);font-weight:700">0%</span>
-      </div>
-      <input type="range" class="sim-slider" id="sim-slider" min="0" max="40" value="0" step="0.5" oninput="simDesconto()">
-      <div class="sim-result">
-        <div class="sim-kpi"><div class="sl">Preço c/ desconto</div><div class="sv" id="sim-preco">—</div></div>
-        <div class="sim-kpi"><div class="sl">Margem real</div><div class="sv" id="sim-margem">—</div></div>
-        <div class="sim-kpi"><div class="sl">Lucro p/ unid.</div><div class="sv" id="sim-lucro">—</div></div>
-      </div>
-    </div>
+
 
     <div class="breakdown" id="frete-alert-box" style="display:none">
       <div class="bd-title">⚡ Oportunidade de Frete</div>
@@ -415,14 +404,55 @@ function simDesconto(){
   if(!lastCalc)return;
   const pct=parseFloat(document.getElementById('sim-slider').value)||0;
   document.getElementById('sim-pct-label').textContent=pct.toFixed(1)+'%';
-  const{preco,base,pI,pC,pA}=lastCalc;
-  const pd=preco*(1-pct/100),vi=pd*pI,vc=pd*pC,va=pd*pA;
-  const pay=pd-base-vi-vc-va,mg=(pay/pd)*100;
+  const{preco,base,pI,pC,pA,custo,frete,ins,qtd,inv,vI,vC,vA,vM}=lastCalc;
+  const pd=preco*(1-pct/100);
+  const vi=pd*pI,vc=pd*pC,va=pd*pA;
+  const pay=pd-base-vi-vc-va;
+  const mg=(pay/pd)*100;
+
+  // Mini cards topo
   document.getElementById('sim-preco').textContent=fmt(pd);
   document.getElementById('sim-margem').textContent=fmtP(mg);
   document.getElementById('sim-lucro').textContent=fmt(pay);
   document.getElementById('sim-margem').style.color=mg>=10?'#4ade80':mg>=5?'#F0A070':'#f87171';
   document.getElementById('sim-lucro').style.color=pay>0?'#c4b5fd':'#f87171';
+
+  const bdCol=document.getElementById('bd-desc-col');
+  const projCol=document.getElementById('proj-desc-col');
+  if(!bdCol||!projCol)return;
+  if(pct>0){
+    const pctLabel=pct.toFixed(1)+'%';
+    bdCol.style.display='block';
+    projCol.style.display='block';
+    document.getElementById('bd-desc-pct').textContent='('+pctLabel+')';
+    document.getElementById('proj-desc-pct').textContent='('+pctLabel+')';
+
+    // Detalhamento com desconto
+    document.getElementById('bdd-custo').textContent=fmt(custo);
+    document.getElementById('bdd-frete').textContent=fmt(frete);
+    document.getElementById('bdd-outros').textContent=fmt(ins);
+    document.getElementById('bdd-base').textContent=fmt(base);
+    document.getElementById('bdd-imp').textContent=fmt(vi);
+    document.getElementById('bdd-com').textContent=fmt(vc);
+    document.getElementById('bdd-afi').textContent=fmt(va);
+    document.getElementById('bdd-mar').textContent=fmtP(mg);
+    document.getElementById('bdd-mar').style.color=mg>=10?'#4ade80':mg>=5?'#F0A070':'#f87171';
+    document.getElementById('bdd-preco').textContent=fmt(pd);
+
+    // Projeção com desconto
+    document.getElementById('spd-cu').textContent=fmt(custo);
+    document.getElementById('spd-inv').textContent=fmt(inv);
+    document.getElementById('spd-imp').textContent=fmt(vi*qtd);
+    document.getElementById('spd-fat').textContent=fmt(pd*qtd);
+    document.getElementById('spd-pay').textContent=fmt(pay);
+    document.getElementById('spd-pay').style.color=pay>0?'#c4b5fd':'#f87171';
+    document.getElementById('spd-lb').textContent=fmt(pay*qtd);
+    document.getElementById('spd-cx-bruto').textContent=fmt(inv+pay*qtd+vi*qtd);
+    document.getElementById('spd-cx').textContent=fmt(inv+pay*qtd);
+  }else{
+    bdCol.style.display='none';
+    projCol.style.display='none';
+  }
 }
 
 function calcular(){
@@ -575,7 +605,7 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,_base,preco,payout,q
 }
 
 function finalizarCalculo(){
-  document.getElementById('sim-slider').value=0;simDesconto();
+
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
   const btn=document.getElementById('btn-calc');
