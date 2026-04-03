@@ -305,6 +305,7 @@ input[type=number]{-moz-appearance:textfield}
         <div class="field"><label>Fornecedor</label><input type="text" id="save-forn" placeholder="Nome do fornecedor"></div>
         <div class="field"><label>Código do produto</label><input type="text" id="save-cod" placeholder="Ex: SKU-001"></div>
       </div>
+      <div class="field"><label>📝 Observações</label><textarea id="save-obs" placeholder="Anotações sobre este produto..." style="width:100%;background:#1a1428;border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.85rem;color:#f0f0f0;resize:none;height:60px;outline:none;font-family:inherit;transition:border .2s" onfocus="this.style.borderColor='var(--o)'" onblur="this.style.borderColor='var(--border)'"></textarea></div>
       <button class="btn-save" onclick="salvarProduto()">💾 Salvar no Dashboard</button>
     </div>
 
@@ -569,13 +570,14 @@ function salvarProduto(){
   if(!nome){alert('Informe o nome do produto.');return;}
   const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM;
   const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
-  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout,obs:''};
+  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout};
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   prods.unshift(prod);
   localStorage.setItem('realecom_prods',JSON.stringify(prods));
   document.getElementById('save-nome').value='';
   document.getElementById('save-forn').value='';
   document.getElementById('save-cod').value='';
+  document.getElementById('save-obs').value='';
   alert('✅ Produto salvo no Dashboard!');
 }
 
