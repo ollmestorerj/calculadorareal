@@ -7,9 +7,32 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d0a14'/><path d='M35 38 L40 26 L50 33 L60 26 L65 38 L35 38Z' fill='%23F0A070'/><rect x='34' y='38' width='32' height='5' rx='2.5' fill='%23F0A070'/><path d='M68 57 C68 69 60 78 50 78 C40 78 32 69 32 57 C32 45 40 36 50 36 C56 36 62 39 65 44' stroke='%23F0A070' stroke-width='7' fill='none' stroke-linecap='round'/><path d='M62 35 L69 42 L63 47' stroke='%23F0A070' stroke-width='5.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e}
-body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#f0f0f0;min-height:100vh}
-.header{background:#110e1a;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+:root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e;--text:#f0f0f0;--text2:#6b5f8a;--text3:#4a3f6b}
+body.light{--bg:#f5f3ff;--bg2:#ede9fe;--card:#ffffff;--border:#d8d0f0;--text:#1a1030;--text2:#6b5f8a;--text3:#9985c9}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+.header{background:#110e1a;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s}
+body.light .margem-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:var(--p2)}
+body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
+body.light .field input,body.light .field textarea{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
+body.light .ft{background:#fff}
+body.light .ft th{background:#ede9fe;color:#6b5f8a}
+body.light .ft td{background:#fff;color:#4a3f6b}
+body.light .ft td.pcol{background:#ede9fe;color:var(--p)}
+body.light .ft td.fopt:hover{background:#F0A07022;color:var(--p)}
+body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
+body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
+body.light .price-card.calc{background:linear-gradient(145deg,#166534,#15803d)!important}
+body.light .price-card.ml-cheaper{background:linear-gradient(145deg,#166534,#15803d)!important}
+body.light .price-card.ml-pricier{background:linear-gradient(145deg,#991b1b,#b91c1c)!important}
+body.light .price-card.ml-equal{background:linear-gradient(145deg,#4c1d95,#6d28d9)!important}
+body.light .price-card.ml-none{background:linear-gradient(145deg,#7c2d12,#c2410c)!important}
+body.light .toggle-btn{background:#f0ebff;color:#9985c9;border-color:#d8d0f0}
+body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
+body.light .price-card{color:#fff!important}
+body.light .price-card *{color:#fff!important}
+body.light .pc-badge{background:rgba(255,255,255,.25)!important;color:#fff!important}
+.theme-toggle{background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.78rem;color:var(--text2);font-weight:600;transition:all .2s;white-space:nowrap}
+.theme-toggle:hover{border-color:var(--o);color:var(--o)}
 .header-center{text-align:center;flex:1}
 .brand-name{font-size:1.35rem;font-weight:900;letter-spacing:.05em;line-height:1;color:var(--o)}
 .brand-sub{font-size:.68rem;font-weight:700;letter-spacing:.15em;margin-top:2px;color:#fff}
@@ -114,7 +137,7 @@ input[type=number]{-moz-appearance:textfield}
 </head>
 <body>
 <div class="header">
-  <div style="width:110px"></div>
+  <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
   <div class="header-center">
     <div class="brand-name">CALCULADORA REAL</div>
     <div class="brand-sub">realecom</div>
@@ -335,6 +358,17 @@ const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119',
 const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
 
 let pesoUsado=0,freteSel=0,freteMode='dim',lastCalc=null,calcMode=1;
+
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  document.getElementById('theme-btn').textContent=isLight?'🌙 Escuro':'☀️ Claro';
+  localStorage.setItem('realecom_theme',isLight?'light':'dark');
+}
+// Restaurar tema salvo
+(function(){
+  const t=localStorage.getItem('realecom_theme');
+  if(t==='light'){document.body.classList.add('light');document.getElementById('theme-btn').textContent='🌙 Escuro';}
+})();
 
 document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
 
