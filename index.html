@@ -4,63 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora REAL | RealEcom</title>
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e;--text:#f0f0f0;--text2:#6b5f8a;--text3:#4a3f6b}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s}
 body.light{--bg:#f5f3ff;--bg2:#ede9fe;--card:#ffffff;--border:#d8d0f0;--text:#1a1030;--text2:#6b5f8a;--text3:#9985c9}
-body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
-.header{background:#110e1a;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s}
-body.light .margem-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:var(--p2)}
-body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
-body.light .field input,body.light .field textarea{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
-body.light .ft{background:#fff}
-body.light .ft th{background:#ede9fe;color:#6b5f8a}
-body.light .ft td{background:#fff;color:#4a3f6b}
-body.light .ft td.pcol{background:#ede9fe;color:var(--p)}
-body.light .ft td.fopt:hover{background:#F0A07022;color:var(--p)}
-body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
-body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
-body.light .price-card.calc{background:linear-gradient(145deg,#166534,#15803d)!important}
-body.light .price-card.ml-cheaper{background:linear-gradient(145deg,#166534,#15803d)!important}
-body.light .price-card.ml-pricier{background:linear-gradient(145deg,#991b1b,#b91c1c)!important}
-body.light .price-card.ml-equal{background:linear-gradient(145deg,#4c1d95,#6d28d9)!important}
-body.light .price-card.ml-none{background:linear-gradient(145deg,#7c2d12,#c2410c)!important}
-body.light .dash-header h2{color:#ea580c}
-body.light .dash-header h2 span{color:#ea580c}
-body.light .toggle-btn{background:#e5e5e5;color:#888;border-color:#ccc}
-body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
-body.light .prod-name h3{color:#4c1d95}
-body.light .prod-name p{color:#9985c9}
-body.light .prod-card{background:#fff;border-color:#d8d0f0}
-body.light .prod-card-detail{background:#f5f3ff}
-body.light .pd-item{background:#ede9fe}
-body.light .pd-item .pdl{color:#9985c9}
-body.light .pd-item .pdv{color:#4c1d95}
-body.light .prod-metric .pm-label{color:#9985c9}
-body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:#6b5f8a}
-body.light .btn-back{background:#f0ebff;border-color:#d8d0f0;color:#6b5f8a}
-body.light .price-card{color:#fff!important}
-body.light .price-card *{color:#fff!important}
-body.light .brow .br{color:#4c1d95;font-weight:700}
-body.light .brow.total .br{color:#3b0764;font-weight:800}
-body.light .brow.highlight .br{color:#c2410c;font-weight:700}
-body.light .brow .bl{color:#6b5f8a}
-body.light .brow.total .bl{color:#4c1d95}
-body.light #proj-qtd{color:#c2410c!important}
-body.light .bd-title{color:#6b5f8a}
-body.light .breakdown{background:#fff;border-color:#d8d0f0}
+
+/* PAGES */
+.page{display:none}.page.active{display:block}
+
+/* HEADER */
+.header{background:#110e1a;border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s}
+body.light .header{background:#ede9fe}
 .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.78rem;color:var(--text2);font-weight:600;transition:all .2s;white-space:nowrap}
 .theme-toggle:hover{border-color:var(--o);color:var(--o)}
-.header-center{text-align:center;flex:1}
-.brand-name{font-size:1.35rem;font-weight:900;letter-spacing:.05em;line-height:1;color:var(--o)}
-.brand-sub{font-size:.68rem;font-weight:700;letter-spacing:.15em;margin-top:2px;color:#fff}
 .btn-dash{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;white-space:nowrap}
-.page{display:none}.page.active{display:block}
-.main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 64px)}
+
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 56px)}
 @media(max-width:800px){.main-layout{grid-template-columns:1fr}}
 .left-panel{border-right:1px solid var(--border);padding:16px 15px;overflow-y:auto}
 .right-panel{padding:16px 15px;overflow-y:auto;background:var(--bg2)}
+
+/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
 .card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:10px}
 .margem-card{background:linear-gradient(135deg,#1e0a3c,#2d1060);border:1.5px solid var(--p2);border-radius:14px;padding:14px;margin-bottom:10px}
@@ -69,8 +36,8 @@ body.light .breakdown{background:#fff;border-color:#d8d0f0}
 .margem-hint{font-size:.72rem;color:var(--p2);text-align:center;margin-top:5px;opacity:.8}
 .field{margin-bottom:9px}
 .field label{display:block;font-size:.76rem;color:#6b5f8a;margin-bottom:3px;font-weight:500}
-.field input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:#f0f0f0;background:#1a1428;transition:border .2s}
-.field input:focus{outline:none;border-color:var(--o);background:#1e1830}
+.field input,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;transition:border .2s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--o);background:#1e1830}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -85,6 +52,8 @@ input[type=number]{-moz-appearance:textfield}
 .toggle-row{display:flex;gap:7px;margin-bottom:9px}
 .toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid var(--border);background:#1a1428;color:#4a3f6b;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
 .toggle-btn.active{border-color:var(--o);color:var(--o);background:#F0A07010}
+body.light .toggle-btn{background:#e5e5e5;color:#888;border-color:#ccc}
+body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
 .peso-info{background:#1a1428;border:1px solid var(--border);border-radius:9px;padding:9px 11px;margin-top:7px;font-size:.78rem;display:none;flex-wrap:wrap;gap:10px}
 .peso-info .pi{color:#6b5f8a}.peso-info .pi strong{color:var(--o)}
 .frete-wrap{overflow-x:auto;margin-top:8px}
@@ -96,6 +65,15 @@ input[type=number]{-moz-appearance:textfield}
 .ft td.fsel{background:var(--o)!important;color:#000!important;font-weight:700}
 .ft tr.dim{opacity:.35}
 .frete-badge{background:#F0A07010;border:1px solid #F0A07040;border-radius:9px;padding:7px 11px;font-size:.79rem;color:var(--o);font-weight:600;margin-top:7px;display:none}
+body.light .ft th{background:#ede9fe;color:#6b5f8a}
+body.light .ft td{background:#fff;color:#4a3f6b}
+body.light .ft td.pcol{background:#ede9fe;color:var(--p)}
+body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
+body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
+body.light .field input,body.light .field textarea{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
+body.light .margem-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:var(--p2)}
+body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
+
 .btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;position:relative}
 .btn-calc:hover{opacity:.88}
 .btn-reset{width:100%;padding:10px;background:var(--card);color:#6b5f8a;border:1px solid var(--border);border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
@@ -108,7 +86,10 @@ input[type=number]{-moz-appearance:textfield}
 .price-card.ml-cheaper{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
 .price-card.ml-pricier{background:linear-gradient(145deg,#7f1d1d,#991b1b);border:1px solid #ef444455}
 .price-card.ml-equal{background:linear-gradient(145deg,#1e1a2e,#2d2060);border:1px solid #6B21A855}
-.price-card.ml-none{background:linear-gradient(145deg,#1a1428,#201640);border:1px solid var(--border)}
+.price-card.ml-none{background:linear-gradient(145deg,#7c2d12,#c2410c);border:1px solid #ea580c55}
+body.light .price-card{color:#fff!important}
+body.light .price-card *{color:#fff!important}
+body.light .pc-badge{background:rgba(255,255,255,.25)!important;color:#fff!important}
 .pc-tag{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:5px}
 .pc-price{font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:5px}
 .pc-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.15);font-size:.67rem;font-weight:700;margin-bottom:9px}
@@ -125,51 +106,193 @@ input[type=number]{-moz-appearance:textfield}
 .brow .bl{color:#4a3f6b}.brow .br{color:#c4b5fd;font-weight:600}
 .brow.total{padding-top:8px}.brow.total .bl{color:#8b7faa;font-weight:700}.brow.total .br{color:#fff;font-weight:800;font-size:.9rem}
 .brow.highlight .br{color:var(--o)}
+body.light .brow .br{color:#4c1d95;font-weight:700}
+body.light .brow.total .br{color:#3b0764;font-weight:800}
+body.light .brow.highlight .br{color:#c2410c;font-weight:700}
+body.light .brow .bl{color:#6b5f8a}
+body.light .brow.total .bl{color:#4c1d95}
+body.light #proj-qtd{color:#c2410c!important}
+body.light .breakdown{background:#fff;border-color:#d8d0f0}
+body.light .bd-title{color:#6b5f8a}
+body.light .explain-box{background:#fff;border-color:#d8d0f0}
 .save-card{background:linear-gradient(135deg,#0a1628,#0f2040);border:1.5px solid #1e3a5f;border-radius:14px;padding:14px;margin-bottom:10px}
 .save-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a8fcc;margin-bottom:10px}
 .btn-save{width:100%;padding:11px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:6px}
+
+/* DASHBOARD */
 .dash-page{padding:20px 18px;max-width:900px;margin:0 auto}
 .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.dash-header h2{font-size:1.1rem;font-weight:800;color:#fff}
-.dash-header h2 span{color:var(--o)}
+body.light .dash-header h2{color:#ea580c}
+body.light .dash-header h2 span{color:#ea580c}
 .btn-back{background:var(--card);color:#8b7faa;border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:.78rem;font-weight:600;cursor:pointer}
+body.light .btn-back{background:#f0ebff;border-color:#d8d0f0;color:#6b5f8a}
 .prod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+body.light .prod-card{background:#fff;border-color:#d8d0f0}
 .prod-card-top{padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.prod-name{flex:1;min-width:100px}
-.prod-name h3{font-size:.92rem;font-weight:800;color:#fff;margin-bottom:2px}
+.prod-name h3{font-size:.92rem;font-weight:800;color:var(--text);margin-bottom:2px}
+body.light .prod-name h3{color:#4c1d95}
 .prod-name p{font-size:.7rem;color:#4a3f6b}
+body.light .prod-name p{color:#9985c9}
 .prod-metric{text-align:center;min-width:64px}
 .prod-metric .pm-label{font-size:.58rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
 .prod-metric .pm-value{font-size:.9rem;font-weight:800}
 .prod-card-detail{display:none;padding:14px 16px;background:#0a0812;border-top:1px solid var(--border)}
+body.light .prod-card-detail{background:#f5f3ff}
 .prod-detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px}
 .pd-item{background:var(--card);border-radius:9px;padding:9px 11px}
+body.light .pd-item{background:#ede9fe}
 .pd-item .pdl{font-size:.6rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
 .pd-item .pdv{font-size:.85rem;font-weight:700;color:#c4b5fd}
+body.light .pd-item .pdl{color:#9985c9}
+body.light .pd-item .pdv{color:#4c1d95}
 .prod-obs{width:100%;background:#140f20;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.76rem;color:#8a7aaa;resize:none;height:50px;outline:none;font-family:inherit;margin-top:4px;display:block}
 .btn-toggle{background:none;border:1px solid var(--border);color:#6b5f8a;border-radius:8px;padding:5px 12px;font-size:.72rem;cursor:pointer}
+body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:#6b5f8a}
 .btn-del{background:none;border:1px solid #2a1a1a;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .btn-del:hover{background:#ff3b3018;border-color:#f8717144}
 .btn-del svg{width:16px;height:16px;stroke:#4a3f6b;transition:stroke .2s}
 .btn-del:hover svg{stroke:#f87171}
+
+/* CALENDÁRIO */
+.cal-page{padding:20px 18px;max-width:900px;margin:0 auto}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.cal-nav{display:flex;align-items:center;gap:12px}
+.cal-nav button{background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.cal-nav button:hover{border-color:var(--o);color:var(--o)}
+.cal-nav h3{font-size:1rem;font-weight:800;color:var(--text);min-width:160px;text-align:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-day-header{text-align:center;font-size:.68rem;font-weight:700;color:#4a3f6b;padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-day{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 6px;min-height:72px;cursor:pointer;transition:all .2s;position:relative}
+.cal-day:hover{border-color:var(--o)}
+.cal-day.today{border-color:var(--o);background:#F0A07010}
+.cal-day.other-month{opacity:.35}
+.cal-day .day-num{font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:4px}
+.cal-day.today .day-num{color:var(--o)}
+.cal-event{font-size:.62rem;border-radius:4px;padding:2px 5px;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-event.full{background:#7c3aed33;color:#a78bfa;border-left:2px solid #7c3aed}
+.cal-event.conta{background:#dc262633;color:#f87171;border-left:2px solid #dc2626}
+.cal-event.entrega{background:#16a34a33;color:#4ade80;border-left:2px solid #16a34a}
+.cal-event.outro{background:#F0A07033;color:var(--o);border-left:2px solid var(--o)}
+.cal-event-more{font-size:.58rem;color:#4a3f6b;padding:1px 4px}
+
+/* MODAL EVENTO */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#161022;border:1px solid var(--border);border-radius:16px;padding:22px;width:100%;max-width:400px;margin:20px}
+.modal h3{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:16px}
+.modal-field{margin-bottom:12px}
+.modal-field label{display:block;font-size:.76rem;color:#6b5f8a;margin-bottom:4px;font-weight:500}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;outline:none;font-family:inherit;transition:border .2s}
+.modal-field input:focus,.modal-field select:focus{border-color:var(--o)}
+.modal-field select option{background:#1a1428}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.btn-confirm{flex:1;padding:11px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer}
+.btn-cancel{flex:1;padding:11px;background:var(--card);color:#6b5f8a;border:1px solid var(--border);border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer}
+
+/* NOTIFICAÇÃO */
+.notif-container{position:fixed;top:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:320px}
+.notif{background:#161022;border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:.82rem;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideIn .3s ease;display:flex;gap:10px;align-items:flex-start}
+.notif.full{border-color:#7c3aed88}.notif.conta{border-color:#dc262688}.notif.entrega{border-color:#16a34a88}.notif.outro{border-color:var(--o)}
+.notif-icon{font-size:1.2rem;flex-shrink:0}
+.notif-body .notif-title{font-weight:700;margin-bottom:2px}
+.notif-body .notif-sub{font-size:.74rem;color:#6b5f8a}
+.notif-close{background:none;border:none;color:#4a3f6b;cursor:pointer;font-size:1rem;margin-left:auto;flex-shrink:0}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* HOME CARDS */
+.home-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none;display:block;color:inherit}
+.home-card:hover{border-color:var(--o);transform:translateY(-3px)}
 </style>
 </head>
 <body>
-<div class="header">
-  <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
-  <div class="header-center" style="display:flex;align-items:center;justify-content:center;gap:12px;flex:1">
-    <img src="logo.png" alt="RealEcom" style="height:32px;object-fit:contain;filter:brightness(0) invert(1)">
-    <div style="width:1px;height:28px;background:#333"></div>
-    <div class="brand-name" style="font-size:.85rem;letter-spacing:.08em">CALCULADORA REAL</div>
+
+<!-- NOTIFICAÇÕES -->
+<div class="notif-container" id="notif-container"></div>
+
+<!-- MODAL EVENTO -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">📅 Novo Evento</h3>
+    <div class="modal-field"><label>Título do evento</label><input type="text" id="ev-titulo" placeholder="Ex: Coleta Full, Vencimento conta..."></div>
+    <div class="modal-field"><label>Tipo</label>
+      <select id="ev-tipo">
+        <option value="full">📦 Coleta Full</option>
+        <option value="conta">💰 Vencimento de Conta</option>
+        <option value="entrega">🚚 Entrega</option>
+        <option value="outro">📌 Outro</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Data</label><input type="date" id="ev-data"></div>
+    <div class="modal-field"><label>Hora (opcional)</label><input type="time" id="ev-hora"></div>
+    <div class="modal-field"><label>Observação (opcional)</label><input type="text" id="ev-obs" placeholder="Detalhes do evento..."></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="salvarEvento()">Salvar</button>
+    </div>
   </div>
-  <button class="btn-dash" onclick="showPage('dash')">📊 Dashboard</button>
 </div>
 
-<!-- CALCULADORA -->
-<div id="page-calc" class="page active">
+<!-- ===== PÁGINA INICIAL ===== -->
+<div id="page-home" class="page active">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px">
+    <div style="margin-bottom:36px;text-align:center">
+      <img src="logo.png" alt="RealEcom" style="height:120px;object-fit:contain;filter:brightness(0) invert(1)">
+    </div>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:28px;text-align:center">Selecione uma ferramenta para começar</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%;max-width:880px">
+
+      <div class="home-card" onclick="showPage('calc')">
+        <div style="font-size:2.5rem;margin-bottom:12px">🧮</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Calculadora</div>
+        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Calcule o preço ideal de venda, margem, ROI e Markup</div>
+      </div>
+
+      <div class="home-card" onclick="showPage('dash')">
+        <div style="font-size:2.5rem;margin-bottom:12px">📊</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Dashboard</div>
+        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Visualize e gerencie todos os produtos salvos</div>
+      </div>
+
+      <div class="home-card" onclick="showPage('cal')">
+        <div style="font-size:2.5rem;margin-bottom:12px">📅</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Calendário</div>
+        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Marque coletas Full, vencimentos e receba alertas</div>
+      </div>
+
+      <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card">
+        <div style="font-size:2.5rem;margin-bottom:12px">🔍</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:10px">Verificar Marca no INPI</div>
+        <div style="text-align:left;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">1</span><span>Clique em <strong style="color:#c4b5fd">Continuar</strong> sem login</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">2</span><span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">3</span><span>Em Consulta, selecione <strong style="color:#c4b5fd">Marca</strong></span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">4</span><span>Digite o nome e pesquise</span></div>
+        </div>
+      </a>
+
+    </div>
+    <button class="theme-toggle" id="theme-btn-home" onclick="toggleTheme()" style="margin-top:32px;display:none">☀️ Claro</button>
+  </div>
+</div>
+
+<!-- ===== HEADER (calc/dash/cal) ===== -->
+<div id="app-header" style="display:none">
+  <div class="header">
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex:1;cursor:pointer" onclick="showPage('home')">
+      <img src="logo.png" alt="RealEcom" style="height:42px;object-fit:contain;filter:brightness(0) invert(1)">
+      <div style="width:1px;height:28px;background:#333"></div>
+      <div style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</div>
+    </div>
+    <div style="width:110px"></div>
+  </div>
+</div>
+
+<!-- ===== CALCULADORA ===== -->
+<div id="page-calc" class="page">
+<div id="calc-header-placeholder"></div>
 <div class="main-layout">
 <div class="left-panel">
-
   <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:12px;gap:4px">
     <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff">💎 Cálculo pela Margem Desejada</button>
     <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:none;color:#4a3f6b">🌐 Cálculo pelo Valor Médio do Mercado</button>
@@ -179,7 +302,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="card">
-    <div class="card-title">🛒 Custo dos Produtos <span style="color:#f87171;font-size:.65rem;font-weight:600">(obrigatório)</span></div>
+    <div class="card-title">🛒 Custo dos Produtos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
     <div class="item-list" id="items-list">
       <div class="item-row">
         <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
@@ -190,7 +313,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="card">
-    <div class="card-title">📦 Frete & Outros Custos <span style="color:#f87171;font-size:.65rem;font-weight:600">(obrigatório)</span></div>
+    <div class="card-title">📦 Frete & Outros Custos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
     <div class="toggle-row">
       <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')">📐 Por Dimensões</button>
       <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')">✏️ Manual</button>
@@ -211,7 +334,7 @@ input[type=number]{-moz-appearance:textfield}
         <div style="font-size:.65rem;color:#3a3050;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600">Selecione a faixa de preço</div>
         <div class="frete-wrap"><table class="ft" id="frete-table"></table></div>
         <div class="frete-badge" id="frete-badge">✅ Frete: <span id="frete-val">—</span></div>
-        <div id="frete-aviso" style="display:none;margin-top:6px;background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#f87171;line-height:1.5"></div>
+        <div id="frete-aviso" style="display:none;margin-top:6px;border-radius:9px;padding:8px 11px;font-size:.76rem;line-height:1.5"></div>
       </div>
       <div class="note">Peso vol. = C × L × A ÷ 6000. Usa-se o maior.</div>
     </div>
@@ -224,7 +347,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="card">
-    <div class="card-title">📊 Taxas & Comissões — <span style="color:#f87171;font-size:.65rem;font-weight:600">Imposto e Comissão do ML obrigatórios</span></div>
+    <div class="card-title">📊 Taxas & Comissões — <span style="color:#f87171;font-size:.65rem">Imposto e Comissão do ML obrigatórios</span></div>
     <div class="row2">
       <div class="field"><label>🏛️ Impostos (%)</label><input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1"></div>
       <div class="field"><label>🏷️ Comissão Marketplace (%)</label><input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1"></div>
@@ -233,7 +356,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="margem-card" id="margem-block">
-    <div class="card-title">💎 Margem de Lucro Desejada <span style="color:#f87171;font-size:.65rem;font-weight:600">(obrigatório)</span></div>
+    <div class="card-title">💎 Margem de Lucro Desejada <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
     <div class="field"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1"></div>
     <div class="margem-hint">↑ Meta de lucro em % sobre o preço de venda</div>
   </div>
@@ -248,42 +371,24 @@ input[type=number]{-moz-appearance:textfield}
 
   <button class="btn-calc" id="btn-calc" onclick="calcular()">⚡ Calcular Precificação</button>
 
-  <!-- INPI -->
   <div id="inpi-box" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:10px">
     <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4a3f6b;margin-bottom:10px">📋 Verificar Marca Registrada no INPI</div>
     <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a">
-        <span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">1</span>
-        <span>Na tela inicial, clique em <strong style="color:#c4b5fd">Continuar</strong> para acessar sem login</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a">
-        <span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">2</span>
-        <span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a">
-        <span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">3</span>
-        <span>Em Consulta, selecione <strong style="color:#c4b5fd">Marca</strong> novamente</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a">
-        <span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">4</span>
-        <span>Digite o nome da marca no campo de busca e pesquise</span>
-      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">1</span><span>Na tela inicial, clique em <strong style="color:#c4b5fd">Continuar</strong> para acessar sem login</span></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">2</span><span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">3</span><span>Em Consulta, selecione <strong style="color:#c4b5fd">Marca</strong> novamente</span></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#6b5f8a"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">4</span><span>Digite o nome da marca no campo de busca e pesquise</span></div>
     </div>
-    <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;font-size:.82rem;font-weight:700;text-align:center;text-decoration:none;letter-spacing:.02em">
-      🔍 VERIFICAR MARCA REGISTRADA NO INPI
-    </a>
+    <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;font-size:.82rem;font-weight:700;text-align:center;text-decoration:none">🔍 VERIFICAR MARCA REGISTRADA NO INPI</a>
   </div>
-
 </div>
 
-<!-- RESULTADO -->
 <div class="right-panel">
   <div class="right-empty" id="right-empty">
     <div style="font-size:3rem">🧮</div>
     <p style="font-size:.82rem;color:#888;line-height:1.6">Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong></p>
   </div>
   <div id="right-result" style="display:none">
-
     <div class="price-grid" id="price-grid">
       <div class="price-card calc">
         <div class="pc-tag">🎯 Preço Ideal Calculado</div>
@@ -306,17 +411,8 @@ input[type=number]{-moz-appearance:textfield}
         </div>
       </div>
     </div>
-
-    <div class="explain-box">
-      <div class="ex-title">📖 Análise</div>
-      <span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span>
-    </div>
-
-    <div class="breakdown" id="frete-alert-box" style="display:none">
-      <div class="bd-title">⚡ Oportunidade de Frete</div>
-      <div id="frete-alert-content"></div>
-    </div>
-
+    <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
+    <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title">⚡ Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
     <div class="breakdown">
       <div class="bd-title">Detalhamento do Preço</div>
       <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
@@ -329,7 +425,6 @@ input[type=number]{-moz-appearance:textfield}
       <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
       <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
     </div>
-
     <div class="breakdown">
       <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unidades</div>
       <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
@@ -341,7 +436,6 @@ input[type=number]{-moz-appearance:textfield}
       <div class="brow highlight"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
       <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
     </div>
-
     <div class="save-card" id="save-card" style="display:none">
       <div class="save-title">💾 Salvar no Dashboard</div>
       <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
@@ -349,25 +443,43 @@ input[type=number]{-moz-appearance:textfield}
         <div class="field"><label>Fornecedor</label><input type="text" id="save-forn" placeholder="Nome do fornecedor"></div>
         <div class="field"><label>Código do produto</label><input type="text" id="save-cod" placeholder="Ex: SKU-001"></div>
       </div>
-      <div class="field"><label>📝 Observações</label><textarea id="save-obs" placeholder="Anotações sobre este produto..." style="width:100%;background:#1a1428;border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.85rem;color:#f0f0f0;resize:none;height:60px;outline:none;font-family:inherit;transition:border .2s" onfocus="this.style.borderColor='var(--o)'" onblur="this.style.borderColor='var(--border)'"></textarea></div>
+      <div class="field"><label>📝 Observações</label><textarea id="save-obs" placeholder="Anotações..." style="width:100%;background:#1a1428;border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.85rem;color:var(--text);resize:none;height:60px;outline:none;font-family:inherit"></textarea></div>
       <button class="btn-save" onclick="salvarProduto()">💾 Salvar no Dashboard</button>
     </div>
-
     <button class="btn-reset" onclick="resetar()">← Novo Cálculo</button>
   </div>
 </div>
 </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ===== DASHBOARD ===== -->
 <div id="page-dash" class="page">
+  <div id="dash-header-placeholder"></div>
   <div class="dash-page">
     <div class="dash-header">
-      <button class="btn-back" onclick="showPage('calc')">← Voltar</button>
+      <button class="btn-back" onclick="showPage('home')">← Voltar</button>
       <h2>📊 Dashboard de <span>Produtos</span></h2>
       <div style="width:80px"></div>
     </div>
     <div id="dash-content"></div>
+  </div>
+</div>
+
+<!-- ===== CALENDÁRIO ===== -->
+<div id="page-cal" class="page">
+  <div id="cal-header-placeholder"></div>
+  <div class="cal-page">
+    <div class="cal-header">
+      <button class="btn-back" onclick="showPage('home')">← Voltar</button>
+      <div class="cal-nav">
+        <button onclick="navMes(-1)">‹</button>
+        <h3 id="cal-titulo">—</h3>
+        <button onclick="navMes(1)">›</button>
+      </div>
+      <button onclick="abrirModal(null)" style="background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer">+ Evento</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div id="cal-eventos-lista" style="margin-top:8px"></div>
   </div>
 </div>
 
@@ -379,23 +491,48 @@ const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119',
 const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
 
 let pesoUsado=0,freteSel=0,freteSel_col=undefined,freteMode='dim',lastCalc=null,calcMode=1;
+let calAno=new Date().getFullYear(),calMes=new Date().getMonth(),calDataSel=null;
 
-function toggleTheme(){
-  const isLight=document.body.classList.toggle('light');
-  document.getElementById('theme-btn').textContent=isLight?'🌙 Escuro':'☀️ Claro';
-  localStorage.setItem('realecom_theme',isLight?'light':'dark');
-}
-// Restaurar tema salvo
-(function(){
-  const t=localStorage.getItem('realecom_theme');
-  if(t==='light'){document.body.classList.add('light');document.getElementById('theme-btn').textContent='🌙 Escuro';}
-})();
-
-document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
-
+// ─── UTILS ───────────────────────────────────────────────
 function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtKg(v){return v%1===0?v.toFixed(0)+' kg':v.toFixed(v<1?3:2)+' kg';}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
+
+// ─── PAGES ───────────────────────────────────────────────
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const h=document.getElementById('app-header');
+  if(p==='home'){h.style.display='none';}
+  else{
+    h.style.display='block';
+    // Move header into the correct page
+    ['calc','dash','cal'].forEach(id=>{
+      const ph=document.getElementById(id+'-header-placeholder');
+      if(ph) ph.innerHTML='';
+    });
+    const ph=document.getElementById(p+'-header-placeholder');
+    if(ph) ph.appendChild(h);
+  }
+  if(p==='dash')renderDash();
+  if(p==='cal')renderCal();
+}
+
+// ─── TEMA ────────────────────────────────────────────────
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  const label=isLight?'🌙 Escuro':'☀️ Claro';
+  ['theme-btn','theme-btn-home'].forEach(id=>{const b=document.getElementById(id);if(b)b.textContent=label;});
+  localStorage.setItem('realecom_theme',isLight?'light':'dark');
+}
+(function(){
+  const t=localStorage.getItem('realecom_theme');
+  if(t==='light'){document.body.classList.add('light');['theme-btn','theme-btn-home'].forEach(id=>{const b=document.getElementById(id);if(b)b.textContent='🌙 Escuro';});}
+})();
+
+// ─── FRETE ───────────────────────────────────────────────
+function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
+function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
 
 function verificarFaixaFrete(){
   const aviso=document.getElementById('frete-aviso');
@@ -409,39 +546,19 @@ function verificarFaixaFrete(){
     aviso.style.cssText='display:block;margin-top:6px;background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#f87171;line-height:1.5';
     aviso.textContent=`⚠️ Atenção: o preço calculado (${fmt(lastCalc.preco)}) corresponde à faixa ${precoLabels[getPrecoIdx(lastCalc.preco)]}, mas você selecionou ${precoLabels[freteSel_col]}. O frete pode estar incorreto.`;
   }
-}function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');if(p==='dash')renderDash();}
-function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
-function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
+}
 
-function setMode(m){
-  calcMode=m;
-  const b1=document.getElementById('mode-btn-1'),b2=document.getElementById('mode-btn-2');
-  const mb=document.getElementById('margem-block');
-  const mlInput=document.getElementById('preco-ml'),mlLabel=document.getElementById('ml-label');
-  if(m===1){
-    b1.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b1.style.color='#fff';
-    b2.style.background='none';b2.style.color='#4a3f6b';
-    mb.style.display='block';
-    mlInput.placeholder='Opcional';
-    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span>';
-    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
-    document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
-    document.getElementById('pc-ml-card').style.display='block';
-  }else{
-    b2.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b2.style.color='#fff';
-    b1.style.background='none';b1.style.color='#4a3f6b';
-    mb.style.display='none';
-    mlInput.placeholder='Obrigatório';
-    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171">*</span>';
-    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
-  }
+function selFrete(col,val){
+  freteSel=val;freteSel_col=col;renderTable(col);
+  document.getElementById('frete-badge').style.display='block';
+  document.getElementById('frete-val').textContent=fmt(val);
+  verificarFaixaFrete();
 }
 
 function calcPeso(){
   const pr=parseFloat(document.getElementById('peso').value)||0;
   const c=parseFloat(document.getElementById('comp').value)||0,l=parseFloat(document.getElementById('larg').value)||0,a=parseFloat(document.getElementById('alt').value)||0;
-  const pv=(c*l*a)/6000;pesoUsado=Math.max(pr,pv);freteSel=0;
+  const pv=(c*l*a)/6000;pesoUsado=Math.max(pr,pv);freteSel=0;freteSel_col=undefined;
   document.getElementById('frete-badge').style.display='none';
   const pi=document.getElementById('peso-info'),fs=document.getElementById('frete-section');
   if(pr>0||pv>0){
@@ -470,15 +587,15 @@ function renderTable(selCol){
   tbl.innerHTML=h+'</tbody>';
 }
 
-function selFrete(col,val){
-  freteSel=val;
-  freteSel_col=col;
-  renderTable(col);
-  document.getElementById('frete-badge').style.display='block';
-  document.getElementById('frete-val').textContent=fmt(val);
-  verificarFaixaFrete();
+function switchFrete(mode){
+  freteMode=mode;
+  document.getElementById('tab-dim').style.display=mode==='dim'?'block':'none';
+  document.getElementById('tab-manual').style.display=mode==='manual'?'block':'none';
+  document.getElementById('btn-dim').className='toggle-btn'+(mode==='dim'?' active':'');
+  document.getElementById('btn-manual').className='toggle-btn'+(mode==='manual'?' active':'');
 }
-function switchFrete(mode){freteMode=mode;document.getElementById('tab-dim').style.display=mode==='dim'?'block':'none';document.getElementById('tab-manual').style.display=mode==='manual'?'block':'none';document.getElementById('btn-dim').className='toggle-btn'+(mode==='dim'?' active':'');document.getElementById('btn-manual').className='toggle-btn'+(mode==='manual'?' active':'');}
+
+// ─── ITENS ───────────────────────────────────────────────
 function sumItems(){return[...document.querySelectorAll('.item-input')].reduce((s,e)=>s+(parseFloat(e.value)||0),0);}
 function addItem(){
   const list=document.getElementById('items-list');if(list.children.length>=10)return;
@@ -488,6 +605,30 @@ function addItem(){
 }
 function removeItem(btn){btn.parentElement.remove();const rows=document.querySelectorAll('.item-row');if(rows.length===1)rows[0].querySelector('.remove-btn').style.display='none';}
 
+// ─── MODO ────────────────────────────────────────────────
+function setMode(m){
+  calcMode=m;
+  const b1=document.getElementById('mode-btn-1'),b2=document.getElementById('mode-btn-2');
+  const mb=document.getElementById('margem-block');
+  const mlInput=document.getElementById('preco-ml'),mlLabel=document.getElementById('ml-label');
+  if(m===1){
+    b1.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b1.style.color='#fff';
+    b2.style.background='none';b2.style.color='#4a3f6b';
+    mb.style.display='block';mlInput.placeholder='Obrigatório';
+    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span>';
+    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
+    document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
+    document.getElementById('pc-ml-card').style.display='block';
+  }else{
+    b2.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b2.style.color='#fff';
+    b1.style.background='none';b1.style.color='#4a3f6b';
+    mb.style.display='none';mlInput.placeholder='Obrigatório';
+    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171">*</span>';
+    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
+  }
+}
+
+// ─── CALCULAR ────────────────────────────────────────────
 function calcular(){
   const custo=sumItems();
   const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
@@ -506,8 +647,7 @@ function calcular(){
     const payout=precoML-base-vI-vC-vA;
     const margemReal=(payout/precoML)*100;
     const markup=custo>0?precoML/custo:0;
-    const inv=custo*qtd;
-    const roi=inv>0?(payout*qtd/inv)*100:0;
+    const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
     lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,qtd,precoML,markup,roi,payout,inv};
     document.getElementById('price-grid').style.gridTemplateColumns='1fr';
     document.getElementById('pc-ml-card').style.display='none';
@@ -522,22 +662,19 @@ function calcular(){
     const fator15=1-0.15-pI-pC-pA;
     const custoMax15=fator15>0?(precoML*fator15-frete-ins):null;
     document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'#4ade80':margemReal>=0?'#F0A070':'#f87171'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:#f87171">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'#4ade80':'#f87171'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
+    if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(precoML));verificarFaixaFrete();}
     preencherDetalhes(custo,frete,ins,base,vI,vC,vA,0,precoML,payout,qtd,inv,vI*qtd);
     document.getElementById('save-card').style.display='block';
-    finalizarCalculo();
-    return;
+    finalizarCalculo();return;
   }
 
   const fator=1-pI-pC-pA-pM;
   if(fator<=0){alert('A soma dos percentuais é ≥ 100%. Revise os valores.');return;}
   const preco=base/fator;
-  if(pesoUsado>0&&freteMode==='dim')renderTable(getPrecoIdx(preco));
-  verificarFaixaFrete();
+  if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(preco));verificarFaixaFrete();}
   const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
-  const payout=preco-base-vI-vC-vA;
-  const markup=custo>0?preco/custo:0;
-  const inv=custo*qtd;
-  const roi=inv>0?(payout*qtd/inv)*100:0;
+  const payout=preco-base-vI-vC-vA,markup=custo>0?preco/custo:0;
+  const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
   lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,qtd,precoML,markup,roi,payout,inv};
 
   document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
@@ -550,14 +687,11 @@ function calcular(){
   document.getElementById('pc-roi').textContent=fmtP(roi);
   document.getElementById('pc-mg').textContent=fmtP(pM*100);
 
-  const mlCard=document.getElementById('pc-ml-card');
-  mlCard.style.display='block';
+  const mlCard=document.getElementById('pc-ml-card');mlCard.style.display='block';
   if(precoML>0){
     const mlvI=precoML*pI,mlvC=precoML*pC,mlvA=precoML*pA;
     const mlPayout=precoML-base-mlvI-mlvC-mlvA;
-    const mlMarkup=custo>0?precoML/custo:0;
-    const mlRoi=inv>0?(mlPayout*qtd/inv)*100:0;
-    const mlMargem=(mlPayout/precoML)*100;
+    const mlMarkup=custo>0?precoML/custo:0,mlRoi=inv>0?(mlPayout*qtd/inv)*100:0,mlMargem=(mlPayout/precoML)*100;
     document.getElementById('pc-ml-preco').textContent=fmt(precoML);
     document.getElementById('ml-mk').textContent=mlMarkup.toFixed(2).replace('.',',');
     document.getElementById('ml-roi').textContent=fmtP(mlRoi);
@@ -607,7 +741,7 @@ function calcular(){
     }
     if(alerta){
       alertBox.style.display='block';
-      document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:#8a7aaa">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong> — pode compensar o preço menor.</div>`;
+      document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:#8a7aaa">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>.</div>`;
     }else{alertBox.style.display='none';}
   }else{alertBox.style.display='none';}
 
@@ -642,6 +776,14 @@ function finalizarCalculo(){
   document.getElementById('right-result').style.display='block';
 }
 
+function resetar(){
+  document.getElementById('right-empty').style.display='flex';
+  document.getElementById('right-result').style.display='none';
+  document.getElementById('inpi-box').style.display='none';
+  lastCalc=null;
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────
 function salvarProduto(){
   if(!lastCalc)return;
   const nome=document.getElementById('save-nome').value.trim();
@@ -650,81 +792,154 @@ function salvarProduto(){
   const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
   const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout};
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  prods.unshift(prod);
-  localStorage.setItem('realecom_prods',JSON.stringify(prods));
-  document.getElementById('save-nome').value='';
-  document.getElementById('save-forn').value='';
-  document.getElementById('save-cod').value='';
-  document.getElementById('save-obs').value='';
+  prods.unshift(prod);localStorage.setItem('realecom_prods',JSON.stringify(prods));
+  document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
   alert('✅ Produto salvo no Dashboard!');
 }
 
-function salvarObs(id,val){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  const p=prods.find(p=>p.id===id);
-  if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));}
-}
+function salvarObs(id,val){const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');const p=prods.find(p=>p.id===id);if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));}}
 
 function deletarProduto(id){
   if(!confirm('Remover este produto?'))return;
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]').filter(p=>p.id!==id);
-  localStorage.setItem('realecom_prods',JSON.stringify(prods));
-  renderDash();
+  localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();
 }
 
-function toggleDetail(id){
-  const det=document.getElementById('det-'+id);
-  const btn=document.getElementById('tbtn-'+id);
-  const open=det.style.display==='block';
-  det.style.display=open?'none':'block';
-  btn.textContent=open?'+ detalhes':'− fechar';
-}
+function toggleDetail(id){const det=document.getElementById('det-'+id);const btn=document.getElementById('tbtn-'+id);const open=det.style.display==='block';det.style.display=open?'none':'block';btn.textContent=open?'+ detalhes':'− fechar';}
 
 function renderDash(){
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   const el=document.getElementById('dash-content');
-  if(!prods.length){
-    el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';
-    return;
-  }
+  if(!prods.length){el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';return;}
   el.innerHTML=prods.map(p=>{
     const rc=p.roi>=10?'#4ade80':p.roi>=5?'#F0A070':'#f87171';
     const mc=p.margem>=10?'#4ade80':p.margem>=5?'#F0A070':'#f87171';
     const mkc=p.markup>=1.5?'#4ade80':p.markup>=1.2?'#F0A070':'#f87171';
-    return`<div class="prod-card">
-      <div class="prod-card-top">
-        <div class="prod-name"><h3>${p.nome}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
-        <div class="prod-metric"><div class="pm-label">Preço</div><div class="pm-value" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
-        <div class="prod-metric"><div class="pm-label">ROI</div><div class="pm-value" style="color:${rc}">${fmtP(p.roi)}</div></div>
-        <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div></div>
-        <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div></div>
-        <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
-        <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
-          </svg>
-        </button>
+    return`<div class="prod-card"><div class="prod-card-top">
+      <div class="prod-name" style="flex:1;min-width:100px"><h3>${p.nome}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
+      <div class="prod-metric"><div class="pm-label">Preço</div><div class="pm-value" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
+      <div class="prod-metric"><div class="pm-label">ROI</div><div class="pm-value" style="color:${rc}">${fmtP(p.roi)}</div></div>
+      <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div></div>
+      <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div></div>
+      <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
+      <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+    </div>
+    <div class="prod-card-detail" id="det-${p.id}">
+      <div class="prod-detail-grid">
+        <div class="pd-item"><div class="pdl">Custo Real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
+        <div class="pd-item"><div class="pdl">Custo Ideal</div><div class="pdv" style="color:${p.custoIdeal!==null?'#4ade80':'#4a3f6b'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
+        <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
+        <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
       </div>
-      <div class="prod-card-detail" id="det-${p.id}">
-        <div class="prod-detail-grid">
-          <div class="pd-item"><div class="pdl">Custo Real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
-          <div class="pd-item"><div class="pdl">Custo Ideal</div><div class="pdv" style="color:${p.custoIdeal!==null?'#4ade80':'#4a3f6b'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
-          <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
-          <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
-        </div>
-        <div style="font-size:.62rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
-        <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
-      </div>
-    </div>`;
+      <div style="font-size:.62rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
+      <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
+    </div></div>`;
   }).join('');
 }
 
-function resetar(){
-  document.getElementById('right-empty').style.display='flex';
-  document.getElementById('right-result').style.display='none';
-  document.getElementById('inpi-box').style.display='none';
-  lastCalc=null;
+// ─── CALENDÁRIO ──────────────────────────────────────────
+const tipoInfo={full:{icon:'📦',label:'Coleta Full',cls:'full'},conta:{icon:'💰',label:'Vencimento de Conta',cls:'conta'},entrega:{icon:'🚚',label:'Entrega',cls:'entrega'},outro:{icon:'📌',label:'Outro',cls:'outro'}};
+const diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function getEventos(){return JSON.parse(localStorage.getItem('realecom_eventos')||'[]');}
+function saveEventos(evs){localStorage.setItem('realecom_eventos',JSON.stringify(evs));}
+
+function navMes(dir){calMes+=dir;if(calMes>11){calMes=0;calAno++;}if(calMes<0){calMes=11;calAno--;}renderCal();}
+
+function renderCal(){
+  document.getElementById('cal-titulo').textContent=`${meses[calMes]} ${calAno}`;
+  const grid=document.getElementById('cal-grid');
+  const eventos=getEventos();
+  const hoje=new Date();
+  const primeiroDia=new Date(calAno,calMes,1).getDay();
+  const diasNoMes=new Date(calAno,calMes+1,0).getDate();
+
+  let h='';
+  diasSemana.forEach(d=>h+=`<div class="cal-day-header">${d}</div>`);
+
+  // Dias do mês anterior
+  for(let i=0;i<primeiroDia;i++){
+    const d=new Date(calAno,calMes,0).getDate()-primeiroDia+i+1;
+    h+=`<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;
+  }
+
+  // Dias do mês atual
+  for(let d=1;d<=diasNoMes;d++){
+    const dataStr=`${calAno}-${String(calMes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isHoje=hoje.getFullYear()===calAno&&hoje.getMonth()===calMes&&hoje.getDate()===d;
+    const evsDia=eventos.filter(e=>e.data===dataStr);
+    const max=3;
+    let evsHtml=evsDia.slice(0,max).map(e=>`<div class="cal-event ${tipoInfo[e.tipo].cls}" title="${e.titulo}">${tipoInfo[e.tipo].icon} ${e.titulo}</div>`).join('');
+    if(evsDia.length>max)evsHtml+=`<div class="cal-event-more">+${evsDia.length-max} mais</div>`;
+    h+=`<div class="cal-day${isHoje?' today':''}" onclick="abrirModal('${dataStr}')"><div class="day-num">${d}</div>${evsHtml}</div>`;
+  }
+
+  // Dias do próximo mês
+  const total=primeiroDia+diasNoMes;
+  const resto=total%7===0?0:7-(total%7);
+  for(let i=1;i<=resto;i++) h+=`<div class="cal-day other-month"><div class="day-num">${i}</div></div>`;
+
+  grid.innerHTML=h;
 }
+
+function abrirModal(data){
+  calDataSel=data;
+  document.getElementById('ev-data').value=data||new Date().toISOString().split('T')[0];
+  document.getElementById('ev-titulo').value='';
+  document.getElementById('ev-hora').value='';
+  document.getElementById('ev-obs').value='';
+  document.getElementById('ev-tipo').value='full';
+  document.getElementById('modal-title').textContent=data?`📅 Novo Evento — ${data.split('-').reverse().join('/')}`:'📅 Novo Evento';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('ev-titulo').focus();
+}
+
+function fecharModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+function salvarEvento(){
+  const titulo=document.getElementById('ev-titulo').value.trim();
+  if(!titulo){alert('Informe o título do evento.');return;}
+  const ev={id:Date.now(),titulo,tipo:document.getElementById('ev-tipo').value,data:document.getElementById('ev-data').value,hora:document.getElementById('ev-hora').value,obs:document.getElementById('ev-obs').value.trim()};
+  const evs=getEventos();evs.push(ev);saveEventos(evs);
+  fecharModal();renderCal();
+}
+
+// ─── NOTIFICAÇÕES ────────────────────────────────────────
+function mostrarNotif(ev){
+  const container=document.getElementById('notif-container');
+  const ti=tipoInfo[ev.tipo];
+  const div=document.createElement('div');
+  div.className=`notif ${ev.tipo}`;
+  div.innerHTML=`<div class="notif-icon">${ti.icon}</div><div class="notif-body"><div class="notif-title">${ti.label}: ${ev.titulo}</div><div class="notif-sub">${ev.hora?ev.hora+' — ':''} ${ev.obs||'Hoje!'}</div></div><button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
+  container.appendChild(div);
+  setTimeout(()=>{if(div.parentElement)div.remove();},8000);
+}
+
+function verificarNotificacoes(){
+  const hoje=new Date();
+  const dataHoje=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
+  const amanha=new Date(hoje);amanha.setDate(amanha.getDate()+1);
+  const dataAmanha=`${amanha.getFullYear()}-${String(amanha.getMonth()+1).padStart(2,'0')}-${String(amanha.getDate()).padStart(2,'0')}`;
+  const notificados=JSON.parse(sessionStorage.getItem('notificados')||'[]');
+  const evs=getEventos();
+  evs.forEach(ev=>{
+    if((ev.data===dataHoje||ev.data===dataAmanha)&&!notificados.includes(ev.id)){
+      setTimeout(()=>mostrarNotif(ev),1000);
+      notificados.push(ev.id);
+    }
+  });
+  sessionStorage.setItem('notificados',JSON.stringify(notificados));
+}
+
+// Scroll impede alteração de campos numéricos
+document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
+
+// Fechar modal clicando fora
+document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))fecharModal();});
+
+// Verificar notificações ao carregar
+verificarNotificacoes();
 </script>
 </body>
 </html>
