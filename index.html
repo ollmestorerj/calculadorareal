@@ -158,8 +158,8 @@ input[type=number]{-moz-appearance:textfield}
 <div class="header">
   <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
   <div class="header-center">
-    <img src="logo.png" alt="RealEcom" style="height:38px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:4px">
-    <div class="brand-name">CALCULADORA REAL</div>
+    <img src="logo.png" alt="RealEcom" style="height:56px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:2px">
+    <div class="brand-name" style="font-size:.85rem;letter-spacing:.08em">CALCULADORA REAL</div>
   </div>
   <button class="btn-dash" onclick="showPage('dash')">📊 Dashboard</button>
 </div>
@@ -210,6 +210,7 @@ input[type=number]{-moz-appearance:textfield}
         <div style="font-size:.65rem;color:#3a3050;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600">Selecione a faixa de preço</div>
         <div class="frete-wrap"><table class="ft" id="frete-table"></table></div>
         <div class="frete-badge" id="frete-badge">✅ Frete: <span id="frete-val">—</span></div>
+        <div id="frete-aviso" style="display:none;margin-top:6px;background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#f87171;line-height:1.5"></div>
       </div>
       <div class="note">Peso vol. = C × L × A ÷ 6000. Usa-se o maior.</div>
     </div>
@@ -376,7 +377,7 @@ const precoFaixas=[0,19,49,79,100,120,150,200];
 const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119','R$120–149','R$150–199','R$200+'];
 const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
 
-let pesoUsado=0,freteSel=0,freteMode='dim',lastCalc=null,calcMode=1;
+let pesoUsado=0,freteSel=0,freteSel_col=undefined,freteMode='dim',lastCalc=null,calcMode=1;
 
 function toggleTheme(){
   const isLight=document.body.classList.toggle('light');
@@ -392,7 +393,22 @@ function toggleTheme(){
 document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
 
 function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtKg(v){return v%1===0?v.toFixed(0)+' kg':v.toFixed(v<1?3:2)+' kg';}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
+
+function verificarFaixaFrete(){
+  const aviso=document.getElementById('frete-aviso');
+  if(!aviso)return;
+  if(!lastCalc||freteSel_col===undefined){aviso.style.display='none';return;}
+  const colCorreta=getPrecoIdx(lastCalc.preco);
+  if(freteSel_col===colCorreta){
+    aviso.style.cssText='display:block;margin-top:6px;background:#05291622;border:1px solid #16a34a55;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#4ade80;line-height:1.5';
+    aviso.textContent=`✅ Faixa correta! O preço calculado (${fmt(lastCalc.preco)}) está dentro da faixa ${precoLabels[colCorreta]}.`;
+  }else{
+    aviso.style.cssText='display:block;margin-top:6px;background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#f87171;line-height:1.5';
+    aviso.textContent=`⚠️ Atenção: o preço calculado (${fmt(lastCalc.preco)}) corresponde à faixa ${precoLabels[getPrecoIdx(lastCalc.preco)]}, mas você selecionou ${precoLabels[freteSel_col]}. O frete pode estar incorreto.`;
+  }
+}function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');if(p==='dash')renderDash();}
 function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
 function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
@@ -429,9 +445,9 @@ function calcPeso(){
   const pi=document.getElementById('peso-info'),fs=document.getElementById('frete-section');
   if(pr>0||pv>0){
     pi.style.display='flex';
-    document.getElementById('pi-real').textContent=pr>0?pr.toFixed(3)+' kg':'—';
-    document.getElementById('pi-vol').textContent=pv>0?pv.toFixed(3)+' kg':'—';
-    document.getElementById('pi-usado').textContent=pesoUsado.toFixed(3)+' kg'+(pv>pr&&pv>0?' (vol.)':' (real)');
+    document.getElementById('pi-real').textContent=pr>0?fmtKg(pr):'—';
+    document.getElementById('pi-vol').textContent=pv>0?fmtKg(pv):'—';
+    document.getElementById('pi-usado').textContent=fmtKg(pesoUsado)+(pv>pr&&pv>0?' (vol.)':' (real)');
     fs.style.display='block';renderTable(-1);
   }else{pi.style.display='none';fs.style.display='none';}
 }
@@ -453,7 +469,14 @@ function renderTable(selCol){
   tbl.innerHTML=h+'</tbody>';
 }
 
-function selFrete(col,val){freteSel=val;renderTable(col);document.getElementById('frete-badge').style.display='block';document.getElementById('frete-val').textContent=fmt(val);}
+function selFrete(col,val){
+  freteSel=val;
+  freteSel_col=col;
+  renderTable(col);
+  document.getElementById('frete-badge').style.display='block';
+  document.getElementById('frete-val').textContent=fmt(val);
+  verificarFaixaFrete();
+}
 function switchFrete(mode){freteMode=mode;document.getElementById('tab-dim').style.display=mode==='dim'?'block':'none';document.getElementById('tab-manual').style.display=mode==='manual'?'block':'none';document.getElementById('btn-dim').className='toggle-btn'+(mode==='dim'?' active':'');document.getElementById('btn-manual').className='toggle-btn'+(mode==='manual'?' active':'');}
 function sumItems(){return[...document.querySelectorAll('.item-input')].reduce((s,e)=>s+(parseFloat(e.value)||0),0);}
 function addItem(){
@@ -508,6 +531,7 @@ function calcular(){
   if(fator<=0){alert('A soma dos percentuais é ≥ 100%. Revise os valores.');return;}
   const preco=base/fator;
   if(pesoUsado>0&&freteMode==='dim')renderTable(getPrecoIdx(preco));
+  verificarFaixaFrete();
   const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
   const payout=preco-base-vI-vC-vA;
   const markup=custo>0?preco/custo:0;
