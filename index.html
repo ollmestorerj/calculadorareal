@@ -71,7 +71,8 @@ body.light .ft td.pcol{background:#ede9fe;color:var(--p)}
 body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
 body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
 body.light .field input,body.light .field textarea{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
-body.light .logo-img{filter:none;content:url('logo-color.png')}
+.logo-img{filter:brightness(0) invert(1)}
+body.light .logo-img{filter:none}
 body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
 
 .btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;position:relative}
@@ -179,6 +180,14 @@ body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:#6b5f8a}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:#161022;border:1px solid var(--border);border-radius:16px;padding:22px;width:100%;max-width:400px;margin:20px}
+body.light .modal{background:#f0f0f0!important}
+body.light .modal h3{color:#1a1030!important}
+body.light .modal-field label{color:#444!important}
+body.light .modal-field input,
+body.light .modal-field select,
+body.light .modal-field textarea{background:#e0e0e0!important;border-color:#bbb!important;color:#111!important}
+body.light .modal-field select option{background:#e0e0e0!important;color:#111!important}
+body.light .btn-cancel{background:#e0e0e0!important;color:#444!important;border-color:#bbb!important}
 .modal h3{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:16px}
 .modal-field{margin-bottom:12px}
 .modal-field label{display:block;font-size:.76rem;color:#6b5f8a;margin-bottom:4px;font-weight:500}
