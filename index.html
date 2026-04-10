@@ -918,30 +918,55 @@ function salvarEvento(){
 }
 
 // ─── NOTIFICAÇÕES ────────────────────────────────────────
-function mostrarNotif(ev){
-  const container=document.getElementById('notif-container');
-  const ti=tipoInfo[ev.tipo];
-  const div=document.createElement('div');
-  div.className=`notif ${ev.tipo}`;
-  div.innerHTML=`<div class="notif-icon">${ti.icon}</div><div class="notif-body"><div class="notif-title">${ti.label}: ${ev.titulo}</div><div class="notif-sub">${ev.hora?ev.hora+' — ':''} ${ev.obs||'Hoje!'}</div></div><button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
-  container.appendChild(div);
-  setTimeout(()=>{if(div.parentElement)div.remove();},8000);
-}
-
 function verificarNotificacoes(){
-  const hoje=new Date();
-  const dataHoje=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
-  const amanha=new Date(hoje);amanha.setDate(amanha.getDate()+1);
-  const dataAmanha=`${amanha.getFullYear()}-${String(amanha.getMonth()+1).padStart(2,'0')}-${String(amanha.getDate()).padStart(2,'0')}`;
+  const hoje=new Date();hoje.setHours(0,0,0,0);
   const notificados=JSON.parse(sessionStorage.getItem('notificados')||'[]');
   const evs=getEventos();
+
+  const msgFull={
+    5:'📦 Coleta Full em 5 dias! Vai enviar? Se não for presta atenção na data limite de cancelamento!',
+    4:'📦 Coleta Full em 4 dias! Se for alterar a data presta atenção para não tomar multa!',
+    3:'📦 Coleta Full em 3 dias! Já conferiu todos os produtos do envio? Olha lá!',
+    2:'📦 Coleta Full em 2 dias! Etiquetou tudo? Não esquece de cobrir o cód. de barras eim!',
+    1:'📦 Coleta Full amanhã!',
+    0:'📦 Hoje é o dia da Coleta Full! Não esquece a Autorização de Entrada e a Nota de Remessa!'
+  };
+
   evs.forEach(ev=>{
-    if((ev.data===dataHoje||ev.data===dataAmanha)&&!notificados.includes(ev.id)){
-      setTimeout(()=>mostrarNotif(ev),1000);
-      notificados.push(ev.id);
+    const dataEv=new Date(ev.data+'T00:00:00');
+    const diffDias=Math.round((dataEv-hoje)/(1000*60*60*24));
+    const chave=`${ev.id}_${diffDias}`;
+    if(notificados.includes(chave))return;
+
+    if(ev.tipo==='full'&&diffDias>=0&&diffDias<=5){
+      const msg=msgFull[diffDias];
+      setTimeout(()=>mostrarNotifMsg(ev,msg,diffDias),800);
+      notificados.push(chave);
+    }else if(ev.tipo!=='full'&&(diffDias===0||diffDias===1)){
+      const ti=tipoInfo[ev.tipo];
+      const msg=diffDias===0?`${ti.icon} Hoje: ${ev.titulo}!`:`${ti.icon} Amanhã: ${ev.titulo}!`;
+      setTimeout(()=>mostrarNotifMsg(ev,msg,diffDias),800);
+      notificados.push(chave);
     }
   });
   sessionStorage.setItem('notificados',JSON.stringify(notificados));
+}
+
+function mostrarNotifMsg(ev,mensagem,diffDias){
+  const container=document.getElementById('notif-container');
+  const ti=tipoInfo[ev.tipo];
+  const urgencia=diffDias===0?'#f87171':diffDias===1?'#F0A070':'#a78bfa';
+  const div=document.createElement('div');
+  div.className=`notif ${ev.tipo}`;
+  div.style.borderColor=urgencia;
+  div.innerHTML=`<div class="notif-icon">${ti.icon}</div>
+    <div class="notif-body">
+      <div class="notif-title" style="color:${urgencia}">${mensagem}</div>
+      <div class="notif-sub">${ev.data.split('-').reverse().join('/')}${ev.hora?' às '+ev.hora:''}${ev.obs?' — '+ev.obs:''}</div>
+    </div>
+    <button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
+  container.appendChild(div);
+  setTimeout(()=>{if(div.parentElement)div.remove();},8000);
 }
 
 // Scroll impede alteração de campos numéricos
