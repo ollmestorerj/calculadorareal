@@ -52,8 +52,9 @@ input[type=number]{-moz-appearance:textfield}
 .toggle-row{display:flex;gap:7px;margin-bottom:9px}
 .toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid var(--border);background:#1a1428;color:#4a3f6b;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
 .toggle-btn.active{border-color:var(--o);color:var(--o);background:#F0A07010}
-body.light .toggle-btn{background:#e5e5e5;color:#888;border-color:#ccc}
-body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
+/* Observação no modo claro */
+body.light .prod-obs{background:#e8e8e8!important;color:#1a1030!important;border-color:#ccc!important}
+body.light textarea{background:#e8e8e8!important;color:#1a1030!important;border-color:#ccc!important}
 .peso-info{background:#1a1428;border:1px solid var(--border);border-radius:9px;padding:9px 11px;margin-top:7px;font-size:.78rem;display:none;flex-wrap:wrap;gap:10px}
 .peso-info .pi{color:#6b5f8a}.peso-info .pi strong{color:var(--o)}
 .frete-wrap{overflow-x:auto;margin-top:8px}
@@ -72,7 +73,8 @@ body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
 body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
 body.light .field input,body.light .field textarea{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
 .logo-img{filter:none}
-body.light .logo-img{filter:none!important}
+body.light .toggle-btn{background:#e5e5e5;color:#888;border-color:#ccc}
+body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
 body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
 
 .btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:4px;position:relative}
@@ -882,7 +884,7 @@ function renderCal(){
     const isHoje=hoje.getFullYear()===calAno&&hoje.getMonth()===calMes&&hoje.getDate()===d;
     const evsDia=eventos.filter(e=>e.data===dataStr);
     const max=3;
-    let evsHtml=evsDia.slice(0,max).map(e=>`<div class="cal-event ${tipoInfo[e.tipo].cls}" title="${e.titulo}">${tipoInfo[e.tipo].icon} ${e.titulo}</div>`).join('');
+    let evsHtml=evsDia.slice(0,max).map(e=>`<div class="cal-event ${tipoInfo[e.tipo].cls}" onclick="event.stopPropagation();abrirModal('${dataStr}',${e.id})" title="${e.titulo}">${tipoInfo[e.tipo].icon} ${e.titulo}</div>`).join('');
     if(evsDia.length>max)evsHtml+=`<div class="cal-event-more">+${evsDia.length-max} mais</div>`;
     h+=`<div class="cal-day${isHoje?' today':''}" onclick="abrirModal('${dataStr}')"><div class="day-num">${d}</div>${evsHtml}</div>`;
   }
@@ -895,26 +897,54 @@ function renderCal(){
   grid.innerHTML=h;
 }
 
-function abrirModal(data){
-  calDataSel=data;
-  document.getElementById('ev-data').value=data||new Date().toISOString().split('T')[0];
-  document.getElementById('ev-titulo').value='';
-  document.getElementById('ev-hora').value='';
-  document.getElementById('ev-obs').value='';
-  document.getElementById('ev-tipo').value='full';
-  document.getElementById('modal-title').textContent=data?`📅 Novo Evento — ${data.split('-').reverse().join('/')}`:'📅 Novo Evento';
+let evEditId=null;
+
+function abrirModal(data,evId){
+  evEditId=evId||null;
+  const evs=getEventos();
+  const ev=evId?evs.find(e=>e.id===evId):null;
+  document.getElementById('ev-data').value=ev?ev.data:(data||new Date().toISOString().split('T')[0]);
+  document.getElementById('ev-titulo').value=ev?ev.titulo:'';
+  document.getElementById('ev-hora').value=ev?ev.hora:'';
+  document.getElementById('ev-obs').value=ev?ev.obs:'';
+  document.getElementById('ev-tipo').value=ev?ev.tipo:'full';
+  document.getElementById('modal-title').textContent=ev?`✏️ Editar Evento`:(data?`📅 Novo Evento — ${data.split('-').reverse().join('/')}`:'📅 Novo Evento');
+  // Botão excluir só aparece ao editar
+  let btnDel=document.getElementById('btn-del-ev');
+  if(!btnDel){
+    btnDel=document.createElement('button');
+    btnDel.id='btn-del-ev';
+    btnDel.className='btn-cancel';
+    btnDel.style.cssText='background:#ff3b3018;border-color:#ff3b3055;color:#f87171;margin-right:auto';
+    btnDel.textContent='🗑 Excluir';
+    btnDel.onclick=()=>excluirEvento();
+    document.querySelector('.modal-btns').prepend(btnDel);
+  }
+  btnDel.style.display=ev?'block':'none';
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('ev-titulo').focus();
 }
 
-function fecharModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function fecharModal(){document.getElementById('modal-overlay').classList.remove('open');evEditId=null;}
+
+function excluirEvento(){
+  if(!evEditId)return;
+  if(!confirm('Excluir este evento?'))return;
+  const evs=getEventos().filter(e=>e.id!==evEditId);
+  saveEventos(evs);fecharModal();renderCal();
+}
 
 function salvarEvento(){
   const titulo=document.getElementById('ev-titulo').value.trim();
   if(!titulo){alert('Informe o título do evento.');return;}
-  const ev={id:Date.now(),titulo,tipo:document.getElementById('ev-tipo').value,data:document.getElementById('ev-data').value,hora:document.getElementById('ev-hora').value,obs:document.getElementById('ev-obs').value.trim()};
-  const evs=getEventos();evs.push(ev);saveEventos(evs);
-  fecharModal();renderCal();
+  const evs=getEventos();
+  if(evEditId){
+    const idx=evs.findIndex(e=>e.id===evEditId);
+    if(idx>=0){evs[idx]={...evs[idx],titulo,tipo:document.getElementById('ev-tipo').value,data:document.getElementById('ev-data').value,hora:document.getElementById('ev-hora').value,obs:document.getElementById('ev-obs').value.trim()};}
+  }else{
+    evs.push({id:Date.now(),titulo,tipo:document.getElementById('ev-tipo').value,data:document.getElementById('ev-data').value,hora:document.getElementById('ev-hora').value,obs:document.getElementById('ev-obs').value.trim()});
+  }
+  saveEventos(evs);fecharModal();renderCal();
 }
 
 // ─── NOTIFICAÇÕES ────────────────────────────────────────
@@ -970,7 +1000,10 @@ function mostrarNotifMsg(ev,mensagem,diffDias){
 }
 
 // Scroll impede alteração de campos numéricos
-document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
+document.addEventListener('wheel',e=>{
+  const el=document.activeElement;
+  if(el&&el.type==='number'){e.preventDefault();}
+},{passive:false});
 
 // Fechar modal clicando fora
 document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))fecharModal();});
