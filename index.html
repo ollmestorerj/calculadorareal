@@ -157,8 +157,9 @@ input[type=number]{-moz-appearance:textfield}
 <body>
 <div class="header">
   <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
-  <div class="header-center">
-    <img src="logo.png" alt="RealEcom" style="height:56px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:2px">
+  <div class="header-center" style="display:flex;align-items:center;justify-content:center;gap:12px;flex:1">
+    <img src="logo.png" alt="RealEcom" style="height:32px;object-fit:contain;filter:brightness(0) invert(1)">
+    <div style="width:1px;height:28px;background:#333"></div>
     <div class="brand-name" style="font-size:.85rem;letter-spacing:.08em">CALCULADORA REAL</div>
   </div>
   <button class="btn-dash" onclick="showPage('dash')">📊 Dashboard</button>
