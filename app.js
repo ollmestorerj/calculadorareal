@@ -511,3 +511,45 @@ function verificarNotificacoes(){
 
 document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
 verificarNotificacoes();
+
+function exportarExcel(){
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  if(!prods.length){alert('Nenhum produto no Dashboard para exportar.');return;}
+
+  const fmt2=(v)=>typeof v==='number'?v.toFixed(2).replace('.',','):v||'';
+
+  // Cabeçalho
+  const rows=[
+    ['Nome','Fornecedor','Código','Custo Real (R$)','Custo Ideal (R$)','Preço Calculado (R$)','Preço Médio ML (R$)','Lucro/unid. (R$)','Markup','ROI (%)','Margem (%)','Observações']
+  ];
+
+  prods.forEach(p=>{
+    rows.push([
+      p.nome||'',
+      p.forn||'',
+      p.cod||'',
+      fmt2(p.custoReal),
+      p.custoIdeal!==null?fmt2(Math.max(p.custoIdeal,0)):'',
+      fmt2(p.precoCalc),
+      p.precoML>0?fmt2(p.precoML):'',
+      fmt2(p.payout),
+      p.markup?p.markup.toFixed(2).replace('.',','):'',
+      fmt2(p.roi),
+      fmt2(p.margem),
+      p.obs||''
+    ]);
+  });
+
+  // Gerar CSV com separador ; (compatível com Excel BR)
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const bom='\uFEFF'; // BOM para Excel reconhecer UTF-8
+  const blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`dashboard_realecom_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
