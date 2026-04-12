@@ -655,13 +655,36 @@ function exportarExcel(){
         <button onclick="salvarMetas()" style="width:100%;margin-top:10px;padding:8px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:9px;font-size:.76rem;font-weight:700;cursor:pointer">💾 Salvar Meta</button>
       </div>
 
-      <!-- Nota de andamento -->
-      <div class="nota-card" style="margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between">
-        <div class="meta-card-title" style="color:#4a8fcc">📝 Nota de Andamento</div>
-        <div class="nota-display" id="nota-display" style="font-size:2.8rem">7,5</div>
-        <input type="range" class="nota-slider" id="nota-slider" min="0" max="10" step="0.5" value="7.5" oninput="atualizarNota(this.value)">
-        <div style="display:flex;justify-content:space-between;font-size:.62rem;color:#a0a0a0;margin-bottom:6px"><span>0</span><span>5</span><span>10</span></div>
-        <textarea class="meta-input" id="nota-obs" placeholder="Como está indo?..." style="height:52px;resize:none;font-size:.76rem"></textarea>
+      <!-- Painel de qualidade -->
+      <div class="meta-card" style="margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between">
+        <div class="meta-card-title" style="color:#4a8fcc;margin-bottom:10px">🔬 Qualidade das Análises</div>
+
+        <!-- Total analisado no mês -->
+        <div style="background:#1a1428;border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:center">
+          <div style="font-size:.68rem;color:#d0d0d0;margin-bottom:2px">Você analisou este mês</div>
+          <div style="font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="qual-total">0</div>
+          <div style="font-size:.65rem;color:#a0a0a0">produtos</div>
+        </div>
+
+        <!-- Métricas de ROI -->
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #4ade80">
+            <span style="font-size:.72rem;color:#d0d0d0">ROI acima de 1,60x</span>
+            <span style="font-size:.85rem;font-weight:800;color:#4ade80" id="qual-roi160">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #F0A070">
+            <span style="font-size:.72rem;color:#d0d0d0">ROI acima de 1,80x</span>
+            <span style="font-size:.85rem;font-weight:800;color:#F0A070" id="qual-roi180">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #c4b5fd">
+            <span style="font-size:.72rem;color:#d0d0d0">ROI acima de 2,00x</span>
+            <span style="font-size:.85rem;font-weight:800;color:#c4b5fd" id="qual-roi200">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #60a5fa">
+            <span style="font-size:.72rem;color:#d0d0d0">Ticket médio ML</span>
+            <span style="font-size:.85rem;font-weight:800;color:#60a5fa" id="qual-ticket">R$ —</span>
+          </div>
+        </div>
       </div>
     </div>
 
