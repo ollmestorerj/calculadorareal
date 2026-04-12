@@ -17,6 +17,8 @@ body.light{--bg:#f5f3ff;--bg2:#ede9fe;--card:#ffffff;--border:#d8d0f0;--text:#1a
 body.light .app-header{background:#ede9fe}
 .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.78rem;color:var(--text2);font-weight:600;transition:all .2s;white-space:nowrap}
 .theme-toggle:hover{border-color:var(--o);color:var(--o)}
+.btn-home{background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.78rem;color:var(--text2);font-weight:600;transition:all .2s;white-space:nowrap}
+.btn-home:hover{border-color:var(--o);color:var(--o)}
 .btn-dash{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;white-space:nowrap}
 
 /* LAYOUT */
@@ -287,7 +289,7 @@ body.light .logo-img{filter:none!important}
   <div class="app-header">
     <div style="display:flex;gap:8px;align-items:center">
       <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
-      <button class="theme-toggle" onclick="showPage('home')">🏠</button>
+      <button class="btn-home" onclick="showPage('home')">🏠</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
       <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
@@ -454,7 +456,7 @@ body.light .logo-img{filter:none!important}
   <div class="app-header">
     <div style="display:flex;gap:8px;align-items:center">
       <button class="theme-toggle" onclick="toggleTheme()">☀️ Claro</button>
-      <button class="theme-toggle" onclick="showPage('home')">🏠</button>
+      <button class="btn-home" onclick="showPage('home')">🏠</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
       <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
@@ -478,7 +480,7 @@ body.light .logo-img{filter:none!important}
   <div class="app-header">
     <div style="display:flex;gap:8px;align-items:center">
       <button class="theme-toggle" onclick="toggleTheme()">☀️ Claro</button>
-      <button class="theme-toggle" onclick="showPage('home')">🏠</button>
+      <button class="btn-home" onclick="showPage('home')">🏠</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
       <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
@@ -525,7 +527,7 @@ function showPage(p){
 function toggleTheme(){
   const isLight=document.body.classList.toggle('light');
   const label=isLight?'🌙 Escuro':'☀️ Claro';
-  document.querySelectorAll('.theme-toggle').forEach(b=>{if(b.id==='theme-btn'||b.id==='theme-btn-home'||!b.id)b.textContent=label;});
+  document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent=label);
   localStorage.setItem('realecom_theme',isLight?'light':'dark');
 }
 (function(){
