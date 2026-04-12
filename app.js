@@ -566,11 +566,47 @@ function exportarExcel(){
 
 function carregarMetas(){
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
-  if(m.nota!==undefined){document.getElementById('nota-slider').value=m.nota;document.getElementById('nota-display').textContent=parseFloat(m.nota).toFixed(1).replace('.',',');}
-  if(m.notaObs)document.getElementById('nota-obs').value=m.notaObs;
-  if(m.prodDia)document.getElementById('meta-prod-dia').value=m.prodDia;
-  if(m.diasSemana)document.getElementById('meta-dias-semana').value=m.diasSemana;
-  recalcularMetas();
+  const elDia=document.getElementById('meta-prod-dia');
+  const elDias=document.getElementById('meta-dias-semana');
+  if(m.prodDia&&elDia)elDia.value=m.prodDia;
+  if(m.diasSemana&&elDias)elDias.value=m.diasSemana;
+  // Sempre atualiza painel de qualidade, mesmo sem meta definida
+  atualizarQualidade();
+  // Recalcula metas de progresso se tiver os valores
+  if(m.prodDia&&m.diasSemana)recalcularMetas();
+}
+
+function atualizarQualidade(){
+  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
+  const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+
+  // Produtos dos últimos 30 dias
+  const agora=Date.now();
+  const limite30=agora-(30*24*60*60*1000);
+  const prodsMes=todos.filter(p=>{
+    const ts=typeof p.id==='number'?p.id:parseInt(p.id);
+    return ts>=limite30;
+  });
+
+  const qualTotal=document.getElementById('qual-total');
+  if(qualTotal)qualTotal.textContent=prodsMes.length;
+
+  const roi160=prodsMes.filter(p=>p.markup&&parseFloat(p.markup)>=1.60).length;
+  const roi180=prodsMes.filter(p=>p.markup&&parseFloat(p.markup)>=1.80).length;
+  const roi200=prodsMes.filter(p=>p.markup&&parseFloat(p.markup)>=2.00).length;
+
+  const q160=document.getElementById('qual-roi160');
+  const q180=document.getElementById('qual-roi180');
+  const q200=document.getElementById('qual-roi200');
+  if(q160)q160.textContent=roi160;
+  if(q180)q180.textContent=roi180;
+  if(q200)q200.textContent=roi200;
+
+  const comML=prodsMes.filter(p=>p.precoML&&p.precoML>0);
+  const ticketMedio=comML.length>0?(comML.reduce((s,p)=>s+parseFloat(p.precoML),0)/comML.length):0;
+  const qTicket=document.getElementById('qual-ticket');
+  if(qTicket)qTicket.textContent=ticketMedio>0?'R$ '+ticketMedio.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'R$ —';
 }
 
 function salvarMetas(){
@@ -657,34 +693,6 @@ function recalcularMetas(){
   const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,226);
   const mn=atualizarGrafico('mes',prodsMes,metaMes,226);
 
-  // Painel de qualidade — baseado nos produtos do mês
-  const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  function prodsPeriodoTodos(dias){
-    const agora=Date.now();
-    const limiteMs=agora-(dias*24*60*60*1000);
-    const limiteReal=Math.max(dataInicio.getTime(),limiteMs);
-    return todos.filter(p=>{const ts=typeof p.id==='number'?p.id:parseInt(p.id);return ts>=limiteReal;});
-  }
-  const prodsMesQual=prodsPeriodoTodos(30);
-
-  // Total
-  const qualTotal=document.getElementById('qual-total');
-  if(qualTotal)qualTotal.textContent=prodsMesQual.length;
-
-  // ROI acima de 1.60, 1.80, 2.00
-  const roi160=prodsMesQual.filter(p=>p.markup&&parseFloat(p.markup)>=1.60).length;
-  const roi180=prodsMesQual.filter(p=>p.markup&&parseFloat(p.markup)>=1.80).length;
-  const roi200=prodsMesQual.filter(p=>p.markup&&parseFloat(p.markup)>=2.00).length;
-  const q160=document.getElementById('qual-roi160');
-  const q180=document.getElementById('qual-roi180');
-  const q200=document.getElementById('qual-roi200');
-  if(q160)q160.textContent=roi160;
-  if(q180)q180.textContent=roi180;
-  if(q200)q200.textContent=roi200;
-
-  // Ticket médio ML
-  const comML=prodsMesQual.filter(p=>p.precoML&&p.precoML>0);
-  const ticketMedio=comML.length>0?(comML.reduce((s,p)=>s+parseFloat(p.precoML),0)/comML.length):0;
-  const qTicket=document.getElementById('qual-ticket');
-  if(qTicket)qTicket.textContent=ticketMedio>0?'R$ '+ticketMedio.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'R$ —';
+  // Atualizar painel de qualidade
+  atualizarQualidade();
 }
