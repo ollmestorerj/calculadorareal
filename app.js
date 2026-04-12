@@ -299,7 +299,7 @@ function calcular(){
   }else{
     mlCard.className='price-card ml-none';
     document.getElementById('pc-ml-preco').textContent='—';
-    document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:#6b5f8a;font-size:.67rem;font-weight:700;margin-bottom:9px';
+    document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:#d0d0d0;font-size:.67rem;font-weight:700;margin-bottom:9px';
     document.getElementById('pc-ml-badge').textContent='Informe o preço médio';
     document.getElementById('pc-ml-kpis').style.opacity='.25';
     ['ml-mk','ml-roi','ml-mg'].forEach(id=>document.getElementById(id).textContent='—');
@@ -316,7 +316,7 @@ function calcular(){
       const baseNova=custo+freteNovo+ins,precoMinNovo=baseNova/fator;
       if(precoMinNovo<=limitePreco){alerta={freteNovo,limitePreco,ganhoFrete:frete-freteNovo};break;}
     }
-    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:#8a7aaa">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
+    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:#c0c0c0">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
     else{alertBox.style.display='none';}
   }else{alertBox.style.display='none';}
 
@@ -400,7 +400,7 @@ function renderDash(){
         <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
         <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
       </div>
-      <div style="font-size:.62rem;color:#4a3f6b;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
+      <div style="font-size:.62rem;color:#a0a0a0;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
       <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
     </div></div>`;
   }).join('');
@@ -588,6 +588,7 @@ function atualizarNota(v){
   document.getElementById('nota-display').textContent=parseFloat(v).toFixed(1).replace('.',',');
 }
 
+
 function recalcularMetas(){
   const prodDia=parseInt(document.getElementById('meta-prod-dia').value)||0;
   const diasSem=parseInt(document.getElementById('meta-dias-semana').value)||0;
@@ -602,48 +603,60 @@ function recalcularMetas(){
   document.getElementById('meta-val-quinzena').textContent=metaQuinzena+' produtos';
   document.getElementById('meta-val-mes').textContent=metaMes+' produtos';
 
-  // Buscar data de início da meta
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
-
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  const agora=new Date();
 
-  // Filtrar produtos por período baseado no id (timestamp)
   function prodsPeriodo(dias){
-    const limite=new Date(Math.max(dataInicio.getTime(), agora.getTime()-dias*24*60*60*1000));
+    const limite=new Date(Math.max(dataInicio.getTime(),Date.now()-dias*24*60*60*1000));
     return prods.filter(p=>p.id>=limite.getTime());
   }
 
   const prodsSemana=prodsPeriodo(7);
   const prodsQuinzena=prodsPeriodo(15);
   const prodsMes=prodsPeriodo(30);
-
   function comprados(lista){return lista.filter(p=>p.comprado).length;}
 
-  function atualizarCard(prefix,lista,meta){
-    const qtd=lista.length,comp=comprados(lista),pct=meta>0?Math.min(Math.round((qtd/meta)*100),100):0;
+  function atualizarGrafico(prefix,lista,meta){
+    const qtd=lista.length,comp=comprados(lista);
+    const pct=meta>0?Math.min(Math.round((qtd/meta)*100),100):0;
+    const circumference=226;
+    const offset=circumference-(pct/100)*circumference;
+
+    // Atualizar círculo SVG
+    const circle=document.getElementById('circle-'+prefix);
+    if(circle){
+      circle.style.strokeDashoffset=offset;
+      circle.style.transition='stroke-dashoffset .8s ease';
+      if(pct>=100)circle.setAttribute('stroke','#4ade80');
+      else if(pct>=50)circle.setAttribute('stroke','url(#g'+prefix[0]+')');
+      else circle.setAttribute('stroke','url(#g'+prefix[0]+')');
+    }
+
+    // Percentual no centro
+    const pctEl=document.getElementById('pct-'+prefix+'-num');
+    if(pctEl)pctEl.textContent=pct+'%';
+
+    // Info abaixo do gráfico
     const faltam=Math.max(meta-qtd,0);
-    const cor=pct>=100?'#4ade80':pct>=50?'#F0A070':'#c4b5fd';
-    document.getElementById('resumo-'+prefix).innerHTML=
-      `<div style="font-size:.9rem;font-weight:800;color:${cor};margin-bottom:6px">${pct}% da meta atingida</div>`+
-      `<div style="font-size:.78rem;color:#8a7aaa">${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?' · <strong style="color:#4ade80">'+comp+' comprado'+(comp!==1?'s':'')+'</strong>':''}</div>`;
-    document.getElementById('bar-'+prefix).style.width=pct+'%';
-    document.getElementById('bar-'+prefix).style.background=pct>=100?'linear-gradient(90deg,#16a34a,#4ade80)':pct>=50?'linear-gradient(90deg,var(--p),var(--o))':'linear-gradient(90deg,var(--p),var(--p2))';
-    document.getElementById('pct-'+prefix).textContent=pct+'% concluído';
-    document.getElementById('faltam-'+prefix).textContent=faltam>0?`Faltam ${faltam} produtos`:'🎉 Meta atingida!';
+    const infoEl=document.getElementById('info-'+prefix);
+    if(infoEl){
+      infoEl.innerHTML=`<strong style="color:var(--text);font-size:.75rem">${qtd}/${meta}</strong> produtos<br>`+
+        (comp>0?`<span style="color:#4ade80">⭐ ${comp} comprado${comp>1?'s':''}</span>`:'<span style="color:#a0a0a0">nenhum comprado</span>');
+    }
+
+    // Resumo textual
+    const resumoEl=document.getElementById('resumo-'+prefix);
+    if(resumoEl){
+      const cor=pct>=100?'#4ade80':pct>=50?'#F0A070':'#c4b5fd';
+      resumoEl.innerHTML=`<span style="color:${cor};font-weight:700">${pct>=100?'🎉':'📍'} ${prefix==='semana'?'Esta semana':prefix==='quinzena'?'Quinzena':'Este mês'}:</span> `+
+        `${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?` · <strong style="color:#4ade80">${comp} comprado${comp>1?'s':''}</strong>`:''}. `+
+        (faltam>0?`Faltam <strong style="color:var(--o)">${faltam}</strong> para bater a meta.`:`<strong style="color:#4ade80">Meta atingida!</strong>`);
+    }
   }
 
-  atualizarCard('semana',prodsSemana,metaSemana);
-  atualizarCard('quinzena',prodsQuinzena,metaQuinzena);
-  atualizarCard('mes',prodsMes,metaMes);
-}
-
-// ============================================================
-// ESTRELA — Marcar produto como comprado
-// ============================================================
-function toggleComprado(id){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  const p=prods.find(p=>p.id===id);
-  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();}
+  document.getElementById('resumo-geral').style.display='block';
+  atualizarGrafico('semana',prodsSemana,metaSemana);
+  atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena);
+  atualizarGrafico('mes',prodsMes,metaMes);
 }
