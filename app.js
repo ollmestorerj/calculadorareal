@@ -607,9 +607,16 @@ function recalcularMetas(){
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
+  // Filtro por período: usa o id do produto (timestamp de quando foi salvo)
   function prodsPeriodo(dias){
-    const limite=new Date(Math.max(dataInicio.getTime(),Date.now()-dias*24*60*60*1000));
-    return prods.filter(p=>p.id>=limite.getTime());
+    const agora=Date.now();
+    const limiteMs=agora-(dias*24*60*60*1000);
+    // Usa o maior entre dataInicio e (agora - dias)
+    const limiteReal=Math.max(dataInicio.getTime(),limiteMs);
+    return prods.filter(p=>{
+      const ts=typeof p.id==='number'?p.id:parseInt(p.id);
+      return ts>=limiteReal;
+    });
   }
 
   const prodsSemana=prodsPeriodo(7);
@@ -617,46 +624,67 @@ function recalcularMetas(){
   const prodsMes=prodsPeriodo(30);
   function comprados(lista){return lista.filter(p=>p.comprado).length;}
 
-  function atualizarGrafico(prefix,lista,meta){
+  function atualizarGrafico(prefix,lista,meta,circumference){
     const qtd=lista.length,comp=comprados(lista);
     const pct=meta>0?Math.min(Math.round((qtd/meta)*100),100):0;
-    const circumference=226;
     const offset=circumference-(pct/100)*circumference;
-
-    // Atualizar círculo SVG
     const circle=document.getElementById('circle-'+prefix);
     if(circle){
       circle.style.strokeDashoffset=offset;
       circle.style.transition='stroke-dashoffset .8s ease';
       if(pct>=100)circle.setAttribute('stroke','#4ade80');
-      else if(pct>=50)circle.setAttribute('stroke','url(#g'+prefix[0]+')');
-      else circle.setAttribute('stroke','url(#g'+prefix[0]+')');
     }
-
-    // Percentual no centro
     const pctEl=document.getElementById('pct-'+prefix+'-num');
     if(pctEl)pctEl.textContent=pct+'%';
-
-    // Info abaixo do gráfico
     const faltam=Math.max(meta-qtd,0);
     const infoEl=document.getElementById('info-'+prefix);
     if(infoEl){
       infoEl.innerHTML=`<strong style="color:var(--text);font-size:.75rem">${qtd}/${meta}</strong> produtos<br>`+
         (comp>0?`<span style="color:#4ade80">⭐ ${comp} comprado${comp>1?'s':''}</span>`:'<span style="color:#a0a0a0">nenhum comprado</span>');
     }
-
-    // Resumo textual
     const resumoEl=document.getElementById('resumo-'+prefix);
     if(resumoEl){
       const cor=pct>=100?'#4ade80':pct>=50?'#F0A070':'#c4b5fd';
       resumoEl.innerHTML=`<span style="color:${cor};font-weight:700">${pct>=100?'🎉':'📍'} ${prefix==='semana'?'Esta semana':prefix==='quinzena'?'Quinzena':'Este mês'}:</span> `+
-        `${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?` · <strong style="color:#4ade80">${comp} comprado${comp>1?'s':''}</strong>`:''}. `+
+        `${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?` · <strong style="color:#4ade80">${comp} comprado${comp>1?'s':''}</strong>`:''}.  `+
         (faltam>0?`Faltam <strong style="color:var(--o)">${faltam}</strong> para bater a meta.`:`<strong style="color:#4ade80">Meta atingida!</strong>`);
     }
+    return {pct,qtd,comp};
   }
 
   document.getElementById('resumo-geral').style.display='block';
-  atualizarGrafico('semana',prodsSemana,metaSemana);
-  atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena);
-  atualizarGrafico('mes',prodsMes,metaMes);
+  const s=atualizarGrafico('semana',prodsSemana,metaSemana,226);
+  const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,226);
+  const mn=atualizarGrafico('mes',prodsMes,metaMes,226);
+
+  // Painel de qualidade — baseado nos produtos do mês
+  const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  function prodsPeriodoTodos(dias){
+    const agora=Date.now();
+    const limiteMs=agora-(dias*24*60*60*1000);
+    const limiteReal=Math.max(dataInicio.getTime(),limiteMs);
+    return todos.filter(p=>{const ts=typeof p.id==='number'?p.id:parseInt(p.id);return ts>=limiteReal;});
+  }
+  const prodsMesQual=prodsPeriodoTodos(30);
+
+  // Total
+  const qualTotal=document.getElementById('qual-total');
+  if(qualTotal)qualTotal.textContent=prodsMesQual.length;
+
+  // ROI acima de 1.60, 1.80, 2.00
+  const roi160=prodsMesQual.filter(p=>p.markup&&parseFloat(p.markup)>=1.60).length;
+  const roi180=prodsMesQual.filter(p=>p.markup&&parseFloat(p.markup)>=1.80).length;
+  const roi200=prodsMesQual.filter(p=>p.markup&&parseFloat(p.markup)>=2.00).length;
+  const q160=document.getElementById('qual-roi160');
+  const q180=document.getElementById('qual-roi180');
+  const q200=document.getElementById('qual-roi200');
+  if(q160)q160.textContent=roi160;
+  if(q180)q180.textContent=roi180;
+  if(q200)q200.textContent=roi200;
+
+  // Ticket médio ML
+  const comML=prodsMesQual.filter(p=>p.precoML&&p.precoML>0);
+  const ticketMedio=comML.length>0?(comML.reduce((s,p)=>s+parseFloat(p.precoML),0)/comML.length):0;
+  const qTicket=document.getElementById('qual-ticket');
+  if(qTicket)qTicket.textContent=ticketMedio>0?'R$ '+ticketMedio.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'R$ —';
 }
