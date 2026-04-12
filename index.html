@@ -12,6 +12,37 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 body.light{--bg:#f5f3ff;--bg2:#ede9fe;--card:#ffffff;--border:#d8d0f0;--text:#1a1030;--text2:#6b5f8a;--text3:#9985c9}
 .page{display:none}.page.active{display:block}
 
+/* ===== LOGIN ===== */
+#page-login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;position:relative;overflow:hidden}
+#page-login::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% -10%,#6B21A825 0%,transparent 65%);pointer-events:none}
+#page-login::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 90% 110%,#F0A07018 0%,transparent 60%);pointer-events:none}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:420px;position:relative;z-index:1;box-shadow:0 32px 80px rgba(0,0,0,.55)}
+@media(max-width:480px){.login-box{padding:30px 22px}}
+.login-logo{text-align:center;margin-bottom:30px}
+.login-logo img{height:72px;object-fit:contain;filter:brightness(0) invert(1)}
+body.light .login-logo img{filter:none}
+.login-title{text-align:center;font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.login-sub{text-align:center;font-size:.78rem;color:var(--text2);margin-bottom:30px;line-height:1.6}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:.74rem;color:var(--text2);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.login-input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:1rem;font-weight:700;color:var(--text);background:#1a1428;text-align:center;letter-spacing:.12em;text-transform:uppercase;outline:none;transition:border .2s,box-shadow .2s;font-family:inherit}
+.login-input:focus{border-color:var(--o);box-shadow:0 0 0 3px #F0A07018}
+.login-input::placeholder{font-weight:400;letter-spacing:.04em;text-transform:none;color:#3a3050}
+body.light .login-input{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:6px;transition:opacity .2s,transform .1s;letter-spacing:.03em}
+.btn-login:hover{opacity:.88}
+.btn-login:active{transform:scale(.98)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed}
+.login-erro{background:#7f1d1d22;border:1px solid #ef444455;border-radius:10px;padding:10px 14px;font-size:.78rem;color:#f87171;margin-top:12px;text-align:center;display:none;line-height:1.5}
+.login-loading{display:none;text-align:center;margin-top:12px;font-size:.78rem;color:var(--text2)}
+.login-loading span{display:inline-block;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.login-footer{margin-top:24px;text-align:center;font-size:.72rem;color:#3a3050;line-height:1.7}
+.login-footer a{color:var(--o);text-decoration:none;font-weight:600}
+.login-footer a:hover{text-decoration:underline}
+.login-validade{background:#05291622;border:1px solid #16a34a44;border-radius:10px;padding:10px 14px;font-size:.76rem;color:#4ade80;margin-top:14px;text-align:center;display:none}
+.login-badge{display:inline-flex;align-items:center;gap:6px;background:#F0A07015;border:1px solid #F0A07035;border-radius:20px;padding:4px 12px;font-size:.7rem;color:var(--o);font-weight:700;margin-bottom:18px}
+
 /* HEADER */
 .app-header{background:#110e1a;border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;transition:background .3s}
 body.light .app-header{background:#ede9fe}
@@ -20,6 +51,10 @@ body.light .app-header{background:#ede9fe}
 .btn-home{background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.78rem;color:var(--text2);font-weight:600;transition:all .2s;white-space:nowrap}
 .btn-home:hover{border-color:var(--o);color:var(--o)}
 .btn-dash{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-sair{background:none;border:1.5px solid #2a1a1a;border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.72rem;color:#6b5f8a;font-weight:600;transition:all .2s;white-space:nowrap}
+.btn-sair:hover{border-color:#f87171;color:#f87171}
+.usuario-info{font-size:.72rem;color:var(--text2);display:flex;align-items:center;gap:6px}
+.usuario-info strong{color:var(--o)}
 
 /* LAYOUT */
 .main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 56px)}
@@ -221,6 +256,32 @@ body.light .logo-img{filter:none!important}
 
 <div class="notif-container" id="notif-container"></div>
 
+<!-- ===== LOGIN ===== -->
+<div id="page-login" class="page active">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="logo.png" alt="RealEcom">
+    </div>
+    <div style="text-align:center;margin-bottom:6px">
+      <span class="login-badge">🔐 ACESSO EXCLUSIVO PARA SELLERS</span>
+    </div>
+    <div class="login-title">Calculadora REAL</div>
+    <div class="login-sub">Digite sua chave de acesso para entrar.<br>Recebeu por e-mail após a compra.</div>
+    <div class="login-field">
+      <label>Chave de Acesso</label>
+      <input class="login-input" type="text" id="login-chave" placeholder="REAL-XXXX-XXXX" autocomplete="off" spellcheck="false" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar →</button>
+    <div class="login-erro" id="login-erro"></div>
+    <div class="login-loading" id="login-loading"><span>Verificando sua chave...</span></div>
+    <div class="login-validade" id="login-validade"></div>
+    <div class="login-footer">
+      Ainda não tem acesso? <a href="https://wa.me/5521979509790" target="_blank">Fale com a gente</a><br>
+      Problemas com sua chave? <a href="/cdn-cgi/l/email-protection#7724322228323a363e3b">Suporte</a>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
@@ -245,14 +306,16 @@ body.light .logo-img{filter:none!important}
 </div>
 
 <!-- ===== HOME ===== -->
-<div id="page-home" class="page active">
-  <div style="position:fixed;top:14px;left:16px;z-index:100">
+<div id="page-home" class="page">
+  <div style="position:fixed;top:14px;left:16px;z-index:100;display:flex;gap:8px">
     <button class="theme-toggle" id="theme-btn-home" onclick="toggleTheme()">☀️ Claro</button>
+    <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
   <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px">
     <div style="margin-bottom:36px;text-align:center">
       <img src="logo.png" class="logo-img" alt="RealEcom" style="height:120px;object-fit:contain">
     </div>
+    <div id="home-usuario" style="font-size:.8rem;color:var(--text2);margin-bottom:8px;text-align:center"></div>
     <p style="font-size:.85rem;color:var(--text2);margin-bottom:28px;text-align:center">Selecione uma ferramenta para começar</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%;max-width:880px">
       <div class="home-card" onclick="showPage('calc')">
@@ -503,7 +566,103 @@ body.light .logo-img{filter:none!important}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ============================================================
+// CONFIGURAÇÃO — substitua pela URL do seu Apps Script
+// ============================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmXTOx6jF3vcyziEedXtjeleTjOJTQtNGNh-8fmL0GcBGKa20rgAt-0YARiElFjp4CWg/exec';
+const SESSAO_DURACAO_H = 24; // horas que a sessão fica válida
+
+// ============================================================
+// LOGIN
+// ============================================================
+function verificarSessao(){
+  try{
+    const s=JSON.parse(localStorage.getItem('realecom_sessao')||'null');
+    if(!s)return false;
+    const agora=Date.now();
+    if(agora>s.expira){localStorage.removeItem('realecom_sessao');return false;}
+    return s;
+  }catch(e){return false;}
+}
+
+function salvarSessao(dados){
+  const expira=Date.now()+(SESSAO_DURACAO_H*60*60*1000);
+  localStorage.setItem('realecom_sessao',JSON.stringify({...dados,expira}));
+}
+
+function sair(){
+  if(!confirm('Deseja sair da sua conta?'))return;
+  localStorage.removeItem('realecom_sessao');
+  location.reload();
+}
+
+async function fazerLogin(){
+  const chave=document.getElementById('login-chave').value.trim().toUpperCase();
+  if(!chave){mostrarErroLogin('Digite sua chave de acesso.');return;}
+
+  const btn=document.getElementById('btn-login');
+  const erro=document.getElementById('login-erro');
+  const loading=document.getElementById('login-loading');
+  const validade=document.getElementById('login-validade');
+
+  btn.disabled=true;
+  erro.style.display='none';
+  validade.style.display='none';
+  loading.style.display='block';
+
+  try{
+    const url=`${APPS_SCRIPT_URL}?chave=${encodeURIComponent(chave)}`;
+    const res=await fetch(url);
+    const data=await res.json();
+
+    loading.style.display='none';
+
+    if(data.ok){
+      salvarSessao({chave,nome:data.nome,email:data.email,validade:data.validade});
+      validade.style.display='block';
+      validade.textContent=`✅ Bem-vindo, ${data.nome}! Acesso válido até ${data.validade}.`;
+      setTimeout(()=>entrarNoApp(data),1200);
+    }else{
+      mostrarErroLogin(data.erro||'Chave inválida.');
+      btn.disabled=false;
+    }
+  }catch(e){
+    loading.style.display='none';
+    mostrarErroLogin('Erro de conexão. Verifique sua internet e tente novamente.');
+    btn.disabled=false;
+  }
+}
+
+function mostrarErroLogin(msg){
+  const el=document.getElementById('login-erro');
+  el.textContent=msg;
+  el.style.display='block';
+}
+
+function entrarNoApp(dados){
+  // Atualiza nome do usuário na home
+  const hu=document.getElementById('home-usuario');
+  if(hu&&dados&&dados.nome){
+    hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong> · Acesso válido até <strong>${dados.validade}</strong>`;
+  }
+  showPage('home');
+}
+
+// Verifica sessão ao carregar
+(function(){
+  const s=verificarSessao();
+  if(s){
+    entrarNoApp(s);
+  }
+  // Tema
+  const t=localStorage.getItem('realecom_theme');
+  if(t==='light'){document.body.classList.add('light');document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='🌙 Escuro');}
+})();
+
+// ============================================================
+// APP
+// ============================================================
 const pesoFaixas=[[0,.3],[.3,.5],[.5,1],[1,1.5],[1.5,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,11],[11,13],[13,15],[15,17],[17,20],[20,25],[25,30],[30,40],[40,50],[50,60],[60,70],[70,80],[80,90],[90,100],[100,125],[125,150],[150,1e9]];
 const pesoLabels=['Até 0,3kg','0,3–0,5kg','0,5–1kg','1–1,5kg','1,5–2kg','2–3kg','3–4kg','4–5kg','5–6kg','6–7kg','7–8kg','8–9kg','9–11kg','11–13kg','13–15kg','15–17kg','17–20kg','20–25kg','25–30kg','30–40kg','40–50kg','50–60kg','60–70kg','70–80kg','80–90kg','90–100kg','100–125kg','125–150kg','+150kg'];
 const precoFaixas=[0,19,49,79,100,120,150,200];
@@ -518,6 +677,8 @@ function fmtKg(v){return v%1===0?v.toFixed(0)+' kg':v.toFixed(v<1?3:2)+' kg';}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 
 function showPage(p){
+  // Proteção: bloqueia acesso às páginas internas sem sessão
+  if(p!=='login'&&!verificarSessao()){location.reload();return;}
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   if(p==='dash')renderDash();
@@ -530,10 +691,6 @@ function toggleTheme(){
   document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent=label);
   localStorage.setItem('realecom_theme',isLight?'light':'dark');
 }
-(function(){
-  const t=localStorage.getItem('realecom_theme');
-  if(t==='light'){document.body.classList.add('light');document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='🌙 Escuro');}
-})();
 
 function getPesoIdx(p){for(let i=0;i<pesoFaixas.length;i++)if(p<=pesoFaixas[i][1])return i;return pesoFaixas.length-1;}
 function getPrecoIdx(p){let c=0;for(let i=0;i<precoFaixas.length;i++)if(p>=precoFaixas[i])c=i;return c;}
@@ -922,8 +1079,4 @@ function verificarNotificacoes(){
   sessionStorage.setItem('notificados',JSON.stringify(notificados));
 }
 
-document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
-verificarNotificacoes();
-</script>
-</body>
-</html>
+document.addEventListener('wheel',e=>{if(document.acti
