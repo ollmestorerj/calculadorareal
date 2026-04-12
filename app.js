@@ -72,12 +72,11 @@ function mostrarErroLogin(msg){
 }
 
 function entrarNoApp(dados){
-  // Atualiza nome do usuário na home
   const hu=document.getElementById('home-usuario');
   if(hu&&dados&&dados.nome){
     hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong> · Acesso válido até <strong>${dados.validade}</strong>`;
   }
-  showPage('home');
+  showPage('home', true);
 }
 
 // Verifica sessão ao carregar
@@ -107,9 +106,9 @@ function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,ma
 function fmtKg(v){return v%1===0?v.toFixed(0)+' kg':v.toFixed(v<1?3:2)+' kg';}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 
-function showPage(p){
+function showPage(p,bypassCheck){
   // Proteção: bloqueia acesso às páginas internas sem sessão
-  if(p!=='login'&&!verificarSessao()){location.reload();return;}
+  if(p!=='login'&&!bypassCheck&&!verificarSessao()){location.reload();return;}
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   if(p==='dash')renderDash();
