@@ -113,6 +113,7 @@ function showPage(p,bypassCheck){
   document.getElementById('page-'+p).classList.add('active');
   if(p==='dash')renderDash();
   if(p==='cal')renderCal();
+  if(p==='metas')carregarMetas();
 }
 
 function toggleTheme(){
@@ -552,4 +553,98 @@ function exportarExcel(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// METAS
+// ============================================================
+let timerInterval=null,timerSegundos=0;
+
+function carregarMetas(){
+  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  if(m.nota!==undefined){document.getElementById('nota-slider').value=m.nota;document.getElementById('nota-display').textContent=parseFloat(m.nota).toFixed(1).replace('.',',');}
+  if(m.notaObs)document.getElementById('nota-obs').value=m.notaObs;
+  if(m.prodAlvo)document.getElementById('meta-prod-alvo').value=m.prodAlvo;
+  if(m.prodPeriodo)document.getElementById('meta-prod-periodo').value=m.prodPeriodo;
+  if(m.tempoAlvo)document.getElementById('meta-tempo-alvo').value=m.tempoAlvo;
+  // Timer do dia
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  if(m.timerData===hoje&&m.timerSeg){timerSegundos=m.timerSeg;atualizarDisplayTimer();}
+  atualizarProgressoProd();
+  atualizarProgressoTempo();
+}
+
+function salvarMetas(){
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  const m={
+    nota:document.getElementById('nota-slider').value,
+    notaObs:document.getElementById('nota-obs').value,
+    prodAlvo:document.getElementById('meta-prod-alvo').value,
+    prodPeriodo:document.getElementById('meta-prod-periodo').value,
+    tempoAlvo:document.getElementById('meta-tempo-alvo').value,
+    timerSeg:timerSegundos,
+    timerData:hoje
+  };
+  localStorage.setItem('realecom_metas',JSON.stringify(m));
+  alert('✅ Metas salvas!');
+}
+
+function atualizarNota(v){
+  document.getElementById('nota-display').textContent=parseFloat(v).toFixed(1).replace('.',',');
+}
+
+function atualizarProgressoProd(){
+  const alvo=parseInt(document.getElementById('meta-prod-alvo').value)||0;
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const atual=prods.length;
+  document.getElementById('meta-prod-atual').textContent=atual;
+  if(alvo>0){
+    const pct=Math.min(Math.round((atual/alvo)*100),100);
+    document.getElementById('meta-prod-bar').style.width=pct+'%';
+    document.getElementById('meta-prod-pct').textContent=pct+'% concluído';
+    const faltam=Math.max(alvo-atual,0);
+    document.getElementById('meta-prod-faltam').textContent=faltam>0?`Faltam ${faltam} produtos`:'🎉 Meta atingida!';
+  }
+}
+
+function atualizarProgressoTempo(){
+  const alvoMin=parseInt(document.getElementById('meta-tempo-alvo').value)||0;
+  const alvoSeg=alvoMin*60;
+  if(alvoSeg>0){
+    const pct=Math.min(Math.round((timerSegundos/alvoSeg)*100),100);
+    document.getElementById('meta-tempo-bar').style.width=pct+'%';
+    document.getElementById('meta-tempo-pct').textContent=pct+'% concluído';
+    const faltamSeg=Math.max(alvoSeg-timerSegundos,0);
+    const fm=Math.floor(faltamSeg/60),fs=faltamSeg%60;
+    document.getElementById('meta-tempo-faltam').textContent=faltamSeg>0?`Faltam ${fm}min ${fs}s`:'🎉 Meta atingida!';
+  }
+}
+
+function atualizarDisplayTimer(){
+  const h=Math.floor(timerSegundos/3600),m=Math.floor((timerSegundos%3600)/60),s=timerSegundos%60;
+  document.getElementById('tempo-display').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  atualizarProgressoTempo();
+}
+
+function startTimer(){
+  if(timerInterval)return;
+  timerInterval=setInterval(()=>{timerSegundos++;atualizarDisplayTimer();},1000);
+  document.getElementById('btn-timer-start').style.display='none';
+  document.getElementById('btn-timer-stop').style.display='inline-block';
+}
+
+function stopTimer(){
+  clearInterval(timerInterval);timerInterval=null;
+  document.getElementById('btn-timer-start').style.display='inline-block';
+  document.getElementById('btn-timer-stop').style.display='none';
+  // Salvar automaticamente ao pausar
+  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  m.timerSeg=timerSegundos;m.timerData=new Date().toLocaleDateString('pt-BR');
+  localStorage.setItem('realecom_metas',JSON.stringify(m));
+}
+
+function resetTimer(){
+  stopTimer();timerSegundos=0;atualizarDisplayTimer();
+  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  m.timerSeg=0;localStorage.setItem('realecom_metas',JSON.stringify(m));
 }
