@@ -246,6 +246,29 @@ body.light .login-input{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
 .btn-sair{background:none;border:1.5px solid #2a1a1a;border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.72rem;color:#6b5f8a;font-weight:600;transition:all .2s;white-space:nowrap}
 .btn-sair:hover{border-color:#f87171;color:#f87171}
 
+/* METAS */
+.metas-page{padding:20px 18px;max-width:700px;margin:0 auto}
+.meta-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px}
+.meta-card-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a3f6b;margin-bottom:12px}
+.meta-progress-bar{height:10px;background:#1a1428;border-radius:20px;overflow:hidden;margin:8px 0}
+.meta-progress-fill{height:100%;border-radius:20px;transition:width .5s ease;background:linear-gradient(90deg,var(--p),var(--o))}
+.meta-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;outline:none;font-family:inherit;margin-top:5px}
+.meta-input:focus{border-color:var(--o)}
+body.light .meta-input{background:#e8e8e8;border-color:#d8d0f0;color:#1a1030}
+.meta-stat{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;margin-top:6px}
+.meta-stat .ms-label{color:#6b5f8a}
+.meta-stat .ms-value{font-weight:800;color:var(--o)}
+.nota-card{background:linear-gradient(135deg,#0a1628,#0f2040);border:1.5px solid #1e3a5f;border-radius:16px;padding:18px;margin-bottom:12px}
+.nota-display{font-size:3.5rem;font-weight:900;text-align:center;background:linear-gradient(135deg,var(--p),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.nota-label{text-align:center;font-size:.72rem;color:#4a8fcc;margin-top:4px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em}
+.nota-slider{width:100%;accent-color:var(--o);margin:8px 0}
+.btn-salvar-meta{width:100%;padding:11px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:8px}
+.tempo-display{font-size:2rem;font-weight:900;color:var(--o);text-align:center;margin:8px 0}
+.btn-timer{padding:10px 20px;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;margin:4px}
+.btn-timer.start{background:linear-gradient(135deg,#166534,#16a34a);color:#fff}
+.btn-timer.stop{background:linear-gradient(135deg,#7f1d1d,#dc2626);color:#fff}
+.btn-timer.reset{background:var(--card);color:#6b5f8a;border:1px solid var(--border)}
+body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
 </style>
 </head>
 <body>
@@ -319,8 +342,13 @@ body.light .login-input{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
       </div>
       <div class="home-card" onclick="showPage('dash')">
         <div style="font-size:2.5rem;margin-bottom:12px">📊</div>
-        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Dashboard</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Dashboard de Produtos</div>
         <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Visualize e gerencie todos os produtos salvos</div>
+      </div>
+      <div class="home-card" onclick="showPage('metas')">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎯</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Metas</div>
+        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Defina e acompanhe suas metas de pesquisa e tempo</div>
       </div>
       <div class="home-card" onclick="showPage('cal')">
         <div style="font-size:2.5rem;margin-bottom:12px">📅</div>
@@ -577,5 +605,91 @@ function exportarExcel(){
   document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 </script>
+<!-- ===== METAS ===== -->
+<div id="page-metas" class="page">
+  <div class="app-header">
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="theme-toggle" onclick="toggleTheme()">☀️ Claro</button>
+      <button class="btn-home" onclick="showPage('home')">🏠</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
+      <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
+      <div style="width:1px;height:26px;background:#444"></div>
+      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">METAS</span>
+    </div>
+    <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+  </div>
+  <div class="metas-page">
+    <div class="dash-header" style="margin-bottom:18px">
+      <button class="btn-back" onclick="showPage('home')">← Voltar</button>
+      <h2>🎯 Minhas <span>Metas</span></h2>
+      <button onclick="salvarMetas()" style="background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer">💾 Salvar</button>
+    </div>
+
+    <!-- NOTA DE ANDAMENTO -->
+    <div class="nota-card">
+      <div class="meta-card-title" style="color:#4a8fcc">📝 Nota de Andamento</div>
+      <div class="nota-display" id="nota-display">7,5</div>
+      <div class="nota-label">sua avaliação do progresso geral</div>
+      <input type="range" class="nota-slider" id="nota-slider" min="0" max="10" step="0.5" value="7.5" oninput="atualizarNota(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#4a3f6b;margin-bottom:10px"><span>0</span><span>5</span><span>10</span></div>
+      <textarea class="meta-input" id="nota-obs" placeholder="Como está indo? O que pode melhorar?..." style="height:70px;resize:none"></textarea>
+    </div>
+
+    <!-- META DE PRODUTOS -->
+    <div class="meta-card">
+      <div class="meta-card-title">📦 Meta de Produtos Pesquisados</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Meta (produtos)</div>
+          <input type="number" class="meta-input" id="meta-prod-alvo" placeholder="Ex: 20" min="1" step="1" oninput="atualizarProgressoProd()">
+        </div>
+        <div>
+          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Período</div>
+          <select class="meta-input" id="meta-prod-periodo" onchange="atualizarProgressoProd()">
+            <option value="semana">Por semana</option>
+            <option value="mes">Por mês</option>
+          </select>
+        </div>
+      </div>
+      <div class="meta-stat">
+        <span class="ms-label">Produtos salvos no Dashboard</span>
+        <span class="ms-value" id="meta-prod-atual">0</span>
+      </div>
+      <div class="meta-progress-bar"><div class="meta-progress-fill" id="meta-prod-bar" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#6b5f8a;margin-top:4px">
+        <span id="meta-prod-pct">0% concluído</span>
+        <span id="meta-prod-faltam">—</span>
+      </div>
+    </div>
+
+    <!-- META DE TEMPO -->
+    <div class="meta-card">
+      <div class="meta-card-title">⏱️ Meta de Tempo na Plataforma</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Meta (minutos/dia)</div>
+          <input type="number" class="meta-input" id="meta-tempo-alvo" placeholder="Ex: 30" min="1" step="1" oninput="atualizarProgressoTempo()">
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end">
+          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Tempo hoje</div>
+          <div class="tempo-display" id="tempo-display">00:00:00</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-bottom:10px">
+        <button class="btn-timer start" id="btn-timer-start" onclick="startTimer()">▶ Iniciar</button>
+        <button class="btn-timer stop" id="btn-timer-stop" onclick="stopTimer()" style="display:none">⏹ Pausar</button>
+        <button class="btn-timer reset" onclick="resetTimer()">↺ Zerar</button>
+      </div>
+      <div class="meta-progress-bar"><div class="meta-progress-fill" id="meta-tempo-bar" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#6b5f8a;margin-top:4px">
+        <span id="meta-tempo-pct">0% concluído</span>
+        <span id="meta-tempo-faltam">—</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
