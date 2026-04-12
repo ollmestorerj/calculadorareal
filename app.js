@@ -510,4 +510,5 @@ function verificarNotificacoes(){
   sessionStorage.setItem('notificados',JSON.stringify(notificados));
 }
 
-document.addEventListener('wheel',e=>{if(document.act
+document.addEventListener('wheel',e=>{if(document.activeElement&&document.activeElement.type==='number')e.preventDefault();},{passive:false});
+verificarNotificacoes();
