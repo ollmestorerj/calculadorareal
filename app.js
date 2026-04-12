@@ -383,12 +383,13 @@ function renderDash(){
     const rc=p.roi>=10?'#4ade80':p.roi>=5?'#F0A070':'#f87171';
     const mc=p.margem>=10?'#4ade80':p.margem>=5?'#F0A070':'#f87171';
     const mkc=p.markup>=1.5?'#4ade80':p.markup>=1.2?'#F0A070':'#f87171';
-    return`<div class="prod-card"><div class="prod-card-top">
-      <div class="prod-name"><h3>${p.nome}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
+    return`<div class="prod-card" style="${p.comprado?'border-color:#16a34a55;':''}""><div class="prod-card-top">
+      <div class="prod-name"><h3>${p.nome}${p.comprado?' <span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:700">✅ Comprado</span>':''}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
       <div class="prod-metric"><div class="pm-label">Preço</div><div class="pm-value" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
       <div class="prod-metric"><div class="pm-label">ROI</div><div class="pm-value" style="color:${rc}">${fmtP(p.roi)}</div></div>
       <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div></div>
       <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div></div>
+      <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar como comprado':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1rem;transition:all .2s" onmouseover="this.style.borderColor='#16a34a'" onmouseout="this.style.borderColor='${p.comprado?'#16a34a55':'var(--border)'}'">${p.comprado?'⭐':'☆'}</button>
       <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
       <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
     </div>
@@ -558,33 +559,27 @@ function exportarExcel(){
 // ============================================================
 // METAS
 // ============================================================
-let timerInterval=null,timerSegundos=0;
+
+// ============================================================
+// METAS — Nova versão com períodos
+// ============================================================
 
 function carregarMetas(){
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   if(m.nota!==undefined){document.getElementById('nota-slider').value=m.nota;document.getElementById('nota-display').textContent=parseFloat(m.nota).toFixed(1).replace('.',',');}
   if(m.notaObs)document.getElementById('nota-obs').value=m.notaObs;
-  if(m.prodAlvo)document.getElementById('meta-prod-alvo').value=m.prodAlvo;
-  if(m.prodPeriodo)document.getElementById('meta-prod-periodo').value=m.prodPeriodo;
-  if(m.tempoAlvo)document.getElementById('meta-tempo-alvo').value=m.tempoAlvo;
-  // Timer do dia
-  const hoje=new Date().toLocaleDateString('pt-BR');
-  if(m.timerData===hoje&&m.timerSeg){timerSegundos=m.timerSeg;atualizarDisplayTimer();}
-  atualizarProgressoProd();
-  atualizarProgressoTempo();
+  if(m.prodDia)document.getElementById('meta-prod-dia').value=m.prodDia;
+  if(m.diasSemana)document.getElementById('meta-dias-semana').value=m.diasSemana;
+  recalcularMetas();
 }
 
 function salvarMetas(){
-  const hoje=new Date().toLocaleDateString('pt-BR');
-  const m={
-    nota:document.getElementById('nota-slider').value,
-    notaObs:document.getElementById('nota-obs').value,
-    prodAlvo:document.getElementById('meta-prod-alvo').value,
-    prodPeriodo:document.getElementById('meta-prod-periodo').value,
-    tempoAlvo:document.getElementById('meta-tempo-alvo').value,
-    timerSeg:timerSegundos,
-    timerData:hoje
-  };
+  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  m.nota=document.getElementById('nota-slider').value;
+  m.notaObs=document.getElementById('nota-obs').value;
+  m.prodDia=document.getElementById('meta-prod-dia').value;
+  m.diasSemana=document.getElementById('meta-dias-semana').value;
+  if(!m.dataInicio)m.dataInicio=new Date().toISOString();
   localStorage.setItem('realecom_metas',JSON.stringify(m));
   alert('✅ Metas salvas!');
 }
@@ -593,58 +588,62 @@ function atualizarNota(v){
   document.getElementById('nota-display').textContent=parseFloat(v).toFixed(1).replace('.',',');
 }
 
-function atualizarProgressoProd(){
-  const alvo=parseInt(document.getElementById('meta-prod-alvo').value)||0;
+function recalcularMetas(){
+  const prodDia=parseInt(document.getElementById('meta-prod-dia').value)||0;
+  const diasSem=parseInt(document.getElementById('meta-dias-semana').value)||0;
+  if(!prodDia||!diasSem)return;
+
+  const metaSemana=prodDia*diasSem;
+  const metaQuinzena=metaSemana*2;
+  const metaMes=metaSemana*4;
+
+  document.getElementById('meta-resumo').style.display='block';
+  document.getElementById('meta-val-semana').textContent=metaSemana+' produtos';
+  document.getElementById('meta-val-quinzena').textContent=metaQuinzena+' produtos';
+  document.getElementById('meta-val-mes').textContent=metaMes+' produtos';
+
+  // Buscar data de início da meta
+  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
+
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  const atual=prods.length;
-  document.getElementById('meta-prod-atual').textContent=atual;
-  if(alvo>0){
-    const pct=Math.min(Math.round((atual/alvo)*100),100);
-    document.getElementById('meta-prod-bar').style.width=pct+'%';
-    document.getElementById('meta-prod-pct').textContent=pct+'% concluído';
-    const faltam=Math.max(alvo-atual,0);
-    document.getElementById('meta-prod-faltam').textContent=faltam>0?`Faltam ${faltam} produtos`:'🎉 Meta atingida!';
+  const agora=new Date();
+
+  // Filtrar produtos por período baseado no id (timestamp)
+  function prodsPeriodo(dias){
+    const limite=new Date(Math.max(dataInicio.getTime(), agora.getTime()-dias*24*60*60*1000));
+    return prods.filter(p=>p.id>=limite.getTime());
   }
-}
 
-function atualizarProgressoTempo(){
-  const alvoMin=parseInt(document.getElementById('meta-tempo-alvo').value)||0;
-  const alvoSeg=alvoMin*60;
-  if(alvoSeg>0){
-    const pct=Math.min(Math.round((timerSegundos/alvoSeg)*100),100);
-    document.getElementById('meta-tempo-bar').style.width=pct+'%';
-    document.getElementById('meta-tempo-pct').textContent=pct+'% concluído';
-    const faltamSeg=Math.max(alvoSeg-timerSegundos,0);
-    const fm=Math.floor(faltamSeg/60),fs=faltamSeg%60;
-    document.getElementById('meta-tempo-faltam').textContent=faltamSeg>0?`Faltam ${fm}min ${fs}s`:'🎉 Meta atingida!';
+  const prodsSemana=prodsPeriodo(7);
+  const prodsQuinzena=prodsPeriodo(15);
+  const prodsMes=prodsPeriodo(30);
+
+  function comprados(lista){return lista.filter(p=>p.comprado).length;}
+
+  function atualizarCard(prefix,lista,meta){
+    const qtd=lista.length,comp=comprados(lista),pct=meta>0?Math.min(Math.round((qtd/meta)*100),100):0;
+    const faltam=Math.max(meta-qtd,0);
+    const cor=pct>=100?'#4ade80':pct>=50?'#F0A070':'#c4b5fd';
+    document.getElementById('resumo-'+prefix).innerHTML=
+      `<div style="font-size:.9rem;font-weight:800;color:${cor};margin-bottom:6px">${pct}% da meta atingida</div>`+
+      `<div style="font-size:.78rem;color:#8a7aaa">${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?' · <strong style="color:#4ade80">'+comp+' comprado'+(comp!==1?'s':'')+'</strong>':''}</div>`;
+    document.getElementById('bar-'+prefix).style.width=pct+'%';
+    document.getElementById('bar-'+prefix).style.background=pct>=100?'linear-gradient(90deg,#16a34a,#4ade80)':pct>=50?'linear-gradient(90deg,var(--p),var(--o))':'linear-gradient(90deg,var(--p),var(--p2))';
+    document.getElementById('pct-'+prefix).textContent=pct+'% concluído';
+    document.getElementById('faltam-'+prefix).textContent=faltam>0?`Faltam ${faltam} produtos`:'🎉 Meta atingida!';
   }
+
+  atualizarCard('semana',prodsSemana,metaSemana);
+  atualizarCard('quinzena',prodsQuinzena,metaQuinzena);
+  atualizarCard('mes',prodsMes,metaMes);
 }
 
-function atualizarDisplayTimer(){
-  const h=Math.floor(timerSegundos/3600),m=Math.floor((timerSegundos%3600)/60),s=timerSegundos%60;
-  document.getElementById('tempo-display').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  atualizarProgressoTempo();
-}
-
-function startTimer(){
-  if(timerInterval)return;
-  timerInterval=setInterval(()=>{timerSegundos++;atualizarDisplayTimer();},1000);
-  document.getElementById('btn-timer-start').style.display='none';
-  document.getElementById('btn-timer-stop').style.display='inline-block';
-}
-
-function stopTimer(){
-  clearInterval(timerInterval);timerInterval=null;
-  document.getElementById('btn-timer-start').style.display='inline-block';
-  document.getElementById('btn-timer-stop').style.display='none';
-  // Salvar automaticamente ao pausar
-  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
-  m.timerSeg=timerSegundos;m.timerData=new Date().toLocaleDateString('pt-BR');
-  localStorage.setItem('realecom_metas',JSON.stringify(m));
-}
-
-function resetTimer(){
-  stopTimer();timerSegundos=0;atualizarDisplayTimer();
-  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
-  m.timerSeg=0;localStorage.setItem('realecom_metas',JSON.stringify(m));
+// ============================================================
+// ESTRELA — Marcar produto como comprado
+// ============================================================
+function toggleComprado(id){
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const p=prods.find(p=>p.id===id);
+  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();}
 }
