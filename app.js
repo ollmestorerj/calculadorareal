@@ -299,7 +299,7 @@ function calcular(){
   }else{
     mlCard.className='price-card ml-none';
     document.getElementById('pc-ml-preco').textContent='—';
-    document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:#d0d0d0;font-size:.67rem;font-weight:700;margin-bottom:9px';
+    document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:var(--text2);font-size:.67rem;font-weight:700;margin-bottom:9px';
     document.getElementById('pc-ml-badge').textContent='Informe o preço médio';
     document.getElementById('pc-ml-kpis').style.opacity='.25';
     ['ml-mk','ml-roi','ml-mg'].forEach(id=>document.getElementById(id).textContent='—');
@@ -316,7 +316,7 @@ function calcular(){
       const baseNova=custo+freteNovo+ins,precoMinNovo=baseNova/fator;
       if(precoMinNovo<=limitePreco){alerta={freteNovo,limitePreco,ganhoFrete:frete-freteNovo};break;}
     }
-    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:#c0c0c0">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
+    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:var(--text2)">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
     else{alertBox.style.display='none';}
   }else{alertBox.style.display='none';}
 
@@ -400,7 +400,7 @@ function renderDash(){
         <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
         <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
       </div>
-      <div style="font-size:.62rem;color:#a0a0a0;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
+      <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
       <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
     </div></div>`;
   }).join('');
@@ -676,7 +676,7 @@ function recalcularMetas(){
     const infoEl=document.getElementById('info-'+prefix);
     if(infoEl){
       infoEl.innerHTML=`<strong style="color:var(--text);font-size:.75rem">${qtd}/${meta}</strong> produtos<br>`+
-        (comp>0?`<span style="color:#4ade80">⭐ ${comp} comprado${comp>1?'s':''}</span>`:'<span style="color:#a0a0a0">nenhum comprado</span>');
+        (comp>0?`<span style="color:#4ade80">⭐ ${comp} comprado${comp>1?'s':''}</span>`:'<span style="color:var(--text3)">nenhum comprado</span>');
     }
     const resumoEl=document.getElementById('resumo-'+prefix);
     if(resumoEl){
@@ -689,9 +689,9 @@ function recalcularMetas(){
   }
 
   document.getElementById('resumo-geral').style.display='block';
-  const s=atualizarGrafico('semana',prodsSemana,metaSemana,226);
-  const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,226);
-  const mn=atualizarGrafico('mes',prodsMes,metaMes,226);
+  const s=atualizarGrafico('semana',prodsSemana,metaSemana,314);
+  const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,314);
+  const mn=atualizarGrafico('mes',prodsMes,metaMes,314);
 
   // Atualizar painel de qualidade
   atualizarQualidade();
