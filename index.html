@@ -328,42 +328,42 @@ body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
     <button class="theme-toggle" id="theme-btn-home" onclick="toggleTheme()">☀️ Claro</button>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
-  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px">
-    <div style="margin-bottom:36px;text-align:center">
-      <img src="logo.png" class="logo-img" alt="RealEcom" style="height:120px;object-fit:contain">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px">
+    <div style="margin-bottom:12px;text-align:center">
+      <img src="logo.png" class="logo-img" alt="RealEcom" style="height:90px;object-fit:contain">
     </div>
-    <div id="home-usuario" style="font-size:.8rem;color:var(--text2);margin-bottom:8px;text-align:center"></div>
-    <p style="font-size:.85rem;color:var(--text2);margin-bottom:28px;text-align:center">Selecione uma ferramenta para começar</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%;max-width:880px">
-      <div class="home-card" onclick="showPage('calc')">
-        <div style="font-size:2.5rem;margin-bottom:12px">🧮</div>
-        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Calculadora</div>
-        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Calcule o preço ideal de venda, margem, ROI e Markup</div>
+    <div id="home-usuario" style="font-size:.82rem;color:var(--text2);margin-bottom:28px;text-align:center"></div>
+
+    <!-- LINHA 1: Calculadora + Dashboard de Produtos (cards grandes) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:660px;margin-bottom:14px">
+      <div class="home-card" onclick="showPage('calc')" style="padding:28px 20px">
+        <div style="font-size:2.8rem;margin-bottom:10px">🧮</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px">Calculadora</div>
+        <div style="font-size:.76rem;color:var(--text2);line-height:1.5">Calcule preço ideal, margem, ROI e Markup</div>
       </div>
-      <div class="home-card" onclick="showPage('dash')">
-        <div style="font-size:2.5rem;margin-bottom:12px">📊</div>
-        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Dashboard de Produtos</div>
-        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Visualize e gerencie todos os produtos salvos</div>
+      <div class="home-card" onclick="showPage('dash')" style="padding:28px 20px">
+        <div style="font-size:2.8rem;margin-bottom:10px">📊</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px">Dashboard</div>
+        <div style="font-size:.76rem;color:var(--text2);line-height:1.5">Gerencie todos os seus produtos salvos</div>
       </div>
-      <div class="home-card" onclick="showPage('metas')">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎯</div>
-        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Metas</div>
-        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Defina e acompanhe suas metas de pesquisa e tempo</div>
+    </div>
+
+    <!-- LINHA 2: Metas + Calendário + INPI (cards menores) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;width:100%;max-width:660px">
+      <div class="home-card" onclick="showPage('metas')" style="padding:22px 14px">
+        <div style="font-size:2rem;margin-bottom:8px">🎯</div>
+        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Metas</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Acompanhe seu progresso</div>
       </div>
-      <div class="home-card" onclick="showPage('cal')">
-        <div style="font-size:2.5rem;margin-bottom:12px">📅</div>
-        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px">Calendário</div>
-        <div style="font-size:.78rem;color:var(--text2);line-height:1.5">Marque coletas Full, vencimentos e receba alertas</div>
+      <div class="home-card" onclick="showPage('cal')" style="padding:22px 14px">
+        <div style="font-size:2rem;margin-bottom:8px">📅</div>
+        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Calendário</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Coletas e vencimentos</div>
       </div>
-      <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card">
-        <div style="font-size:2.5rem;margin-bottom:12px">🔍</div>
-        <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:10px">Verificar Marca no INPI</div>
-        <div style="text-align:left;display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">1</span><span>Clique em <strong style="color:#c4b5fd">Continuar</strong> sem login</span></div>
-          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">2</span><span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span></div>
-          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">3</span><span>Em Consulta, selecione <strong style="color:#c4b5fd">Marca</strong></span></div>
-          <div style="display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800">4</span><span>Digite o nome e pesquise</span></div>
-        </div>
+      <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:22px 14px">
+        <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Verificar marca registrada</div>
       </a>
     </div>
   </div>
@@ -636,55 +636,57 @@ function exportarExcel(){
       <textarea class="meta-input" id="nota-obs" placeholder="Como está indo? O que pode melhorar?..." style="height:70px;resize:none"></textarea>
     </div>
 
-    <!-- META DE PRODUTOS -->
+    <!-- DEFINIÇÃO DA META -->
     <div class="meta-card">
-      <div class="meta-card-title">📦 Meta de Produtos Pesquisados</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="meta-card-title">⚙️ Definir Meta de Análises</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div>
-          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Meta (produtos)</div>
-          <input type="number" class="meta-input" id="meta-prod-alvo" placeholder="Ex: 20" min="1" step="1" oninput="atualizarProgressoProd()">
+          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Produtos por dia</div>
+          <input type="number" class="meta-input" id="meta-prod-dia" placeholder="Ex: 5" min="1" step="1" oninput="recalcularMetas()">
         </div>
         <div>
-          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Período</div>
-          <select class="meta-input" id="meta-prod-periodo" onchange="atualizarProgressoProd()">
-            <option value="semana">Por semana</option>
-            <option value="mes">Por mês</option>
-          </select>
+          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Dias por semana</div>
+          <input type="number" class="meta-input" id="meta-dias-semana" placeholder="Ex: 4" min="1" max="7" step="1" oninput="recalcularMetas()">
         </div>
       </div>
-      <div class="meta-stat">
-        <span class="ms-label">Produtos salvos no Dashboard</span>
-        <span class="ms-value" id="meta-prod-atual">0</span>
+      <div id="meta-resumo" style="background:#1a1428;border-radius:10px;padding:10px 12px;font-size:.78rem;color:#6b5f8a;display:none">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>Meta semanal</span><span style="color:var(--o);font-weight:700" id="meta-val-semana">—</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>Meta quinzenal</span><span style="color:var(--o);font-weight:700" id="meta-val-quinzena">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Meta mensal</span><span style="color:var(--o);font-weight:700" id="meta-val-mes">—</span></div>
       </div>
-      <div class="meta-progress-bar"><div class="meta-progress-fill" id="meta-prod-bar" style="width:0%"></div></div>
+      <body.light #meta-resumo{background:#f0ebff}></body.light>
+    </div>
+
+    <!-- PROGRESSO SEMANAL -->
+    <div class="meta-card">
+      <div class="meta-card-title">📅 Esta Semana</div>
+      <div id="resumo-semana" style="background:linear-gradient(135deg,#0a1628,#0f2040);border-radius:10px;padding:12px;margin-bottom:10px;font-size:.82rem;color:#8a7aaa;text-align:center">Configure sua meta acima para ver o progresso</div>
+      <div class="meta-progress-bar"><div class="meta-progress-fill" id="bar-semana" style="width:0%"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#6b5f8a;margin-top:4px">
-        <span id="meta-prod-pct">0% concluído</span>
-        <span id="meta-prod-faltam">—</span>
+        <span id="pct-semana">0% concluído</span>
+        <span id="faltam-semana">—</span>
       </div>
     </div>
 
-    <!-- META DE TEMPO -->
+    <!-- PROGRESSO QUINZENAL -->
     <div class="meta-card">
-      <div class="meta-card-title">⏱️ Meta de Tempo na Plataforma</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div>
-          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Meta (minutos/dia)</div>
-          <input type="number" class="meta-input" id="meta-tempo-alvo" placeholder="Ex: 30" min="1" step="1" oninput="atualizarProgressoTempo()">
-        </div>
-        <div style="display:flex;flex-direction:column;justify-content:flex-end">
-          <div style="font-size:.72rem;color:#6b5f8a;margin-bottom:4px">Tempo hoje</div>
-          <div class="tempo-display" id="tempo-display">00:00:00</div>
-        </div>
-      </div>
-      <div style="text-align:center;margin-bottom:10px">
-        <button class="btn-timer start" id="btn-timer-start" onclick="startTimer()">▶ Iniciar</button>
-        <button class="btn-timer stop" id="btn-timer-stop" onclick="stopTimer()" style="display:none">⏹ Pausar</button>
-        <button class="btn-timer reset" onclick="resetTimer()">↺ Zerar</button>
-      </div>
-      <div class="meta-progress-bar"><div class="meta-progress-fill" id="meta-tempo-bar" style="width:0%"></div></div>
+      <div class="meta-card-title">📆 Quinzena</div>
+      <div id="resumo-quinzena" style="background:linear-gradient(135deg,#0a1628,#0f2040);border-radius:10px;padding:12px;margin-bottom:10px;font-size:.82rem;color:#8a7aaa;text-align:center">Configure sua meta acima para ver o progresso</div>
+      <div class="meta-progress-bar"><div class="meta-progress-fill" id="bar-quinzena" style="width:0%"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#6b5f8a;margin-top:4px">
-        <span id="meta-tempo-pct">0% concluído</span>
-        <span id="meta-tempo-faltam">—</span>
+        <span id="pct-quinzena">0% concluído</span>
+        <span id="faltam-quinzena">—</span>
+      </div>
+    </div>
+
+    <!-- PROGRESSO MENSAL -->
+    <div class="meta-card">
+      <div class="meta-card-title">🗓️ Este Mês</div>
+      <div id="resumo-mes" style="background:linear-gradient(135deg,#0a1628,#0f2040);border-radius:10px;padding:12px;margin-bottom:10px;font-size:.82rem;color:#8a7aaa;text-align:center">Configure sua meta acima para ver o progresso</div>
+      <div class="meta-progress-bar"><div class="meta-progress-fill" id="bar-mes" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#6b5f8a;margin-top:4px">
+        <span id="pct-mes">0% concluído</span>
+        <span id="faltam-mes">—</span>
       </div>
     </div>
 
