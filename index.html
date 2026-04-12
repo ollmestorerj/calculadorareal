@@ -7,9 +7,9 @@
 <link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e;--text:#f0f0f0;--text2:#d0d0d0;--text3:#a0a0a0}
+:root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e;--text:#f0f0f0;--text2:#b8afd4;--text3:#8a7aaa}
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s}
-body.light{--bg:#f5f3ff;--bg2:#ede9fe;--card:#ffffff;--border:#d8d0f0;--text:#1a1030;--text2:#6b5f8a;--text3:#9985c9}
+body.light{--bg:#f5f3ff;--bg2:#ede9fe;--card:#ffffff;--border:#d8d0f0;--text:#1a1030;--text2:#3d3060;--text3:#5a4f7a}
 .page{display:none}.page.active{display:block}
 
 /* HEADER */
@@ -27,7 +27,7 @@ body.light .app-header{background:#ede9fe}
 .left-panel{border-right:1px solid var(--border);padding:16px 15px;overflow-y:auto}
 .right-panel{padding:16px 15px;overflow-y:auto;background:var(--bg2)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
-.card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a0a0a0;margin-bottom:10px}
+.card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px}
 .margem-card{background:linear-gradient(135deg,#1e0a3c,#2d1060);border:1.5px solid var(--p2);border-radius:14px;padding:14px;margin-bottom:10px}
 .margem-card .card-title{color:var(--p2)}
 .margem-card input{border-color:var(--p2)!important;font-size:1.1rem!important;font-weight:700!important;color:#c4b5fd!important;text-align:center}
@@ -35,7 +35,7 @@ body.light .app-header{background:#ede9fe}
 body.light .margem-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:var(--p2)}
 body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
 .field{margin-bottom:9px}
-.field label{display:block;font-size:.76rem;color:#d0d0d0;margin-bottom:3px;font-weight:500}
+.field label{display:block;font-size:.76rem;color:var(--text2);margin-bottom:3px;font-weight:500}
 .field input,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;transition:border .2s}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--o);background:#1e1830}
 body.light .field input,body.light .field textarea{background:#e8e8e8;border-color:#d8d0f0;color:#1a1030}
@@ -44,36 +44,36 @@ input[type=number]{-moz-appearance:textfield}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
 @media(max-width:480px){.row4{grid-template-columns:1fr 1fr}}
-.note{font-size:.68rem;color:#909090;margin-top:4px}
+.note{font-size:.68rem;color:var(--text3);margin-top:4px}
 .item-list{display:flex;flex-direction:column;gap:5px}
 .item-row{display:grid;grid-template-columns:1fr 32px;gap:5px;align-items:center}
-.add-item{background:none;border:1.5px dashed var(--border);color:#a0a0a0;border-radius:9px;padding:6px;font-size:.76rem;cursor:pointer;width:100%;margin-top:5px;transition:all .2s}
+.add-item{background:none;border:1.5px dashed var(--border);color:var(--text3);border-radius:9px;padding:6px;font-size:.76rem;cursor:pointer;width:100%;margin-top:5px;transition:all .2s}
 .add-item:hover{border-color:var(--o);color:var(--o)}
 .remove-btn{background:#ff3b3018;border:none;color:#ff3b30;width:32px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
 .toggle-row{display:flex;gap:7px;margin-bottom:9px}
-.toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid var(--border);background:#1a1428;color:#a0a0a0;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
+.toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid var(--border);background:#1a1428;color:var(--text3);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
 .toggle-btn.active{border-color:var(--o);color:var(--o);background:#F0A07010}
 body.light .toggle-btn{background:#e5e5e5;color:#888;border-color:#ccc}
 body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
 .peso-info{background:#1a1428;border:1px solid var(--border);border-radius:9px;padding:9px 11px;margin-top:7px;font-size:.78rem;display:none;flex-wrap:wrap;gap:10px}
-.peso-info .pi{color:#d0d0d0}.peso-info .pi strong{color:var(--o)}
+.peso-info .pi{color:var(--text2)}.peso-info .pi strong{color:var(--o)}
 body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
 .frete-wrap{overflow-x:auto;margin-top:8px}
 .ft{width:100%;border-collapse:collapse;font-size:.67rem}
-.ft th{background:#1a1428;padding:5px 4px;text-align:center;font-weight:600;color:#a0a0a0;border:1px solid var(--border);white-space:nowrap}
-.ft td{padding:5px 4px;text-align:center;border:1px solid #170f26;color:#d0d0d0}
+.ft th{background:#1a1428;padding:5px 4px;text-align:center;font-weight:600;color:var(--text3);border:1px solid var(--border);white-space:nowrap}
+.ft td{padding:5px 4px;text-align:center;border:1px solid #170f26;color:var(--text2)}
 .ft td.pcol{font-weight:600;text-align:left;white-space:nowrap;background:#1a1428;color:var(--o);padding-left:6px}
 .ft td.fopt{cursor:pointer;transition:all .15s}.ft td.fopt:hover{background:#F0A07018;color:var(--o);font-weight:600}
 .ft td.fsel{background:var(--o)!important;color:#000!important;font-weight:700}
 .ft tr.dim{opacity:.35}
-body.light .ft th{background:#ede9fe;color:#d0d0d0}
-body.light .ft td{background:#fff;color:#a0a0a0}
+body.light .ft th{background:#ede9fe;color:var(--text2)}
+body.light .ft td{background:#fff;color:var(--text3)}
 body.light .ft td.pcol{background:#ede9fe;color:var(--p)}
 .frete-badge{background:#F0A07010;border:1px solid #F0A07040;border-radius:9px;padding:7px 11px;font-size:.79rem;color:var(--o);font-weight:600;margin-top:7px;display:none}
 body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
 .btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;margin-top:4px}
 .btn-calc:hover{opacity:.88}
-.btn-reset{width:100%;padding:10px;background:var(--card);color:#d0d0d0;border:1px solid var(--border);border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
+.btn-reset{width:100%;padding:10px;background:var(--card);color:var(--text2);border:1px solid var(--border);border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
 .btn-reset:hover{border-color:var(--o);color:var(--o)}
 .right-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;opacity:.2;text-align:center;gap:10px}
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px}
@@ -94,24 +94,24 @@ body.light .pc-badge{background:rgba(255,255,255,.25)!important;color:#fff!impor
 .pc-kpi .pkl{font-size:.58rem;opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
 .pc-kpi .pkv{font-size:.9rem;font-weight:800}
 .pc-kpi .pks{font-size:.56rem;opacity:.45;margin-top:1px}
-.explain-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;font-size:.79rem;color:#c0c0c0;line-height:1.6}
-.explain-box .ex-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a0a0a0;margin-bottom:7px}
+.explain-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;font-size:.79rem;color:var(--text2);line-height:1.6}
+.explain-box .ex-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:7px}
 body.light .explain-box{background:#fff;border-color:#d8d0f0}
 .breakdown{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px;margin-bottom:10px}
-.bd-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a0a0a0;margin-bottom:9px}
+.bd-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:9px}
 .brow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1a1428;font-size:.79rem}
 .brow:last-child{border:none}
-.brow .bl{color:#a0a0a0}.brow .br{color:#c4b5fd;font-weight:600}
+.brow .bl{color:var(--text3)}.brow .br{color:#c4b5fd;font-weight:600}
 .brow.total{padding-top:8px}.brow.total .bl{color:#8b7faa;font-weight:700}.brow.total .br{color:#fff;font-weight:800;font-size:.9rem}
 .brow.highlight .br{color:var(--o)}
 body.light .brow .br{color:#4c1d95;font-weight:700}
 body.light .brow.total .br{color:#3b0764;font-weight:800}
 body.light .brow.highlight .br{color:#c2410c;font-weight:700}
-body.light .brow .bl{color:#d0d0d0}
+body.light .brow .bl{color:var(--text2)}
 body.light .brow.total .bl{color:#4c1d95}
 body.light #proj-qtd{color:#c2410c!important}
 body.light .breakdown{background:#fff;border-color:#d8d0f0}
-body.light .bd-title{color:#d0d0d0}
+body.light .bd-title{color:var(--text2)}
 .save-card{background:linear-gradient(135deg,#0a1628,#0f2040);border:1.5px solid #1e3a5f;border-radius:14px;padding:14px;margin-bottom:10px}
 .save-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4a8fcc;margin-bottom:10px}
 .btn-save{width:100%;padding:11px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:6px}
@@ -126,30 +126,30 @@ body.light .prod-obs{background:#e8e8e8!important;color:#1a1030!important;border
 body.light .dash-header h2{color:#ea580c}
 body.light .dash-header h2 span{color:#ea580c}
 .btn-back{background:var(--card);color:#8b7faa;border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:.78rem;font-weight:600;cursor:pointer}
-body.light .btn-back{background:#f0ebff;border-color:#d8d0f0;color:#d0d0d0}
+body.light .btn-back{background:#f0ebff;border-color:#d8d0f0;color:var(--text2)}
 .prod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
 body.light .prod-card{background:#fff;border-color:#d8d0f0}
 .prod-card-top{padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .prod-name{flex:1;min-width:100px}
 .prod-name h3{font-size:.92rem;font-weight:800;color:var(--text);margin-bottom:2px}
 body.light .prod-name h3{color:#4c1d95}
-.prod-name p{font-size:.7rem;color:#a0a0a0}
+.prod-name p{font-size:.7rem;color:var(--text3)}
 body.light .prod-name p{color:#9985c9}
 .prod-metric{text-align:center;min-width:64px}
-.prod-metric .pm-label{font-size:.58rem;color:#a0a0a0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.prod-metric .pm-label{font-size:.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
 .prod-metric .pm-value{font-size:.9rem;font-weight:800}
 .prod-card-detail{display:none;padding:14px 16px;background:#0a0812;border-top:1px solid var(--border)}
 body.light .prod-card-detail{background:#f5f3ff}
 .prod-detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px}
 .pd-item{background:var(--card);border-radius:9px;padding:9px 11px}
 body.light .pd-item{background:#ede9fe}
-.pd-item .pdl{font-size:.6rem;color:#a0a0a0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.pd-item .pdl{font-size:.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
 .pd-item .pdv{font-size:.85rem;font-weight:700;color:#c4b5fd}
 body.light .pd-item .pdl{color:#9985c9}
 body.light .pd-item .pdv{color:#4c1d95}
-.prod-obs{width:100%;background:#140f20;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.76rem;color:#c0c0c0;resize:none;height:50px;outline:none;font-family:inherit;margin-top:4px;display:block}
-.btn-toggle{background:none;border:1px solid var(--border);color:#d0d0d0;border-radius:8px;padding:5px 12px;font-size:.72rem;cursor:pointer}
-body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:#d0d0d0}
+.prod-obs{width:100%;background:#140f20;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.76rem;color:var(--text2);resize:none;height:50px;outline:none;font-family:inherit;margin-top:4px;display:block}
+.btn-toggle{background:none;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:5px 12px;font-size:.72rem;cursor:pointer}
+body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:var(--text2)}
 .btn-del{background:none;border:1px solid #2a1a1a;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .btn-del:hover{background:#ff3b3018;border-color:#f8717144}
 .btn-del svg{width:16px;height:16px;stroke:#4a3f6b;transition:stroke .2s}
@@ -162,7 +162,7 @@ body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:#d0d0d0}
 .cal-nav button{background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85rem}
 .cal-nav h3{font-size:1rem;font-weight:800;color:var(--text);min-width:160px;text-align:center}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
-.cal-day-header{text-align:center;font-size:.68rem;font-weight:700;color:#a0a0a0;padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-day-header{text-align:center;font-size:.68rem;font-weight:700;color:var(--text3);padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
 body.light .cal-day-header{color:#9985c9}
 .cal-day{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 6px;min-height:72px;cursor:pointer;transition:all .2s;position:relative}
 .cal-day:hover{border-color:var(--o)}
@@ -179,7 +179,7 @@ body.light .cal-day.today .day-num{color:var(--o)}
 .cal-event.conta{background:#dc262633;color:#f87171;border-left:2px solid #dc2626}
 .cal-event.entrega{background:#16a34a33;color:#4ade80;border-left:2px solid #16a34a}
 .cal-event.outro{background:#F0A07033;color:var(--o);border-left:2px solid var(--o)}
-.cal-event-more{font-size:.58rem;color:#a0a0a0;padding:1px 4px}
+.cal-event-more{font-size:.58rem;color:var(--text3);padding:1px 4px}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
@@ -193,12 +193,12 @@ body.light .modal-field select option{background:#e0e0e0!important;color:#111!im
 body.light .btn-cancel{background:#e0e0e0!important;color:#444!important;border-color:#bbb!important}
 .modal h3{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:16px}
 .modal-field{margin-bottom:12px}
-.modal-field label{display:block;font-size:.76rem;color:#d0d0d0;margin-bottom:4px;font-weight:500}
+.modal-field label{display:block;font-size:.76rem;color:var(--text2);margin-bottom:4px;font-weight:500}
 .modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;outline:none;font-family:inherit}
 .modal-field select option{background:#1a1428}
 .modal-btns{display:flex;gap:8px;margin-top:16px}
 .btn-confirm{flex:1;padding:11px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer}
-.btn-cancel{flex:1;padding:11px;background:var(--card);color:#d0d0d0;border:1px solid var(--border);border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer}
+.btn-cancel{flex:1;padding:11px;background:var(--card);color:var(--text2);border:1px solid var(--border);border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer}
 
 /* NOTIFICAÇÃO */
 .notif-container{position:fixed;top:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:320px}
@@ -206,8 +206,8 @@ body.light .btn-cancel{background:#e0e0e0!important;color:#444!important;border-
 .notif.full{border-color:#7c3aed88}.notif.conta{border-color:#dc262688}.notif.entrega{border-color:#16a34a88}.notif.outro{border-color:var(--o)}
 .notif-icon{font-size:1.2rem;flex-shrink:0}
 .notif-body .notif-title{font-weight:700;margin-bottom:2px}
-.notif-body .notif-sub{font-size:.74rem;color:#d0d0d0}
-.notif-close{background:none;border:none;color:#a0a0a0;cursor:pointer;font-size:1rem;margin-left:auto;flex-shrink:0}
+.notif-body .notif-sub{font-size:.74rem;color:var(--text2)}
+.notif-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;margin-left:auto;flex-shrink:0}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 
 /* HOME */
@@ -231,7 +231,7 @@ body.light .login-logo img{filter:none}
 .login-field label{display:block;font-size:.74rem;color:var(--text2);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
 .login-input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:1rem;font-weight:700;color:var(--text);background:#1a1428;text-align:center;letter-spacing:.12em;text-transform:uppercase;outline:none;transition:border .2s,box-shadow .2s;font-family:inherit}
 .login-input:focus{border-color:var(--o);box-shadow:0 0 0 3px #F0A07018}
-.login-input::placeholder{font-weight:400;letter-spacing:.04em;text-transform:none;color:#909090}
+.login-input::placeholder{font-weight:400;letter-spacing:.04em;text-transform:none;color:var(--text3)}
 body.light .login-input{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
 .btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:6px;transition:opacity .2s,transform .1s;letter-spacing:.03em}
 .btn-login:hover{opacity:.88}.btn-login:active{transform:scale(.98)}.btn-login:disabled{opacity:.5;cursor:not-allowed}
@@ -239,24 +239,24 @@ body.light .login-input{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
 .login-loading{display:none;text-align:center;margin-top:12px;font-size:.78rem;color:var(--text2)}
 .login-loading span{display:inline-block;animation:pulse 1.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-.login-footer{margin-top:24px;text-align:center;font-size:.72rem;color:#909090;line-height:1.7}
+.login-footer{margin-top:24px;text-align:center;font-size:.72rem;color:var(--text3);line-height:1.7}
 .login-footer a{color:var(--o);text-decoration:none;font-weight:600}
 .login-validade{background:#05291622;border:1px solid #16a34a44;border-radius:10px;padding:10px 14px;font-size:.76rem;color:#4ade80;margin-top:14px;text-align:center;display:none}
 .login-badge{display:inline-flex;align-items:center;gap:6px;background:#F0A07015;border:1px solid #F0A07035;border-radius:20px;padding:4px 12px;font-size:.7rem;color:var(--o);font-weight:700;margin-bottom:18px}
-.btn-sair{background:none;border:1.5px solid #2a1a1a;border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.72rem;color:#d0d0d0;font-weight:600;transition:all .2s;white-space:nowrap}
+.btn-sair{background:none;border:1.5px solid #2a1a1a;border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.72rem;color:var(--text2);font-weight:600;transition:all .2s;white-space:nowrap}
 .btn-sair:hover{border-color:#f87171;color:#f87171}
 
 /* METAS */
 .metas-page{padding:20px 18px;max-width:700px;margin:0 auto}
 .meta-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px}
-.meta-card-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a0a0a0;margin-bottom:12px}
+.meta-card-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:12px}
 .meta-progress-bar{height:10px;background:#1a1428;border-radius:20px;overflow:hidden;margin:8px 0}
 .meta-progress-fill{height:100%;border-radius:20px;transition:width .5s ease;background:linear-gradient(90deg,var(--p),var(--o))}
 .meta-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;outline:none;font-family:inherit;margin-top:5px}
 .meta-input:focus{border-color:var(--o)}
 body.light .meta-input{background:#e8e8e8;border-color:#d8d0f0;color:#1a1030}
 .meta-stat{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;margin-top:6px}
-.meta-stat .ms-label{color:#d0d0d0}
+.meta-stat .ms-label{color:var(--text2)}
 .meta-stat .ms-value{font-weight:800;color:var(--o)}
 .nota-card{background:linear-gradient(135deg,#0a1628,#0f2040);border:1.5px solid #1e3a5f;border-radius:16px;padding:18px;margin-bottom:12px}
 .nota-display{font-size:3.5rem;font-weight:900;text-align:center;background:linear-gradient(135deg,var(--p),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
@@ -267,8 +267,15 @@ body.light .meta-input{background:#e8e8e8;border-color:#d8d0f0;color:#1a1030}
 .btn-timer{padding:10px 20px;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;margin:4px}
 .btn-timer.start{background:linear-gradient(135deg,#166534,#16a34a);color:#fff}
 .btn-timer.stop{background:linear-gradient(135deg,#7f1d1d,#dc2626);color:#fff}
-.btn-timer.reset{background:var(--card);color:#d0d0d0;border:1px solid var(--border)}
+.btn-timer.reset{background:var(--card);color:var(--text2);border:1px solid var(--border)}
 body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
+
+body.light .meta-input{background:#f0ebff!important;border-color:#d8d0f0!important;color:#1a1030!important}
+body.light .meta-card{background:#fff;border-color:#d8d0f0}
+body.light .meta-card-title{color:#6b5f8a}
+body.light .nota-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:#d8d0f0}
+body.light #meta-resumo span{color:#4c1d95!important}
+
 </style>
 </head>
 <body>
@@ -387,9 +394,9 @@ body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
   <div class="left-panel">
     <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:12px;gap:4px">
       <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff">💎 Cálculo pela Margem Desejada</button>
-      <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:none;color:#a0a0a0">🌐 Cálculo pelo Valor Médio do Mercado</button>
+      <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:none;color:var(--text3)">🌐 Cálculo pelo Valor Médio do Mercado</button>
     </div>
-    <div id="mode-desc" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:11px;font-size:.76rem;color:#d0d0d0;line-height:1.5">
+    <div id="mode-desc" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:11px;font-size:.76rem;color:var(--text2);line-height:1.5">
       <strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.
     </div>
     <div class="card">
@@ -421,7 +428,7 @@ body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
           <span class="pi">✅ Usado: <strong id="pi-usado">—</strong></span>
         </div>
         <div id="frete-section" style="display:none;margin-top:8px">
-          <div style="font-size:.65rem;color:#909090;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600">Selecione a faixa de preço</div>
+          <div style="font-size:.65rem;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600">Selecione a faixa de preço</div>
           <div class="frete-wrap"><table class="ft" id="frete-table"></table></div>
           <div class="frete-badge" id="frete-badge">✅ Frete: <span id="frete-val">—</span></div>
           <div id="frete-aviso" style="display:none;border-radius:9px;padding:8px 11px;font-size:.76rem;line-height:1.5;margin-top:6px"></div>
@@ -457,12 +464,12 @@ body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
     </div>
     <button class="btn-calc" onclick="calcular()">⚡ Calcular Precificação</button>
     <div id="inpi-box" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:10px">
-      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a0a0a0;margin-bottom:10px">📋 Verificar Marca Registrada no INPI</div>
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">📋 Verificar Marca Registrada no INPI</div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#d0d0d0"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">1</span><span>Na tela inicial, clique em <strong style="color:#c4b5fd">Continuar</strong> para acessar sem login</span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#d0d0d0"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">2</span><span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#d0d0d0"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">3</span><span>Em Consulta, selecione <strong style="color:#c4b5fd">Marca</strong> novamente</span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:#d0d0d0"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">4</span><span>Digite o nome da marca no campo de busca e pesquise</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">1</span><span>Na tela inicial, clique em <strong style="color:#c4b5fd">Continuar</strong> para acessar sem login</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">2</span><span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">3</span><span>Em Consulta, selecione <strong style="color:#c4b5fd">Marca</strong> novamente</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">4</span><span>Digite o nome da marca no campo de busca e pesquise</span></div>
       </div>
       <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;font-size:.82rem;font-weight:700;text-align:center;text-decoration:none">🔍 VERIFICAR MARCA REGISTRADA NO INPI</a>
     </div>
@@ -487,7 +494,7 @@ body.light .btn-timer.reset{background:#f0ebff;border-color:#d8d0f0}
         <div class="price-card ml-none" id="pc-ml-card">
           <div class="pc-tag" id="pc-ml-tag">💛 Preço Médio ML</div>
           <div class="pc-price" id="pc-ml-preco">—</div>
-          <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1);color:#d0d0d0">Informe o preço médio</div>
+          <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1);color:var(--text2)">Informe o preço médio</div>
           <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
             <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div><div class="pks">&gt;1,50</div></div>
             <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div><div class="pks">&gt;10%</div></div>
@@ -620,145 +627,136 @@ function exportarExcel(){
     <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
   </div>
 
-  <div class="metas-page">
+  <div class="metas-page" style="max-width:900px">
 
-    <!-- LINHA 1: Configuração + Nota lado a lado -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <!-- LINHA 1: Config + Qualidade lado a lado -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
 
       <!-- Config da meta -->
       <div class="meta-card" style="margin-bottom:0">
-        <div class="meta-card-title">⚙️ Minha Meta</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">⚙️ MINHA META</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
           <div>
-            <div style="font-size:.68rem;color:#d0d0d0;margin-bottom:3px">Produtos/dia</div>
-            <input type="number" class="meta-input" id="meta-prod-dia" placeholder="5" min="1" step="1" oninput="recalcularMetas()" style="padding:7px 10px;font-size:.85rem">
+            <div style="font-size:.75rem;color:var(--text2);margin-bottom:5px">Produtos/dia</div>
+            <input type="number" class="meta-input" id="meta-prod-dia" placeholder="5" min="1" step="1" oninput="recalcularMetas()" style="padding:10px 12px;font-size:1rem;font-weight:700">
           </div>
           <div>
-            <div style="font-size:.68rem;color:#d0d0d0;margin-bottom:3px">Dias/semana</div>
-            <input type="number" class="meta-input" id="meta-dias-semana" placeholder="4" min="1" max="7" step="1" oninput="recalcularMetas()" style="padding:7px 10px;font-size:.85rem">
+            <div style="font-size:.75rem;color:var(--text2);margin-bottom:5px">Dias/semana</div>
+            <input type="number" class="meta-input" id="meta-dias-semana" placeholder="4" min="1" max="7" step="1" oninput="recalcularMetas()" style="padding:10px 12px;font-size:1rem;font-weight:700">
           </div>
         </div>
-        <div id="meta-resumo" style="display:none">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">
-            <span style="font-size:.7rem;color:#d0d0d0">Semana</span>
-            <span style="font-size:.82rem;font-weight:800;color:var(--o)" id="meta-val-semana">—</span>
+        <div id="meta-resumo" style="display:none;margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:.82rem;color:var(--text2)">📅 Semana</span>
+            <span style="font-size:.95rem;font-weight:800;color:var(--o)" id="meta-val-semana">—</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">
-            <span style="font-size:.7rem;color:#d0d0d0">Quinzena</span>
-            <span style="font-size:.82rem;font-weight:800;color:var(--o)" id="meta-val-quinzena">—</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:.82rem;color:var(--text2)">📆 Quinzena</span>
+            <span style="font-size:.95rem;font-weight:800;color:var(--o)" id="meta-val-quinzena">—</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-            <span style="font-size:.7rem;color:#d0d0d0">Mês</span>
-            <span style="font-size:.82rem;font-weight:800;color:var(--o)" id="meta-val-mes">—</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0">
+            <span style="font-size:.82rem;color:var(--text2)">🗓️ Mês</span>
+            <span style="font-size:.95rem;font-weight:800;color:var(--o)" id="meta-val-mes">—</span>
           </div>
         </div>
-        <button onclick="salvarMetas()" style="width:100%;margin-top:10px;padding:8px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:9px;font-size:.76rem;font-weight:700;cursor:pointer">💾 Salvar Meta</button>
+        <button onclick="salvarMetas()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer">💾 Salvar Meta</button>
       </div>
 
       <!-- Painel de qualidade -->
-      <div class="meta-card" style="margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between">
-        <div class="meta-card-title" style="color:#4a8fcc;margin-bottom:10px">🔬 Qualidade das Análises</div>
-
-        <!-- Total analisado no mês -->
-        <div style="background:#1a1428;border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:center">
-          <div style="font-size:.68rem;color:#d0d0d0;margin-bottom:2px">Você analisou este mês</div>
-          <div style="font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="qual-total">0</div>
-          <div style="font-size:.65rem;color:#a0a0a0">produtos</div>
+      <div class="meta-card" style="margin-bottom:0">
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px;color:#60a5fa">🔬 QUALIDADE DAS ANÁLISES</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center">
+          <div style="font-size:.78rem;color:var(--text2);margin-bottom:4px">Você analisou este mês</div>
+          <div style="font-size:3rem;font-weight:900;line-height:1;color:var(--o)" id="qual-total">0</div>
+          <div style="font-size:.72rem;color:var(--text3);margin-top:4px">produtos</div>
         </div>
-
-        <!-- Métricas de ROI -->
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #4ade80">
-            <span style="font-size:.72rem;color:#d0d0d0">ROI acima de 1,60x</span>
-            <span style="font-size:.85rem;font-weight:800;color:#4ade80" id="qual-roi160">0</span>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;border-left:3px solid #4ade80">
+            <span style="font-size:.8rem;color:var(--text2)">ROI acima de 1,60x</span>
+            <span style="font-size:1rem;font-weight:900;color:#4ade80" id="qual-roi160">0</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #F0A070">
-            <span style="font-size:.72rem;color:#d0d0d0">ROI acima de 1,80x</span>
-            <span style="font-size:.85rem;font-weight:800;color:#F0A070" id="qual-roi180">0</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;border-left:3px solid #F0A070">
+            <span style="font-size:.8rem;color:var(--text2)">ROI acima de 1,80x</span>
+            <span style="font-size:1rem;font-weight:900;color:#F0A070" id="qual-roi180">0</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #c4b5fd">
-            <span style="font-size:.72rem;color:#d0d0d0">ROI acima de 2,00x</span>
-            <span style="font-size:.85rem;font-weight:800;color:#c4b5fd" id="qual-roi200">0</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;border-left:3px solid #c4b5fd">
+            <span style="font-size:.8rem;color:var(--text2)">ROI acima de 2,00x</span>
+            <span style="font-size:1rem;font-weight:900;color:#c4b5fd" id="qual-roi200">0</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#1a1428;border-radius:8px;border-left:3px solid #60a5fa">
-            <span style="font-size:.72rem;color:#d0d0d0">Ticket médio ML</span>
-            <span style="font-size:.85rem;font-weight:800;color:#60a5fa" id="qual-ticket">R$ —</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;border-left:3px solid #60a5fa">
+            <span style="font-size:.8rem;color:var(--text2)">Ticket médio ML</span>
+            <span style="font-size:1rem;font-weight:900;color:#60a5fa" id="qual-ticket">R$ —</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- LINHA 2: 3 gráficos de progresso lado a lado -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-
-      <!-- Semana -->
-      <div class="meta-card" style="margin-bottom:0;text-align:center;padding:14px 10px">
-        <div class="meta-card-title" style="margin-bottom:8px">📅 Semana</div>
-        <div style="position:relative;width:88px;height:88px;margin:0 auto 10px">
-          <svg viewBox="0 0 88 88" style="transform:rotate(-90deg);width:88px;height:88px">
-            <circle cx="44" cy="44" r="36" fill="none" stroke="#1a1428" stroke-width="8"/>
-            <circle cx="44" cy="44" r="36" fill="none" stroke="url(#gs)" stroke-width="8" stroke-linecap="round"
-              stroke-dasharray="226" id="circle-semana" stroke-dashoffset="226"/>
+    <!-- LINHA 2: 3 gráficos maiores -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+      <div class="meta-card" style="margin-bottom:0;text-align:center;padding:20px 14px">
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">📅 SEMANA</div>
+        <div style="position:relative;width:120px;height:120px;margin:0 auto 14px">
+          <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);width:120px;height:120px">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gs)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="314" id="circle-semana" stroke-dashoffset="314"/>
             <defs><linearGradient id="gs" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stop-color="#6B21A8"/><stop offset="100%" stop-color="#F0A070"/>
             </linearGradient></defs>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <span id="pct-semana-num" style="font-size:1.1rem;font-weight:900;color:var(--text)">0%</span>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <span id="pct-semana-num" style="font-size:1.5rem;font-weight:900;color:var(--text)">0%</span>
           </div>
         </div>
-        <div id="info-semana" style="font-size:.68rem;color:#d0d0d0;line-height:1.6">—</div>
+        <div id="info-semana" style="font-size:.8rem;color:var(--text2);line-height:1.8">—</div>
       </div>
 
-      <!-- Quinzena -->
-      <div class="meta-card" style="margin-bottom:0;text-align:center;padding:14px 10px">
-        <div class="meta-card-title" style="margin-bottom:8px">📆 Quinzena</div>
-        <div style="position:relative;width:88px;height:88px;margin:0 auto 10px">
-          <svg viewBox="0 0 88 88" style="transform:rotate(-90deg);width:88px;height:88px">
-            <circle cx="44" cy="44" r="36" fill="none" stroke="#1a1428" stroke-width="8"/>
-            <circle cx="44" cy="44" r="36" fill="none" stroke="url(#gq)" stroke-width="8" stroke-linecap="round"
-              stroke-dasharray="226" id="circle-quinzena" stroke-dashoffset="226"/>
+      <div class="meta-card" style="margin-bottom:0;text-align:center;padding:20px 14px">
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">📆 QUINZENA</div>
+        <div style="position:relative;width:120px;height:120px;margin:0 auto 14px">
+          <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);width:120px;height:120px">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gq)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="314" id="circle-quinzena" stroke-dashoffset="314"/>
             <defs><linearGradient id="gq" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stop-color="#6B21A8"/><stop offset="100%" stop-color="#F0A070"/>
             </linearGradient></defs>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <span id="pct-quinzena-num" style="font-size:1.1rem;font-weight:900;color:var(--text)">0%</span>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <span id="pct-quinzena-num" style="font-size:1.5rem;font-weight:900;color:var(--text)">0%</span>
           </div>
         </div>
-        <div id="info-quinzena" style="font-size:.68rem;color:#d0d0d0;line-height:1.6">—</div>
+        <div id="info-quinzena" style="font-size:.8rem;color:var(--text2);line-height:1.8">—</div>
       </div>
 
-      <!-- Mês -->
-      <div class="meta-card" style="margin-bottom:0;text-align:center;padding:14px 10px">
-        <div class="meta-card-title" style="margin-bottom:8px">🗓️ Mês</div>
-        <div style="position:relative;width:88px;height:88px;margin:0 auto 10px">
-          <svg viewBox="0 0 88 88" style="transform:rotate(-90deg);width:88px;height:88px">
-            <circle cx="44" cy="44" r="36" fill="none" stroke="#1a1428" stroke-width="8"/>
-            <circle cx="44" cy="44" r="36" fill="none" stroke="url(#gm)" stroke-width="8" stroke-linecap="round"
-              stroke-dasharray="226" id="circle-mes" stroke-dashoffset="226"/>
+      <div class="meta-card" style="margin-bottom:0;text-align:center;padding:20px 14px">
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">🗓️ MÊS</div>
+        <div style="position:relative;width:120px;height:120px;margin:0 auto 14px">
+          <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);width:120px;height:120px">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gm)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="314" id="circle-mes" stroke-dashoffset="314"/>
             <defs><linearGradient id="gm" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stop-color="#6B21A8"/><stop offset="100%" stop-color="#F0A070"/>
             </linearGradient></defs>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <span id="pct-mes-num" style="font-size:1.1rem;font-weight:900;color:var(--text)">0%</span>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <span id="pct-mes-num" style="font-size:1.5rem;font-weight:900;color:var(--text)">0%</span>
           </div>
         </div>
-        <div id="info-mes" style="font-size:.68rem;color:#d0d0d0;line-height:1.6">—</div>
+        <div id="info-mes" style="font-size:.8rem;color:var(--text2);line-height:1.8">—</div>
       </div>
-
     </div>
 
-    <!-- LINHA 3: Resumo textual -->
+    <!-- LINHA 3: Resumo -->
     <div class="meta-card" id="resumo-geral" style="display:none">
-      <div class="meta-card-title">📊 Resumo do Período</div>
-      <div id="resumo-semana" style="font-size:.82rem;color:#c0c0c0;padding:6px 0;border-bottom:1px solid var(--border)">—</div>
-      <div id="resumo-quinzena" style="font-size:.82rem;color:#c0c0c0;padding:6px 0;border-bottom:1px solid var(--border)">—</div>
-      <div id="resumo-mes" style="font-size:.82rem;color:#c0c0c0;padding:6px 0">—</div>
+      <div class="meta-card-title" style="font-size:.75rem;margin-bottom:12px">📊 RESUMO DO PERÍODO</div>
+      <div id="resumo-semana" style="font-size:.85rem;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)">—</div>
+      <div id="resumo-quinzena" style="font-size:.85rem;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)">—</div>
+      <div id="resumo-mes" style="font-size:.85rem;color:var(--text2);padding:8px 0">—</div>
     </div>
 
-  </div>
+
 </div>
 
 </body>
