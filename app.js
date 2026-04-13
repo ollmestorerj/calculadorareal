@@ -497,7 +497,26 @@ function mostrarNotifMsg(ev,mensagem,diffDias){
   setTimeout(()=>{if(div.parentElement)div.remove();},8000);
 }
 
+function garantirDAS(){
+  // Garante que existe evento DAS no dia 20 de cada mês (próximos 12 meses)
+  const evs=getEventos();
+  const hoje=new Date();
+  let alterado=false;
+
+  for(let i=0;i<12;i++){
+    const d=new Date(hoje.getFullYear(),hoje.getMonth()+i,20);
+    const dataStr=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-20`;
+    const jaExiste=evs.some(e=>e.data===dataStr&&e.titulo==='Pagamento DAS');
+    if(!jaExiste){
+      evs.push({id:Date.now()+i,titulo:'Pagamento DAS',tipo:'conta',data:dataStr,hora:'',obs:'Vencimento mensal do DAS - Simples Nacional'});
+      alterado=true;
+    }
+  }
+  if(alterado)saveEventos(evs);
+}
+
 function verificarNotificacoes(){
+  garantirDAS();
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const notificados=JSON.parse(sessionStorage.getItem('notificados')||'[]');
   getEventos().forEach(ev=>{
@@ -505,8 +524,17 @@ function verificarNotificacoes(){
     const diffDias=Math.round((dataEv-hoje)/(1000*60*60*24));
     const chave=`${ev.id}_${diffDias}`;
     if(notificados.includes(chave))return;
-    if(ev.tipo==='full'&&diffDias>=0&&diffDias<=5){setTimeout(()=>mostrarNotifMsg(ev,msgFull[diffDias],diffDias),800);notificados.push(chave);}
-    else if(ev.tipo!=='full'&&(diffDias===0||diffDias===1)){const ti=tipoInfo[ev.tipo];const msg=diffDias===0?`${ti.icon} Hoje: ${ev.titulo}!`:`${ti.icon} Amanhã: ${ev.titulo}!`;setTimeout(()=>mostrarNotifMsg(ev,msg,diffDias),800);notificados.push(chave);}
+    // DAS: notifica nos 5 dias anteriores e no dia
+    if(ev.titulo==='Pagamento DAS'&&diffDias>=0&&diffDias<=5){
+      const msgs={0:'💰 Hoje é o vencimento do DAS! Não esqueça de pagar.',1:'💰 DAS vence amanhã! Já separou o valor?',2:'💰 DAS vence em 2 dias.',3:'💰 DAS vence em 3 dias.',4:'💰 DAS vence em 4 dias.',5:'💰 DAS vence em 5 dias.'};
+      setTimeout(()=>mostrarNotifMsg(ev,msgs[diffDias],diffDias),800);
+      notificados.push(chave);
+    } else if(ev.tipo==='full'&&diffDias>=0&&diffDias<=5){
+      setTimeout(()=>mostrarNotifMsg(ev,msgFull[diffDias],diffDias),800);notificados.push(chave);
+    } else if(ev.tipo!=='full'&&ev.titulo!=='Pagamento DAS'&&(diffDias===0||diffDias===1)){
+      const ti=tipoInfo[ev.tipo];const msg=diffDias===0?`${ti.icon} Hoje: ${ev.titulo}!`:`${ti.icon} Amanhã: ${ev.titulo}!`;
+      setTimeout(()=>mostrarNotifMsg(ev,msg,diffDias),800);notificados.push(chave);
+    }
   });
   sessionStorage.setItem('notificados',JSON.stringify(notificados));
 }
@@ -592,9 +620,10 @@ function atualizarQualidade(){
   const qualTotal=document.getElementById('qual-total');
   if(qualTotal)qualTotal.textContent=prodsMes.length;
 
-  const roi160=prodsMes.filter(p=>p.markup&&parseFloat(p.markup)>=1.60).length;
-  const roi180=prodsMes.filter(p=>p.markup&&parseFloat(p.markup)>=1.80).length;
-  const roi200=prodsMes.filter(p=>p.markup&&parseFloat(p.markup)>=2.00).length;
+  // Margem: 10-14,99% / 15-19,99% / 20%+
+  const roi160=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=10&&parseFloat(p.margem)<15).length;
+  const roi180=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=15&&parseFloat(p.margem)<20).length;
+  const roi200=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=20).length;
 
   const q160=document.getElementById('qual-roi160');
   const q180=document.getElementById('qual-roi180');
@@ -610,14 +639,23 @@ function atualizarQualidade(){
 }
 
 function salvarMetas(){
+  const prodDia=parseInt(document.getElementById('meta-prod-dia').value)||0;
+  const diasSemana=parseInt(document.getElementById('meta-dias-semana').value)||0;
+  if(!prodDia||!diasSemana){
+    alert('Preencha os campos: quantos produtos por dia e quantos dias por semana.');
+    return;
+  }
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
-  m.nota=document.getElementById('nota-slider').value;
-  m.notaObs=document.getElementById('nota-obs').value;
-  m.prodDia=document.getElementById('meta-prod-dia').value;
-  m.diasSemana=document.getElementById('meta-dias-semana').value;
+  m.prodDia=prodDia;
+  m.diasSemana=diasSemana;
   if(!m.dataInicio)m.dataInicio=new Date().toISOString();
-  localStorage.setItem('realecom_metas',JSON.stringify(m));
-  alert('✅ Metas salvas!');
+  try{
+    localStorage.setItem('realecom_metas',JSON.stringify(m));
+    recalcularMetas();
+    alert('✅ Metas salvas com sucesso!');
+  }catch(e){
+    alert('Erro ao salvar: '+e.message);
+  }
 }
 
 function atualizarNota(v){
