@@ -71,19 +71,21 @@ function mostrarErroLogin(msg){
   el.style.display='block';
 }
 
-function entrarNoApp(dados){
+function entrarNoApp(dados, pagina){
   const hu=document.getElementById('home-usuario');
   if(hu&&dados&&dados.nome){
     hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong> · Acesso válido até <strong>${dados.validade}</strong>`;
   }
-  showPage('home', true);
+  showPage(pagina||'home', true);
 }
 
 // Verifica sessão ao carregar
 (function(){
   const s=verificarSessao();
   if(s){
-    entrarNoApp(s);
+    // Restaurar última página visitada
+    const ultimaPagina=localStorage.getItem('realecom_pagina')||'home';
+    entrarNoApp(s, ultimaPagina);
   }
   // Tema
   const t=localStorage.getItem('realecom_theme');
@@ -114,6 +116,8 @@ function showPage(p,bypassCheck){
   if(p==='dash')renderDash();
   if(p==='cal')renderCal();
   if(p==='metas')carregarMetas();
+  // Salvar página atual para restaurar no F5
+  if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
 
 function toggleTheme(){
