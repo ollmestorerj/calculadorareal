@@ -76,7 +76,8 @@ function entrarNoApp(dados, pagina){
   if(hu&&dados&&dados.nome){
     hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong> · Acesso válido até <strong>${dados.validade}</strong>`;
   }
-  showPage(pagina||'home', true);
+  // Pequeno delay para garantir que o DOM está pronto antes de renderizar
+  setTimeout(()=>showPage(pagina||'home', true), 50);
 }
 
 // Verifica sessão ao carregar
@@ -609,6 +610,7 @@ function carregarMetas(){
 }
 
 function atualizarQualidade(){
+  if(!document.getElementById('qual-total'))return; // página metas não está ativa
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
   const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
@@ -668,8 +670,11 @@ function atualizarNota(v){
 
 
 function recalcularMetas(){
-  const prodDia=parseInt(document.getElementById('meta-prod-dia').value)||0;
-  const diasSem=parseInt(document.getElementById('meta-dias-semana').value)||0;
+  const elDia=document.getElementById('meta-prod-dia');
+  const elDias=document.getElementById('meta-dias-semana');
+  if(!elDia||!elDias)return; // elementos ainda não existem no DOM
+  const prodDia=parseInt(elDia.value)||0;
+  const diasSem=parseInt(elDias.value)||0;
   if(!prodDia||!diasSem)return;
 
   const metaSemana=prodDia*diasSem;
