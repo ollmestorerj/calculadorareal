@@ -459,8 +459,8 @@ body.light #meta-resumo span{color:#4c1d95!important}
             <input type="number" id="frete-full-qtd" placeholder="Ex: 200" min="1" step="1" oninput="calcFreteFullUnit()">
           </div>
         </div>
-        <div id="frete-full-result" style="display:none;background:#7c3aed18;border-radius:8px;padding:7px 10px;font-size:.78rem;color:#a78bfa;text-align:center">
-          📦 Custo por unidade: <strong id="frete-full-unit" style="color:#c4b5fd">—</strong>
+        <div id="frete-full-result" style="display:none;background:#7c3aed18;border:1px solid #7c3aed44;border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7c3aed;text-align:center">
+          📦 Custo por unidade: <strong id="frete-full-unit" style="color:#6B21A8">—</strong>
         </div>
       </div>
     </div>
@@ -532,8 +532,10 @@ body.light #meta-resumo span{color:#4c1d95!important}
         <div class="breakdown" style="margin-bottom:0">
           <div class="bd-title">Detalhamento do Preço</div>
           <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
-          <div class="brow"><span class="bl">Frete</span><span class="br" id="bd-frete">—</span></div>
+          <div class="brow"><span class="bl">Frete entrega</span><span class="br" id="bd-frete">—</span></div>
+          <div class="brow" id="bd-frete-full-row" style="display:none"><span class="bl" style="color:#a78bfa">📦 Frete Full/unid.</span><span class="br" id="bd-frete-full" style="color:#a78bfa">—</span></div>
           <div class="brow"><span class="bl">Insumos / Outros</span><span class="br" id="bd-outros">—</span></div>
+          <div class="brow" id="bd-frete-full-row" style="display:none"><span class="bl" style="color:#a78bfa">📦 Frete Full/unidade</span><span class="br" id="bd-frete-full">—</span></div>
           <div class="brow"><span class="bl">Base de cálculo</span><span class="br" id="bd-base">—</span></div>
           <div class="brow"><span class="bl">Impostos</span><span class="br" id="bd-imp">—</span></div>
           <div class="brow"><span class="bl">Comissão marketplace</span><span class="br" id="bd-com">—</span></div>
@@ -557,10 +559,22 @@ body.light #meta-resumo span{color:#4c1d95!important}
       <!-- BREAK-EVEN -->
       <div class="breakdown" id="breakeven-box" style="display:none">
         <div class="bd-title">🎯 Break-even — Ponto de Equilíbrio</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div class="field" style="margin-bottom:0">
+            <label>Vendas por dia (estimativa)</label>
+            <input type="number" id="be-vendas-dia" placeholder="Ex: 10" min="1" step="1" oninput="calcBreakEven()" style="background:var(--card)">
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end">
+            <div style="background:#05291622;border:1px solid #16a34a44;border-radius:8px;padding:8px 10px;text-align:center">
+              <div style="font-size:.68rem;color:var(--text2);margin-bottom:2px">Dias para recuperar</div>
+              <div style="font-size:1.4rem;font-weight:900;color:#4ade80" id="be-dias">—</div>
+            </div>
+          </div>
+        </div>
         <div class="brow"><span class="bl">Investimento total</span><span class="br" id="be-inv">—</span></div>
         <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="be-lucro-unit">—</span></div>
-        <div class="brow total"><span class="bl">Unidades para cobrir investimento</span><span class="br" id="be-unidades" style="color:#4ade80">—</span></div>
-        <div style="margin-top:8px;background:#05291622;border-radius:8px;padding:8px 10px;font-size:.76rem;color:#a78bfa" id="be-msg">—</div>
+        <div class="brow"><span class="bl">Unidades para cobrir</span><span class="br" id="be-unidades" style="color:#4ade80">—</span></div>
+        <div style="margin-top:8px;background:#05291622;border-radius:8px;padding:8px 10px;font-size:.76rem;color:#a78bfa" id="be-msg">Informe sua estimativa de vendas por dia.</div>
       </div>
 
       <!-- SIMULADOR DE DEVOLUÇÃO -->
