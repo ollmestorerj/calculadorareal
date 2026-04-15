@@ -234,7 +234,7 @@ function calcular(){
     const margemReal=(payout/precoML)*100;
     const markup=custo>0?precoML/custo:0;
     const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
-    lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,qtd,precoML,markup,roi,payout,inv};
+    lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
     document.getElementById('price-grid').style.gridTemplateColumns='1fr';
     document.getElementById('pc-ml-card').style.display='none';
     document.querySelector('.price-card.calc .pc-tag').textContent='🌐 Preço Médio do Mercado';
@@ -261,7 +261,7 @@ function calcular(){
   const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
   const payout=preco-base-vI-vC-vA,markup=custo>0?preco/custo:0;
   const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
-  lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,qtd,precoML,markup,roi,payout,inv};
+  lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
 
   document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
   document.querySelector('.price-card.calc .pc-tag').textContent='🎯 Preço Ideal Calculado';
@@ -336,7 +336,16 @@ function calcular(){
 function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv,totalImp){
   document.getElementById('bd-custo').textContent=fmt(custo);
   document.getElementById('bd-frete').textContent=fmt(frete);
-  document.getElementById('bd-outros').textContent=fmt(ins);
+  // Frete Full separado
+  const freteFullUnit=lastCalc&&lastCalc.freteFullUnit||0;
+  const insSemFull=ins-freteFullUnit;
+  const elBdFull=document.getElementById('bd-frete-full');
+  const elBdFullRow=document.getElementById('bd-frete-full-row');
+  if(elBdFull&&elBdFullRow){
+    if(freteFullUnit>0){elBdFull.textContent=fmt(freteFullUnit);elBdFullRow.style.display='flex';}
+    else{elBdFullRow.style.display='none';}
+  }
+  document.getElementById('bd-outros').textContent=fmt(insSemFull>0?insSemFull:ins);
   document.getElementById('bd-base').textContent=fmt(base);
   document.getElementById('bd-imp').textContent=fmt(vI);
   document.getElementById('bd-com').textContent=fmt(vC);
@@ -785,18 +794,35 @@ function calcBreakEven(){
   const box=document.getElementById('breakeven-box');
   const inv=lastCalc.inv||0;
   const payout=lastCalc.payout||0;
+  const qtd=lastCalc.qtd||0;
   if(inv<=0||payout<=0){box.style.display='none';return;}
   box.style.display='block';
-  const unidades=Math.ceil(inv/payout);
-  const pct=Math.round((unidades/lastCalc.qtd)*100);
+
+  // Unidades necessárias para cobrir o investimento com o lucro
+  const unidadesParaCobrir=Math.ceil(inv/payout);
+
   document.getElementById('be-inv').textContent=fmt(inv);
   document.getElementById('be-lucro-unit').textContent=fmt(payout);
-  document.getElementById('be-unidades').textContent=unidades+' unidades';
-  const msg=pct<=100
-    ?`Com ${lastCalc.qtd} unidades compradas, você precisa vender ${unidades} (${pct}% do lote) para cobrir o investimento.`
-    :`⚠️ Atenção: você precisaria vender ${unidades} unidades para cobrir o investimento, mas comprou apenas ${lastCalc.qtd}.`;
-  document.getElementById('be-msg').textContent=msg;
-  document.getElementById('be-msg').style.color=pct<=100?'#a78bfa':'#f87171';
+  document.getElementById('be-unidades').textContent=unidadesParaCobrir+' unidades ('+Math.round((unidadesParaCobrir/qtd)*100)+'% do lote)';
+
+  const vendasDia=parseInt(document.getElementById('be-vendas-dia').value)||0;
+  const diasEl=document.getElementById('be-dias');
+  const msgEl=document.getElementById('be-msg');
+
+  if(vendasDia>0){
+    const dias=Math.ceil(unidadesParaCobrir/vendasDia);
+    const semanas=Math.ceil(dias/7);
+    diasEl.textContent=dias+'d';
+    const cor=dias<=30?'#4ade80':dias<=60?'#F0A070':'#f87171';
+    diasEl.style.color=cor;
+    const ritmo=dias<=30?'🔥 Ótimo ritmo!':dias<=60?'⚡ Ritmo razoável.':'⚠️ Pode demorar.';
+    msgEl.innerHTML=`${ritmo} Vendendo <strong>${vendasDia} und/dia</strong>, você precisa de <strong>${dias} dias (~${semanas} semana${semanas>1?'s':''})</strong> para cobrir o investimento de <strong>${fmt(inv)}</strong>. Isso representa vender <strong>${unidadesParaCobrir} das ${qtd} unidades</strong> compradas.`;
+    msgEl.style.color=dias<=30?'#4ade80':dias<=60?'#F0A070':'#f87171';
+  }else{
+    diasEl.textContent='—';
+    msgEl.textContent=`Informe sua estimativa de vendas por dia para calcular em quantos dias recupera o investimento de ${fmt(inv)}.`;
+    msgEl.style.color='#a78bfa';
+  }
 }
 
 // ============================================================
