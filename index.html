@@ -555,34 +555,38 @@ body.light #meta-resumo span{color:#4c1d95!important}
           <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
           <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
         </div>
-            <!-- SIMULADOR DE DEVOLUÇÃO -->
-      <div class="breakdown" id="devolucao-box" style="display:none">
-        <div class="bd-title">↩️ Simulador de Devolução</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-          <div class="field" style="margin-bottom:0">
+
+      <!-- Grid: Devolução (esquerda) + Salvar (direita) -->
+      <div id="bottom-grid" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+
+        <!-- Devolução / Frete Reverso -->
+        <div class="breakdown" id="devolucao-box" style="margin-bottom:0">
+          <div class="bd-title">↩️ Frete Reverso</div>
+          <div class="field" style="margin-bottom:10px">
             <label>Taxa de devolução (R$)</label>
             <input type="number" id="dev-taxa" placeholder="Ex: 20,00" min="0" step="0.01" oninput="calcDevolucao()" style="background:var(--card)">
           </div>
-          <div style="display:flex;flex-direction:column;justify-content:flex-end">
-            <div style="background:#7f1d1d22;border-radius:8px;padding:8px 10px;text-align:center">
-              <div style="font-size:.68rem;color:var(--text2);margin-bottom:2px">Vendas para cobrir</div>
-              <div style="font-size:1.4rem;font-weight:900;color:#f87171" id="dev-vendas">—</div>
-            </div>
+          <div style="background:#7f1d1d22;border:1px solid #dc262633;border-radius:8px;padding:10px;text-align:center;margin-bottom:8px">
+            <div style="font-size:.68rem;color:var(--text2);margin-bottom:2px">Vendas para cobrir</div>
+            <div style="font-size:1.6rem;font-weight:900;color:#f87171" id="dev-vendas">—</div>
           </div>
+          <div style="font-size:.74rem;color:var(--text2);background:#7f1d1d18;border-radius:8px;padding:8px 10px;line-height:1.5" id="dev-msg">Informe o valor da taxa para calcular.</div>
         </div>
-        <div style="font-size:.76rem;color:var(--text2);background:#7f1d1d18;border-radius:8px;padding:8px 10px" id="dev-msg">Informe o valor da taxa de devolução para calcular.</div>
+
+        <!-- Salvar no Dashboard -->
+        <div class="save-card" id="save-card" style="margin-bottom:0">
+          <div class="save-title">💾 Salvar no Dashboard</div>
+          <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
+          <div class="row2">
+            <div class="field"><label>Fornecedor</label><input type="text" id="save-forn" placeholder="Nome do fornecedor"></div>
+            <div class="field"><label>Código do produto</label><input type="text" id="save-cod" placeholder="Ex: SKU-001"></div>
+          </div>
+          <div class="field"><label>📝 Observações</label><textarea id="save-obs" placeholder="Anotações..." style="height:52px;resize:none"></textarea></div>
+          <button class="btn-save" onclick="salvarProduto()">💾 Salvar no Dashboard</button>
+        </div>
       </div>
 
-      <div class="save-card" id="save-card" style="display:none">
-        <div class="save-title">💾 Salvar no Dashboard</div>
-        <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
-        <div class="row2">
-          <div class="field"><label>Fornecedor</label><input type="text" id="save-forn" placeholder="Nome do fornecedor"></div>
-          <div class="field"><label>Código do produto</label><input type="text" id="save-cod" placeholder="Ex: SKU-001"></div>
-        </div>
-        <div class="field"><label>📝 Observações</label><textarea id="save-obs" placeholder="Anotações..." style="height:60px;resize:none"></textarea></div>
-        <button class="btn-save" onclick="salvarProduto()">💾 Salvar no Dashboard</button>
-      </div>
+      <!-- Botão Novo Cálculo — full width -->
       <button class="btn-reset" onclick="resetar()">← Novo Cálculo</button>
     </div>
   </div>
