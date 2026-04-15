@@ -214,7 +214,11 @@ function setMode(m){
 function calcular(){
   const custo=sumItems();
   const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
-  const ins=parseFloat(document.getElementById('insumos').value)||0;
+  // Frete de coleta Full por unidade
+  const freteFullTotal=parseFloat(document.getElementById('frete-full').value)||0;
+  const freteFullQtd=parseInt(document.getElementById('frete-full-qtd').value)||1;
+  const freteFullUnit=freteFullTotal>0?freteFullTotal/freteFullQtd:0;
+  const ins=(parseFloat(document.getElementById('insumos').value)||0)+freteFullUnit;
   const pI=(parseFloat(document.getElementById('impostos').value)||0)/100;
   const pC=(parseFloat(document.getElementById('comissao').value)||0)/100;
   const pA=(parseFloat(document.getElementById('afiliados').value)||0)/100;
@@ -354,12 +358,24 @@ function finalizarCalculo(){
   document.getElementById('inpi-box').style.display='block';
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
+  calcBreakEven();
+  // Mostrar caixa de devolução
+  if(lastCalc&&lastCalc.payout>0){
+    document.getElementById('devolucao-box').style.display='block';
+    calcDevolucao();
+  }
 }
 
 function resetar(){
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
   document.getElementById('inpi-box').style.display='none';
+  document.getElementById('breakeven-box').style.display='none';
+  document.getElementById('devolucao-box').style.display='none';
+  document.getElementById('frete-full').value='';
+  document.getElementById('frete-full-qtd').value='';
+  document.getElementById('frete-full-result').style.display='none';
+  document.getElementById('dev-taxa').value='';
   lastCalc=null;
 }
 
@@ -742,4 +758,61 @@ function recalcularMetas(){
 
   // Atualizar painel de qualidade
   atualizarQualidade();
+}
+
+// ============================================================
+// FRETE FULL — cálculo por unidade
+// ============================================================
+function calcFreteFullUnit(){
+  const total=parseFloat(document.getElementById('frete-full').value)||0;
+  const qtd=parseInt(document.getElementById('frete-full-qtd').value)||0;
+  const res=document.getElementById('frete-full-result');
+  const uni=document.getElementById('frete-full-unit');
+  if(total>0&&qtd>0){
+    const porUnit=total/qtd;
+    res.style.display='block';
+    uni.textContent=fmt(porUnit)+' por unidade';
+  }else{
+    res.style.display='none';
+  }
+}
+
+// ============================================================
+// BREAK-EVEN
+// ============================================================
+function calcBreakEven(){
+  if(!lastCalc)return;
+  const box=document.getElementById('breakeven-box');
+  const inv=lastCalc.inv||0;
+  const payout=lastCalc.payout||0;
+  if(inv<=0||payout<=0){box.style.display='none';return;}
+  box.style.display='block';
+  const unidades=Math.ceil(inv/payout);
+  const pct=Math.round((unidades/lastCalc.qtd)*100);
+  document.getElementById('be-inv').textContent=fmt(inv);
+  document.getElementById('be-lucro-unit').textContent=fmt(payout);
+  document.getElementById('be-unidades').textContent=unidades+' unidades';
+  const msg=pct<=100
+    ?`Com ${lastCalc.qtd} unidades compradas, você precisa vender ${unidades} (${pct}% do lote) para cobrir o investimento.`
+    :`⚠️ Atenção: você precisaria vender ${unidades} unidades para cobrir o investimento, mas comprou apenas ${lastCalc.qtd}.`;
+  document.getElementById('be-msg').textContent=msg;
+  document.getElementById('be-msg').style.color=pct<=100?'#a78bfa':'#f87171';
+}
+
+// ============================================================
+// DEVOLUÇÃO
+// ============================================================
+function calcDevolucao(){
+  if(!lastCalc||lastCalc.payout<=0)return;
+  const taxa=parseFloat(document.getElementById('dev-taxa').value)||0;
+  const msg=document.getElementById('dev-msg');
+  const vendasEl=document.getElementById('dev-vendas');
+  if(taxa<=0){
+    vendasEl.textContent='—';
+    msg.textContent='Informe o valor da taxa de devolução para calcular.';
+    return;
+  }
+  const vendasNecessarias=Math.ceil(taxa/lastCalc.payout);
+  vendasEl.textContent=vendasNecessarias;
+  msg.textContent=`Com lucro de ${fmt(lastCalc.payout)} por unidade, você precisa fazer ${vendasNecessarias} venda${vendasNecessarias>1?'s':''} para cobrir uma devolução de ${fmt(taxa)}.`;
 }
