@@ -542,7 +542,6 @@ body.light #meta-resumo span{color:#4c1d95!important}
           <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
           <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
         </div>
-
         <div class="breakdown" style="margin-bottom:0">
           <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unidades</div>
           <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
@@ -554,15 +553,12 @@ body.light #meta-resumo span{color:#4c1d95!important}
           <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
           <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
         </div>
+      </div>
 
-      <!-- Wrapper bottom: empilha grid + botão em coluna -->
+      <!-- Frete Reverso + Salvar lado a lado -->
       <div id="bottom-wrapper" style="display:none;flex-direction:column;gap:10px">
-
-        <!-- Flex row: Devolução + Salvar -->
-        <div style="display:flex;gap:10px;align-items:flex-start">
-
-          <!-- Devolução / Frete Reverso -->
-          <div class="breakdown" id="devolucao-box" style="margin-bottom:0;flex:1">
+        <div style="display:grid;grid-template-columns:50% calc(50% - 10px);gap:10px">
+          <div class="breakdown" id="devolucao-box" style="margin-bottom:0;box-sizing:border-box">
             <div class="bd-title">↩️ Frete Reverso</div>
             <div class="field" style="margin-bottom:10px">
               <label>Taxa de devolução (R$)</label>
@@ -574,9 +570,7 @@ body.light #meta-resumo span{color:#4c1d95!important}
             </div>
             <div style="font-size:.74rem;color:var(--text2);background:#7f1d1d18;border-radius:8px;padding:8px 10px;line-height:1.5" id="dev-msg">Informe o valor da taxa para calcular.</div>
           </div>
-
-          <!-- Salvar no Dashboard -->
-          <div class="save-card" id="save-card" style="margin-bottom:0;flex:1">
+          <div class="save-card" id="save-card" style="margin-bottom:0;box-sizing:border-box">
             <div class="save-title">💾 Salvar no Dashboard</div>
             <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
             <div class="row2">
@@ -587,15 +581,10 @@ body.light #meta-resumo span{color:#4c1d95!important}
             <button class="btn-save" onclick="salvarProduto()">💾 Salvar no Dashboard</button>
           </div>
         </div>
-
-        <!-- Botão Novo Cálculo — full width -->
         <button class="btn-reset" onclick="resetar()" style="width:100%">← Novo Cálculo</button>
       </div>
     </div>
   </div>
-  </div>
-</div>
-
 <!-- ===== DASHBOARD ===== -->
 <div id="page-dash" class="page">
   <div class="app-header">
