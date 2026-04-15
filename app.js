@@ -367,6 +367,7 @@ function finalizarCalculo(){
   document.getElementById('inpi-box').style.display='block';
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
+  document.getElementById('btn-reset').style.display='block';
   // Mostrar caixa de devolução
   if(lastCalc&&lastCalc.payout>0){
     calcDevolucao();
@@ -377,6 +378,7 @@ function resetar(){
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
   document.getElementById('inpi-box').style.display='none';
+  document.getElementById('btn-reset').style.display='none';
 
   document.getElementById('frete-full').value='';
   document.getElementById('frete-full-qtd').value='';
