@@ -250,7 +250,7 @@ function calcular(){
     document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'#4ade80':margemReal>=0?'#F0A070':'#f87171'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:#f87171">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'#4ade80':'#f87171'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
     if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(precoML));verificarFaixaFrete();}
     preencherDetalhes(custo,frete,ins,base,vI,vC,vA,0,precoML,payout,qtd,inv,vI*qtd);
-    document.getElementById('save-card').style.display='block';
+    document.getElementById('bottom-grid').style.display='grid';
     finalizarCalculo();return;
   }
 
@@ -304,7 +304,7 @@ function calcular(){
       const custoIdeal=precoML*fator-frete-ins;
       document.getElementById('explain-text').innerHTML=`Preço médio ML está <strong style="color:#f87171">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, compre por no máximo <strong style="color:#4ade80">${fmt(Math.max(custoIdeal,0))}</strong>.`;
     }
-    document.getElementById('save-card').style.display='block';
+    document.getElementById('bottom-grid').style.display='grid';
   }else{
     mlCard.className='price-card ml-none';
     document.getElementById('pc-ml-preco').textContent='—';
@@ -313,7 +313,7 @@ function calcular(){
     document.getElementById('pc-ml-kpis').style.opacity='.25';
     ['ml-mk','ml-roi','ml-mg'].forEach(id=>document.getElementById(id).textContent='—');
     document.getElementById('explain-text').innerHTML=`Este é o menor preço que cobre todos os seus custos com a margem definida. Informe o <strong style="color:var(--o)">Preço Médio ML</strong> para ver o comparativo.`;
-    document.getElementById('save-card').style.display='none';
+    document.getElementById('bottom-grid').style.display='none';
   }
 
   const alertBox=document.getElementById('frete-alert-box');
@@ -369,7 +369,6 @@ function finalizarCalculo(){
   document.getElementById('right-result').style.display='block';
   // Mostrar caixa de devolução
   if(lastCalc&&lastCalc.payout>0){
-    document.getElementById('devolucao-box').style.display='block';
     calcDevolucao();
   }
 }
@@ -378,7 +377,7 @@ function resetar(){
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
   document.getElementById('inpi-box').style.display='none';
-  document.getElementById('devolucao-box').style.display='none';
+
   document.getElementById('frete-full').value='';
   document.getElementById('frete-full-qtd').value='';
   document.getElementById('frete-full-result').style.display='none';
