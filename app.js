@@ -367,7 +367,6 @@ function finalizarCalculo(){
   document.getElementById('inpi-box').style.display='block';
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
-  calcBreakEven();
   // Mostrar caixa de devolução
   if(lastCalc&&lastCalc.payout>0){
     document.getElementById('devolucao-box').style.display='block';
@@ -379,7 +378,6 @@ function resetar(){
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
   document.getElementById('inpi-box').style.display='none';
-  document.getElementById('breakeven-box').style.display='none';
   document.getElementById('devolucao-box').style.display='none';
   document.getElementById('frete-full').value='';
   document.getElementById('frete-full-qtd').value='';
@@ -786,44 +784,6 @@ function calcFreteFullUnit(){
   }
 }
 
-// ============================================================
-// BREAK-EVEN
-// ============================================================
-function calcBreakEven(){
-  if(!lastCalc)return;
-  const box=document.getElementById('breakeven-box');
-  const inv=lastCalc.inv||0;
-  const payout=lastCalc.payout||0;
-  const qtd=lastCalc.qtd||0;
-  if(inv<=0||payout<=0){box.style.display='none';return;}
-  box.style.display='block';
-
-  // Unidades necessárias para cobrir o investimento com o lucro
-  const unidadesParaCobrir=Math.ceil(inv/payout);
-
-  document.getElementById('be-inv').textContent=fmt(inv);
-  document.getElementById('be-lucro-unit').textContent=fmt(payout);
-  document.getElementById('be-unidades').textContent=unidadesParaCobrir+' unidades ('+Math.round((unidadesParaCobrir/qtd)*100)+'% do lote)';
-
-  const vendasDia=parseInt(document.getElementById('be-vendas-dia').value)||0;
-  const diasEl=document.getElementById('be-dias');
-  const msgEl=document.getElementById('be-msg');
-
-  if(vendasDia>0){
-    const dias=Math.ceil(unidadesParaCobrir/vendasDia);
-    const semanas=Math.ceil(dias/7);
-    diasEl.textContent=dias+'d';
-    const cor=dias<=30?'#4ade80':dias<=60?'#F0A070':'#f87171';
-    diasEl.style.color=cor;
-    const ritmo=dias<=30?'🔥 Ótimo ritmo!':dias<=60?'⚡ Ritmo razoável.':'⚠️ Pode demorar.';
-    msgEl.innerHTML=`${ritmo} Vendendo <strong>${vendasDia} und/dia</strong>, você precisa de <strong>${dias} dias (~${semanas} semana${semanas>1?'s':''})</strong> para cobrir o investimento de <strong>${fmt(inv)}</strong>. Isso representa vender <strong>${unidadesParaCobrir} das ${qtd} unidades</strong> compradas.`;
-    msgEl.style.color=dias<=30?'#4ade80':dias<=60?'#F0A070':'#f87171';
-  }else{
-    diasEl.textContent='—';
-    msgEl.textContent=`Informe sua estimativa de vendas por dia para calcular em quantos dias recupera o investimento de ${fmt(inv)}.`;
-    msgEl.style.color='#a78bfa';
-  }
-}
 
 // ============================================================
 // DEVOLUÇÃO
