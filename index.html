@@ -558,11 +558,11 @@ body.light #meta-resumo span{color:#4c1d95!important}
       <!-- Wrapper bottom: empilha grid + botão em coluna -->
       <div id="bottom-wrapper" style="display:none;flex-direction:column;gap:10px">
 
-        <!-- Grid 2 colunas: Devolução + Salvar -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <!-- Flex row: Devolução + Salvar -->
+        <div style="display:flex;gap:10px;align-items:flex-start">
 
           <!-- Devolução / Frete Reverso -->
-          <div class="breakdown" id="devolucao-box" style="margin-bottom:0">
+          <div class="breakdown" id="devolucao-box" style="margin-bottom:0;flex:1">
             <div class="bd-title">↩️ Frete Reverso</div>
             <div class="field" style="margin-bottom:10px">
               <label>Taxa de devolução (R$)</label>
@@ -576,7 +576,7 @@ body.light #meta-resumo span{color:#4c1d95!important}
           </div>
 
           <!-- Salvar no Dashboard -->
-          <div class="save-card" id="save-card" style="margin-bottom:0">
+          <div class="save-card" id="save-card" style="margin-bottom:0;flex:1">
             <div class="save-title">💾 Salvar no Dashboard</div>
             <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
             <div class="row2">
