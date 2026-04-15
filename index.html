@@ -557,7 +557,7 @@ body.light #meta-resumo span{color:#4c1d95!important}
         </div>
 
       <!-- Grid: Devolução (esquerda) + Salvar (direita) -->
-      <div id="bottom-grid" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div id="bottom-grid" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
 
         <!-- Devolução / Frete Reverso -->
         <div class="breakdown" id="devolucao-box" style="margin-bottom:0">
@@ -586,8 +586,8 @@ body.light #meta-resumo span{color:#4c1d95!important}
         </div>
       </div>
 
-      <!-- Botão Novo Cálculo — full width -->
-      <button class="btn-reset" onclick="resetar()">← Novo Cálculo</button>
+      <!-- Botão Novo Cálculo — full width abaixo do grid -->
+      <button class="btn-reset" id="btn-reset" onclick="resetar()" style="display:none;width:100%;margin-top:10px">← Novo Cálculo</button>
     </div>
   </div>
   </div>
