@@ -438,8 +438,30 @@ body.light #meta-resumo span{color:#4c1d95!important}
       <div id="tab-manual" style="display:none">
         <div class="field"><label>Valor do frete (R$)</label><input type="number" id="frete-manual" placeholder="Ex: 15.90" min="0" step="0.01"></div>
       </div>
+
+      <!-- Separador Insumos -->
       <div style="border-top:1px solid var(--border);margin-top:11px;padding-top:11px">
         <div class="field"><label>📦 Insumos / Embalagem / Outros (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
+      </div>
+
+      <!-- Frete de Coleta Full -->
+      <div style="border-top:1px solid #7c3aed44;margin-top:11px;padding-top:11px">
+        <div style="background:#7c3aed18;border:1px solid #7c3aed44;border-radius:8px;padding:7px 10px;margin-bottom:10px;font-size:.72rem;color:#a78bfa;line-height:1.5">
+          📦 <strong>Frete de Coleta Full</strong> — custo do envio dos seus produtos ao CD do Mercado Livre. Divida pelo total de unidades para obter o custo por produto.
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Valor do frete coleta (R$)</label>
+            <input type="number" id="frete-full" placeholder="Ex: 200,00" min="0" step="0.01" oninput="calcFreteFullUnit()">
+          </div>
+          <div class="field">
+            <label>Qtd. unidades no envio</label>
+            <input type="number" id="frete-full-qtd" placeholder="Ex: 200" min="1" step="1" oninput="calcFreteFullUnit()">
+          </div>
+        </div>
+        <div id="frete-full-result" style="display:none;background:#7c3aed18;border-radius:8px;padding:7px 10px;font-size:.78rem;color:#a78bfa;text-align:center">
+          📦 Custo por unidade: <strong id="frete-full-unit" style="color:#c4b5fd">—</strong>
+        </div>
       </div>
     </div>
     <div class="card">
@@ -504,29 +526,61 @@ body.light #meta-resumo span{color:#4c1d95!important}
       </div>
       <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
       <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title">⚡ Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
-      <div class="breakdown">
-        <div class="bd-title">Detalhamento do Preço</div>
-        <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
-        <div class="brow"><span class="bl">Frete</span><span class="br" id="bd-frete">—</span></div>
-        <div class="brow"><span class="bl">Insumos / Outros</span><span class="br" id="bd-outros">—</span></div>
-        <div class="brow"><span class="bl">Base de cálculo</span><span class="br" id="bd-base">—</span></div>
-        <div class="brow"><span class="bl">Impostos</span><span class="br" id="bd-imp">—</span></div>
-        <div class="brow"><span class="bl">Comissão marketplace</span><span class="br" id="bd-com">—</span></div>
-        <div class="brow"><span class="bl">Comissão afiliados</span><span class="br" id="bd-afi">—</span></div>
-        <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
-        <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
+
+      <!-- Detalhamento + Projeção lado a lado -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="breakdown" style="margin-bottom:0">
+          <div class="bd-title">Detalhamento do Preço</div>
+          <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
+          <div class="brow"><span class="bl">Frete</span><span class="br" id="bd-frete">—</span></div>
+          <div class="brow"><span class="bl">Insumos / Outros</span><span class="br" id="bd-outros">—</span></div>
+          <div class="brow"><span class="bl">Base de cálculo</span><span class="br" id="bd-base">—</span></div>
+          <div class="brow"><span class="bl">Impostos</span><span class="br" id="bd-imp">—</span></div>
+          <div class="brow"><span class="bl">Comissão marketplace</span><span class="br" id="bd-com">—</span></div>
+          <div class="brow"><span class="bl">Comissão afiliados</span><span class="br" id="bd-afi">—</span></div>
+          <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
+          <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
+        </div>
+
+        <div class="breakdown" style="margin-bottom:0">
+          <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unidades</div>
+          <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
+          <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
+          <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
+          <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
+          <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
+          <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto esperado</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
+          <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
+          <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
+        </div>
       </div>
-      <div class="breakdown">
-        <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unidades</div>
-        <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
-        <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
-        <div class="brow highlight"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
-        <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
-        <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
-        <div class="brow"><span class="bl">Lucro bruto esperado</span><span class="br" id="proj-lb">—</span></div>
-        <div class="brow highlight"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
-        <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
+      <!-- BREAK-EVEN -->
+      <div class="breakdown" id="breakeven-box" style="display:none">
+        <div class="bd-title">🎯 Break-even — Ponto de Equilíbrio</div>
+        <div class="brow"><span class="bl">Investimento total</span><span class="br" id="be-inv">—</span></div>
+        <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="be-lucro-unit">—</span></div>
+        <div class="brow total"><span class="bl">Unidades para cobrir investimento</span><span class="br" id="be-unidades" style="color:#4ade80">—</span></div>
+        <div style="margin-top:8px;background:#05291622;border-radius:8px;padding:8px 10px;font-size:.76rem;color:#a78bfa" id="be-msg">—</div>
       </div>
+
+      <!-- SIMULADOR DE DEVOLUÇÃO -->
+      <div class="breakdown" id="devolucao-box" style="display:none">
+        <div class="bd-title">↩️ Simulador de Devolução</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div class="field" style="margin-bottom:0">
+            <label>Taxa de devolução (R$)</label>
+            <input type="number" id="dev-taxa" placeholder="Ex: 20,00" min="0" step="0.01" oninput="calcDevolucao()" style="background:var(--card)">
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end">
+            <div style="background:#7f1d1d22;border-radius:8px;padding:8px 10px;text-align:center">
+              <div style="font-size:.68rem;color:var(--text2);margin-bottom:2px">Vendas para cobrir</div>
+              <div style="font-size:1.4rem;font-weight:900;color:#f87171" id="dev-vendas">—</div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:.76rem;color:var(--text2);background:#7f1d1d18;border-radius:8px;padding:8px 10px" id="dev-msg">Informe o valor da taxa de devolução para calcular.</div>
+      </div>
+
       <div class="save-card" id="save-card" style="display:none">
         <div class="save-title">💾 Salvar no Dashboard</div>
         <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
