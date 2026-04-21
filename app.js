@@ -682,23 +682,28 @@ function calcularGiro(){
     alerta.textContent=`✅ Estoque tranquilo por ${diasRestantes} dias. Você tem tempo para planejar o próximo pedido.`;
   }
 
-  // Cenários: quanto comprar para cobrir 10, 20, 30 dias
-  function cenario(dias){
-    const precisaDias = dias; // total de dias que quer ter coberto
-    const precisaTotal = vendasDia * precisaDias;
-    const precisaComprar = Math.max(precisaTotal - estoqueAtual, 0);
+  // Cenários: quanto comprar para o NOVO LOTE cobrir X dias
+  // Lógica: enquanto o lote não chega (prazo dias), você consome do estoque atual
+  // O novo lote precisa cobrir exatamente os dias do cenário
+  // Se o estoque atual ainda tiver sobra quando o lote chegar, desconta
+  function cenario(diasCobertura){
+    const estoqueQuandoChegar = Math.max(estoqueAtual - vendasDia * prazo, 0);
+    const precisaComprar = Math.max(vendasDia * diasCobertura - estoqueQuandoChegar, 0);
     const investimento = precisaComprar * custoUnit;
     return {qtd: precisaComprar, valor: investimento};
   }
 
+  const c5  = cenario(5);
   const c10 = cenario(10);
-  const c20 = cenario(20);
+  const c15 = cenario(15);
   const c30 = cenario(30);
 
+  document.getElementById('giro-c5-qtd').textContent  = fmtN(c5.qtd)+' unid.';
+  document.getElementById('giro-c5-val').textContent   = custoUnit>0 ? fmt(c5.valor)  : '—';
   document.getElementById('giro-c10-qtd').textContent = fmtN(c10.qtd)+' unid.';
   document.getElementById('giro-c10-val').textContent  = custoUnit>0 ? fmt(c10.valor) : '—';
-  document.getElementById('giro-c20-qtd').textContent = fmtN(c20.qtd)+' unid.';
-  document.getElementById('giro-c20-val').textContent  = custoUnit>0 ? fmt(c20.valor) : '—';
+  document.getElementById('giro-c15-qtd').textContent = fmtN(c15.qtd)+' unid.';
+  document.getElementById('giro-c15-val').textContent  = custoUnit>0 ? fmt(c15.valor) : '—';
   document.getElementById('giro-c30-qtd').textContent = fmtN(c30.qtd)+' unid.';
   document.getElementById('giro-c30-val').textContent  = custoUnit>0 ? fmt(c30.valor) : '—';
 
