@@ -117,6 +117,7 @@ function showPage(p,bypassCheck){
   if(p==='dash')renderDash();
   if(p==='cal')renderCal();
   if(p==='metas')carregarMetas();
+  if(p==='gestao')calcularGestao();
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
@@ -611,6 +612,109 @@ function exportarExcel(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// DASHBOARD — toggleComprado
+// ============================================================
+function toggleComprado(id){
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const p=prods.find(p=>p.id===id);
+  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();}
+}
+
+// ============================================================
+// GESTÃO FINANCEIRA
+// ============================================================
+
+// Dados de gestão
+function getGestao(){return JSON.parse(localStorage.getItem('realecom_gestao')||'{"receitas":[],"despesas":[],"capital":0}');}
+function saveGestao(d){localStorage.setItem('realecom_gestao',JSON.stringify(d));}
+
+function calcularGestao(){
+  const g=getGestao();
+  const hoje=new Date();
+  const mesAtual=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+
+  // Receitas e despesas do mês atual
+  const recMes=g.receitas.filter(r=>r.data&&r.data.startsWith(mesAtual));
+  const despMes=g.despesas.filter(d=>d.data&&d.data.startsWith(mesAtual));
+
+  const totalRec=recMes.reduce((s,r)=>s+(parseFloat(r.valor)||0),0);
+  const totalDesp=despMes.reduce((s,d)=>s+(parseFloat(d.valor)||0),0);
+  const saldo=totalRec-totalDesp;
+  const capital=parseFloat(g.capital)||0;
+
+  // Atualiza cards de resumo
+  const setEl=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setEl('gest-rec-mes',fmt(totalRec));
+  setEl('gest-desp-mes',fmt(totalDesp));
+  setEl('gest-saldo-mes',fmt(saldo));
+  setEl('gest-capital',fmt(capital));
+
+  // Cor do saldo
+  const elSaldo=document.getElementById('gest-saldo-mes');
+  if(elSaldo)elSaldo.style.color=saldo>=0?'#4ade80':'#f87171';
+
+  // Renderiza listas
+  renderGestaoLista('gest-lista-rec',recMes,'receita');
+  renderGestaoLista('gest-lista-desp',despMes,'despesa');
+}
+
+function renderGestaoLista(elId,items,tipo){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  if(!items.length){
+    el.innerHTML=`<div style="text-align:center;padding:16px;opacity:.35;font-size:.78rem;color:#888">Nenhum lançamento</div>`;
+    return;
+  }
+  const cor=tipo==='receita'?'#4ade80':'#f87171';
+  const sinal=tipo==='receita'?'+':'-';
+  el.innerHTML=items.slice().reverse().map(item=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border);font-size:.78rem">
+      <div>
+        <div style="font-weight:600;color:var(--text)">${item.desc||'—'}</div>
+        <div style="font-size:.68rem;color:var(--text3)">${item.data?item.data.split('-').reverse().join('/'):''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:800;color:${cor}">${sinal}${fmt(parseFloat(item.valor)||0)}</span>
+        <button onclick="removerLancamento('${tipo}',${item.id})" style="background:none;border:none;color:#4a3f6b;cursor:pointer;font-size:.85rem;padding:2px 5px" title="Remover">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function adicionarLancamento(tipo){
+  const prefId=tipo==='receita'?'rec':'desp';
+  const desc=document.getElementById(`gest-${prefId}-desc`).value.trim();
+  const valor=parseFloat(document.getElementById(`gest-${prefId}-val`).value)||0;
+  const data=document.getElementById(`gest-${prefId}-data`).value;
+  if(!desc||!valor||!data){alert('Preencha descrição, valor e data.');return;}
+  const g=getGestao();
+  const lista=tipo==='receita'?g.receitas:g.despesas;
+  lista.push({id:Date.now(),desc,valor,data});
+  saveGestao(g);
+  document.getElementById(`gest-${prefId}-desc`).value='';
+  document.getElementById(`gest-${prefId}-val`).value='';
+  document.getElementById(`gest-${prefId}-data`).value='';
+  calcularGestao();
+}
+
+function removerLancamento(tipo,id){
+  if(!confirm('Remover este lançamento?'))return;
+  const g=getGestao();
+  if(tipo==='receita')g.receitas=g.receitas.filter(r=>r.id!==id);
+  else g.despesas=g.despesas.filter(d=>d.id!==id);
+  saveGestao(g);
+  calcularGestao();
+}
+
+function salvarCapital(){
+  const v=parseFloat(document.getElementById('gest-capital-input').value)||0;
+  const g=getGestao();
+  g.capital=v;
+  saveGestao(g);
+  calcularGestao();
+  alert('✅ Capital de giro salvo!');
 }
 
 // ============================================================
