@@ -275,9 +275,24 @@ body.light .meta-card{background:#fff;border-color:#d8d0f0}
 body.light .meta-card-title{color:#6b5f8a}
 body.light .nota-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:#d8d0f0}
 body.light #meta-resumo span{color:#4c1d95!important}
+/* GESTÃO */
+.gest-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:600px){.gest-summary{grid-template-columns:1fr 1fr}}
+.gest-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.gest-kpi .gk-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.gest-kpi .gk-val{font-size:1.35rem;font-weight:900;color:var(--o)}
+.gest-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:640px){.gest-cols{grid-template-columns:1fr}}
+.gest-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+.gest-card-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.gest-form{display:grid;gap:7px;margin-bottom:10px}
+.gest-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:#1a1428;outline:none;font-family:inherit;transition:border .2s}
+.gest-input:focus{border-color:var(--o)}
+body.light .gest-input{background:#f0ebff;border-color:#d8d0f0;color:#1a1030}
+.gest-lista{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:9px}
+body.light .gest-card{background:#fff;border-color:#d8d0f0}
 
-</style>
-</head>
+
 <body>
 
 <div class="notif-container" id="notif-container"></div>
@@ -355,8 +370,8 @@ body.light #meta-resumo span{color:#4c1d95!important}
       </div>
     </div>
 
-    <!-- LINHA 2: Metas + Calendário + INPI (cards menores) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;width:100%;max-width:660px">
+    <!-- LINHA 2: Metas + Calendário + Gestão + INPI (cards menores) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;width:100%;max-width:660px">
       <div class="home-card" onclick="showPage('metas')" style="padding:22px 14px">
         <div style="font-size:2rem;margin-bottom:8px">🎯</div>
         <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Metas</div>
@@ -366,6 +381,11 @@ body.light #meta-resumo span{color:#4c1d95!important}
         <div style="font-size:2rem;margin-bottom:8px">📅</div>
         <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Calendário</div>
         <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Coletas e vencimentos</div>
+      </div>
+      <div class="home-card" onclick="showPage('gestao')" style="padding:22px 14px">
+        <div style="font-size:2rem;margin-bottom:8px">💳</div>
+        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Gestão</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Receitas e despesas</div>
       </div>
       <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:22px 14px">
         <div style="font-size:2rem;margin-bottom:8px">🔍</div>
@@ -388,7 +408,10 @@ body.light #meta-resumo span{color:#4c1d95!important}
       <div style="width:1px;height:26px;background:#444"></div>
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</span>
     </div>
-    <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+    <div style="display:flex;gap:6px">
+      <button class="btn-dash" onclick="showPage('gestao')">💳 Gestão</button>
+      <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+    </div>
   </div>
   <div class="main-layout">
   <div class="left-panel">
@@ -657,6 +680,99 @@ function exportarExcel(){
   document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 </script>
+<!-- ===== GESTÃO FINANCEIRA ===== -->
+<div id="page-gestao" class="page">
+  <div class="app-header">
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="theme-toggle" onclick="toggleTheme()">☀️ Claro</button>
+      <button class="btn-home" onclick="showPage('home')">🏠</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
+      <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
+      <div style="width:1px;height:26px;background:#444"></div>
+      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">GESTÃO FINANCEIRA</span>
+    </div>
+    <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+  </div>
+
+  <div style="padding:20px 18px;max-width:900px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <button class="btn-back" onclick="showPage('home')">← Voltar</button>
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">💳 Gestão <span style="color:var(--o)">Financeira</span></h2>
+      <div style="width:100px"></div>
+    </div>
+
+    <!-- KPIs do mês -->
+    <div class="gest-summary">
+      <div class="gest-kpi">
+        <div class="gk-label">📥 Receitas/mês</div>
+        <div class="gk-val" id="gest-rec-mes" style="color:#4ade80">R$ —</div>
+      </div>
+      <div class="gest-kpi">
+        <div class="gk-label">📤 Despesas/mês</div>
+        <div class="gk-val" id="gest-desp-mes" style="color:#f87171">R$ —</div>
+      </div>
+      <div class="gest-kpi">
+        <div class="gk-label">💰 Saldo do mês</div>
+        <div class="gk-val" id="gest-saldo-mes">R$ —</div>
+      </div>
+      <div class="gest-kpi">
+        <div class="gk-label">🏦 Capital de giro</div>
+        <div class="gk-val" id="gest-capital" style="color:#c4b5fd">R$ —</div>
+      </div>
+    </div>
+
+    <!-- Capital de giro -->
+    <div class="gest-card" style="margin-bottom:14px">
+      <div class="gest-card-title" style="color:#a78bfa">🏦 CAPITAL DE GIRO DISPONÍVEL</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" class="gest-input" id="gest-capital-input" placeholder="Ex: 5000,00" min="0" step="0.01" style="flex:1">
+        <button onclick="salvarCapital()" style="padding:9px 16px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap">Salvar</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--text3);margin-top:5px">Informe quanto você tem disponível para investir em estoque</div>
+    </div>
+
+    <!-- Receitas e Despesas lado a lado -->
+    <div class="gest-cols">
+      <!-- Receitas -->
+      <div class="gest-card">
+        <div class="gest-card-title" style="color:#4ade80">📥 RECEITAS — MÊS ATUAL</div>
+        <div class="gest-form">
+          <input type="text" class="gest-input" id="gest-rec-desc" placeholder="Descrição (ex: Venda produto X)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+            <input type="number" class="gest-input" id="gest-rec-val" placeholder="Valor (R$)" min="0" step="0.01">
+            <input type="date" class="gest-input" id="gest-rec-data">
+          </div>
+          <button onclick="adicionarLancamento('receita')" style="width:100%;padding:9px;background:linear-gradient(135deg,#166534,#16a34a);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer">+ Adicionar Receita</button>
+        </div>
+        <div class="gest-lista" id="gest-lista-rec">
+          <div style="text-align:center;padding:16px;opacity:.35;font-size:.78rem;color:#888">Nenhum lançamento</div>
+        </div>
+      </div>
+
+      <!-- Despesas -->
+      <div class="gest-card">
+        <div class="gest-card-title" style="color:#f87171">📤 DESPESAS — MÊS ATUAL</div>
+        <div class="gest-form">
+          <input type="text" class="gest-input" id="gest-desp-desc" placeholder="Descrição (ex: Frete fornecedor)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+            <input type="number" class="gest-input" id="gest-desp-val" placeholder="Valor (R$)" min="0" step="0.01">
+            <input type="date" class="gest-input" id="gest-desp-data">
+          </div>
+          <button onclick="adicionarLancamento('despesa')" style="width:100%;padding:9px;background:linear-gradient(135deg,#7f1d1d,#dc2626);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer">+ Adicionar Despesa</button>
+        </div>
+        <div class="gest-lista" id="gest-lista-desp">
+          <div style="text-align:center;padding:16px;opacity:.35;font-size:.78rem;color:#888">Nenhum lançamento</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:.72rem;color:var(--text3);text-align:center;padding-bottom:24px">
+      📌 Os lançamentos são filtrados pelo mês atual. Dados salvos localmente no navegador.
+    </div>
+  </div>
+</div>
+
 <!-- ===== METAS ===== -->
 <div id="page-metas" class="page">
   <div class="app-header">
