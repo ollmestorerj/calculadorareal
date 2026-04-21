@@ -683,14 +683,10 @@ function calcularGiro(){
   }
 
   // Cenários: quanto comprar para o NOVO LOTE cobrir X dias
-  // Lógica: enquanto o lote não chega (prazo dias), você consome do estoque atual
-  // O novo lote precisa cobrir exatamente os dias do cenário
-  // Se o estoque atual ainda tiver sobra quando o lote chegar, desconta
+  // Quanto comprar no próximo pedido para cobrir X dias de vendas
   function cenario(diasCobertura){
-    const estoqueQuandoChegar = Math.max(estoqueAtual - vendasDia * prazo, 0);
-    const precisaComprar = Math.max(vendasDia * diasCobertura - estoqueQuandoChegar, 0);
-    const investimento = precisaComprar * custoUnit;
-    return {qtd: precisaComprar, valor: investimento};
+    const precisaComprar = vendasDia * diasCobertura;
+    return {qtd: precisaComprar, valor: precisaComprar * custoUnit};
   }
 
   const c5  = cenario(5);
