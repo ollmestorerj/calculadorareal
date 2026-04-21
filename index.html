@@ -681,7 +681,7 @@ function exportarExcel(){
   document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 </script>
-<!-- ===== GESTÃO FINANCEIRA ===== -->
+<!-- ===== GESTÃO DE ESTOQUE ===== -->
 <div id="page-gestao" class="page">
   <div class="app-header">
     <div style="display:flex;gap:8px;align-items:center">
@@ -691,85 +691,123 @@ function exportarExcel(){
     <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
       <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
       <div style="width:1px;height:26px;background:#444"></div>
-      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">GESTÃO FINANCEIRA</span>
+      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">GESTÃO DE ESTOQUE</span>
     </div>
     <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
   </div>
 
-  <div style="padding:20px 18px;max-width:900px;margin:0 auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+  <div style="padding:20px 18px;max-width:700px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px">
       <button class="btn-back" onclick="showPage('home')">← Voltar</button>
-      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">💳 Gestão <span style="color:var(--o)">Financeira</span></h2>
-      <div style="width:100px"></div>
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">📦 Calculadora de <span style="color:var(--o)">Giro</span></h2>
+      <div style="width:80px"></div>
     </div>
+    <p style="font-size:.76rem;color:var(--text2);margin-bottom:18px;text-align:center;line-height:1.6">Descubra quanto estoque você precisa comprar e quando fazer o próximo pedido.</p>
 
-    <!-- KPIs do mês -->
-    <div class="gest-summary">
-      <div class="gest-kpi">
-        <div class="gk-label">📥 Receitas/mês</div>
-        <div class="gk-val" id="gest-rec-mes" style="color:#4ade80">R$ —</div>
-      </div>
-      <div class="gest-kpi">
-        <div class="gk-label">📤 Despesas/mês</div>
-        <div class="gk-val" id="gest-desp-mes" style="color:#f87171">R$ —</div>
-      </div>
-      <div class="gest-kpi">
-        <div class="gk-label">💰 Saldo do mês</div>
-        <div class="gk-val" id="gest-saldo-mes">R$ —</div>
-      </div>
-      <div class="gest-kpi">
-        <div class="gk-label">🏦 Capital de giro</div>
-        <div class="gk-val" id="gest-capital" style="color:#c4b5fd">R$ —</div>
-      </div>
-    </div>
-
-    <!-- Capital de giro -->
+    <!-- Inputs -->
     <div class="gest-card" style="margin-bottom:14px">
-      <div class="gest-card-title" style="color:#a78bfa">🏦 CAPITAL DE GIRO DISPONÍVEL</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="number" class="gest-input" id="gest-capital-input" placeholder="Ex: 5000,00" min="0" step="0.01" style="flex:1">
-        <button onclick="salvarCapital()" style="padding:9px 16px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap">Salvar</button>
-      </div>
-      <div style="font-size:.7rem;color:var(--text3);margin-top:5px">Informe quanto você tem disponível para investir em estoque</div>
-    </div>
-
-    <!-- Receitas e Despesas lado a lado -->
-    <div class="gest-cols">
-      <!-- Receitas -->
-      <div class="gest-card">
-        <div class="gest-card-title" style="color:#4ade80">📥 RECEITAS — MÊS ATUAL</div>
-        <div class="gest-form">
-          <input type="text" class="gest-input" id="gest-rec-desc" placeholder="Descrição (ex: Venda produto X)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-            <input type="number" class="gest-input" id="gest-rec-val" placeholder="Valor (R$)" min="0" step="0.01">
-            <input type="date" class="gest-input" id="gest-rec-data">
-          </div>
-          <button onclick="adicionarLancamento('receita')" style="width:100%;padding:9px;background:linear-gradient(135deg,#166534,#16a34a);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer">+ Adicionar Receita</button>
+      <div class="gest-card-title" style="color:var(--o)">📋 DADOS DO PRODUTO</div>
+      <div class="row2" style="margin-bottom:9px">
+        <div class="field">
+          <label>Quantidade comprada (unid.)</label>
+          <input type="number" class="gest-input" id="giro-qtd" placeholder="Ex: 500" min="0" step="1" oninput="calcularGiro()">
         </div>
-        <div class="gest-lista" id="gest-lista-rec">
-          <div style="text-align:center;padding:16px;opacity:.35;font-size:.78rem;color:#888">Nenhum lançamento</div>
+        <div class="field">
+          <label>Valor total do lote (R$)</label>
+          <input type="number" class="gest-input" id="giro-valor" placeholder="Ex: 2500,00" min="0" step="0.01" oninput="calcularGiro()">
         </div>
       </div>
-
-      <!-- Despesas -->
-      <div class="gest-card">
-        <div class="gest-card-title" style="color:#f87171">📤 DESPESAS — MÊS ATUAL</div>
-        <div class="gest-form">
-          <input type="text" class="gest-input" id="gest-desp-desc" placeholder="Descrição (ex: Frete fornecedor)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-            <input type="number" class="gest-input" id="gest-desp-val" placeholder="Valor (R$)" min="0" step="0.01">
-            <input type="date" class="gest-input" id="gest-desp-data">
-          </div>
-          <button onclick="adicionarLancamento('despesa')" style="width:100%;padding:9px;background:linear-gradient(135deg,#7f1d1d,#dc2626);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer">+ Adicionar Despesa</button>
+      <div class="row2" style="margin-bottom:9px">
+        <div class="field">
+          <label>Vendas por dia (unid.)</label>
+          <input type="number" class="gest-input" id="giro-vendas-dia" placeholder="Ex: 25" min="0" step="1" oninput="calcularGiro()">
         </div>
-        <div class="gest-lista" id="gest-lista-desp">
-          <div style="text-align:center;padding:16px;opacity:.35;font-size:.78rem;color:#888">Nenhum lançamento</div>
+        <div class="field">
+          <label>Dias desde a compra</label>
+          <input type="number" class="gest-input" id="giro-dias-compra" placeholder="Ex: 3" min="0" step="1" oninput="calcularGiro()">
+          <div class="note">Há quantos dias você fez essa compra?</div>
         </div>
+      </div>
+      <div class="field">
+        <label>Dias para chegar o novo lote</label>
+        <input type="number" class="gest-input" id="giro-prazo" placeholder="Ex: 15" min="0" step="1" oninput="calcularGiro()">
+        <div class="note">Quantos dias o fornecedor demora para entregar depois que você faz o pedido?</div>
       </div>
     </div>
 
-    <div style="font-size:.72rem;color:var(--text3);text-align:center;padding-bottom:24px">
-      📌 Os lançamentos são filtrados pelo mês atual. Dados salvos localmente no navegador.
+    <!-- Resultado: escondido até preencher -->
+    <div id="giro-resultado" style="display:none">
+
+      <!-- Situação atual -->
+      <div class="gest-card" style="margin-bottom:14px;background:linear-gradient(135deg,#0a1628,#0f2040);border-color:#1e3a5f">
+        <div class="gest-card-title" style="color:#60a5fa">📊 SITUAÇÃO ATUAL DO ESTOQUE</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+          <div style="text-align:center">
+            <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Estoque atual</div>
+            <div style="font-size:1.4rem;font-weight:900;color:#c4b5fd" id="giro-estoque-atual">—</div>
+            <div style="font-size:.65rem;color:var(--text3)">unidades</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Dias restantes</div>
+            <div style="font-size:1.4rem;font-weight:900" id="giro-dias-restantes" style="color:#4ade80">—</div>
+            <div style="font-size:.65rem;color:var(--text3)">no ritmo atual</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Custo/unidade</div>
+            <div style="font-size:1.4rem;font-weight:900;color:var(--o)" id="giro-custo-unit">—</div>
+            <div style="font-size:.65rem;color:var(--text3)">médio</div>
+          </div>
+        </div>
+        <!-- Alerta de reposição -->
+        <div id="giro-alerta" style="border-radius:10px;padding:10px 13px;font-size:.78rem;font-weight:600;line-height:1.5;text-align:center"></div>
+      </div>
+
+      <!-- 3 cenários de quanto comprar -->
+      <div class="gest-card-title" style="color:var(--text3);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">🛒 QUANTO COMPRAR NO PRÓXIMO PEDIDO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="gest-kpi" style="border-color:#1e3a5f">
+          <div class="gk-label" style="color:#60a5fa">Para 10 dias</div>
+          <div class="gk-val" id="giro-c10-qtd" style="color:#c4b5fd;font-size:1.1rem">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.85rem;font-weight:800;color:#60a5fa;margin-top:5px" id="giro-c10-val">R$ —</div>
+        </div>
+        <div class="gest-kpi" style="border-color:#166534;background:linear-gradient(135deg,#052e1622,#16653422)">
+          <div class="gk-label" style="color:#4ade80">Para 20 dias ⭐</div>
+          <div class="gk-val" id="giro-c20-qtd" style="color:#4ade80;font-size:1.1rem">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.85rem;font-weight:800;color:#4ade80;margin-top:5px" id="giro-c20-val">R$ —</div>
+        </div>
+        <div class="gest-kpi" style="border-color:#7c2d12">
+          <div class="gk-label" style="color:#F0A070">Para 30 dias</div>
+          <div class="gk-val" id="giro-c30-qtd" style="color:#F0A070;font-size:1.1rem">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.85rem;font-weight:800;color:#F0A070;margin-top:5px" id="giro-c30-val">R$ —</div>
+        </div>
+      </div>
+
+      <!-- Ponto de reposição -->
+      <div class="gest-card" style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border-color:#6B21A855;margin-bottom:14px">
+        <div class="gest-card-title" style="color:#a78bfa">⏰ PONTO DE REPOSIÇÃO</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
+            <div style="font-size:.66rem;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Faça o pedido quando tiver</div>
+            <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="giro-ponto-rep">—</div>
+            <div style="font-size:.7rem;color:#a78bfa">unidades em estoque</div>
+          </div>
+          <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
+            <div style="font-size:.66rem;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Isso acontece em</div>
+            <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="giro-ponto-dias">—</div>
+            <div style="font-size:.7rem;color:#a78bfa" id="giro-ponto-label">dias a partir de hoje</div>
+          </div>
+        </div>
+        <div style="font-size:.74rem;color:#a78bfa;margin-top:10px;padding:8px 11px;background:#6B21A810;border-radius:8px;line-height:1.6" id="giro-ponto-msg"></div>
+      </div>
+
+    </div>
+
+    <div id="giro-empty" style="text-align:center;padding:40px 20px;opacity:.3">
+      <div style="font-size:2.5rem">📦</div>
+      <p style="font-size:.8rem;color:#888;margin-top:8px;line-height:1.6">Preencha os dados acima<br>para ver os cálculos</p>
     </div>
   </div>
 </div>
