@@ -76,7 +76,6 @@ function entrarNoApp(dados, pagina){
   if(hu&&dados&&dados.nome){
     hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong> · Acesso válido até <strong>${dados.validade}</strong>`;
   }
-  // Pequeno delay para garantir que o DOM está pronto antes de renderizar
   setTimeout(()=>showPage(pagina||'home', true), 50);
 }
 
@@ -84,11 +83,9 @@ function entrarNoApp(dados, pagina){
 (function(){
   const s=verificarSessao();
   if(s){
-    // Restaurar última página visitada
     const ultimaPagina=localStorage.getItem('realecom_pagina')||'home';
     entrarNoApp(s, ultimaPagina);
   }
-  // Tema
   const t=localStorage.getItem('realecom_theme');
   if(t==='light'){document.body.classList.add('light');document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='🌙 Escuro');}
 })();
@@ -110,14 +107,13 @@ function fmtKg(v){return v%1===0?v.toFixed(0)+' kg':v.toFixed(v<1?3:2)+' kg';}
 function fmtP(v){return v.toFixed(2).replace('.',',')+' %';}
 
 function showPage(p,bypassCheck){
-  // Proteção: bloqueia acesso às páginas internas sem sessão
   if(p!=='login'&&!bypassCheck&&!verificarSessao()){location.reload();return;}
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   if(p==='dash')renderDash();
   if(p==='cal')renderCal();
   if(p==='metas')carregarMetas();
-  // Salvar página atual para restaurar no F5
+  if(p==='gestao')calcularGestao();
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
 
@@ -214,7 +210,6 @@ function setMode(m){
 function calcular(){
   const custo=sumItems();
   const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
-  // Frete de coleta Full por unidade
   const freteFullTotal=parseFloat(document.getElementById('frete-full').value)||0;
   const freteFullQtd=parseInt(document.getElementById('frete-full-qtd').value)||1;
   const freteFullUnit=freteFullTotal>0?freteFullTotal/freteFullQtd:0;
@@ -336,7 +331,6 @@ function calcular(){
 function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv,totalImp){
   document.getElementById('bd-custo').textContent=fmt(custo);
   document.getElementById('bd-frete').textContent=fmt(frete);
-  // Frete Full separado
   const freteFullUnit=lastCalc&&lastCalc.freteFullUnit||0;
   const insSemFull=ins-freteFullUnit;
   const elBdFull=document.getElementById('bd-frete-full');
@@ -367,8 +361,6 @@ function finalizarCalculo(){
   document.getElementById('inpi-box').style.display='block';
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
-  
-  // Mostrar caixa de devolução
   if(lastCalc&&lastCalc.payout>0){
     calcDevolucao();
   }
@@ -378,8 +370,6 @@ function resetar(){
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
   document.getElementById('inpi-box').style.display='none';
-  
-
   document.getElementById('frete-full').value='';
   document.getElementById('frete-full-qtd').value='';
   document.getElementById('frete-full-result').style.display='none';
@@ -387,29 +377,30 @@ function resetar(){
   lastCalc=null;
 }
 
+// ============================================================
+// SALVAR PRODUTO — métricas do Preço ML no card, preço da margem nos detalhes
+// ============================================================
 function salvarProduto(){
   if(!lastCalc)return;
   const nome=document.getElementById('save-nome').value.trim();
   if(!nome){alert('Informe o nome do produto.');return;}
 
-  // Fator para cálculo do custo ideal (baseado na margem definida pelo usuário, ou 15% como fallback)
+  // Fator para cálculo do custo ideal (margem definida ou 15% como fallback)
   const margemDefinida=lastCalc.pM>0?lastCalc.pM:0.15;
   const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-margemDefinida;
 
-  // Preço calculado para atingir a margem desejada
+  // Preço calculado para atingir a margem desejada e seu lucro
   const precoMargem=fator>0?lastCalc.base/fator:null;
-
-  // Lucro por unidade do preço calculado (margem)
   let lucroMargem=null;
   if(precoMargem!==null){
     const vI=precoMargem*lastCalc.pI,vC=precoMargem*lastCalc.pC,vA=precoMargem*lastCalc.pA;
     lucroMargem=precoMargem-lastCalc.base-vI-vC-vA;
   }
 
-  // Custo ideal = custo máximo para atingir a margem vendendo no preço médio ML
+  // Custo ideal = custo máximo para ter a margem vendendo no preço ML
   const custoIdeal=(lastCalc.precoML>0&&fator>0)?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
 
-  // Métricas do Preço Médio ML
+  // Métricas do Preço Médio ML (exibidas no card principal)
   let precoML_roi=0,precoML_margem=0,precoML_markup=0,precoML_payout=0;
   if(lastCalc.precoML>0){
     const mlvI=lastCalc.precoML*lastCalc.pI,mlvC=lastCalc.precoML*lastCalc.pC,mlvA=lastCalc.precoML*lastCalc.pA;
@@ -433,7 +424,7 @@ function salvarProduto(){
     // Preço calculado para a margem desejada e seu lucro
     precoCalc:precoMargem!==null?precoMargem:lastCalc.preco,
     lucroMargem:lucroMargem!==null?lucroMargem:lastCalc.payout,
-    // Preço Médio ML e suas métricas (exibidas no card principal)
+    // Preço Médio ML e suas métricas (exibidas no card)
     precoML:lastCalc.precoML,
     precoML_roi,
     precoML_margem,
@@ -456,26 +447,28 @@ function salvarObs(id,val){const prods=JSON.parse(localStorage.getItem('realecom
 function deletarProduto(id){if(!confirm('Remover este produto?'))return;const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]').filter(p=>p.id!==id);localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();}
 function toggleDetail(id){const det=document.getElementById('det-'+id);const btn=document.getElementById('tbtn-'+id);const open=det.style.display==='block';det.style.display=open?'none':'block';btn.textContent=open?'+ detalhes':'− fechar';}
 
+// ============================================================
+// DASHBOARD — card mostra métricas do Preço ML; detalhes mostram preço da margem
+// ============================================================
 function renderDash(){
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   const el=document.getElementById('dash-content');
   if(!prods.length){el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';return;}
   el.innerHTML=prods.map(p=>{
     // Métricas do card: usa precoML_* se disponível, senão fallback para campos antigos
-    const roi   = p.precoML>0 ? (p.precoML_roi   ?? p.roi)    : p.roi;
+    const roi   = p.precoML>0 ? (p.precoML_roi    ?? p.roi)    : p.roi;
     const margem= p.precoML>0 ? (p.precoML_margem ?? p.margem) : p.margem;
     const markup= p.precoML>0 ? (p.precoML_markup ?? p.markup) : p.markup;
-    const precoExib = p.precoML>0 ? p.precoML : p.precoCalc;
 
     const rc=roi>=10?'#4ade80':roi>=5?'#F0A070':'#f87171';
     const mc=margem>=10?'#4ade80':margem>=5?'#F0A070':'#f87171';
     const mkc=markup>=1.5?'#4ade80':markup>=1.2?'#F0A070':'#f87171';
 
     // Detalhes
-    const custoIdealStr = p.custoIdeal!==null && p.custoIdeal!==undefined ? fmt(p.custoIdeal) : '—';
-    const precoMargem   = p.precoCalc ? fmt(p.precoCalc) : '—';
-    const lucroMargem   = p.lucroMargem!==undefined ? fmt(p.lucroMargem) : (p.payout!==undefined?fmt(p.payout):'—');
-    const lucroML       = p.precoML>0 && p.precoML_payout!==undefined ? fmt(p.precoML_payout) : '—';
+    const custoIdealStr=p.custoIdeal!==null&&p.custoIdeal!==undefined?fmt(p.custoIdeal):'—';
+    const precoMargem=p.precoCalc?fmt(p.precoCalc):'—';
+    const lucroMargem=p.lucroMargem!==undefined?fmt(p.lucroMargem):(p.payout!==undefined?fmt(p.payout):'—');
+    const lucroML=p.precoML>0&&p.precoML_payout!==undefined?fmt(p.precoML_payout):'—';
 
     return`<div class="prod-card" style="${p.comprado?'border-color:#16a34a55;':''}"><div class="prod-card-top">
       <div class="prod-name"><h3>${p.nome}${p.comprado?' <span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:700">✅ Comprado</span>':''}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
@@ -593,11 +586,9 @@ function mostrarNotifMsg(ev,mensagem,diffDias){
 }
 
 function garantirDAS(){
-  // Garante que existe evento DAS no dia 20 de cada mês (próximos 12 meses)
   const evs=getEventos();
   const hoje=new Date();
   let alterado=false;
-
   for(let i=0;i<12;i++){
     const d=new Date(hoje.getFullYear(),hoje.getMonth()+i,20);
     const dataStr=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-20`;
@@ -619,7 +610,6 @@ function verificarNotificacoes(){
     const diffDias=Math.round((dataEv-hoje)/(1000*60*60*24));
     const chave=`${ev.id}_${diffDias}`;
     if(notificados.includes(chave))return;
-    // DAS: notifica nos 5 dias anteriores e no dia
     if(ev.titulo==='Pagamento DAS'&&diffDias>=0&&diffDias<=5){
       const msgs={0:'💰 Hoje é o vencimento do DAS! Não esqueça de pagar.',1:'💰 DAS vence amanhã! Já separou o valor?',2:'💰 DAS vence em 2 dias.',3:'💰 DAS vence em 3 dias.',4:'💰 DAS vence em 4 dias.',5:'💰 DAS vence em 5 dias.'};
       setTimeout(()=>mostrarNotifMsg(ev,msgs[diffDias],diffDias),800);
@@ -640,48 +630,140 @@ verificarNotificacoes();
 function exportarExcel(){
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   if(!prods.length){alert('Nenhum produto no Dashboard para exportar.');return;}
-
   const fmt2=(v)=>typeof v==='number'?v.toFixed(2).replace('.',','):v||'';
-
-  // Cabeçalho
-  const rows=[
-    ['Nome','Fornecedor','Código','Custo Real (R$)','Custo Ideal (R$)','Preço Calculado (R$)','Preço Médio ML (R$)','Lucro/unid. (R$)','Markup','ROI (%)','Margem (%)','Observações']
-  ];
-
+  const rows=[['Nome','Fornecedor','Código','Custo Real (R$)','Custo Ideal (R$)','Preço p/ Margem (R$)','Preço Médio ML (R$)','Lucro p/ Margem (R$)','Lucro ML (R$)','Markup','ROI (%)','Margem (%)','Observações']];
   prods.forEach(p=>{
+    const roi   = p.precoML>0?(p.precoML_roi    ?? p.roi)   :p.roi;
+    const margem= p.precoML>0?(p.precoML_margem ?? p.margem):p.margem;
+    const markup= p.precoML>0?(p.precoML_markup ?? p.markup):p.markup;
     rows.push([
-      p.nome||'',
-      p.forn||'',
-      p.cod||'',
+      p.nome||'',p.forn||'',p.cod||'',
       fmt2(p.custoReal),
-      p.custoIdeal!==null?fmt2(Math.max(p.custoIdeal,0)):'',
+      p.custoIdeal!==null&&p.custoIdeal!==undefined?fmt2(p.custoIdeal):'',
       fmt2(p.precoCalc),
       p.precoML>0?fmt2(p.precoML):'',
-      fmt2(p.payout),
-      p.markup?p.markup.toFixed(2).replace('.',','):'',
-      fmt2(p.roi),
-      fmt2(p.margem),
-      p.obs||''
+      p.lucroMargem!==undefined?fmt2(p.lucroMargem):fmt2(p.payout),
+      p.precoML>0&&p.precoML_payout!==undefined?fmt2(p.precoML_payout):'',
+      markup?markup.toFixed(2).replace('.',','):'',
+      fmt2(roi),fmt2(margem),p.obs||''
     ]);
   });
-
-  // Gerar CSV com separador ; (compatível com Excel BR)
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
-  const bom='\uFEFF'; // BOM para Excel reconhecer UTF-8
-  const blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
   a.download=`dashboard_realecom_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
 // ============================================================
-// METAS
+// DASHBOARD — toggleComprado
 // ============================================================
+function toggleComprado(id){
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const p=prods.find(p=>p.id===id);
+  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();}
+}
+
+// ============================================================
+// GESTÃO DE ESTOQUE — CALCULADORA DE GIRO
+// ============================================================
+
+function calcularGestao(){} // chamado no showPage, giro roda via oninput
+
+function calcularGiro(){
+  const qtd      = parseInt(document.getElementById('giro-qtd').value)||0;
+  const valor    = parseFloat(document.getElementById('giro-valor').value)||0;
+  const vendasDia= parseInt(document.getElementById('giro-vendas-dia').value)||0;
+  const diasComp = parseInt(document.getElementById('giro-dias-compra').value)||0;
+  const prazo    = parseInt(document.getElementById('giro-prazo').value)||0;
+
+  const resultado = document.getElementById('giro-resultado');
+  const empty     = document.getElementById('giro-empty');
+
+  if(!qtd||!vendasDia){
+    resultado.style.display='none';
+    empty.style.display='block';
+    return;
+  }
+
+  resultado.style.display='block';
+  empty.style.display='none';
+
+  const custoUnit = qtd>0&&valor>0 ? valor/qtd : 0;
+
+  const jaVendido = Math.min(diasComp * vendasDia, qtd);
+  const estoqueAtual = Math.max(qtd - jaVendido, 0);
+  const diasRestantes = Math.floor(estoqueAtual / vendasDia);
+
+  const fmtN = n => n.toLocaleString('pt-BR');
+
+  document.getElementById('giro-estoque-atual').textContent = fmtN(estoqueAtual);
+  const elDias = document.getElementById('giro-dias-restantes');
+  elDias.textContent = diasRestantes;
+  elDias.style.color = diasRestantes<=prazo ? '#f87171' : diasRestantes<=prazo*1.5 ? '#F0A070' : '#4ade80';
+
+  document.getElementById('giro-custo-unit').textContent = custoUnit>0 ? fmt(custoUnit) : '—';
+
+  const alerta = document.getElementById('giro-alerta');
+  if(diasRestantes <= prazo && prazo > 0){
+    alerta.style.cssText='background:#7f1d1d33;border:1px solid #ef444455;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#f87171;font-weight:700';
+    alerta.textContent=`⚠️ Atenção! Seu estoque acaba em ${diasRestantes} dias mas o novo lote demora ${prazo} dias para chegar. Faça o pedido agora!`;
+  }else if(diasRestantes <= prazo*1.5 && prazo > 0){
+    alerta.style.cssText='background:#7c2d1233;border:1px solid #F0A07055;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#F0A070;font-weight:600';
+    alerta.textContent=`⏳ Fique de olho — você tem ${diasRestantes} dias de estoque e o lote demora ${prazo} dias. Prepare-se para pedir em breve.`;
+  }else{
+    alerta.style.cssText='background:#05291622;border:1px solid #16a34a44;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#4ade80;font-weight:600';
+    alerta.textContent=`✅ Estoque tranquilo por ${diasRestantes} dias. Você tem tempo para planejar o próximo pedido.`;
+  }
+
+  function cenario(diasCobertura){
+    const precisaComprar = vendasDia * diasCobertura;
+    return {qtd: precisaComprar, valor: precisaComprar * custoUnit};
+  }
+
+  const c5  = cenario(5);
+  const c10 = cenario(10);
+  const c15 = cenario(15);
+  const c30 = cenario(30);
+
+  document.getElementById('giro-c5-qtd').textContent  = fmtN(c5.qtd)+' unid.';
+  document.getElementById('giro-c5-val').textContent   = custoUnit>0 ? fmt(c5.valor)  : '—';
+  document.getElementById('giro-c10-qtd').textContent = fmtN(c10.qtd)+' unid.';
+  document.getElementById('giro-c10-val').textContent  = custoUnit>0 ? fmt(c10.valor) : '—';
+  document.getElementById('giro-c15-qtd').textContent = fmtN(c15.qtd)+' unid.';
+  document.getElementById('giro-c15-val').textContent  = custoUnit>0 ? fmt(c15.valor) : '—';
+  document.getElementById('giro-c30-qtd').textContent = fmtN(c30.qtd)+' unid.';
+  document.getElementById('giro-c30-val').textContent  = custoUnit>0 ? fmt(c30.valor) : '—';
+
+  const pontoRep = prazo > 0 ? vendasDia * prazo : 0;
+  document.getElementById('giro-ponto-rep').textContent = fmtN(pontoRep);
+
+  const diasAtePonto = prazo > 0 ? Math.max(Math.floor((estoqueAtual - pontoRep) / vendasDia), 0) : null;
+  const elPontoDias  = document.getElementById('giro-ponto-dias');
+  const elPontoLabel = document.getElementById('giro-ponto-label');
+  const elPontoMsg   = document.getElementById('giro-ponto-msg');
+
+  if(prazo > 0){
+    if(estoqueAtual <= pontoRep){
+      elPontoDias.textContent = '0';
+      elPontoDias.style.color = '#f87171';
+      elPontoLabel.textContent = 'Peça AGORA!';
+      elPontoMsg.textContent = `Seu estoque (${fmtN(estoqueAtual)} unid.) já está no ponto de reposição ou abaixo. Se pedir hoje, o novo lote chega em ${prazo} dias — quando você terá aproximadamente ${fmtN(vendasDia*prazo)} unidades a menos.`;
+    }else{
+      elPontoDias.textContent = diasAtePonto;
+      elPontoDias.style.color = diasAtePonto <= 5 ? '#f87171' : '#c4b5fd';
+      elPontoLabel.textContent = 'dias a partir de hoje';
+      elPontoMsg.textContent = `Quando seu estoque chegar a ${fmtN(pontoRep)} unidades, faça o pedido. O novo lote chegará exatamente quando você precisar, sem ficar em falta.`;
+    }
+  }else{
+    elPontoDias.textContent = '—';
+    elPontoLabel.textContent = 'preencha os dias do lote';
+    elPontoMsg.textContent = 'Informe quantos dias o fornecedor demora para entregar para calcular o ponto de reposição.';
+  }
+}
 
 // ============================================================
 // METAS — Nova versão com períodos
@@ -693,19 +775,15 @@ function carregarMetas(){
   const elDias=document.getElementById('meta-dias-semana');
   if(m.prodDia&&elDia)elDia.value=m.prodDia;
   if(m.diasSemana&&elDias)elDias.value=m.diasSemana;
-  // Sempre atualiza painel de qualidade, mesmo sem meta definida
   atualizarQualidade();
-  // Recalcula metas de progresso se tiver os valores
   if(m.prodDia&&m.diasSemana)recalcularMetas();
 }
 
 function atualizarQualidade(){
-  if(!document.getElementById('qual-total'))return; // página metas não está ativa
+  if(!document.getElementById('qual-total'))return;
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
-  const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
   const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
-  // Produtos dos últimos 30 dias
   const agora=Date.now();
   const limite30=agora-(30*24*60*60*1000);
   const prodsMes=todos.filter(p=>{
@@ -716,7 +794,7 @@ function atualizarQualidade(){
   const qualTotal=document.getElementById('qual-total');
   if(qualTotal)qualTotal.textContent=prodsMes.length;
 
-  // Margem: usa precoML_margem se disponível (novo), senão fallback para margem antiga
+  // Usa precoML_margem para produtos novos, fallback para campo margem antigo
   const getMargem=p=>p.precoML>0&&p.precoML_margem!==undefined?p.precoML_margem:parseFloat(p.margem||0);
   const roi160=prodsMes.filter(p=>getMargem(p)>=10&&getMargem(p)<15).length;
   const roi180=prodsMes.filter(p=>getMargem(p)>=15&&getMargem(p)<20).length;
@@ -759,11 +837,10 @@ function atualizarNota(v){
   document.getElementById('nota-display').textContent=parseFloat(v).toFixed(1).replace('.',',');
 }
 
-
 function recalcularMetas(){
   const elDia=document.getElementById('meta-prod-dia');
   const elDias=document.getElementById('meta-dias-semana');
-  if(!elDia||!elDias)return; // elementos ainda não existem no DOM
+  if(!elDia||!elDias)return;
   const prodDia=parseInt(elDia.value)||0;
   const diasSem=parseInt(elDias.value)||0;
   if(!prodDia||!diasSem)return;
@@ -781,11 +858,9 @@ function recalcularMetas(){
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
-  // Filtro por período: usa o id do produto (timestamp de quando foi salvo)
   function prodsPeriodo(dias){
     const agora=Date.now();
     const limiteMs=agora-(dias*24*60*60*1000);
-    // Usa o maior entre dataInicio e (agora - dias)
     const limiteReal=Math.max(dataInicio.getTime(),limiteMs);
     return prods.filter(p=>{
       const ts=typeof p.id==='number'?p.id:parseInt(p.id);
@@ -827,11 +902,9 @@ function recalcularMetas(){
   }
 
   document.getElementById('resumo-geral').style.display='block';
-  const s=atualizarGrafico('semana',prodsSemana,metaSemana,314);
-  const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,314);
-  const mn=atualizarGrafico('mes',prodsMes,metaMes,314);
-
-  // Atualizar painel de qualidade
+  atualizarGrafico('semana',prodsSemana,metaSemana,314);
+  atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,314);
+  atualizarGrafico('mes',prodsMes,metaMes,314);
   atualizarQualidade();
 }
 
@@ -851,7 +924,6 @@ function calcFreteFullUnit(){
     res.style.display='none';
   }
 }
-
 
 // ============================================================
 // DEVOLUÇÃO
