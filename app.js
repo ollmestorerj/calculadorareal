@@ -674,16 +674,50 @@ function toggleComprado(id){
 function calcularGestao(){} // chamado no showPage, giro roda via oninput
 
 function calcularGiro(){
-  const qtd      = parseInt(document.getElementById('giro-qtd').value)||0;
-  const valor    = parseFloat(document.getElementById('giro-valor').value)||0;
-  const vendasDia= parseInt(document.getElementById('giro-vendas-dia').value)||0;
-  const diasComp = parseInt(document.getElementById('giro-dias-compra').value)||0;
-  const prazo    = parseInt(document.getElementById('giro-prazo').value)||0;
+  const qtd        = parseInt(document.getElementById('giro-qtd').value)||0;
+  const valor      = parseFloat(document.getElementById('giro-valor').value)||0;
+  const prazo      = parseInt(document.getElementById('giro-prazo').value)||0;
+  const customDias = parseInt(document.getElementById('giro-custom-dias').value)||0;
 
   const resultado = document.getElementById('giro-resultado');
   const empty     = document.getElementById('giro-empty');
 
-  if(!qtd||!vendasDia){
+  // ── Datas → dias automáticos ──
+  const dataCompraInput = document.getElementById('giro-data-compra').value;
+  const dataVendasInput = document.getElementById('giro-data-vendas').value;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  let diasDesdeCompra = 0;
+  let diasVendendo    = 0;
+  if(dataCompraInput){ const dc=new Date(dataCompraInput+'T00:00:00'); diasDesdeCompra=Math.max(Math.floor((hoje-dc)/(1000*60*60*24)),0); }
+  if(dataVendasInput){ const dv=new Date(dataVendasInput+'T00:00:00'); diasVendendo=Math.max(Math.floor((hoje-dv)/(1000*60*60*24)),0); }
+
+  // Mostrar dias calculados
+  const diasInfo = document.getElementById('giro-dias-info');
+  if(dataCompraInput || dataVendasInput){
+    diasInfo.style.display='flex';
+    document.getElementById('giro-dias-compra-calc').textContent = dataCompraInput ? diasDesdeCompra+' dias' : '—';
+    document.getElementById('giro-dias-vendas-calc').textContent = dataVendasInput ? diasVendendo+' dias'   : '—';
+  } else {
+    diasInfo.style.display='none';
+  }
+
+  // ── Vendas/dia: total÷período ou campo manual ──
+  const totalVendido    = parseInt(document.getElementById('giro-total-vendido').value)||0;
+  const vendasDiaManual = parseFloat(document.getElementById('giro-vendas-dia').value)||0;
+  let vendasDia = vendasDiaManual;
+  let mediaCalc = false;
+  if(totalVendido>0 && diasVendendo>0){ vendasDia=totalVendido/diasVendendo; mediaCalc=true; }
+
+  const mediaInfo = document.getElementById('giro-media-info');
+  if(mediaCalc){
+    mediaInfo.style.display='block';
+    mediaInfo.innerHTML=`📊 Média calculada: <strong>${totalVendido} unidades ÷ ${diasVendendo} dias = <span style="color:#4ade80">${vendasDia.toFixed(1)} unid./dia</span></strong>`;
+  } else {
+    mediaInfo.style.display='none';
+  }
+
+  if(!qtd || !vendasDia){
     resultado.style.display='none';
     empty.style.display='block';
     return;
@@ -693,75 +727,87 @@ function calcularGiro(){
   empty.style.display='none';
 
   const custoUnit = qtd>0&&valor>0 ? valor/qtd : 0;
+  const fmtN  = n => Math.round(n).toLocaleString('pt-BR');
+  const fmtDt = d => d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
 
-  const jaVendido = Math.min(diasComp * vendasDia, qtd);
+  // ── Estoque: descontado pela data da COMPRA ──
+  const jaVendido    = Math.min(diasDesdeCompra * vendasDia, qtd);
   const estoqueAtual = Math.max(qtd - jaVendido, 0);
-  const diasRestantes = Math.floor(estoqueAtual / vendasDia);
-
-  const fmtN = n => n.toLocaleString('pt-BR');
+  const diasRestantes= estoqueAtual / vendasDia;
 
   document.getElementById('giro-estoque-atual').textContent = fmtN(estoqueAtual);
   const elDias = document.getElementById('giro-dias-restantes');
-  elDias.textContent = diasRestantes;
-  elDias.style.color = diasRestantes<=prazo ? '#f87171' : diasRestantes<=prazo*1.5 ? '#F0A070' : '#4ade80';
-
-  document.getElementById('giro-custo-unit').textContent = custoUnit>0 ? fmt(custoUnit) : '—';
+  elDias.textContent = Math.floor(diasRestantes);
+  elDias.style.color = diasRestantes<=prazo?'#f87171':diasRestantes<=prazo*1.5?'#F0A070':'#4ade80';
+  document.getElementById('giro-custo-unit').textContent = custoUnit>0?fmt(custoUnit):'—';
 
   const alerta = document.getElementById('giro-alerta');
-  if(diasRestantes <= prazo && prazo > 0){
+  if(prazo>0&&diasRestantes<=prazo){
     alerta.style.cssText='background:#7f1d1d33;border:1px solid #ef444455;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#f87171;font-weight:700';
-    alerta.textContent=`⚠️ Atenção! Seu estoque acaba em ${diasRestantes} dias mas o novo lote demora ${prazo} dias para chegar. Faça o pedido agora!`;
-  }else if(diasRestantes <= prazo*1.5 && prazo > 0){
+    alerta.textContent=`⚠️ Atenção! Seu estoque acaba em ${Math.floor(diasRestantes)} dias mas o novo lote demora ${prazo} dias. Faça o pedido agora!`;
+  } else if(prazo>0&&diasRestantes<=prazo*1.5){
     alerta.style.cssText='background:#7c2d1233;border:1px solid #F0A07055;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#F0A070;font-weight:600';
-    alerta.textContent=`⏳ Fique de olho — você tem ${diasRestantes} dias de estoque e o lote demora ${prazo} dias. Prepare-se para pedir em breve.`;
-  }else{
+    alerta.textContent=`⏳ Fique de olho — você tem ${Math.floor(diasRestantes)} dias de estoque e o lote demora ${prazo} dias. Prepare-se para pedir em breve.`;
+  } else {
     alerta.style.cssText='background:#05291622;border:1px solid #16a34a44;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#4ade80;font-weight:600';
-    alerta.textContent=`✅ Estoque tranquilo por ${diasRestantes} dias. Você tem tempo para planejar o próximo pedido.`;
+    alerta.textContent=`✅ Estoque tranquilo por ${Math.floor(diasRestantes)} dias. Você tem tempo para planejar o próximo pedido.`;
   }
 
-  function cenario(diasCobertura){
-    const precisaComprar = vendasDia * diasCobertura;
-    return {qtd: precisaComprar, valor: precisaComprar * custoUnit};
-  }
-
-  const c5  = cenario(5);
-  const c10 = cenario(10);
-  const c15 = cenario(15);
-  const c30 = cenario(30);
-
+  // ── Cenários fixos ──
+  function cenario(d){ const q=vendasDia*d; return {qtd:q,valor:q*custoUnit}; }
+  const c5=cenario(5),c10=cenario(10),c15=cenario(15),c30=cenario(30);
   document.getElementById('giro-c5-qtd').textContent  = fmtN(c5.qtd)+' unid.';
-  document.getElementById('giro-c5-val').textContent   = custoUnit>0 ? fmt(c5.valor)  : '—';
+  document.getElementById('giro-c5-val').textContent  = custoUnit>0?fmt(c5.valor):'—';
   document.getElementById('giro-c10-qtd').textContent = fmtN(c10.qtd)+' unid.';
-  document.getElementById('giro-c10-val').textContent  = custoUnit>0 ? fmt(c10.valor) : '—';
+  document.getElementById('giro-c10-val').textContent = custoUnit>0?fmt(c10.valor):'—';
   document.getElementById('giro-c15-qtd').textContent = fmtN(c15.qtd)+' unid.';
-  document.getElementById('giro-c15-val').textContent  = custoUnit>0 ? fmt(c15.valor) : '—';
+  document.getElementById('giro-c15-val').textContent = custoUnit>0?fmt(c15.valor):'—';
   document.getElementById('giro-c30-qtd').textContent = fmtN(c30.qtd)+' unid.';
-  document.getElementById('giro-c30-val').textContent  = custoUnit>0 ? fmt(c30.valor) : '—';
+  document.getElementById('giro-c30-val').textContent = custoUnit>0?fmt(c30.valor):'—';
 
-  const pontoRep = prazo > 0 ? vendasDia * prazo : 0;
+  // ── Cenário customizável ──
+  if(customDias>0){
+    const cc=cenario(customDias);
+    document.getElementById('giro-custom-qtd').textContent = fmtN(cc.qtd)+' unidades';
+    document.getElementById('giro-custom-val').textContent = custoUnit>0?fmt(cc.valor):'—';
+  } else {
+    document.getElementById('giro-custom-qtd').textContent = '—';
+    document.getElementById('giro-custom-val').textContent = '—';
+  }
+
+  // ── Ponto de reposição + datas reais ──
+  const pontoRep = prazo>0 ? vendasDia*prazo : 0;
   document.getElementById('giro-ponto-rep').textContent = fmtN(pontoRep);
 
-  const diasAtePonto = prazo > 0 ? Math.max(Math.floor((estoqueAtual - pontoRep) / vendasDia), 0) : null;
   const elPontoDias  = document.getElementById('giro-ponto-dias');
   const elPontoLabel = document.getElementById('giro-ponto-label');
   const elPontoMsg   = document.getElementById('giro-ponto-msg');
+  const elDatasReais = document.getElementById('giro-datas-reais');
 
-  if(prazo > 0){
-    if(estoqueAtual <= pontoRep){
-      elPontoDias.textContent = '0';
-      elPontoDias.style.color = '#f87171';
-      elPontoLabel.textContent = 'Peça AGORA!';
-      elPontoMsg.textContent = `Seu estoque (${fmtN(estoqueAtual)} unid.) já está no ponto de reposição ou abaixo. Se pedir hoje, o novo lote chega em ${prazo} dias — quando você terá aproximadamente ${fmtN(vendasDia*prazo)} unidades a menos.`;
-    }else{
-      elPontoDias.textContent = diasAtePonto;
-      elPontoDias.style.color = diasAtePonto <= 5 ? '#f87171' : '#c4b5fd';
-      elPontoLabel.textContent = 'dias a partir de hoje';
-      elPontoMsg.textContent = `Quando seu estoque chegar a ${fmtN(pontoRep)} unidades, faça o pedido. O novo lote chegará exatamente quando você precisar, sem ficar em falta.`;
+  if(prazo>0){
+    const diasParaPedir = estoqueAtual<=pontoRep ? 0 : Math.floor((estoqueAtual-pontoRep)/vendasDia);
+    const dataPedido  = new Date(hoje); dataPedido.setDate(hoje.getDate()+diasParaPedir);
+    const dataChegada = new Date(dataPedido); dataChegada.setDate(dataPedido.getDate()+prazo);
+
+    elDatasReais.style.display='grid';
+    document.getElementById('giro-data-pedido').textContent  = fmtDt(dataPedido);
+    document.getElementById('giro-data-chegada').textContent = fmtDt(dataChegada);
+
+    if(estoqueAtual<=pontoRep){
+      elPontoDias.textContent='0'; elPontoDias.style.color='#f87171';
+      elPontoLabel.textContent='Peça AGORA!';
+      elPontoMsg.textContent=`Seu estoque (${fmtN(estoqueAtual)} unid.) já está no ponto de reposição. Faça o pedido hoje — o novo lote chega em ${fmtDt(dataChegada)}.`;
+    } else {
+      elPontoDias.textContent=diasParaPedir;
+      elPontoDias.style.color=diasParaPedir<=5?'#f87171':'#c4b5fd';
+      elPontoLabel.textContent='dias a partir de hoje';
+      elPontoMsg.textContent=`Faça o pedido em ${fmtDt(dataPedido)} quando o estoque chegar a ${fmtN(pontoRep)} unidades. O novo lote chegará em ${fmtDt(dataChegada)}, exatamente quando você precisar.`;
     }
-  }else{
-    elPontoDias.textContent = '—';
-    elPontoLabel.textContent = 'preencha os dias do lote';
-    elPontoMsg.textContent = 'Informe quantos dias o fornecedor demora para entregar para calcular o ponto de reposição.';
+  } else {
+    elDatasReais.style.display='none';
+    elPontoDias.textContent='—';
+    elPontoLabel.textContent='preencha os dias do lote';
+    elPontoMsg.textContent='Informe quantos dias o fornecedor demora para calcular o ponto de reposição e as datas.';
   }
 }
 
