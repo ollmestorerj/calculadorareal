@@ -117,7 +117,6 @@ function showPage(p,bypassCheck){
   if(p==='dash')renderDash();
   if(p==='cal')renderCal();
   if(p==='metas')carregarMetas();
-  if(p==='gestao')calcularGestao();
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
@@ -392,9 +391,61 @@ function salvarProduto(){
   if(!lastCalc)return;
   const nome=document.getElementById('save-nome').value.trim();
   if(!nome){alert('Informe o nome do produto.');return;}
-  const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM;
-  const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
-  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout};
+
+  // Fator para cálculo do custo ideal (baseado na margem definida pelo usuário, ou 15% como fallback)
+  const margemDefinida=lastCalc.pM>0?lastCalc.pM:0.15;
+  const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-margemDefinida;
+
+  // Preço calculado para atingir a margem desejada
+  const precoMargem=fator>0?lastCalc.base/fator:null;
+
+  // Lucro por unidade do preço calculado (margem)
+  let lucroMargem=null;
+  if(precoMargem!==null){
+    const vI=precoMargem*lastCalc.pI,vC=precoMargem*lastCalc.pC,vA=precoMargem*lastCalc.pA;
+    lucroMargem=precoMargem-lastCalc.base-vI-vC-vA;
+  }
+
+  // Custo ideal = custo máximo para atingir a margem vendendo no preço médio ML
+  const custoIdeal=(lastCalc.precoML>0&&fator>0)?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
+
+  // Métricas do Preço Médio ML
+  let precoML_roi=0,precoML_margem=0,precoML_markup=0,precoML_payout=0;
+  if(lastCalc.precoML>0){
+    const mlvI=lastCalc.precoML*lastCalc.pI,mlvC=lastCalc.precoML*lastCalc.pC,mlvA=lastCalc.precoML*lastCalc.pA;
+    const mlPayout=lastCalc.precoML-lastCalc.base-mlvI-mlvC-mlvA;
+    precoML_payout=mlPayout;
+    precoML_margem=(mlPayout/lastCalc.precoML)*100;
+    precoML_markup=lastCalc.custo>0?lastCalc.precoML/lastCalc.custo:0;
+    const inv=lastCalc.custo*lastCalc.qtd;
+    precoML_roi=inv>0?(mlPayout*lastCalc.qtd/inv)*100:0;
+  }
+
+  const prod={
+    id:Date.now(),
+    nome,
+    forn:document.getElementById('save-forn').value.trim()||'—',
+    cod:document.getElementById('save-cod').value.trim()||'—',
+    obs:document.getElementById('save-obs').value.trim(),
+    // Custos
+    custoReal:lastCalc.custo,
+    custoIdeal:custoIdeal!==null?Math.max(custoIdeal,0):null,
+    // Preço calculado para a margem desejada e seu lucro
+    precoCalc:precoMargem!==null?precoMargem:lastCalc.preco,
+    lucroMargem:lucroMargem!==null?lucroMargem:lastCalc.payout,
+    // Preço Médio ML e suas métricas (exibidas no card principal)
+    precoML:lastCalc.precoML,
+    precoML_roi,
+    precoML_margem,
+    precoML_markup,
+    precoML_payout,
+    // Compat retroativa — mantidos para produtos antigos já salvos
+    markup:precoML_markup||lastCalc.markup,
+    roi:precoML_roi||lastCalc.roi,
+    margem:precoML_margem||lastCalc.pM*100,
+    payout:precoML_payout||lastCalc.payout
+  };
+
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   prods.unshift(prod);localStorage.setItem('realecom_prods',JSON.stringify(prods));
   document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
@@ -410,15 +461,28 @@ function renderDash(){
   const el=document.getElementById('dash-content');
   if(!prods.length){el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';return;}
   el.innerHTML=prods.map(p=>{
-    const rc=p.roi>=10?'#4ade80':p.roi>=5?'#F0A070':'#f87171';
-    const mc=p.margem>=10?'#4ade80':p.margem>=5?'#F0A070':'#f87171';
-    const mkc=p.markup>=1.5?'#4ade80':p.markup>=1.2?'#F0A070':'#f87171';
-    return`<div class="prod-card" style="${p.comprado?'border-color:#16a34a55;':''}""><div class="prod-card-top">
+    // Métricas do card: usa precoML_* se disponível, senão fallback para campos antigos
+    const roi   = p.precoML>0 ? (p.precoML_roi   ?? p.roi)    : p.roi;
+    const margem= p.precoML>0 ? (p.precoML_margem ?? p.margem) : p.margem;
+    const markup= p.precoML>0 ? (p.precoML_markup ?? p.markup) : p.markup;
+    const precoExib = p.precoML>0 ? p.precoML : p.precoCalc;
+
+    const rc=roi>=10?'#4ade80':roi>=5?'#F0A070':'#f87171';
+    const mc=margem>=10?'#4ade80':margem>=5?'#F0A070':'#f87171';
+    const mkc=markup>=1.5?'#4ade80':markup>=1.2?'#F0A070':'#f87171';
+
+    // Detalhes
+    const custoIdealStr = p.custoIdeal!==null && p.custoIdeal!==undefined ? fmt(p.custoIdeal) : '—';
+    const precoMargem   = p.precoCalc ? fmt(p.precoCalc) : '—';
+    const lucroMargem   = p.lucroMargem!==undefined ? fmt(p.lucroMargem) : (p.payout!==undefined?fmt(p.payout):'—');
+    const lucroML       = p.precoML>0 && p.precoML_payout!==undefined ? fmt(p.precoML_payout) : '—';
+
+    return`<div class="prod-card" style="${p.comprado?'border-color:#16a34a55;':''}"><div class="prod-card-top">
       <div class="prod-name"><h3>${p.nome}${p.comprado?' <span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:700">✅ Comprado</span>':''}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
-      <div class="prod-metric"><div class="pm-label">Preço</div><div class="pm-value" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
-      <div class="prod-metric"><div class="pm-label">ROI</div><div class="pm-value" style="color:${rc}">${fmtP(p.roi)}</div></div>
-      <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div></div>
-      <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div></div>
+      <div class="prod-metric"><div class="pm-label">Preço ML</div><div class="pm-value" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
+      <div class="prod-metric"><div class="pm-label">ROI</div><div class="pm-value" style="color:${rc}">${fmtP(roi)}</div></div>
+      <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(margem)}</div></div>
+      <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${markup.toFixed(2).replace('.',',')}</div></div>
       <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar como comprado':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1rem;transition:all .2s" onmouseover="this.style.borderColor='#16a34a'" onmouseout="this.style.borderColor='${p.comprado?'#16a34a55':'var(--border)'}'">${p.comprado?'⭐':'☆'}</button>
       <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
       <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
@@ -426,9 +490,10 @@ function renderDash(){
     <div class="prod-card-detail" id="det-${p.id}">
       <div class="prod-detail-grid">
         <div class="pd-item"><div class="pdl">Custo Real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
-        <div class="pd-item"><div class="pdl">Custo Ideal</div><div class="pdv" style="color:${p.custoIdeal!==null?'#4ade80':'#4a3f6b'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
-        <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
-        <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
+        <div class="pd-item"><div class="pdl">Custo Ideal</div><div class="pdv" style="color:${p.custoIdeal!==null&&p.custoIdeal!==undefined?'#4ade80':'#4a3f6b'}">${custoIdealStr}</div></div>
+        <div class="pd-item"><div class="pdl">Preço p/ Margem</div><div class="pdv" style="color:#c4b5fd">${precoMargem}</div></div>
+        <div class="pd-item"><div class="pdl">Lucro p/ Margem</div><div class="pdv" style="color:#c4b5fd">${lucroMargem}</div></div>
+        <div class="pd-item"><div class="pdl">Lucro Preço ML</div><div class="pdv" style="color:#F0A070">${lucroML}</div></div>
       </div>
       <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
       <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
@@ -615,124 +680,6 @@ function exportarExcel(){
 }
 
 // ============================================================
-// DASHBOARD — toggleComprado
-// ============================================================
-function toggleComprado(id){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  const p=prods.find(p=>p.id===id);
-  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));renderDash();}
-}
-
-// ============================================================
-// GESTÃO DE ESTOQUE — CALCULADORA DE GIRO
-// ============================================================
-
-function calcularGestao(){} // chamado no showPage, giro roda via oninput
-
-function calcularGiro(){
-  const qtd      = parseInt(document.getElementById('giro-qtd').value)||0;
-  const valor    = parseFloat(document.getElementById('giro-valor').value)||0;
-  const vendasDia= parseInt(document.getElementById('giro-vendas-dia').value)||0;
-  const diasComp = parseInt(document.getElementById('giro-dias-compra').value)||0;
-  const prazo    = parseInt(document.getElementById('giro-prazo').value)||0;
-
-  const resultado = document.getElementById('giro-resultado');
-  const empty     = document.getElementById('giro-empty');
-
-  // Precisa de pelo menos qtd + vendas/dia para calcular
-  if(!qtd||!vendasDia){
-    resultado.style.display='none';
-    empty.style.display='block';
-    return;
-  }
-
-  resultado.style.display='block';
-  empty.style.display='none';
-
-  const custoUnit = qtd>0&&valor>0 ? valor/qtd : 0;
-
-  // Estoque atual = comprou X, faz Y dias, vendendo Z/dia
-  const jaVendido = Math.min(diasComp * vendasDia, qtd);
-  const estoqueAtual = Math.max(qtd - jaVendido, 0);
-
-  // Dias restantes com o estoque atual
-  const diasRestantes = Math.floor(estoqueAtual / vendasDia);
-
-  // Helper: formata número inteiro
-  const fmtN = n => n.toLocaleString('pt-BR');
-
-  // Atualiza situação atual
-  document.getElementById('giro-estoque-atual').textContent = fmtN(estoqueAtual);
-  const elDias = document.getElementById('giro-dias-restantes');
-  elDias.textContent = diasRestantes;
-  elDias.style.color = diasRestantes<=prazo ? '#f87171' : diasRestantes<=prazo*1.5 ? '#F0A070' : '#4ade80';
-
-  document.getElementById('giro-custo-unit').textContent = custoUnit>0 ? fmt(custoUnit) : '—';
-
-  // Alerta de reposição urgente
-  const alerta = document.getElementById('giro-alerta');
-  if(diasRestantes <= prazo && prazo > 0){
-    alerta.style.cssText='background:#7f1d1d33;border:1px solid #ef444455;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#f87171;font-weight:700';
-    alerta.textContent=`⚠️ Atenção! Seu estoque acaba em ${diasRestantes} dias mas o novo lote demora ${prazo} dias para chegar. Faça o pedido agora!`;
-  }else if(diasRestantes <= prazo*1.5 && prazo > 0){
-    alerta.style.cssText='background:#7c2d1233;border:1px solid #F0A07055;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#F0A070;font-weight:600';
-    alerta.textContent=`⏳ Fique de olho — você tem ${diasRestantes} dias de estoque e o lote demora ${prazo} dias. Prepare-se para pedir em breve.`;
-  }else{
-    alerta.style.cssText='background:#05291622;border:1px solid #16a34a44;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#4ade80;font-weight:600';
-    alerta.textContent=`✅ Estoque tranquilo por ${diasRestantes} dias. Você tem tempo para planejar o próximo pedido.`;
-  }
-
-  // Cenários: quanto comprar para o NOVO LOTE cobrir X dias
-  // Quanto comprar no próximo pedido para cobrir X dias de vendas
-  function cenario(diasCobertura){
-    const precisaComprar = vendasDia * diasCobertura;
-    return {qtd: precisaComprar, valor: precisaComprar * custoUnit};
-  }
-
-  const c5  = cenario(5);
-  const c10 = cenario(10);
-  const c15 = cenario(15);
-  const c30 = cenario(30);
-
-  document.getElementById('giro-c5-qtd').textContent  = fmtN(c5.qtd)+' unid.';
-  document.getElementById('giro-c5-val').textContent   = custoUnit>0 ? fmt(c5.valor)  : '—';
-  document.getElementById('giro-c10-qtd').textContent = fmtN(c10.qtd)+' unid.';
-  document.getElementById('giro-c10-val').textContent  = custoUnit>0 ? fmt(c10.valor) : '—';
-  document.getElementById('giro-c15-qtd').textContent = fmtN(c15.qtd)+' unid.';
-  document.getElementById('giro-c15-val').textContent  = custoUnit>0 ? fmt(c15.valor) : '—';
-  document.getElementById('giro-c30-qtd').textContent = fmtN(c30.qtd)+' unid.';
-  document.getElementById('giro-c30-val').textContent  = custoUnit>0 ? fmt(c30.valor) : '—';
-
-  // Ponto de reposição: estoque mínimo para fazer pedido com tempo de chegar
-  const pontoRep = prazo > 0 ? vendasDia * prazo : 0;
-  document.getElementById('giro-ponto-rep').textContent = fmtN(pontoRep);
-
-  // Quantos dias até chegar nesse ponto
-  const diasAtePonto = prazo > 0 ? Math.max(Math.floor((estoqueAtual - pontoRep) / vendasDia), 0) : null;
-  const elPontoDias = document.getElementById('giro-ponto-dias');
-  const elPontoLabel = document.getElementById('giro-ponto-label');
-  const elPontoMsg = document.getElementById('giro-ponto-msg');
-
-  if(prazo > 0){
-    if(estoqueAtual <= pontoRep){
-      elPontoDias.textContent = '0';
-      elPontoDias.style.color = '#f87171';
-      elPontoLabel.textContent = 'Peça AGORA!';
-      elPontoMsg.textContent = `Seu estoque (${fmtN(estoqueAtual)} unid.) já está no ponto de reposição ou abaixo. Se pedir hoje, o novo lote chega em ${prazo} dias — quando você terá aproximadamente ${fmtN(vendasDia*prazo)} unidades a menos.`;
-    }else{
-      elPontoDias.textContent = diasAtePonto;
-      elPontoDias.style.color = diasAtePonto <= 5 ? '#f87171' : '#c4b5fd';
-      elPontoLabel.textContent = 'dias a partir de hoje';
-      elPontoMsg.textContent = `Quando seu estoque chegar a ${fmtN(pontoRep)} unidades, faça o pedido. O novo lote chegará exatamente quando você precisar, sem ficars em falta.`;
-    }
-  }else{
-    elPontoDias.textContent = '—';
-    elPontoLabel.textContent = 'preencha os dias do lote';
-    elPontoMsg.textContent = 'Informe quantos dias o fornecedor demora para entregar para calcular o ponto de reposição.';
-  }
-}
-
-// ============================================================
 // METAS
 // ============================================================
 
@@ -769,10 +716,11 @@ function atualizarQualidade(){
   const qualTotal=document.getElementById('qual-total');
   if(qualTotal)qualTotal.textContent=prodsMes.length;
 
-  // Margem: 10-14,99% / 15-19,99% / 20%+
-  const roi160=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=10&&parseFloat(p.margem)<15).length;
-  const roi180=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=15&&parseFloat(p.margem)<20).length;
-  const roi200=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=20).length;
+  // Margem: usa precoML_margem se disponível (novo), senão fallback para margem antiga
+  const getMargem=p=>p.precoML>0&&p.precoML_margem!==undefined?p.precoML_margem:parseFloat(p.margem||0);
+  const roi160=prodsMes.filter(p=>getMargem(p)>=10&&getMargem(p)<15).length;
+  const roi180=prodsMes.filter(p=>getMargem(p)>=15&&getMargem(p)<20).length;
+  const roi200=prodsMes.filter(p=>getMargem(p)>=20).length;
 
   const q160=document.getElementById('qual-roi160');
   const q180=document.getElementById('qual-roi180');
