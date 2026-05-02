@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — RealEcom</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--o:#F0A070;--p:#6B21A8;--bg:#0d0a14;--card:#140f20;--border:#1e1a2e;--text:#ddd8f0;--text2:#a89ec8;--text3:#7a6f9a}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:#110e1a;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:1rem;font-weight:900;color:var(--o)}
+.header span{font-size:.75rem;color:var(--text3)}
+.container{padding:24px;max-width:1100px;margin:0 auto}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:700px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+.kpi .kl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.kpi .kv{font-size:1.6rem;font-weight:900;color:var(--o)}
+
+/* Tabela usuários */
+.section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px}
+.table-wrap{overflow-x:auto;margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{background:#1a1428;padding:10px 12px;text-align:left;font-weight:700;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid #1a1428;color:var(--text2);vertical-align:top}
+tr:hover td{background:#1a1428}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.65rem;font-weight:700}
+.badge.ativo{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
+.badge.inativo{background:#7f1d1d22;color:#f87171;border:1px solid #ef444444}
+.badge.recente{background:#F0A07022;color:var(--o);border:1px solid #F0A07044}
+
+/* Produtos */
+.prod-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:7px}
+.prod-item .pi-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.prod-item .pi-nome{font-size:.85rem;font-weight:700;color:var(--text)}
+.prod-item .pi-user{font-size:.68rem;color:var(--text3)}
+.prod-metrics{display:flex;gap:14px;margin-top:5px;flex-wrap:wrap}
+.prod-metrics span{font-size:.72rem;color:var(--text2)}
+.prod-metrics strong{color:var(--o)}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;background:none;color:var(--text3);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
+.tab.active{border-color:var(--o);color:var(--o);background:#F0A07010}
+
+.loading{text-align:center;padding:40px;opacity:.3;font-size:.85rem}
+.refresh-btn{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:.8rem;font-weight:700;cursor:pointer}
+
+/* Senha */
+#login-admin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:360px;text-align:center}
+.login-box h2{font-size:1.1rem;font-weight:900;color:var(--o);margin-bottom:6px}
+.login-box p{font-size:.78rem;color:var(--text2);margin-bottom:24px}
+.login-box input{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;background:#1a1428;color:var(--text);font-size:.95rem;text-align:center;outline:none;margin-bottom:12px;font-family:inherit}
+.login-box input:focus{border-color:var(--o)}
+.login-box button{width:100%;padding:12px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer}
+.erro-admin{color:#f87171;font-size:.76rem;margin-top:8px;display:none}
+
+#app-admin{display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN ADMIN -->
+<div id="login-admin">
+  <div class="login-box">
+    <div style="font-size:2.5rem;margin-bottom:12px">🔐</div>
+    <h2>Painel Admin</h2>
+    <p>Acesso exclusivo RealEcom</p>
+    <input type="password" id="senha-admin" placeholder="Senha" onkeydown="if(event.key==='Enter')loginAdmin()">
+    <button onclick="loginAdmin()">Entrar</button>
+    <div class="erro-admin" id="erro-admin">Senha incorreta.</div>
+  </div>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div id="app-admin">
+  <div class="header">
+    <h1>🔥 RealEcom — Painel Admin</h1>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span id="ultima-atualizacao">—</span>
+      <button class="refresh-btn" onclick="carregarTudo()">↻ Atualizar</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi"><div class="kl">👥 Usuários cadastrados</div><div class="kv" id="kpi-usuarios">—</div></div>
+      <div class="kpi"><div class="kl">✅ Ativos (últimos 7 dias)</div><div class="kv" id="kpi-ativos" style="color:#4ade80">—</div></div>
+      <div class="kpi"><div class="kl">📦 Total de produtos</div><div class="kv" id="kpi-produtos" style="color:#c4b5fd">—</div></div>
+      <div class="kpi"><div class="kl">📈 Margem média geral</div><div class="kv" id="kpi-margem" style="color:var(--o)">—</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('usuarios')">👥 Usuários</button>
+      <button class="tab" onclick="showTab('produtos')">📦 Todos os Produtos</button>
+      <button class="tab" onclick="showTab('insights')">📊 Insights</button>
+    </div>
+
+    <!-- Tab Usuários -->
+    <div id="tab-usuarios">
+      <div class="section-title">Usuários cadastrados no Firebase</div>
+      <div class="table-wrap">
+        <table id="tabela-usuarios">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Chave</th>
+              <th>Validade</th>
+              <th>Status</th>
+              <th>Última atividade</th>
+              <th>Última ação</th>
+              <th>Produtos salvos</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-usuarios">
+            <tr><td colspan="7" class="loading">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab Produtos -->
+    <div id="tab-produtos" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div class="section-title" style="margin-bottom:0">Todos os produtos de todos os usuários</div>
+        <input type="text" id="busca-prod" placeholder="Buscar produto..." oninput="filtrarProdutos()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:9px;background:#1a1428;color:var(--text);font-size:.78rem;outline:none;width:220px">
+      </div>
+      <div id="lista-produtos"><div class="loading">Carregando...</div></div>
+    </div>
+
+    <!-- Tab Insights -->
+    <div id="tab-insights" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px">
+          <div class="section-title" style="margin-bottom:12px">🏆 Top 5 margens mais altas</div>
+          <div id="top-margens"></div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px">
+          <div class="section-title" style="margin-bottom:12px">⭐ Produtos marcados como comprado</div>
+          <div id="top-comprados"></div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px">
+        <div class="section-title" style="margin-bottom:12px">💰 Distribuição de preços (Preço Médio ML)</div>
+        <div id="dist-precos"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const SENHA_ADMIN = 'pingpong';
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAv4knEI4IgKH6fRpr_3BuiuijvP2Ul2ms",
+  authDomain: "calculadora-real-ecom.firebaseapp.com",
+  projectId: "calculadora-real-ecom",
+  storageBucket: "calculadora-real-ecom.firebasestorage.app",
+  messagingSenderId: "845239286688",
+  appId: "1:845239286688:web:71018a44cabee0025842c5"
+};
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.firestore();
+
+let todosUsuarios = [];
+let todosProdutos = [];
+
+// ============================================================
+// LOGIN
+// ============================================================
+function loginAdmin(){
+  const senha = document.getElementById('senha-admin').value;
+  if(senha === SENHA_ADMIN){
+    document.getElementById('login-admin').style.display = 'none';
+    document.getElementById('app-admin').style.display = 'block';
+    carregarTudo();
+  } else {
+    document.getElementById('erro-admin').style.display = 'block';
+  }
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function showTab(tab){
+  ['usuarios','produtos','insights'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    b.classList.toggle('active', ['usuarios','produtos','insights'][i] === tab);
+  });
+}
+
+// ============================================================
+// CARREGAR DADOS
+// ============================================================
+async function carregarTudo(){
+  document.getElementById('ultima-atualizacao').textContent = 'Atualizando...';
+  try {
+    // Busca todos os documentos da coleção usuarios
+    const snapshot = await db.collection('usuarios').get();
+    todosUsuarios = [];
+    todosProdutos = [];
+
+    for(const doc of snapshot.docs){
+      const usuario = {id: doc.id, ...doc.data(), produtos: []};
+
+      // Busca produtos de cada usuário
+      try {
+        const prodDoc = await db.collection('usuarios').doc(doc.id)
+          .collection('produtos').doc('data').get();
+        if(prodDoc.exists){
+          const prods = JSON.parse(prodDoc.data().payload || '[]');
+          usuario.produtos = prods;
+          prods.forEach(p => todosProdutos.push({...p, _usuario: usuario.nome || doc.id, _chave: doc.id}));
+        }
+      } catch(e){}
+
+      todosUsuarios.push(usuario);
+    }
+
+    renderUsuarios();
+    renderProdutos();
+    renderInsights();
+    atualizarKPIs();
+
+    document.getElementById('ultima-atualizacao').textContent =
+      'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('ultima-atualizacao').textContent = 'Erro ao carregar';
+  }
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+function atualizarKPIs(){
+  const agora = Date.now();
+  const set7dias = agora - 7*24*60*60*1000;
+  const ativos = todosUsuarios.filter(u => u.ultimaAtividade && u.ultimaAtividade > set7dias).length;
+
+  document.getElementById('kpi-usuarios').textContent = todosUsuarios.length;
+  document.getElementById('kpi-ativos').textContent = ativos;
+  document.getElementById('kpi-produtos').textContent = todosProdutos.length;
+
+  const comMargem = todosProdutos.filter(p => p.margem && parseFloat(p.margem) > 0);
+  const mediaMargem = comMargem.length > 0
+    ? (comMargem.reduce((s,p) => s + parseFloat(p.margem), 0) / comMargem.length).toFixed(1)
+    : '—';
+  document.getElementById('kpi-margem').textContent = mediaMargem !== '—' ? mediaMargem + '%' : '—';
+}
+
+// ============================================================
+// TABELA USUÁRIOS
+// ============================================================
+function renderUsuarios(){
+  const agora = Date.now();
+  const tbody = document.getElementById('tbody-usuarios');
+
+  if(!todosUsuarios.length){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;opacity:.4">Nenhum usuário encontrado</td></tr>';
+    return;
+  }
+
+  // Ordena por última atividade
+  const ordenados = [...todosUsuarios].sort((a,b) => (b.ultimaAtividade||0) - (a.ultimaAtividade||0));
+
+  tbody.innerHTML = ordenados.map(u => {
+    const diffMs = agora - (u.ultimaAtividade || 0);
+    const diffDias = Math.floor(diffMs / (1000*60*60*24));
+    const ativo = diffDias <= 7;
+    const recente = diffDias === 0;
+
+    const statusBadge = recente
+      ? '<span class="badge recente">🟡 Hoje</span>'
+      : ativo
+        ? '<span class="badge ativo">✅ Ativo</span>'
+        : u.ultimaAtividade
+          ? '<span class="badge inativo">⚫ ' + diffDias + 'd atrás</span>'
+          : '<span class="badge inativo">⚫ Nunca</span>';
+
+    const ultimaAtiv = u.ultimaAtividade
+      ? new Date(u.ultimaAtividade).toLocaleString('pt-BR')
+      : '—';
+
+    const acaoLabel = {
+      'login': '🔑 Login',
+      'salvar_produto': '💾 Salvou produto',
+    }[u.ultimaAcao] || u.ultimaAcao || '—';
+
+    return `<tr>
+      <td><strong style="color:var(--text)">${u.nome || '—'}</strong></td>
+      <td style="font-family:monospace;font-size:.72rem;color:var(--o)">${u.chave || u.id}</td>
+      <td>${u.validade || '—'}</td>
+      <td>${statusBadge}</td>
+      <td style="font-size:.72rem">${ultimaAtiv}</td>
+      <td style="font-size:.72rem">${acaoLabel}</td>
+      <td style="text-align:center"><strong style="color:#c4b5fd">${u.produtos.length}</strong></td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// LISTA PRODUTOS
+// ============================================================
+let _termoBusca = '';
+function filtrarProdutos(){
+  _termoBusca = document.getElementById('busca-prod').value.toLowerCase();
+  renderProdutos();
+}
+
+function renderProdutos(){
+  const el = document.getElementById('lista-produtos');
+  const lista = _termoBusca
+    ? todosProdutos.filter(p => p.nome && p.nome.toLowerCase().includes(_termoBusca))
+    : todosProdutos;
+
+  if(!lista.length){
+    el.innerHTML = '<div class="loading">Nenhum produto encontrado</div>';
+    return;
+  }
+
+  // Ordena por data (mais recente primeiro)
+  const ordenados = [...lista].sort((a,b) => (b.id||0) - (a.id||0));
+
+  el.innerHTML = ordenados.map(p => {
+    const mc = parseFloat(p.margem) >= 15 ? '#4ade80' : parseFloat(p.margem) >= 10 ? '#F0A070' : '#f87171';
+    const rc = parseFloat(p.roi) >= 10 ? '#4ade80' : parseFloat(p.roi) >= 5 ? '#F0A070' : '#f87171';
+    const data = p.id ? new Date(p.id).toLocaleDateString('pt-BR') : '—';
+    return `<div class="prod-item">
+      <div class="pi-top">
+        <div>
+          <div class="pi-nome">${p.nome || '—'}${p.comprado ? ' <span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:1px 7px;font-size:.62rem">⭐ Comprado</span>' : ''}</div>
+          <div class="pi-user">👤 ${p._usuario} · ${data}</div>
+        </div>
+        <div style="font-size:1rem;font-weight:900;color:#c4b5fd">R$ ${(p.precoCalc||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      </div>
+      <div class="prod-metrics">
+        <span>Margem: <strong style="color:${mc}">${(p.margem||0).toFixed(1)}%</strong></span>
+        <span>ROI: <strong style="color:${rc}">${(p.roi||0).toFixed(1)}%</strong></span>
+        <span>Markup: <strong style="color:var(--o)">${(p.markup||0).toFixed(2).replace('.',',')}</strong></span>
+        <span>Custo: <strong>R$ ${(p.custoReal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></span>
+        ${p.precoML > 0 ? `<span>Preço ML: <strong>R$ ${p.precoML.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// INSIGHTS
+// ============================================================
+function renderInsights(){
+  // Top 5 margens
+  const comMargem = [...todosProdutos]
+    .filter(p => p.margem && parseFloat(p.margem) > 0)
+    .sort((a,b) => parseFloat(b.margem) - parseFloat(a.margem))
+    .slice(0, 5);
+
+  document.getElementById('top-margens').innerHTML = comMargem.length
+    ? comMargem.map((p,i) => `
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.78rem">
+          <span style="color:var(--text2)">${i+1}. ${p.nome}</span>
+          <span style="font-weight:800;color:#4ade80">${parseFloat(p.margem).toFixed(1)}%</span>
+        </div>`).join('')
+    : '<div style="opacity:.4;font-size:.78rem">Nenhum produto</div>';
+
+  // Comprados
+  const comprados = todosProdutos.filter(p => p.comprado);
+  document.getElementById('top-comprados').innerHTML = comprados.length
+    ? comprados.map(p => `
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.78rem">
+          <span style="color:var(--text2)">⭐ ${p.nome}</span>
+          <span style="color:var(--text3);font-size:.68rem">${p._usuario}</span>
+        </div>`).join('')
+    : '<div style="opacity:.4;font-size:.78rem">Nenhum produto marcado</div>';
+
+  // Distribuição de preços
+  const comML = todosProdutos.filter(p => p.precoML > 0);
+  const faixas = [
+    {label:'Até R$50', min:0, max:50},
+    {label:'R$50–100', min:50, max:100},
+    {label:'R$100–200', min:100, max:200},
+    {label:'R$200–500', min:200, max:500},
+    {label:'Acima R$500', min:500, max:Infinity},
+  ];
+  const maxCount = Math.max(...faixas.map(f => comML.filter(p => p.precoML >= f.min && p.precoML < f.max).length), 1);
+  document.getElementById('dist-precos').innerHTML = faixas.map(f => {
+    const count = comML.filter(p => p.precoML >= f.min && p.precoML < f.max).length;
+    const pct = Math.round((count / maxCount) * 100);
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:3px">
+        <span style="color:var(--text2)">${f.label}</span>
+        <span style="color:var(--o);font-weight:700">${count} produto${count!==1?'s':''}</span>
+      </div>
+      <div style="background:#1a1428;border-radius:20px;height:8px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#6B21A8,#F0A070);border-radius:20px;transition:width .5s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
