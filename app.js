@@ -836,7 +836,7 @@ function calcularGiro(){
   const valor     = parseMasked(document.getElementById('giro-valor'));
   const vendasDia = parseInt(document.getElementById('giro-vendas-dia').value)||0;
   const dataCompraStr  = document.getElementById('giro-data-compra').value;
-  const dataEntregaStr = document.getElementById('giro-data-entrega').value;
+  const prazo          = parseInt(document.getElementById('giro-prazo').value)||0;
 
   const resultado = document.getElementById('giro-resultado');
   const empty     = document.getElementById('giro-empty');
@@ -853,12 +853,6 @@ function calcularGiro(){
   if(dataCompraStr){
     const dataCompra = new Date(dataCompraStr+'T00:00:00');
     diasComp = Math.max(Math.round((hoje - dataCompra)/(1000*60*60*24)), 0);
-  }
-
-  let prazo = 0;
-  if(dataEntregaStr){
-    const dataEntrega = new Date(dataEntregaStr+'T00:00:00');
-    prazo = Math.max(Math.round((dataEntrega - hoje)/(1000*60*60*24)), 0);
   }
 
   const jaVendido = Math.min(diasComp * vendasDia, qtd);
@@ -903,19 +897,23 @@ function calcularGiro(){
   const elMsg   = document.getElementById('giro-ponto-msg');
   const elLabel = document.getElementById('giro-ponto-label');
 
-  if(prazo>0&&dataEntregaStr){
+  if(prazo>0){
     const diasAtePonto = Math.max(Math.floor((estoqueAtual-pontoRep)/vendasDia),0);
     const dataPedido = new Date(hoje);
     dataPedido.setDate(dataPedido.getDate()+diasAtePonto);
     const dataPedidoStr = dataPedido.toISOString().split('T')[0];
     const dataPedidoFmt = dataPedido.toLocaleDateString('pt-BR');
+    // Data de entrega = data do pedido + prazo em dias
+    const dataEntrega = new Date(dataPedido);
+    dataEntrega.setDate(dataEntrega.getDate()+prazo);
+    const dataEntregaStr = dataEntrega.toISOString().split('T')[0];
+    const dataEntregaFmt = dataEntrega.toLocaleDateString('pt-BR');
     elData.textContent  = dataPedidoFmt;
     elLabel.textContent = diasAtePonto===0 ? '🔴 Peça HOJE!' : `em ${diasAtePonto} dias`;
     if(estoqueAtual<=pontoRep){
-      elMsg.textContent=`Seu estoque já está no ponto de reposição. Faça o pedido agora!`;
+      elMsg.textContent=`Seu estoque já está no ponto de reposição. Faça o pedido agora! O lote chegaria em ${dataEntregaFmt}.`;
     }else{
-      const entregaFmt = new Date(dataEntregaStr+'T00:00:00').toLocaleDateString('pt-BR');
-      elMsg.textContent=`Em ${dataPedidoFmt} faça o pedido. O lote chegará em ${entregaFmt} com estoque suficiente.`;
+      elMsg.textContent=`Em ${dataPedidoFmt} faça o pedido. O lote chegará em ${dataEntregaFmt} com estoque suficiente.`;
     }
     btnCal.style.display='block';
     btnCal.dataset.data = dataPedidoStr;
@@ -925,8 +923,8 @@ function calcularGiro(){
     btnCal.style.opacity = '1';
   }else{
     elData.textContent='—';
-    elLabel.textContent='informe a data de entrega';
-    elMsg.textContent='Informe a data prevista de entrega para calcular quando fazer o pedido.';
+    elLabel.textContent='informe os dias do fornecedor';
+    elMsg.textContent='Informe quantos dias o fornecedor demora para entregar para calcular quando fazer o pedido.';
     if(btnCal)btnCal.style.display='none';
   }
 }
