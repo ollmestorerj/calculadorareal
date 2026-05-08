@@ -466,44 +466,48 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
   document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+totalImp);
   document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
 
-  // Projeção — Preço Médio ML (linhas duplas no mesmo card)
+  // Projeção — Preço Médio ML (grid 3 colunas)
   const precoML=lastCalc&&lastCalc.precoML||0;
   const header=document.getElementById('proj-header-ml');
-  const rowFatS=document.getElementById('proj-row-fat-single');
-  const rowFatD=document.getElementById('proj-row-fat-double');
-  const rowPayS=document.getElementById('proj-row-pay-single');
-  const rowPayD=document.getElementById('proj-row-pay-double');
-  const rowLbS=document.getElementById('proj-row-lb-single');
-  const rowLbD=document.getElementById('proj-row-lb-double');
+  const simple=document.getElementById('proj-simple');
+  const double=document.getElementById('proj-double');
 
   if(precoML>0){
     const mlvI=precoML*(lastCalc.pI||0),mlvC=precoML*(lastCalc.pC||0),mlvA=precoML*(lastCalc.pA||0);
     const mlPayout=precoML-custo-frete-ins-mlvI-mlvC-mlvA;
+    const mlImp=mlvI*qtd;
 
-    // Mostrar colunas duplas
     if(header)header.style.display='block';
-    if(rowFatS)rowFatS.style.display='none';  if(rowFatD)rowFatD.style.display='flex';
-    if(rowPayS)rowPayS.style.display='none';  if(rowPayD)rowPayD.style.display='flex';
-    if(rowLbS)rowLbS.style.display='none';   if(rowLbD)rowLbD.style.display='flex';
+    if(simple)simple.style.display='none';
+    if(double)double.style.display='block';
 
-    // Preencher valores ML nas linhas duplas
-    const elFatD=rowFatD&&rowFatD.querySelectorAll('span span');
-    if(elFatD&&elFatD[0])elFatD[0].textContent=fmt(preco*qtd);
-    if(elFatD&&elFatD[1])elFatD[1].textContent=fmt(precoML*qtd);
-
-    const elPayD=rowPayD&&rowPayD.querySelectorAll('span span');
-    if(elPayD&&elPayD[0])elPayD[0].textContent=fmt(payout);
-    if(elPayD&&elPayD[1]){elPayD[1].textContent=fmt(mlPayout);elPayD[1].style.color=mlPayout>=0?'#F0A070':'#f87171';}
-
-    const elLbD=rowLbD&&rowLbD.querySelectorAll('span span');
-    if(elLbD&&elLbD[0])elLbD[0].textContent=fmt(payout*qtd);
-    if(elLbD&&elLbD[1]){elLbD[1].textContent=fmt(mlPayout*qtd);elLbD[1].style.color=mlPayout*qtd>=0?'#F0A070':'#f87171';}
+    const s=id=>document.getElementById(id);
+    // Coluna A — Preço Margem
+    s('pd-cu-a').textContent=fmt(custo);
+    s('pd-inv-a').textContent=fmt(inv);
+    s('pd-imp-a').textContent=fmt(totalImp);
+    s('pd-fat-a').textContent=fmt(preco*qtd);
+    s('pd-pay-a').textContent=fmt(payout);
+    s('pd-cx-bruto-a').textContent=fmt(inv+payout*qtd+totalImp);
+    s('pd-cx-a').textContent=fmt(inv+payout*qtd);
+    s('pd-lb-a').textContent=fmt(payout*qtd);
+    // Coluna B — Preço Médio
+    s('pd-cu-b').textContent=fmt(custo);
+    s('pd-inv-b').textContent=fmt(inv);
+    s('pd-imp-b').textContent=fmt(mlImp);
+    s('pd-fat-b').textContent=fmt(precoML*qtd);
+    const elPayB=s('pd-pay-b');
+    elPayB.textContent=fmt(mlPayout);
+    elPayB.style.color=mlPayout>=0?'#F0A070':'#f87171';
+    s('pd-cx-bruto-b').textContent=fmt(inv+mlPayout*qtd+mlImp);
+    s('pd-cx-b').textContent=fmt(inv+mlPayout*qtd);
+    const elLbB=s('pd-lb-b');
+    elLbB.textContent=fmt(mlPayout*qtd);
+    elLbB.style.color=mlPayout*qtd>=0?'#F0A070':'#f87171';
   }else{
-    // Sem ML — mostrar colunas simples
     if(header)header.style.display='none';
-    if(rowFatS)rowFatS.style.display='flex';  if(rowFatD)rowFatD.style.display='none';
-    if(rowPayS)rowPayS.style.display='flex';  if(rowPayD)rowPayD.style.display='none';
-    if(rowLbS)rowLbS.style.display='flex';   if(rowLbD)rowLbD.style.display='none';
+    if(simple)simple.style.display='block';
+    if(double)double.style.display='none';
   }
 }
 
