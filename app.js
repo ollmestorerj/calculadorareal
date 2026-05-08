@@ -934,6 +934,18 @@ function calcularGiro(){
   }
 }
 
+// Máscara monetária R$ para inputs de texto
+function maskReal(el){
+  let v=el.value.replace(/\D/g,'');
+  if(!v){el.value='';return;}
+  v=(parseInt(v)/100).toFixed(2);
+  el.value='R$ '+parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function parseMasked(el){
+  return parseFloat((el.value||'').replace(/[R$\s.]/g,'').replace(',','.'))||0;
+}
+
 // ============================================================
 // SIMPLES NACIONAL — ANEXO I
 // ============================================================
@@ -947,8 +959,8 @@ const SN_ANEXO1 = [
 ];
 
 function calcularSimples(){
-  const rbt12  = parseFloat(document.getElementById('sn-rbt12').value)||0;
-  const mensal = parseFloat(document.getElementById('sn-mensal').value)||0;
+  const rbt12  = parseMasked(document.getElementById('sn-rbt12'));
+  const mensal = parseMasked(document.getElementById('sn-mensal'));
   const res    = document.getElementById('sn-resultado');
   const empty  = document.getElementById('sn-empty');
 
