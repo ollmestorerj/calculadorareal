@@ -568,28 +568,40 @@ body.light .gest-card{background:#fff;border-color:#d8d0f0}
         </div>
         <div class="breakdown" style="margin-bottom:0">
           <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unid.</div>
-          <!-- Cabeçalho das colunas — aparece só quando tem ML -->
-          <div id="proj-header-ml" style="display:none;margin-bottom:6px">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding-bottom:6px;border-bottom:1px solid var(--border)">
+          <!-- Cabeçalho 3 colunas -->
+          <div id="proj-header-ml" style="display:none;margin-bottom:2px">
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding-bottom:6px;border-bottom:1.5px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em">
               <div style="color:var(--text3)">Item</div>
-              <div style="color:#c4b5fd;text-align:right;border-right:1px solid var(--border);padding-right:8px">Preço Margem</div>
+              <div style="color:#c4b5fd;text-align:right">Preço Margem</div>
               <div style="color:#F0A070;text-align:right">Preço Médio</div>
             </div>
           </div>
-          <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
-          <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
-          <div class="brow" id="proj-row-imp"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
-          <!-- Linha dupla faturamento -->
-          <div class="brow" id="proj-row-fat-single"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
-          <div class="brow" id="proj-row-fat-double" style="display:none"><span class="bl">Faturamento esperado</span><span style="display:flex;gap:0;align-items:center"><span style="font-size:.78rem;font-weight:600;color:#c4b5fd;padding-right:8px;border-right:1px solid var(--border)" id="proj-fat">—</span><span style="font-size:.78rem;font-weight:600;color:#F0A070;padding-left:8px" id="proj-ml-fat">—</span></span></div>
-          <!-- Linha dupla lucro/unid -->
-          <div class="brow" id="proj-row-pay-single"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
-          <div class="brow" id="proj-row-pay-double" style="display:none"><span class="bl">Lucro por unidade</span><span style="display:flex;gap:0;align-items:center"><span style="font-size:.78rem;font-weight:600;color:#c4b5fd;padding-right:8px;border-right:1px solid var(--border)" id="proj-pay">—</span><span style="font-size:.78rem;font-weight:600;color:#F0A070;padding-left:8px" id="proj-ml-pay">—</span></span></div>
-          <!-- Linha dupla lucro bruto -->
-          <div class="brow total" id="proj-row-lb-single" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
-          <div class="brow total" id="proj-row-lb-double" style="display:none;border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto</span><span style="display:flex;gap:0;align-items:center"><span style="font-size:.95rem;font-weight:800;color:#c4b5fd;padding-right:8px;border-right:1px solid var(--border)" id="proj-lb">—</span><span style="font-size:.95rem;font-weight:800;color:#F0A070;padding-left:8px" id="proj-ml-lb">—</span></span></div>
-          <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
-          <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
+          <!-- Linhas simples (sem ML) -->
+          <div id="proj-simple">
+            <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
+            <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
+            <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
+            <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
+            <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
+            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
+            <div class="brow"><span class="bl">Caixa c/ imposto 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
+            <div class="brow total"><span class="bl">Caixa líquido</span><span class="br" id="proj-cx">—</span></div>
+          </div>
+          <!-- Linhas duplas (com ML) -->
+          <div id="proj-double" style="display:none">
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Custo unitário</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cu-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cu-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Investimento total</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-inv-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-inv-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Total em impostos</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-imp-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-imp-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Faturamento esperado</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-fat-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-fat-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Lucro por unidade</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-pay-a">—</span><span style="text-align:right;font-weight:600" id="pd-pay-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa c/ imposto 💡</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-bruto-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-bruto-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa líquido</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:8px 0 2px;border-top:1.5px solid var(--border);margin-top:2px;font-size:.82rem">
+              <span style="color:#4ade80;font-weight:700">💰 Lucro bruto</span>
+              <span style="text-align:right;color:#c4b5fd;font-weight:800;font-size:.95rem" id="pd-lb-a">—</span>
+              <span style="text-align:right;font-weight:800;font-size:.95rem" id="pd-lb-b">—</span>
+            </div>
+          </div>
         </div>
       </div>
 
