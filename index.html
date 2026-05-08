@@ -1055,12 +1055,12 @@ function exportarExcel(){
       <div class="row2">
         <div class="field">
           <label>Faturamento bruto — últimos 12 meses (R$)</label>
-          <input type="number" id="sn-rbt12" placeholder="Ex: 610000" min="0" step="0.01" oninput="calcularSimples()">
+          <input type="text" id="sn-rbt12" placeholder="R$ 0,00" oninput="maskReal(this);calcularSimples()" style="font-size:1rem;font-weight:700">
           <div class="note">Some os últimos 12 meses de faturamento</div>
         </div>
         <div class="field">
           <label>Faturamento do mês atual (R$)</label>
-          <input type="number" id="sn-mensal" placeholder="Ex: 55000" min="0" step="0.01" oninput="calcularSimples()">
+          <input type="text" id="sn-mensal" placeholder="R$ 0,00" oninput="maskReal(this);calcularSimples()" style="font-size:1rem;font-weight:700">
           <div class="note">Faturamento bruto deste mês</div>
         </div>
       </div>
@@ -1071,17 +1071,17 @@ function exportarExcel(){
 
       <!-- Faixa + alíquotas em destaque -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-        <div style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border:1.5px solid var(--p2);border-radius:14px;padding:14px;text-align:center">
+        <div style="background:var(--card);border:1.5px solid var(--p2);border-radius:14px;padding:14px;text-align:center">
           <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--p2);margin-bottom:6px">Faixa</div>
           <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="sn-faixa">—</div>
           <div style="font-size:.68rem;color:var(--text3);margin-top:4px" id="sn-faixa-range">—</div>
         </div>
-        <div style="background:linear-gradient(135deg,#052e16,#166534);border:1.5px solid #16a34a55;border-radius:14px;padding:14px;text-align:center">
+        <div style="background:var(--card);border:1.5px solid #16a34a55;border-radius:14px;padding:14px;text-align:center">
           <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4ade80;margin-bottom:6px">Alíquota Efetiva</div>
           <div style="font-size:1.6rem;font-weight:900;color:#4ade80" id="sn-aliq-efetiva">—</div>
           <div style="font-size:.68rem;color:var(--text3);margin-top:4px">sobre o faturamento</div>
         </div>
-        <div style="background:linear-gradient(135deg,#7f1d1d,#991b1b);border:1.5px solid #ef444455;border-radius:14px;padding:14px;text-align:center">
+        <div style="background:var(--card);border:1.5px solid #ef444455;border-radius:14px;padding:14px;text-align:center">
           <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#f87171;margin-bottom:6px">DAS a Pagar</div>
           <div style="font-size:1.6rem;font-weight:900;color:#f87171" id="sn-das">—</div>
           <div style="font-size:.68rem;color:var(--text3);margin-top:4px">este mês</div>
