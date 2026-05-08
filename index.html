@@ -741,7 +741,7 @@ function exportarExcel(){
   document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 </script>
-<!-- ===== GESTÃO DE ESTOQUE ===== -->
+<!-- ===== CALCULADORA DE GIRO ===== -->
 <div id="page-gestao" class="page">
   <div class="app-header">
     <div style="display:flex;gap:8px;align-items:center">
@@ -751,7 +751,7 @@ function exportarExcel(){
     <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
       <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
       <div style="width:1px;height:26px;background:#444"></div>
-      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">GESTÃO DE ESTOQUE</span>
+      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA DE GIRO</span>
     </div>
     <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
   </div>
@@ -774,7 +774,7 @@ function exportarExcel(){
         </div>
         <div class="field">
           <label>Valor total do lote (R$)</label>
-          <input type="number" class="gest-input" id="giro-valor" placeholder="Ex: 2500,00" min="0" step="0.01" oninput="calcularGiro()">
+          <input type="text" class="gest-input" id="giro-valor" placeholder="R$ 0,00" oninput="maskReal(this);calcularGiro()" style="font-weight:700">
         </div>
       </div>
       <div class="row2" style="margin-bottom:9px">
@@ -783,19 +783,19 @@ function exportarExcel(){
           <input type="number" class="gest-input" id="giro-vendas-dia" placeholder="Ex: 25" min="0" step="1" oninput="calcularGiro()">
         </div>
         <div class="field">
-          <label>Dias desde a compra</label>
-          <input type="number" class="gest-input" id="giro-dias-compra" placeholder="Ex: 3" min="0" step="1" oninput="calcularGiro()">
-          <div class="note">Há quantos dias você fez essa compra?</div>
+          <label>Data da compra</label>
+          <input type="date" class="gest-input" id="giro-data-compra" oninput="calcularGiro()">
+          <div class="note">Quando você fez essa compra?</div>
         </div>
       </div>
       <div class="field">
-        <label>Dias para chegar o novo lote</label>
-        <input type="number" class="gest-input" id="giro-prazo" placeholder="Ex: 15" min="0" step="1" oninput="calcularGiro()">
-        <div class="note">Quantos dias o fornecedor demora para entregar depois que você faz o pedido?</div>
+        <label>Data prevista de entrega do novo lote</label>
+        <input type="date" class="gest-input" id="giro-data-entrega" oninput="calcularGiro()">
+        <div class="note">Quando o fornecedor vai entregar o próximo pedido?</div>
       </div>
     </div>
 
-    <!-- Resultado: escondido até preencher -->
+    <!-- Resultado -->
     <div id="giro-resultado" style="display:none">
 
       <!-- Situação atual -->
@@ -809,7 +809,7 @@ function exportarExcel(){
           </div>
           <div style="text-align:center">
             <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Dias restantes</div>
-            <div style="font-size:1.4rem;font-weight:900" id="giro-dias-restantes" style="color:#4ade80">—</div>
+            <div style="font-size:1.4rem;font-weight:900" id="giro-dias-restantes">—</div>
             <div style="font-size:.65rem;color:var(--text3)">no ritmo atual</div>
           </div>
           <div style="text-align:center">
@@ -818,11 +818,10 @@ function exportarExcel(){
             <div style="font-size:.65rem;color:var(--text3)">médio</div>
           </div>
         </div>
-        <!-- Alerta de reposição -->
         <div id="giro-alerta" style="border-radius:10px;padding:10px 13px;font-size:.78rem;font-weight:600;line-height:1.5;text-align:center"></div>
       </div>
 
-      <!-- 3 cenários de quanto comprar -->
+      <!-- Quanto comprar -->
       <div class="gest-card-title" style="color:var(--text3);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">🛒 QUANTO COMPRAR NO PRÓXIMO PEDIDO</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px">
         <div class="gest-kpi" style="border-color:#1e3a5f">
@@ -854,19 +853,23 @@ function exportarExcel(){
       <!-- Ponto de reposição -->
       <div class="gest-card" style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border-color:#6B21A855;margin-bottom:14px">
         <div class="gest-card-title" style="color:#a78bfa">⏰ PONTO DE REPOSIÇÃO</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
           <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
             <div style="font-size:.66rem;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Faça o pedido quando tiver</div>
             <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="giro-ponto-rep">—</div>
             <div style="font-size:.7rem;color:#a78bfa">unidades em estoque</div>
           </div>
           <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
-            <div style="font-size:.66rem;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Isso acontece em</div>
-            <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="giro-ponto-dias">—</div>
-            <div style="font-size:.7rem;color:#a78bfa" id="giro-ponto-label">dias a partir de hoje</div>
+            <div style="font-size:.66rem;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Data para pedir</div>
+            <div style="font-size:1.2rem;font-weight:900;color:#c4b5fd" id="giro-ponto-data">—</div>
+            <div style="font-size:.7rem;color:#a78bfa" id="giro-ponto-label">baseado na entrega</div>
           </div>
         </div>
-        <div style="font-size:.74rem;color:#a78bfa;margin-top:10px;padding:8px 11px;background:#6B21A810;border-radius:8px;line-height:1.6" id="giro-ponto-msg"></div>
+        <div style="font-size:.74rem;color:#a78bfa;margin-bottom:10px;padding:8px 11px;background:#6B21A810;border-radius:8px;line-height:1.6" id="giro-ponto-msg"></div>
+        <!-- Botão adicionar ao calendário -->
+        <button id="btn-add-cal" onclick="adicionarGiroCalendario()" style="display:none;width:100%;padding:11px;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer">
+          📅 Adicionar lembrete no Calendário
+        </button>
       </div>
 
     </div>
