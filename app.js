@@ -220,6 +220,7 @@ function showPage(p,bypassCheck){
   if(p==='cal')renderCal();
   if(p==='metas')carregarMetas();
   if(p==='gestao')calcularGestao();
+  if(p==='simples'){document.getElementById('sn-resultado').style.display='none';document.getElementById('sn-empty').style.display='block';}
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
@@ -931,6 +932,68 @@ function calcularGiro(){
     elPontoLabel.textContent = 'preencha os dias do lote';
     elPontoMsg.textContent = 'Informe quantos dias o fornecedor demora para entregar para calcular o ponto de reposição.';
   }
+}
+
+// ============================================================
+// SIMPLES NACIONAL — ANEXO I
+// ============================================================
+const SN_ANEXO1 = [
+  {faixa:'1ª Faixa', min:0.01,       max:180000,    nominal:0.04,  deducao:0,      irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.415,  icms:0.34},
+  {faixa:'2ª Faixa', min:180000.01,  max:360000,    nominal:0.073, deducao:5940,   irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.415,  icms:0.34},
+  {faixa:'3ª Faixa', min:360000.01,  max:720000,    nominal:0.095, deducao:13860,  irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.42,   icms:0.335},
+  {faixa:'4ª Faixa', min:720000.01,  max:1800000,   nominal:0.107, deducao:22500,  irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.42,   icms:0.335},
+  {faixa:'5ª Faixa', min:1800000.01, max:3600000,   nominal:0.143, deducao:87300,  irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.42,   icms:0.335},
+  {faixa:'6ª Faixa', min:3600000.01, max:4800000,   nominal:0.19,  deducao:378000, irpj:0.135, csll:0.1,   cofins:0.2827, pis:0.0613, cpp:0.421,  icms:0},
+];
+
+function calcularSimples(){
+  const rbt12  = parseFloat(document.getElementById('sn-rbt12').value)||0;
+  const mensal = parseFloat(document.getElementById('sn-mensal').value)||0;
+  const res    = document.getElementById('sn-resultado');
+  const empty  = document.getElementById('sn-empty');
+
+  if(!rbt12||!mensal){res.style.display='none';empty.style.display='block';empty.innerHTML='<div style="font-size:2.5rem">🧾</div><p style="font-size:.8rem;color:#888;margin-top:8px;line-height:1.6">Preencha o faturamento acima<br>para ver os cálculos</p>';return;}
+
+  const faixaObj=SN_ANEXO1.find(f=>rbt12>=f.min&&rbt12<=f.max);
+  if(!faixaObj){
+    res.style.display='none';empty.style.display='block';
+    empty.innerHTML='<div style="font-size:2.5rem">⚠️</div><p style="font-size:.8rem;color:#f87171;margin-top:8px">Faturamento acima do limite do Simples Nacional (R$ 4,8 milhões/ano)</p>';
+    return;
+  }
+
+  const aliqEfetiva=(rbt12*faixaObj.nominal-faixaObj.deducao)/rbt12;
+  const das=mensal*aliqEfetiva;
+  res.style.display='block';empty.style.display='none';
+
+  const fmtPct=v=>(v*100).toFixed(2).replace('.',',')+' %';
+  const fmtRange=f=>'R$ '+(f.min).toLocaleString('pt-BR',{maximumFractionDigits:0})+' – R$ '+(f.max).toLocaleString('pt-BR',{maximumFractionDigits:0});
+
+  document.getElementById('sn-faixa').textContent        =faixaObj.faixa;
+  document.getElementById('sn-faixa-range').textContent  =fmtRange(faixaObj);
+  document.getElementById('sn-aliq-efetiva').textContent =fmtPct(aliqEfetiva);
+  document.getElementById('sn-das').textContent          =fmt(das);
+  document.getElementById('sn-d-rbt12').textContent      =fmt(rbt12);
+  document.getElementById('sn-d-nominal').textContent    =fmtPct(faixaObj.nominal);
+  document.getElementById('sn-d-deducao').textContent    =fmt(faixaObj.deducao);
+  document.getElementById('sn-d-efetiva').textContent    =fmtPct(aliqEfetiva);
+  document.getElementById('sn-d-mensal').textContent     =fmt(mensal);
+  document.getElementById('sn-d-das').textContent        =fmt(das);
+
+  const tributos=[
+    {nome:'IRPJ',   pct:faixaObj.irpj,   cor:'#60a5fa'},
+    {nome:'CSLL',   pct:faixaObj.csll,   cor:'#a78bfa'},
+    {nome:'Cofins', pct:faixaObj.cofins, cor:'#f472b6'},
+    {nome:'PIS',    pct:faixaObj.pis,    cor:'#fb923c'},
+    {nome:'CPP',    pct:faixaObj.cpp,    cor:'#4ade80'},
+    {nome:'ICMS',   pct:faixaObj.icms,   cor:'#facc15'},
+  ].filter(t=>t.pct>0);
+
+  document.getElementById('sn-tributos').innerHTML=tributos.map(t=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;border-top:3px solid ${t.cor}">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${t.cor};margin-bottom:4px">${t.nome}</div>
+      <div style="font-size:.82rem;font-weight:800;color:var(--text)">${fmt(das*t.pct)}</div>
+      <div style="font-size:.65rem;color:var(--text3);margin-top:2px">${fmtPct(t.pct)} do DAS</div>
+    </div>`).join('');
 }
 
 // ============================================================
