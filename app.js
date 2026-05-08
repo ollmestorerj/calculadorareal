@@ -1126,7 +1126,8 @@ function calcRanqueamento(){
   elPayUnit.textContent=fmt(payoutRank)+'/unid.';
   elPayUnit.style.color=payoutRank>=0?'#4ade80':'#f87171';
 }
-  if(!lastCalc||lastCalc.payout<=0)return;
+
+function calcDevolucao(){
   const taxa=parseFloat(document.getElementById('dev-taxa').value)||0;
   const msg=document.getElementById('dev-msg');
   const vendasEl=document.getElementById('dev-vendas');
