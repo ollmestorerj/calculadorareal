@@ -836,6 +836,7 @@ function calcularGiro(){
   const valor     = parseMasked(document.getElementById('giro-valor'));
   const vendasDia = parseInt(document.getElementById('giro-vendas-dia').value)||0;
   const dataCompraStr  = document.getElementById('giro-data-compra').value;
+  const dataInicioStr  = document.getElementById('giro-data-inicio').value;
   const prazo          = parseInt(document.getElementById('giro-prazo').value)||0;
 
   const resultado = document.getElementById('giro-resultado');
@@ -849,10 +850,12 @@ function calcularGiro(){
   const custoUnit = qtd>0&&valor>0 ? valor/qtd : 0;
   const hoje = new Date(); hoje.setHours(0,0,0,0);
 
+  // Dias de venda = desde o início das vendas (ou data de compra se não informado)
   let diasComp = 0;
-  if(dataCompraStr){
-    const dataCompra = new Date(dataCompraStr+'T00:00:00');
-    diasComp = Math.max(Math.round((hoje - dataCompra)/(1000*60*60*24)), 0);
+  const dataRefStr = dataInicioStr || dataCompraStr;
+  if(dataRefStr){
+    const dataRef = new Date(dataRefStr+'T00:00:00');
+    diasComp = Math.max(Math.round((hoje - dataRef)/(1000*60*60*24)), 0);
   }
 
   const jaVendido = Math.min(diasComp * vendasDia, qtd);
