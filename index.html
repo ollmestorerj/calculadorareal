@@ -211,7 +211,8 @@ body.light .btn-cancel{background:#e0e0e0!important;color:#444!important;border-
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 
 /* HOME */
-.home-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none;display:block;color:inherit}
+.home-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none;display:block;color:inherit;user-select:none}
+.home-card *{cursor:pointer;user-select:none}
 .home-card:hover{border-color:var(--o);transform:translateY(-3px)}
 .logo-img{filter:brightness(0) invert(1)}
 body.light .logo-img{filter:none!important}
@@ -789,9 +790,9 @@ function exportarExcel(){
         </div>
       </div>
       <div class="field">
-        <label>Data prevista de entrega do novo lote</label>
-        <input type="date" class="gest-input" id="giro-data-entrega" oninput="calcularGiro()">
-        <div class="note">Quando o fornecedor vai entregar o próximo pedido?</div>
+        <label>Dias para chegar o novo lote</label>
+        <input type="number" class="gest-input" id="giro-prazo" placeholder="Ex: 15" min="0" step="1" oninput="calcularGiro()">
+        <div class="note">Quantos dias o fornecedor demora para entregar depois que você faz o pedido?</div>
       </div>
     </div>
 
