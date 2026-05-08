@@ -566,30 +566,30 @@ body.light .gest-card{background:#fff;border-color:#d8d0f0}
           <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
           <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
         </div>
-        <!-- Projeções lado a lado dentro da coluna direita -->
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div class="breakdown" style="margin-bottom:0">
-            <div class="bd-title">📈 Projeção Preço Calculado — <span id="proj-qtd" style="color:var(--o)">—</span> unid.</div>
-            <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
-            <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
-            <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
-            <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
-            <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
-            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto esperado</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
-            <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
-            <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
+        <div class="breakdown" style="margin-bottom:0">
+          <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unid.</div>
+          <!-- Cabeçalho das colunas — aparece só quando tem ML -->
+          <div id="proj-header-ml" style="display:none;margin-bottom:6px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em">
+              <div style="color:var(--text3)">Item</div>
+              <div style="color:#c4b5fd;text-align:right">Preço Calc.</div>
+              <div style="color:#F0A070;text-align:right">Preço ML</div>
+            </div>
           </div>
-          <div class="breakdown" id="proj-ml-col" style="margin-bottom:0;display:none">
-            <div class="bd-title" style="color:#F0A070">📈 Projeção Preço Médio ML — <span style="color:var(--o)">mesmo lote</span></div>
-            <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu-ml" style="color:var(--text2)">mesmo</span></div>
-            <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv-ml" style="color:var(--text2)">mesmo</span></div>
-            <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-ml-imp" style="color:var(--text2)">—</span></div>
-            <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-ml-fat">—</span></div>
-            <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-ml-pay">—</span></div>
-            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto esperado</span><span class="br" id="proj-ml-lb" style="font-size:1rem">—</span></div>
-            <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-ml-cx-bruto">—</span></div>
-            <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-ml-cx">—</span></div>
-          </div>
+          <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
+          <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
+          <div class="brow" id="proj-row-imp"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
+          <!-- Linha dupla faturamento -->
+          <div class="brow" id="proj-row-fat-single"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
+          <div class="brow" id="proj-row-fat-double" style="display:none"><span class="bl">Faturamento esperado</span><span style="display:flex;gap:8px;align-items:center"><span style="font-size:.78rem;font-weight:600;color:#c4b5fd" id="proj-fat">—</span><span style="font-size:.78rem;font-weight:600;color:#F0A070" id="proj-ml-fat">—</span></span></div>
+          <!-- Linha dupla lucro/unid -->
+          <div class="brow" id="proj-row-pay-single"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
+          <div class="brow" id="proj-row-pay-double" style="display:none"><span class="bl">Lucro por unidade</span><span style="display:flex;gap:8px;align-items:center"><span style="font-size:.78rem;font-weight:600;color:#c4b5fd" id="proj-pay">—</span><span style="font-size:.78rem;font-weight:600;color:#F0A070" id="proj-ml-pay">—</span></span></div>
+          <!-- Linha dupla lucro bruto -->
+          <div class="brow total" id="proj-row-lb-single" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
+          <div class="brow total" id="proj-row-lb-double" style="display:none;border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto</span><span style="display:flex;gap:8px;align-items:center"><span style="font-size:.95rem;font-weight:800;color:#c4b5fd" id="proj-lb">—</span><span style="font-size:.95rem;font-weight:800;color:#F0A070" id="proj-ml-lb">—</span></span></div>
+          <div class="brow"><span class="bl">Caixa c/ imposto incluso 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
+          <div class="brow total"><span class="bl">Caixa líquido (após imposto)</span><span class="br" id="proj-cx">—</span></div>
         </div>
       </div>
 
@@ -611,22 +611,22 @@ body.light .gest-card{background:#fff;border-color:#d8d0f0}
           </div>
 
           <!-- Ranqueamento -->
-          <div class="breakdown" style="margin-bottom:0;background:linear-gradient(135deg,#0a1628,#0f2040);border-color:#1e3a5f">
+          <div class="breakdown" style="margin-bottom:0">
             <div class="bd-title" style="color:#60a5fa">🏆 Ranqueamento</div>
             <div class="field" style="margin-bottom:8px">
-              <label style="color:#60a5fa">Preço para ranquear (R$)</label>
-              <input type="number" id="rank-preco" placeholder="Ex: 49,90" min="0" step="0.01" oninput="calcRanqueamento()" style="background:#0a1628;border-color:#1e3a5f">
+              <label>Preço para ranquear (R$)</label>
+              <input type="number" id="rank-preco" placeholder="Ex: 49,90" min="0" step="0.01" oninput="calcRanqueamento()" style="background:var(--card)">
             </div>
             <div class="field" style="margin-bottom:10px">
-              <label style="color:#60a5fa">Qtd. vendas no ranqueamento</label>
-              <input type="number" id="rank-qtd" placeholder="Ex: 30" min="0" step="1" oninput="calcRanqueamento()" style="background:#0a1628;border-color:#1e3a5f">
+              <label>Qtd. vendas no ranqueamento</label>
+              <input type="number" id="rank-qtd" placeholder="Ex: 30" min="0" step="1" oninput="calcRanqueamento()" style="background:var(--card)">
             </div>
             <div id="rank-resultado" style="display:none">
               <div class="brow"><span class="bl">Lucro/unid.</span><span class="br" id="rank-pay-unit">—</span></div>
               <div class="brow"><span class="bl">Faturamento total</span><span class="br" id="rank-fat">—</span></div>
               <div class="brow total"><span class="bl" style="color:#4ade80">Lucro / Prejuízo</span><span class="br" id="rank-lucro">—</span></div>
-              <div style="margin-top:8px;background:#1e3a5f33;border-radius:8px;padding:8px 10px">
-                <div style="font-size:.65rem;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px" id="rank-impacto-label">Impacto vs preço ideal</div>
+              <div style="margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px">
+                <div style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px" id="rank-impacto-label">Impacto vs preço ideal</div>
                 <div style="font-size:1rem;font-weight:900" id="rank-impacto">—</div>
               </div>
             </div>
@@ -703,6 +703,8 @@ body.light .gest-card{background:#fff;border-color:#d8d0f0}
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
 <script>
 function exportarExcel(){
