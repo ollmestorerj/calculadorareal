@@ -21,13 +21,6 @@ let _db = null;
 
 async function getDB(){
   if(_db) return _db;
-  // Carrega SDK do Firebase dinamicamente
-  if(!window.firebase){
-    await Promise.all([
-      loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'),
-      loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js')
-    ]);
-  }
   if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
   _db = firebase.firestore();
   return _db;
@@ -473,25 +466,44 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
   document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+totalImp);
   document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
 
-  // Projeção — Preço Médio ML
+  // Projeção — Preço Médio ML (linhas duplas no mesmo card)
   const precoML=lastCalc&&lastCalc.precoML||0;
-  const elMlCol=document.getElementById('proj-ml-col');
-  if(elMlCol){
-    if(precoML>0){
-      const mlvI=precoML*(lastCalc.pI||0),mlvC=precoML*(lastCalc.pC||0),mlvA=precoML*(lastCalc.pA||0);
-      const mlPayout=precoML-custo-frete-ins-mlvI-mlvC-mlvA;
-      const mlImp=mlvI*qtd;
-      elMlCol.style.display='block';
-      document.getElementById('proj-ml-fat').textContent=fmt(precoML*qtd);
-      document.getElementById('proj-ml-pay').textContent=fmt(mlPayout);
-      const elMlLb=document.getElementById('proj-ml-lb');
-      elMlLb.textContent=fmt(mlPayout*qtd);
-      elMlLb.style.color=mlPayout*qtd>=0?'#4ade80':'#f87171';
-      document.getElementById('proj-ml-cx-bruto').textContent=fmt(inv+mlPayout*qtd+mlImp);
-      document.getElementById('proj-ml-cx').textContent=fmt(inv+mlPayout*qtd);
-    }else{
-      elMlCol.style.display='none';
-    }
+  const header=document.getElementById('proj-header-ml');
+  const rowFatS=document.getElementById('proj-row-fat-single');
+  const rowFatD=document.getElementById('proj-row-fat-double');
+  const rowPayS=document.getElementById('proj-row-pay-single');
+  const rowPayD=document.getElementById('proj-row-pay-double');
+  const rowLbS=document.getElementById('proj-row-lb-single');
+  const rowLbD=document.getElementById('proj-row-lb-double');
+
+  if(precoML>0){
+    const mlvI=precoML*(lastCalc.pI||0),mlvC=precoML*(lastCalc.pC||0),mlvA=precoML*(lastCalc.pA||0);
+    const mlPayout=precoML-custo-frete-ins-mlvI-mlvC-mlvA;
+
+    // Mostrar colunas duplas
+    if(header)header.style.display='block';
+    if(rowFatS)rowFatS.style.display='none';  if(rowFatD)rowFatD.style.display='flex';
+    if(rowPayS)rowPayS.style.display='none';  if(rowPayD)rowPayD.style.display='flex';
+    if(rowLbS)rowLbS.style.display='none';   if(rowLbD)rowLbD.style.display='flex';
+
+    // Preencher valores ML nas linhas duplas
+    const elFatD=rowFatD&&rowFatD.querySelectorAll('span span');
+    if(elFatD&&elFatD[0])elFatD[0].textContent=fmt(preco*qtd);
+    if(elFatD&&elFatD[1])elFatD[1].textContent=fmt(precoML*qtd);
+
+    const elPayD=rowPayD&&rowPayD.querySelectorAll('span span');
+    if(elPayD&&elPayD[0])elPayD[0].textContent=fmt(payout);
+    if(elPayD&&elPayD[1]){elPayD[1].textContent=fmt(mlPayout);elPayD[1].style.color=mlPayout>=0?'#F0A070':'#f87171';}
+
+    const elLbD=rowLbD&&rowLbD.querySelectorAll('span span');
+    if(elLbD&&elLbD[0])elLbD[0].textContent=fmt(payout*qtd);
+    if(elLbD&&elLbD[1]){elLbD[1].textContent=fmt(mlPayout*qtd);elLbD[1].style.color=mlPayout*qtd>=0?'#F0A070':'#f87171';}
+  }else{
+    // Sem ML — mostrar colunas simples
+    if(header)header.style.display='none';
+    if(rowFatS)rowFatS.style.display='flex';  if(rowFatD)rowFatD.style.display='none';
+    if(rowPayS)rowPayS.style.display='flex';  if(rowPayD)rowPayD.style.display='none';
+    if(rowLbS)rowLbS.style.display='flex';   if(rowLbD)rowLbD.style.display='none';
   }
 }
 
