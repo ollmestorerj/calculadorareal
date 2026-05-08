@@ -789,6 +789,11 @@ function exportarExcel(){
           <div class="note">Quando você fez essa compra?</div>
         </div>
       </div>
+      <div class="field" style="margin-bottom:9px">
+        <label>Data de início das vendas</label>
+        <input type="date" class="gest-input" id="giro-data-inicio" oninput="calcularGiro()">
+        <div class="note">Quando o produto ficou disponível para venda? O estoque é calculado a partir desta data.</div>
+      </div>
       <div class="field">
         <label>Dias para chegar o novo lote</label>
         <input type="number" class="gest-input" id="giro-prazo" placeholder="Ex: 15" min="0" step="1" oninput="calcularGiro()">
