@@ -214,6 +214,9 @@ body.light .btn-cancel{background:#e0e0e0!important;color:#444!important;border-
 .home-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none;display:block;color:inherit;user-select:none}
 .home-card *{cursor:pointer;user-select:none}
 .home-card:hover{border-color:var(--o);transform:translateY(-3px)}
+#page-home{user-select:none}
+#page-home *:not(input):not(textarea):not(button){cursor:default}
+#page-home .home-card,#page-home .home-card *{cursor:pointer}
 .logo-img{filter:brightness(0) invert(1)}
 body.light .logo-img{filter:none!important}
 
