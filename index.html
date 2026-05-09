@@ -358,58 +358,86 @@ body.light .gest-card{background:#fff;border-color:#d8d0f0}
 </div>
 
 <div id="page-home" class="page">
-  <div style="position:fixed;top:14px;left:16px;z-index:100">
+  <div style="position:fixed;top:14px;right:16px;z-index:100;display:flex;gap:8px">
     <button class="theme-toggle" id="theme-btn-home" onclick="toggleTheme()">☀️ Claro</button>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
-  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px">
-    <div style="margin-bottom:12px;text-align:center">
-      <img src="logo.png" class="logo-img" alt="RealEcom" style="height:90px;object-fit:contain">
-    </div>
-    <div id="home-usuario" style="font-size:.82rem;color:var(--text2);margin-bottom:28px;text-align:center"></div>
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px 40px">
 
-    <!-- LINHA 1: Calculadora + Dashboard de Produtos (cards grandes) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:660px;margin-bottom:14px">
-      <div class="home-card" onclick="showPage('calc')" style="padding:28px 20px">
-        <div style="font-size:2.8rem;margin-bottom:10px">🧮</div>
-        <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px">Calculadora</div>
-        <div style="font-size:.76rem;color:var(--text2);line-height:1.5">Calcule preço ideal, margem, ROI e Markup</div>
+    <!-- Logo -->
+    <div style="margin-bottom:8px;text-align:center">
+      <img src="logo.png" class="logo-img" alt="RealEcom" style="height:72px;object-fit:contain">
+    </div>
+    <div id="home-usuario" style="font-size:.82rem;color:var(--text2);margin-bottom:20px;text-align:center"></div>
+
+    <!-- Métricas rápidas -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:780px;margin-bottom:16px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px">Produtos salvos</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="home-kpi-prods">—</div>
       </div>
-      <div class="home-card" onclick="showPage('dash')" style="padding:28px 20px">
-        <div style="font-size:2.8rem;margin-bottom:10px">📊</div>
-        <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px">Dashboard</div>
-        <div style="font-size:.76rem;color:var(--text2);line-height:1.5">Gerencie todos os seus produtos salvos</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px">Margem média</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#4ade80" id="home-kpi-margem">—</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px">Acesso válido até</div>
+        <div style="font-size:1rem;font-weight:900;color:var(--o);padding-top:5px" id="home-kpi-validade">—</div>
       </div>
     </div>
 
-    <!-- LINHA 2: Metas + Calendário + Gestão + INPI + Simples (cards menores) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;width:100%;max-width:660px;margin-bottom:14px">
-      <div class="home-card" onclick="showPage('metas')" style="padding:22px 14px">
-        <div style="font-size:2rem;margin-bottom:8px">🎯</div>
-        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Metas</div>
-        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Acompanhe seu progresso</div>
+    <!-- Cards grandes: Calculadora + Dashboard -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:780px;margin-bottom:12px">
+      <div class="home-card" onclick="showPage('calc')" style="padding:22px 20px;border-color:var(--border);text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:44px;height:44px;background:#6B21A822;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">🧮</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">Calculadora</div>
+            <div style="font-size:.72rem;color:var(--text2)">Precificação completa</div>
+          </div>
+        </div>
+        <div style="font-size:.74rem;color:var(--text2);line-height:1.6;margin-bottom:10px">Calcule preço ideal, margem, ROI, Markup e compare com o mercado</div>
+        <div style="font-size:.7rem;color:#a78bfa;background:#6B21A815;border-radius:6px;padding:4px 10px;display:inline-block">→ Calcular novo produto</div>
       </div>
-      <div class="home-card" onclick="showPage('cal')" style="padding:22px 14px">
-        <div style="font-size:2rem;margin-bottom:8px">📅</div>
-        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Calendário</div>
-        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Coletas e vencimentos</div>
-      </div>
-      <div class="home-card" onclick="showPage('gestao')" style="padding:22px 14px">
-        <div style="font-size:2rem;margin-bottom:8px">💳</div>
-        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Gestão</div>
-        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Calculadora de giro</div>
+      <div class="home-card" onclick="showPage('dash')" style="padding:22px 20px;border-color:var(--border);text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:44px;height:44px;background:#F0A07022;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">📊</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">Dashboard</div>
+            <div style="font-size:.72rem;color:var(--text2)" id="home-dash-sub">Seus produtos salvos</div>
+          </div>
+        </div>
+        <div style="font-size:.74rem;color:var(--text2);line-height:1.6;margin-bottom:10px">Gerencie, compare e acompanhe todos os produtos analisados</div>
+        <div style="font-size:.7rem;color:#F0A070;background:#F0A07015;border-radius:6px;padding:4px 10px;display:inline-block">→ Ver todos os produtos</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:660px">
-      <div class="home-card" onclick="showPage('simples')" style="padding:22px 14px">
-        <div style="font-size:2rem;margin-bottom:8px">🧾</div>
-        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">Simples Nacional</div>
-        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Calcule sua alíquota efetiva</div>
+
+    <!-- Cards médios: 5 ferramentas -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:780px">
+      <div class="home-card" onclick="showPage('metas')" style="padding:20px 14px;text-align:center">
+        <div style="width:40px;height:40px;background:#16a34a22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">🎯</div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Metas</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Acompanhe seu progresso</div>
       </div>
-      <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:22px 14px">
-        <div style="font-size:2rem;margin-bottom:8px">🔍</div>
-        <div style="font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
-        <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Verificar marca registrada</div>
+      <div class="home-card" onclick="showPage('cal')" style="padding:20px 14px;text-align:center">
+        <div style="width:40px;height:40px;background:#F0A07022;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">📅</div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Calendário</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Coletas e vencimentos</div>
+      </div>
+      <div class="home-card" onclick="showPage('gestao')" style="padding:20px 14px;text-align:center">
+        <div style="width:40px;height:40px;background:#7c3aed22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">📦</div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Giro</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Gestão de estoque</div>
+      </div>
+      <div class="home-card" onclick="showPage('simples')" style="padding:20px 14px;text-align:center">
+        <div style="width:40px;height:40px;background:#0ea5e922;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">🧾</div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Simples</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Alíquota efetiva</div>
+      </div>
+      <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:20px 14px;text-align:center">
+        <div style="width:40px;height:40px;background:#f59e0b22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">🔍</div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Marca registrada</div>
       </a>
     </div>
   </div>
