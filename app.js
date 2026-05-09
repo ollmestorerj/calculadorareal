@@ -234,10 +234,30 @@ function mostrarErroLogin(msg){
 function entrarNoApp(dados, pagina){
   const hu=document.getElementById('home-usuario');
   if(hu&&dados&&dados.nome){
-    hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong>${dados.validade&&dados.validade!=='—'?' · Acesso válido até <strong>'+dados.validade+'</strong>':''}`;
+    hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong>`;
   }
+  // KPIs da home
+  const elVal=document.getElementById('home-kpi-validade');
+  if(elVal) elVal.textContent=dados.validade&&dados.validade!=='—'?dados.validade:'Sem expiração';
+
+  // Pré-carrega dados do Firebase em background
   fbGet('produtos','realecom_prods','[]').then(prods=>{
     localStorage.setItem('realecom_prods',JSON.stringify(prods));
+    // Atualiza KPIs da home com dados reais
+    const elProds=document.getElementById('home-kpi-prods');
+    const elMargem=document.getElementById('home-kpi-margem');
+    const elDashSub=document.getElementById('home-dash-sub');
+    if(elProds) elProds.textContent=prods.length;
+    if(elDashSub) elDashSub.textContent=prods.length+' produto'+(prods.length!==1?'s':'')+' salvos';
+    if(elMargem){
+      const comMargem=prods.filter(p=>p.margem&&parseFloat(p.margem)>0);
+      if(comMargem.length>0){
+        const media=(comMargem.reduce((s,p)=>s+parseFloat(p.margem),0)/comMargem.length).toFixed(1);
+        elMargem.textContent=media+'%';
+      }else{
+        elMargem.textContent='—';
+      }
+    }
   });
   fbGet('eventos','realecom_eventos','[]').then(evs=>{
     localStorage.setItem('realecom_eventos',JSON.stringify(evs));
