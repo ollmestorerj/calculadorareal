@@ -97,9 +97,19 @@ async function registrarAtividade(acao){
 }
 
 // ============================================================
-// LOGIN
+// LOGIN — Firebase Auth (email + senha)
 // ============================================================
+
+let _auth = null;
+async function getAuth(){
+  if(_auth) return _auth;
+  if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  _auth = firebase.auth();
+  return _auth;
+}
+
 function verificarSessao(){
+  // Compatibilidade: retorna usuário do Firebase ou sessão antiga
   try{
     const s=JSON.parse(localStorage.getItem('realecom_sessao')||'null');
     if(!s)return false;
@@ -114,46 +124,104 @@ function salvarSessao(dados){
   localStorage.setItem('realecom_sessao',JSON.stringify({...dados,expira}));
 }
 
-function sair(){
+async function sair(){
   if(!confirm('Deseja sair da sua conta?'))return;
+  try{
+    const auth=await getAuth();
+    await auth.signOut();
+  }catch(e){}
   localStorage.removeItem('realecom_sessao');
   location.reload();
 }
 
 async function fazerLogin(){
-  const chave=document.getElementById('login-chave').value.trim().toUpperCase();
-  if(!chave){mostrarErroLogin('Digite sua chave de acesso.');return;}
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const senha=document.getElementById('login-senha').value;
+  if(!email||!senha){mostrarErroLogin('Preencha o e-mail e a senha.');return;}
 
   const btn=document.getElementById('btn-login');
-  const erro=document.getElementById('login-erro');
   const loading=document.getElementById('login-loading');
-  const validade=document.getElementById('login-validade');
-
   btn.disabled=true;
-  erro.style.display='none';
-  validade.style.display='none';
+  document.getElementById('login-erro').style.display='none';
+  document.getElementById('login-validade').style.display='none';
   loading.style.display='block';
 
   try{
-    const url=`${APPS_SCRIPT_URL}?chave=${encodeURIComponent(chave)}`;
-    const res=await fetch(url);
-    const data=await res.json();
+    const auth=await getAuth();
+    const cred=await auth.signInWithEmailAndPassword(email,senha);
+    const uid=cred.user.uid;
+
+    // Busca dados do usuário no Firestore
+    const db=await getDB();
+    const doc=await db.collection('usuarios').doc(email).get();
 
     loading.style.display='none';
 
-    if(data.ok){
-      salvarSessao({chave,nome:data.nome,email:data.email,validade:data.validade});
-      validade.style.display='block';
-      validade.textContent=`✅ Bem-vindo, ${data.nome}! Acesso válido até ${data.validade}.`;
-      setTimeout(()=>entrarNoApp(data),1200);
-    }else{
-      mostrarErroLogin(data.erro||'Chave inválida.');
+    if(!doc.exists){
+      mostrarErroLogin('Conta não encontrada. Entre em contato com o suporte.');
+      await auth.signOut();
       btn.disabled=false;
+      return;
     }
+
+    const dados=doc.data();
+
+    // Verifica se está ativo e dentro do prazo
+    if(!dados.ativo){
+      mostrarErroLogin('Sua conta está inativa. Entre em contato com o suporte.');
+      await auth.signOut();
+      btn.disabled=false;
+      return;
+    }
+
+    // Verifica validade
+    if(dados.validade){
+      const partes=dados.validade.split('/');
+      const validade=new Date(partes[2],partes[1]-1,partes[0]);
+      validade.setHours(23,59,59);
+      if(new Date()>validade){
+        mostrarErroLogin('Seu acesso expirou em '+dados.validade+'. Renove sua assinatura.');
+        await auth.signOut();
+        btn.disabled=false;
+        return;
+      }
+    }
+
+    salvarSessao({email,nome:dados.nome||email,validade:dados.validade||'—',uid});
+    const el=document.getElementById('login-validade');
+    el.style.display='block';
+    el.textContent=`✅ Bem-vindo, ${dados.nome||email}!`;
+    setTimeout(()=>entrarNoApp({nome:dados.nome||email,validade:dados.validade||'—',email}),900);
+
   }catch(e){
     loading.style.display='none';
-    mostrarErroLogin('Erro de conexão. Verifique sua internet e tente novamente.');
     btn.disabled=false;
+    const msgs={
+      'auth/user-not-found':'E-mail não cadastrado.',
+      'auth/wrong-password':'Senha incorreta.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos.',
+      'auth/invalid-credential':'E-mail ou senha incorretos.',
+    };
+    mostrarErroLogin(msgs[e.code]||'Erro ao entrar. Tente novamente.');
+  }
+}
+
+async function esqueceuSenha(){
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  if(!email){mostrarErroLogin('Digite seu e-mail acima para recuperar a senha.');return;}
+  try{
+    const auth=await getAuth();
+    await auth.sendPasswordResetEmail(email);
+    const el=document.getElementById('login-validade');
+    el.style.display='block';
+    el.style.background='#05291622';
+    el.style.borderColor='#16a34a44';
+    el.style.color='#4ade80';
+    el.textContent='📧 E-mail de recuperação enviado! Verifique sua caixa de entrada.';
+    document.getElementById('login-erro').style.display='none';
+  }catch(e){
+    mostrarErroLogin('Não foi possível enviar o e-mail. Verifique se o endereço está correto.');
   }
 }
 
@@ -166,9 +234,8 @@ function mostrarErroLogin(msg){
 function entrarNoApp(dados, pagina){
   const hu=document.getElementById('home-usuario');
   if(hu&&dados&&dados.nome){
-    hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong> · Acesso válido até <strong>${dados.validade}</strong>`;
+    hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong>${dados.validade&&dados.validade!=='—'?' · Acesso válido até <strong>'+dados.validade+'</strong>':''}`;
   }
-  // Pré-carrega dados do Firebase em background
   fbGet('produtos','realecom_prods','[]').then(prods=>{
     localStorage.setItem('realecom_prods',JSON.stringify(prods));
   });
@@ -186,11 +253,9 @@ function entrarNoApp(dados, pagina){
 (function(){
   const s=verificarSessao();
   if(s){
-    // Restaurar última página visitada
     const ultimaPagina=localStorage.getItem('realecom_pagina')||'home';
     entrarNoApp(s, ultimaPagina);
   }
-  // Tema
   const t=localStorage.getItem('realecom_theme');
   if(t==='light'){document.body.classList.add('light');document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='🌙 Escuro');}
 })();
