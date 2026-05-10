@@ -250,28 +250,83 @@ function entrarNoApp(dados, pagina){
   // KPIs da home
   const elVal=document.getElementById('home-kpi-validade');
   if(elVal) elVal.textContent=dados.validade&&dados.validade!=='—'?dados.validade:'Sem expiração';
+  const elPlano=document.getElementById('home-kpi-plano');
+  if(elPlano) elPlano.textContent=dados.plano?'Plano '+dados.plano:'Acesso liberado';
 
-  // Pré-carrega dados do Firebase em background
   fbGet('produtos','realecom_prods','[]').then(prods=>{
     localStorage.setItem('realecom_prods',JSON.stringify(prods));
-    // Atualiza KPIs da home com dados reais
+
+    // Dashboard KPI — total e distribuição de margem
     const elProds=document.getElementById('home-kpi-prods');
-    const elMargem=document.getElementById('home-kpi-margem');
-    const elDashSub=document.getElementById('home-dash-sub');
     if(elProds) elProds.textContent=prods.length;
+    const elDashSub=document.getElementById('home-dash-sub');
     if(elDashSub) elDashSub.textContent=prods.length+' produto'+(prods.length!==1?'s':'')+' salvos';
-    if(elMargem){
-      const comMargem=prods.filter(p=>p.margem&&parseFloat(p.margem)>0);
-      if(comMargem.length>0){
-        const media=(comMargem.reduce((s,p)=>s+parseFloat(p.margem),0)/comMargem.length).toFixed(1);
-        elMargem.textContent=media+'%';
-      }else{
-        elMargem.textContent='—';
-      }
+
+    const total=prods.length||1;
+    const m10=prods.filter(p=>parseFloat(p.margem)>=10).length;
+    const m15=prods.filter(p=>parseFloat(p.margem)>=15).length;
+    const m20=prods.filter(p=>parseFloat(p.margem)>=20).length;
+    const setBar=(id,val,tot)=>{const el=document.getElementById(id);if(el)el.style.width=Math.round((val/tot)*100)+'%';};
+    const setTxt=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+    setTxt('home-m10',m10); setBar('home-bar10',m10,total);
+    setTxt('home-m15',m15); setBar('home-bar15',m15,total);
+    setTxt('home-m20',m20); setBar('home-bar20',m20,total);
+
+    // Metas KPI
+    const metaObj=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+    const prodDia=parseInt(metaObj.prodDia)||0;
+    const diasSem=parseInt(metaObj.diasSemana)||0;
+    if(prodDia&&diasSem){
+      const agora=Date.now();
+      const metaSem=prodDia*diasSem, metaMes=metaSem*4;
+      const metaDia=prodDia;
+      const hoje0=new Date();hoje0.setHours(0,0,0,0);
+      const pDia=prods.filter(p=>p.id>=hoje0.getTime()).length;
+      const pSem=prods.filter(p=>p.id>=agora-7*864e5).length;
+      const pMes=prods.filter(p=>p.id>=agora-30*864e5).length;
+      setTxt('home-meta-dia',`${pDia}/${metaDia}`);
+      setTxt('home-meta-sem',`${pSem}/${metaSem}`);
+      setTxt('home-meta-mes',`${pMes}/${metaMes}`);
+      setBar('home-bar-dia',pDia,metaDia||1);
+      setBar('home-bar-sem',pSem,metaSem||1);
+      setBar('home-bar-mes',pMes,metaMes||1);
+    }else{
+      ['home-meta-dia','home-meta-sem','home-meta-mes'].forEach(id=>setTxt(id,'—'));
     }
   });
   fbGet('eventos','realecom_eventos','[]').then(evs=>{
     localStorage.setItem('realecom_eventos',JSON.stringify(evs));
+    // Calendário home — eventos de hoje e próximos
+    const hoje=new Date();hoje.setHours(0,0,0,0);
+    const hojeStr=hoje.toISOString().split('T')[0];
+    const cores={full:'#a78bfa',conta:'#f87171',entrega:'#4ade80',outro:'#F0A070'};
+    const proximos=evs.filter(e=>{
+      const d=new Date(e.data+'T00:00:00');
+      return d>=hoje;
+    }).sort((a,b)=>a.data.localeCompare(b.data)).slice(0,3);
+
+    const elCal=document.getElementById('home-cal-eventos');
+    const elCalTit=document.getElementById('home-cal-titulo');
+    if(elCalTit) elCalTit.textContent='Hoje · '+hoje.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    if(elCal){
+      if(!proximos.length){
+        elCal.innerHTML='<div style="font-size:.7rem;color:var(--text3)">Nenhum evento próximo</div>';
+      }else{
+        elCal.innerHTML=proximos.map(e=>{
+          const isHoje=e.data===hojeStr;
+          const d=new Date(e.data+'T00:00:00');
+          const diffDias=Math.round((d-hoje)/(864e5));
+          const label=isHoje?'Hoje':diffDias===1?'Amanhã':'Em '+diffDias+' dias';
+          return`<div style="display:flex;gap:6px;align-items:center">
+            <div style="width:3px;height:26px;background:${cores[e.tipo]||'#F0A070'};border-radius:2px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:.72rem;font-weight:600;color:var(--text)">${e.titulo}</div>
+              <div style="font-size:.65rem;color:var(--text3)">${label}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
   });
   fbGet('metas','realecom_metas','{}').then(m=>{
     localStorage.setItem('realecom_metas',JSON.stringify(m));
