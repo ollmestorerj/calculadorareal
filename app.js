@@ -126,10 +126,9 @@ function salvarSessao(dados){
 
 async function sair(){
   if(!confirm('Deseja sair da sua conta?'))return;
-  try{
-    const auth=await getAuth();
-    await auth.signOut();
-  }catch(e){}
+  const sb=document.getElementById('sidebar');
+  if(sb)sb.style.display='none';
+  try{const auth=await getAuth();await auth.signOut();}catch(e){}
   localStorage.removeItem('realecom_sessao');
   location.reload();
 }
@@ -232,6 +231,18 @@ function mostrarErroLogin(msg){
 }
 
 function entrarNoApp(dados, pagina){
+  // Mostra sidebar
+  const sb = document.getElementById('sidebar');
+  if(sb) sb.style.display='flex';
+
+  // Iniciais no avatar
+  const elIniciais = document.getElementById('sb-iniciais');
+  if(elIniciais && dados && dados.nome){
+    const partes = dados.nome.trim().split(' ');
+    const iniciais = partes.length>=2 ? partes[0][0]+partes[partes.length-1][0] : partes[0].substring(0,2);
+    elIniciais.textContent = iniciais.toUpperCase();
+  }
+
   const hu=document.getElementById('home-usuario');
   if(hu&&dados&&dados.nome){
     hu.innerHTML=`👋 Olá, <strong style="color:var(--o)">${dados.nome}</strong>`;
