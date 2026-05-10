@@ -1131,15 +1131,21 @@ function switchPubMode(mode){
   const btnMan  = document.getElementById('pub-btn-manual');
   const secDash = document.getElementById('pub-sec-dash');
   const secMan  = document.getElementById('pub-sec-manual');
-  const ativo = 'padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:700;cursor:pointer;background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)';
-  const inativo = 'padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;background:none;color:var(--text2)';
   if(mode==='dash'){
-    btnDash.style.cssText=ativo; btnMan.style.cssText=inativo;
-    secDash.style.display='block'; secMan.style.display='none';
+    btnDash.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';
+    btnDash.style.color='#fff';
+    btnMan.style.background='none';
+    btnMan.style.color='var(--text3)';
+    secDash.style.display='block';
+    secMan.style.display='none';
     carregarProdutosPublicidade();
   }else{
-    btnMan.style.cssText=ativo; btnDash.style.cssText=inativo;
-    secDash.style.display='none'; secMan.style.display='block';
+    btnMan.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';
+    btnMan.style.color='#fff';
+    btnDash.style.background='none';
+    btnDash.style.color='var(--text3)';
+    secDash.style.display='none';
+    secMan.style.display='block';
     calcularPublicidadeManual();
   }
 }
