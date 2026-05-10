@@ -635,8 +635,8 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</span>
     </div>
     <div style="display:flex;gap:6px">
-      <button class="btn-dash" onclick="showPage('gestao')">💳 Gestão</button>
-      <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+      <button class="btn-dash" onclick="showPage('gestao')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Giro</button>
+      <button class="btn-dash" onclick="showPage('dash')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Produtos</button>
     </div>
   </div>
   <div class="main-layout">
@@ -649,7 +649,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.
     </div>
     <div class="card">
-      <div class="card-title">🛒 Custo dos Produtos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>Custo dos Produtos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
       <div class="item-list" id="items-list">
         <div class="item-row">
           <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
@@ -659,7 +659,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <button class="add-item" onclick="addItem()">+ Adicionar item</button>
     </div>
     <div class="card">
-      <div class="card-title">📦 Frete & Outros Custos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Frete & Outros Custos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
       <div class="toggle-row">
         <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')">📐 Por Dimensões</button>
         <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')">✏️ Manual</button>
@@ -690,7 +690,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
 
       <!-- Separador Insumos -->
       <div style="border-top:1px solid var(--border);margin-top:11px;padding-top:11px">
-        <div class="field"><label>📦 Insumos / Embalagem / Outros (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
+        <div class="field"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>Insumos / Embalagem / Outros (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
       </div>
 
       <!-- Frete de Coleta Full -->
@@ -714,26 +714,26 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       </div>
     </div>
     <div class="card">
-      <div class="card-title">📊 Taxas & Comissões — <span style="color:#f87171;font-size:.65rem">Imposto e Comissão do ML obrigatórios</span></div>
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>Taxas & Comissões — <span style="color:#f87171;font-size:.65rem">Imposto e Comissão do ML obrigatórios</span></div>
       <div class="row2">
-        <div class="field"><label>🏛️ Impostos (%)</label><input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1"></div>
-        <div class="field"><label>🏷️ Comissão Marketplace (%)</label><input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1"></div>
+        <div class="field"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Impostos (%)</label><input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1"></div>
+        <div class="field"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>Comissão Marketplace (%)</label><input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1"></div>
       </div>
-      <div class="field"><label>🤝 Comissão Afiliados (%)</label><input type="number" id="afiliados" placeholder="0" min="0" max="100" step="0.1"></div>
+      <div class="field"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>Comissão Afiliados (%)</label><input type="number" id="afiliados" placeholder="0" min="0" max="100" step="0.1"></div>
     </div>
     <div class="margem-card" id="margem-block">
-      <div class="card-title">💎 Margem de Lucro Desejada <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>Margem de Lucro Desejada <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
       <div class="field"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1"></div>
       <div class="margem-hint">↑ Meta de lucro em % sobre o preço de venda</div>
     </div>
     <div class="card">
-      <div class="card-title">📈 Projeção & Comparativo</div>
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Projeção & Comparativo</div>
       <div class="row2">
         <div class="field"><label>Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1"></div>
-        <div class="field"><label id="ml-label">💛 Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01"></div>
+        <div class="field"><label id="ml-label"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01"></div>
       </div>
     </div>
-    <button class="btn-calc" onclick="calcular()">⚡ Calcular Precificação</button>
+    <button class="btn-calc" onclick="calcular()"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
     <div id="inpi-box" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:10px">
       <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">📋 Verificar Marca Registrada no INPI</div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
@@ -774,7 +774,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
         </div>
       </div>
       <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
-      <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title">⚡ Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
+      <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
 
       <!-- Detalhamento + Projeção lado a lado -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
@@ -835,7 +835,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
           <!-- Frete Reverso -->
           <div class="breakdown" id="devolucao-box" style="margin-bottom:0">
-            <div class="bd-title">↩️ Frete Reverso</div>
+            <div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#f87171,#dc2626);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></span>Frete Reverso</div>
             <div class="field" style="margin-bottom:10px">
               <label>Taxa de devolução (R$)</label>
               <input type="number" id="dev-taxa" placeholder="Ex: 20,00" min="0" step="0.01" oninput="calcDevolucao()" style="background:var(--card)">
@@ -849,7 +849,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
 
           <!-- Ranqueamento -->
           <div class="breakdown" style="margin-bottom:0">
-            <div class="bd-title" style="color:#60a5fa">🏆 Ranqueamento</div>
+            <div class="bd-title" style="color:#60a5fa"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Ranqueamento</div>
             <div class="field" style="margin-bottom:8px">
               <label>Preço para ranquear (R$)</label>
               <input type="number" id="rank-preco" placeholder="Ex: 49,90" min="0" step="0.01" oninput="calcRanqueamento()" style="background:var(--card)">
@@ -871,14 +871,14 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
 
           <!-- Salvar -->
           <div class="save-card" id="save-card" style="margin-bottom:0">
-            <div class="save-title">💾 Salvar no Dashboard</div>
+            <div class="save-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>Salvar no Dashboard</div>
             <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
             <div class="row2">
               <div class="field"><label>Fornecedor</label><input type="text" id="save-forn" placeholder="Nome do fornecedor"></div>
               <div class="field"><label>Código do produto</label><input type="text" id="save-cod" placeholder="Ex: SKU-001"></div>
             </div>
-            <div class="field"><label>📝 Observações</label><textarea id="save-obs" placeholder="Anotações..." style="height:52px;resize:none"></textarea></div>
-            <button class="btn-save" onclick="salvarProduto()">💾 Salvar no Dashboard</button>
+            <div class="field"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#7a6f9a,#5a4f7a);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>Observações</label><textarea id="save-obs" placeholder="Anotações..." style="height:52px;resize:none"></textarea></div>
+            <button class="btn-save" onclick="salvarProduto()"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>Salvar no Dashboard</button>
           </div>
         </div>
         <button class="btn-reset" onclick="resetar()" style="width:100%">← Novo Cálculo</button>
@@ -900,7 +900,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <div style="width:1px;height:26px;background:#444"></div>
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</span>
     </div>
-    <button class="btn-dash" onclick="showPage('metas')">🎯 Metas</button>
+    <button class="btn-dash" onclick="showPage('metas')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></span>Metas</button>
   </div>
   <div class="dash-page">
     <div class="dash-header">
@@ -924,7 +924,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <div style="width:1px;height:26px;background:#444"></div>
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</span>
     </div>
-    <button class="btn-dash" onclick="showPage('metas')">🎯 Metas</button>
+    <button class="btn-dash" onclick="showPage('metas')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></span>Metas</button>
   </div>
   <div class="cal-page">
     <div class="cal-header">
@@ -980,7 +980,7 @@ function exportarExcel(){
       <div style="width:1px;height:26px;background:#444"></div>
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA DE GIRO</span>
     </div>
-    <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+    <button class="btn-dash" onclick="showPage('dash')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Produtos</button>
   </div>
 
   <div style="padding:20px 18px;max-width:700px;margin:0 auto">
@@ -993,7 +993,7 @@ function exportarExcel(){
 
     <!-- Inputs -->
     <div class="gest-card" style="margin-bottom:14px">
-      <div class="gest-card-title" style="color:var(--o)">📋 DADOS DO PRODUTO</div>
+      <div class="gest-card-title" style="color:var(--o)"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>DADOS DO PRODUTO</div>
       <div class="row2" style="margin-bottom:9px">
         <div class="field">
           <label>Quantidade comprada (unid.)</label>
@@ -1032,7 +1032,7 @@ function exportarExcel(){
 
       <!-- Situação atual -->
       <div class="gest-card" style="margin-bottom:14px;background:linear-gradient(135deg,#0a1628,#0f2040);border-color:#1e3a5f">
-        <div class="gest-card-title" style="color:#60a5fa">📊 SITUAÇÃO ATUAL DO ESTOQUE</div>
+        <div class="gest-card-title" style="color:#60a5fa"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>SITUAÇÃO ATUAL DO ESTOQUE</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
           <div style="text-align:center">
             <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Estoque atual</div>
@@ -1084,7 +1084,7 @@ function exportarExcel(){
 
       <!-- Ponto de reposição -->
       <div class="gest-card" style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border-color:#6B21A855;margin-bottom:14px">
-        <div class="gest-card-title" style="color:#a78bfa">⏰ PONTO DE REPOSIÇÃO</div>
+        <div class="gest-card-title" style="color:#a78bfa"><span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>PONTO DE REPOSIÇÃO</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
           <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
             <div style="font-size:.66rem;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Faça o pedido quando tiver</div>
@@ -1125,7 +1125,7 @@ function exportarExcel(){
       <div style="width:1px;height:26px;background:#444"></div>
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">METAS</span>
     </div>
-    <button class="btn-dash" onclick="showPage('dash')">📊 Produtos</button>
+    <button class="btn-dash" onclick="showPage('dash')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Produtos</button>
   </div>
 
   <div class="metas-page" style="max-width:900px">
@@ -1135,7 +1135,7 @@ function exportarExcel(){
 
       <!-- Config da meta -->
       <div class="meta-card" style="margin-bottom:0">
-        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">⚙️ MINHA META</div>
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px"><span style="width:20px;height:20px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg></span>MINHA META</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
           <div>
             <div style="font-size:.75rem;color:var(--text2);margin-bottom:5px">Produtos/dia</div>
@@ -1165,7 +1165,7 @@ function exportarExcel(){
 
       <!-- Painel de qualidade -->
       <div class="meta-card" style="margin-bottom:0">
-        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px;color:#60a5fa">🔬 QUALIDADE DAS ANÁLISES</div>
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px;color:#60a5fa"><span style="width:20px;height:20px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>QUALIDADE DAS ANÁLISES</div>
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center">
           <div style="font-size:.78rem;color:var(--text2);margin-bottom:4px">Você analisou este mês</div>
           <div style="font-size:3rem;font-weight:900;line-height:1;color:var(--o)" id="qual-total">0</div>
@@ -1195,7 +1195,7 @@ function exportarExcel(){
     <!-- LINHA 2: 3 gráficos maiores -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
       <div class="meta-card" style="margin-bottom:0;text-align:center;padding:20px 14px">
-        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">📅 SEMANA</div>
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>SEMANA</div>
         <div style="position:relative;width:120px;height:120px;margin:0 auto 14px">
           <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);width:120px;height:120px">
             <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
@@ -1213,7 +1213,7 @@ function exportarExcel(){
       </div>
 
       <div class="meta-card" style="margin-bottom:0;text-align:center;padding:20px 14px">
-        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">📆 QUINZENA</div>
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px"><span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>QUINZENA</div>
         <div style="position:relative;width:120px;height:120px;margin:0 auto 14px">
           <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);width:120px;height:120px">
             <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
@@ -1231,7 +1231,7 @@ function exportarExcel(){
       </div>
 
       <div class="meta-card" style="margin-bottom:0;text-align:center;padding:20px 14px">
-        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px">🗓️ MÊS</div>
+        <div class="meta-card-title" style="font-size:.75rem;margin-bottom:14px"><span style="width:20px;height:20px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>MÊS</div>
         <div style="position:relative;width:120px;height:120px;margin:0 auto 14px">
           <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);width:120px;height:120px">
             <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
@@ -1251,7 +1251,7 @@ function exportarExcel(){
 
     <!-- LINHA 3: Resumo -->
     <div class="meta-card" id="resumo-geral" style="display:none">
-      <div class="meta-card-title" style="font-size:.75rem;margin-bottom:12px">📊 RESUMO DO PERÍODO</div>
+      <div class="meta-card-title" style="font-size:.75rem;margin-bottom:12px"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>RESUMO DO PERÍODO</div>
       <div id="resumo-semana" style="font-size:.85rem;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)">—</div>
       <div id="resumo-quinzena" style="font-size:.85rem;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)">—</div>
       <div id="resumo-mes" style="font-size:.85rem;color:var(--text2);padding:8px 0">—</div>
@@ -1273,7 +1273,7 @@ function exportarExcel(){
       <div style="width:1px;height:26px;background:#444"></div>
       <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">SIMPLES NACIONAL</span>
     </div>
-    <button class="btn-dash" onclick="showPage('calc')">🧮 Calculadora</button>
+    <button class="btn-dash" onclick="showPage('calc')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/></svg></span>Calculadora</button>
   </div>
 
   <div style="padding:20px 18px;max-width:680px;margin:0 auto">
@@ -1286,7 +1286,7 @@ function exportarExcel(){
 
     <!-- Inputs -->
     <div class="card" style="margin-bottom:14px">
-      <div class="card-title">📊 DADOS DE FATURAMENTO</div>
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>DADOS DE FATURAMENTO</div>
       <div class="row2">
         <div class="field">
           <label>Faturamento bruto — últimos 12 meses (R$)</label>
@@ -1325,7 +1325,7 @@ function exportarExcel(){
 
       <!-- Detalhamento do cálculo -->
       <div class="breakdown" style="margin-bottom:14px">
-        <div class="bd-title">🔢 COMO FOI CALCULADO</div>
+        <div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>COMO FOI CALCULADO</div>
         <div class="brow"><span class="bl">RBT12 (faturamento 12 meses)</span><span class="br" id="sn-d-rbt12">—</span></div>
         <div class="brow"><span class="bl">Alíquota nominal da faixa</span><span class="br" id="sn-d-nominal">—</span></div>
         <div class="brow"><span class="bl">Parcela a deduzir</span><span class="br" id="sn-d-deducao">—</span></div>
@@ -1336,7 +1336,7 @@ function exportarExcel(){
 
       <!-- Repartição dos tributos -->
       <div class="breakdown" style="margin-bottom:14px">
-        <div class="bd-title">📋 REPARTIÇÃO DOS TRIBUTOS</div>
+        <div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></span>REPARTIÇÃO DOS TRIBUTOS</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="sn-tributos"></div>
       </div>
 
