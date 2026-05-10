@@ -399,10 +399,23 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
 
 <div class="notif-container" id="notif-container"></div>
 
-<!-- MODAL -->
+<!-- MODAL CALENDÁRIO -->
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
+  <div class="modal" style="max-width:460px">
     <h3 id="modal-title">📅 Novo Evento</h3>
+
+    <!-- Templates rápidos -->
+    <div id="modal-templates" style="margin-bottom:14px">
+      <div style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;font-weight:700">Templates rápidos</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="aplicarTemplate('das')" style="background:#dc262618;border:1px solid #dc262644;color:#f87171;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">💰 Pagar DAS</button>
+        <button onclick="aplicarTemplate('full')" style="background:#7c3aed18;border:1px solid #7c3aed44;color:#a78bfa;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">📦 Coleta Full</button>
+        <button onclick="aplicarTemplate('cartao')" style="background:#16a34a18;border:1px solid #16a34a44;color:#4ade80;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">💳 Pagar Cartão</button>
+        <button onclick="aplicarTemplate('estoque')" style="background:#F0A07018;border:1px solid #F0A07044;color:#F0A070;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">📊 Ver Estoque</button>
+        <button onclick="aplicarTemplate('fornecedor')" style="background:#2563eb18;border:1px solid #2563eb44;color:#60a5fa;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">🚚 Fornecedor</button>
+      </div>
+    </div>
+
     <div class="modal-field"><label>Título do evento</label><input type="text" id="ev-titulo" placeholder="Ex: Coleta Full, Vencimento conta..."></div>
     <div class="modal-field"><label>Tipo</label>
       <select id="ev-tipo">
@@ -412,9 +425,22 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
         <option value="outro">📌 Outro</option>
       </select>
     </div>
-    <div class="modal-field"><label>Data</label><input type="date" id="ev-data"></div>
-    <div class="modal-field"><label>Hora (opcional)</label><input type="time" id="ev-hora"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="modal-field"><label>Data</label><input type="date" id="ev-data"></div>
+      <div class="modal-field"><label>Hora (opcional)</label><input type="time" id="ev-hora"></div>
+    </div>
+    <div class="modal-field"><label>Local / Link (opcional)</label><input type="text" id="ev-local" placeholder="Ex: Galpão, Zoom, WhatsApp..."></div>
     <div class="modal-field"><label>Observação (opcional)</label><input type="text" id="ev-obs" placeholder="Detalhes do evento..."></div>
+
+    <!-- Lembrete Push -->
+    <div class="modal-field">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="ev-push" style="width:16px;height:16px;accent-color:var(--o)">
+        <span>Ativar notificação no navegador</span>
+      </label>
+      <div style="font-size:.68rem;color:var(--text3);margin-top:3px;padding-left:24px">Você receberá lembretes conforme o tipo do evento</div>
+    </div>
+
     <div class="modal-btns">
       <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
       <button class="btn-confirm" onclick="salvarEvento()">Salvar</button>
@@ -927,6 +953,34 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     <button class="btn-dash" onclick="showPage('metas')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></span>Metas</button>
   </div>
   <div class="cal-page">
+    <!-- Atalhos rápidos -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button onclick="abrirModalTemplate('das')" style="background:var(--card);border:1px solid #dc262644;color:#f87171;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:16px;background:linear-gradient(135deg,#dc2626,#991b1b);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+        Pagar DAS
+      </button>
+      <button onclick="abrirModalTemplate('full')" style="background:var(--card);border:1px solid #7c3aed44;color:#a78bfa;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:16px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
+        Coleta Full
+      </button>
+      <button onclick="abrirModalTemplate('cartao')" style="background:var(--card);border:1px solid #16a34a44;color:#4ade80;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:16px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
+        Pagar Cartão
+      </button>
+      <button onclick="abrirModalTemplate('estoque')" style="background:var(--card);border:1px solid #F0A07044;color:#F0A070;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:16px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
+        Ver Estoque
+      </button>
+      <button onclick="abrirModalTemplate('fornecedor')" style="background:var(--card);border:1px solid #2563eb44;color:#60a5fa;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:16px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
+        Fornecedor
+      </button>
+      <button onclick="solicitarPermissaoNotificacao()" id="btn-push-cal" style="margin-left:auto;background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:16px;background:linear-gradient(135deg,#6B21A8,#F0A070);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></span>
+        <span id="btn-push-label">Ativar notificações</span>
+      </button>
+    </div>
+
     <div class="cal-header">
       <button class="btn-back" onclick="showPage('home')">← Voltar</button>
       <div class="cal-nav">
