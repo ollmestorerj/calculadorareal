@@ -367,6 +367,12 @@ function showPage(p,bypassCheck){
   if(p!=='login'&&!bypassCheck&&!verificarSessao()){location.reload();return;}
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
+
+  // Destaca item ativo na sidebar
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  const mapa={calc:'sb-calc',dash:'sb-dash',metas:'sb-metas',cal:'sb-cal',gestao:'sb-gestao',simples:'sb-simples',pub:'sb-pub',home:'sb-home'};
+  if(mapa[p]){const el=document.getElementById(mapa[p]);if(el)el.classList.add('active');}
+
   if(p==='dash')renderDash();
   if(p==='cal')renderCal();
   if(p==='metas')carregarMetas();
