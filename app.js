@@ -372,7 +372,7 @@ function showPage(p,bypassCheck){
   if(p==='metas')carregarMetas();
   if(p==='gestao')calcularGestao();
   if(p==='simples'){document.getElementById('sn-resultado').style.display='none';document.getElementById('sn-empty').style.display='block';}
-  if(p==='pub'){switchPubMode('dash');}
+  if(p==='pub'){switchPubMode('dash');renderHistoricoPublicidade();}
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
@@ -1191,10 +1191,7 @@ function calcularPublicidadeManual(){
 
 function renderResultadoPublicidade(preco, margemAds){
   const res = document.getElementById('pub-resultado');
-  if(margemAds<=0||preco<=0){
-    res.style.display='none';
-    return;
-  }
+  if(margemAds<=0||preco<=0){res.style.display='none';return;}
   res.style.display='block';
   const acos = (margemAds/preco)*100;
   const roas = preco/margemAds;
@@ -1204,10 +1201,69 @@ function renderResultadoPublicidade(preco, margemAds){
   document.getElementById('pub-exp-roas').textContent = fmt(preco);
   document.getElementById('pub-exp-acos').textContent = acos.toFixed(1)+'%';
   document.getElementById('pub-exp-margem').textContent = fmt(margemAds);
+  // Mostra campo de nome só no modo manual
+  const nomeWrap=document.getElementById('pub-save-nome-wrap');
+  if(nomeWrap) nomeWrap.style.display=pubMode==='manual'?'block':'none';
 }
 
-// ============================================================
-// SIMPLES NACIONAL — ANEXO I
+function toggleGlossario(){
+  const body=document.getElementById('glossario-body');
+  const arrow=document.getElementById('glossario-arrow');
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(arrow)arrow.textContent=open?'▼':'▲';
+}
+
+function salvarAnalisePublicidade(){
+  const roas=document.getElementById('pub-roas').textContent;
+  const acos=document.getElementById('pub-acos').textContent;
+  const margem=document.getElementById('pub-margem-ads').textContent;
+  if(roas==='—'){alert('Calcule primeiro antes de salvar.');return;}
+
+  let nome='';
+  if(pubMode==='dash'){
+    const idx=document.getElementById('pub-produto-sel').value;
+    const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+    nome=idx!==''?prods[parseInt(idx)].nome:'Produto do Dashboard';
+  }else{
+    nome=document.getElementById('pub-m-nome').value.trim();
+    if(!nome){alert('Informe o nome do produto para salvar.');document.getElementById('pub-m-nome').focus();return;}
+  }
+
+  const historico=JSON.parse(localStorage.getItem('realecom_pub_historico')||'[]');
+  historico.unshift({id:Date.now(),nome,roas,acos,margem});
+  localStorage.setItem('realecom_pub_historico',JSON.stringify(historico));
+  renderHistoricoPublicidade();
+  alert('✅ Análise salva!');
+}
+
+function renderHistoricoPublicidade(){
+  const historico=JSON.parse(localStorage.getItem('realecom_pub_historico')||'[]');
+  const wrap=document.getElementById('pub-historico-wrap');
+  const el=document.getElementById('pub-historico');
+  if(!wrap||!el)return;
+  if(!historico.length){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  el.innerHTML=historico.map(h=>`
+    <div class="prod-item" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:7px">
+      <div style="font-weight:700;color:var(--text);font-size:.82rem">${h.nome}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.78rem;align-items:center">
+        <span>ROAS: <strong style="color:#c4b5fd">${h.roas}</strong></span>
+        <span>ACOS: <strong style="color:#4ade80">${h.acos}</strong></span>
+        <span>Margem ads: <strong style="color:var(--o)">${h.margem}</strong></span>
+        <button onclick="removerAnalisePublicidade(${h.id})" style="background:none;border:none;color:#4a3f6b;cursor:pointer;font-size:.85rem;padding:2px 5px" title="Remover">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function removerAnalisePublicidade(id){
+  const historico=JSON.parse(localStorage.getItem('realecom_pub_historico')||'[]').filter(h=>h.id!==id);
+  localStorage.setItem('realecom_pub_historico',JSON.stringify(historico));
+  renderHistoricoPublicidade();
+}
+
+// Atualizar switchPubMode para mostrar campo de nome no modo manual ao ter resultado
+
 // ============================================================
 const SN_ANEXO1 = [
   {faixa:'1ª Faixa', min:0.01,       max:180000,    nominal:0.04,  deducao:0,      irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.415,  icms:0.34},
