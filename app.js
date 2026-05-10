@@ -332,6 +332,7 @@ function entrarNoApp(dados, pagina){
     localStorage.setItem('realecom_metas',JSON.stringify(m));
   });
   registrarAtividade('login');
+  inicializarPush();
   setTimeout(()=>showPage(pagina||'home', true), 50);
 }
 
@@ -791,7 +792,129 @@ async function renderDash(){
   }).join('');
 }
 
+// ============================================================
+// PUSH NOTIFICATIONS
+// ============================================================
+let _swRegistration = null;
+
+async function inicializarPush(){
+  if(!('serviceWorker' in navigator)||!('Notification' in window)) return;
+  try{
+    _swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    atualizarBtnPush();
+  }catch(e){ console.warn('SW registro falhou:', e); }
+}
+
+function atualizarBtnPush(){
+  const btn = document.getElementById('btn-push-cal');
+  const lbl = document.getElementById('btn-push-label');
+  if(!btn||!lbl) return;
+  if(Notification.permission === 'granted'){
+    lbl.textContent = '🔔 Notificações ativas';
+    btn.style.borderColor = '#16a34a44';
+    btn.style.color = '#4ade80';
+  } else if(Notification.permission === 'denied'){
+    lbl.textContent = '🔕 Notificações bloqueadas';
+    btn.style.color = '#f87171';
+  } else {
+    lbl.textContent = 'Ativar notificações';
+  }
+}
+
+async function solicitarPermissaoNotificacao(){
+  if(!('Notification' in window)){alert('Seu navegador não suporta notificações.');return;}
+  if(Notification.permission === 'granted'){alert('Notificações já estão ativas!');return;}
+  if(Notification.permission === 'denied'){alert('Notificações estão bloqueadas. Vá em Configurações do navegador → Privacidade → Notificações e permita este site.');return;}
+  const perm = await Notification.requestPermission();
+  atualizarBtnPush();
+  if(perm === 'granted'){
+    new Notification('RealEcom', {body:'Notificações ativadas! Você receberá lembretes dos seus eventos.', icon:'/logcon.png'});
+    // Agenda notificações dos eventos existentes
+    agendarTodasNotificacoes();
+  }
+}
+
+function agendarNotificacao(titulo, corpo, dataHora, tag){
+  if(Notification.permission !== 'granted') return;
+  const agora = Date.now();
+  const quando = dataHora instanceof Date ? dataHora.getTime() : dataHora;
+  const delay = quando - agora;
+  if(delay <= 0) return; // já passou
+  if(delay > 7 * 24 * 60 * 60 * 1000) return; // mais de 7 dias, não agenda (limite do SW)
+  setTimeout(()=>{
+    if(Notification.permission === 'granted'){
+      new Notification('RealEcom — ' + titulo, {body: corpo, icon:'/logcon.png', tag});
+    }
+  }, delay);
+}
+
+function agendarNotificacoesEvento(ev){
+  if(Notification.permission !== 'granted') return;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const dataEv = new Date(ev.data + 'T00:00:00');
+  const diffDias = Math.round((dataEv - hoje) / (1000*60*60*24));
+
+  // Regras por tipo
+  let diasAntes = [];
+  if(ev.tipo === 'full'){
+    diasAntes = [5,4,3,2,1];
+  } else if(ev.titulo === 'Pagamento DAS'){
+    diasAntes = [1];
+  } else if(ev.tipo === 'giro_pedido' || ev.tipo === 'giro_entrega'){
+    diasAntes = [3,2,1];
+  } else {
+    diasAntes = [1];
+  }
+
+  // Agenda notificações de antecedência
+  diasAntes.forEach(d => {
+    if(diffDias === d){
+      const msg = d === 1 ? `Amanhã: ${ev.titulo}` : `Em ${d} dias: ${ev.titulo}`;
+      agendarNotificacao(ev.titulo, msg, new Date(hoje.getTime() + 9*60*60*1000), `${ev.id}_${d}d`);
+    }
+  });
+
+  // No dia — manhã (9h) e tarde (15h)
+  if(diffDias === 0){
+    agendarNotificacao(ev.titulo, `Hoje: ${ev.titulo}${ev.obs?' — '+ev.obs:''}`, new Date(hoje.getTime() + 9*60*60*1000), `${ev.id}_manha`);
+    agendarNotificacao(ev.titulo, `Lembrete tarde: ${ev.titulo}`, new Date(hoje.getTime() + 15*60*60*1000), `${ev.id}_tarde`);
+  }
+}
+
+function agendarTodasNotificacoes(){
+  getEventos().forEach(ev => agendarNotificacoesEvento(ev));
+}
+
+// ============================================================
+// CALENDÁRIO — TEMPLATES
+// ============================================================
+const templatesEvento = {
+  das:        {titulo:'Pagamento DAS', tipo:'conta', obs:'Vencimento mensal do DAS - Simples Nacional'},
+  full:       {titulo:'Coleta Full', tipo:'full', obs:''},
+  cartao:     {titulo:'Pagar Cartão', tipo:'conta', obs:''},
+  estoque:    {titulo:'Ver Estoque', tipo:'outro', obs:'Conferir nível de estoque'},
+  fornecedor: {titulo:'Pedido ao Fornecedor', tipo:'entrega', obs:''},
+};
+
+function abrirModalTemplate(tipo){
+  const t = templatesEvento[tipo];
+  if(!t) return;
+  const hoje = new Date().toISOString().split('T')[0];
+  abrirModal(hoje);
+  setTimeout(()=>{
+    document.getElementById('ev-titulo').value = t.titulo;
+    document.getElementById('ev-tipo').value = t.tipo;
+    document.getElementById('ev-obs').value = t.obs;
+    document.getElementById('ev-push').checked = true;
+  }, 50);
+}
+
+// Também expor como aplicarTemplate para compatibilidade com modal
+function aplicarTemplate(tipo){ abrirModalTemplate(tipo); }
+
+// ============================================================
 // CALENDÁRIO
+// ============================================================
 const tipoInfo={full:{icon:'📦',label:'Coleta Full',cls:'full'},conta:{icon:'💰',label:'Vencimento de Conta',cls:'conta'},entrega:{icon:'🚚',label:'Entrega',cls:'entrega'},outro:{icon:'📌',label:'Outro',cls:'outro'}};
 const diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -831,7 +954,9 @@ function abrirModal(data,evId){
   document.getElementById('ev-titulo').value=ev?ev.titulo:'';
   document.getElementById('ev-hora').value=ev?ev.hora:'';
   document.getElementById('ev-obs').value=ev?ev.obs:'';
+  document.getElementById('ev-local').value=ev?(ev.local||''):'';
   document.getElementById('ev-tipo').value=ev?ev.tipo:'full';
+  document.getElementById('ev-push').checked=ev?!!ev.push:true;
   document.getElementById('modal-title').textContent=ev?'✏️ Editar Evento':(data?`📅 Novo Evento — ${data.split('-').reverse().join('/')}`:'📅 Novo Evento');
   let btnDel=document.getElementById('btn-del-ev');
   if(!btnDel){
@@ -845,6 +970,38 @@ function abrirModal(data,evId){
   setTimeout(()=>document.getElementById('ev-titulo').focus(),100);
 }
 
+function salvarEvento(){
+  const titulo=document.getElementById('ev-titulo').value.trim();
+  if(!titulo){alert('Informe o título do evento.');return;}
+  const evs=getEventos();
+  const novoEv={
+    titulo,
+    tipo:document.getElementById('ev-tipo').value,
+    data:document.getElementById('ev-data').value,
+    hora:document.getElementById('ev-hora').value,
+    obs:document.getElementById('ev-obs').value.trim(),
+    local:document.getElementById('ev-local').value.trim(),
+    push:document.getElementById('ev-push').checked
+  };
+  if(evEditId){
+    const idx=evs.findIndex(e=>e.id===evEditId);
+    if(idx>=0)evs[idx]={...evs[idx],...novoEv};
+  }else{
+    novoEv.id=Date.now();
+    evs.push(novoEv);
+  }
+  saveEventos(evs);
+  // Agenda notificação push se ativado
+  if(novoEv.push){
+    if(Notification.permission==='granted'){
+      agendarNotificacoesEvento(novoEv.id?novoEv:{...novoEv,id:evs[evs.length-1].id});
+    }else if(Notification.permission!=='denied'){
+      solicitarPermissaoNotificacao();
+    }
+  }
+  fecharModal();renderCal();
+}
+
 function fecharModal(){document.getElementById('modal-overlay').classList.remove('open');evEditId=null;}
 
 function excluirEvento(){
@@ -852,19 +1009,6 @@ function excluirEvento(){
   if(!confirm('Excluir este evento?'))return;
   saveEventos(getEventos().filter(e=>e.id!==evEditId));
   fecharModal();renderCal();
-}
-
-function salvarEvento(){
-  const titulo=document.getElementById('ev-titulo').value.trim();
-  if(!titulo){alert('Informe o título do evento.');return;}
-  const evs=getEventos();
-  if(evEditId){
-    const idx=evs.findIndex(e=>e.id===evEditId);
-    if(idx>=0)evs[idx]={...evs[idx],titulo,tipo:document.getElementById('ev-tipo').value,data:document.getElementById('ev-data').value,hora:document.getElementById('ev-hora').value,obs:document.getElementById('ev-obs').value.trim()};
-  }else{
-    evs.push({id:Date.now(),titulo,tipo:document.getElementById('ev-tipo').value,data:document.getElementById('ev-data').value,hora:document.getElementById('ev-hora').value,obs:document.getElementById('ev-obs').value.trim()});
-  }
-  saveEventos(evs);fecharModal();renderCal();
 }
 
 document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))fecharModal();});
@@ -1096,11 +1240,15 @@ function adicionarGiroCalendario(){
   const dataEntrega  = btn.dataset.dataEntrega;
   if(!dataPedido) return;
   const evs = getEventos();
-  evs.push({id:Date.now(), titulo:'🛒 Fazer pedido ao fornecedor', tipo:'outro', data:dataPedido, hora:'09:00', obs:'Ponto de reposição atingido — hora de pedir o novo lote'});
-  if(dataEntrega){
-    evs.push({id:Date.now()+1, titulo:'📦 Chegada do novo lote', tipo:'entrega', data:dataEntrega, hora:'', obs:'Entrega prevista do fornecedor'});
-  }
+  const pedidoEv = {id:Date.now(), titulo:'🛒 Fazer pedido ao fornecedor', tipo:'giro_pedido', data:dataPedido, hora:'09:00', obs:'Ponto de reposição atingido — hora de pedir o novo lote', push:true};
+  const entregaEv = dataEntrega ? {id:Date.now()+1, titulo:'📦 Chegada do novo lote', tipo:'giro_entrega', data:dataEntrega, hora:'', obs:'Entrega prevista do fornecedor', push:true} : null;
+  evs.push(pedidoEv);
+  if(entregaEv) evs.push(entregaEv);
   saveEventos(evs);
+  if(Notification.permission==='granted'){
+    agendarNotificacoesEvento(pedidoEv);
+    if(entregaEv) agendarNotificacoesEvento(entregaEv);
+  }
   btn.textContent='✅ Adicionado ao Calendário!';
   btn.disabled=true;
   btn.style.opacity='0.7';
