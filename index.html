@@ -371,6 +371,12 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     </div>
     <span class="sb-tooltip">Simples Nacional</span>
   </button>
+  <button class="sb-item" onclick="showPage('pub')" title="Publicidade ROAS/ACOS">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+    </div>
+    <span class="sb-tooltip">Publicidade ROAS/ACOS</span>
+  </button>
   <a class="sb-item" href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" title="INPI">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -578,7 +584,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     </div>
 
     <!-- Cards médios: 5 ferramentas -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:780px">
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:100%;max-width:780px">
       <div class="home-card" onclick="showPage('metas')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #16a34a40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Metas</div>
@@ -598,6 +604,11 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0891b240"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Simples</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Alíquota efetiva</div>
+      </div>
+      <div class="home-card" onclick="showPage('pub')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #db277740"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Publicidade</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">ROAS e ACOS ideal</div>
       </div>
       <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #d9770640"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
@@ -1333,6 +1344,138 @@ function exportarExcel(){
       <div style="font-size:2.5rem">🧾</div>
       <p style="font-size:.8rem;color:#888;margin-top:8px;line-height:1.6">Preencha o faturamento acima<br>para ver os cálculos</p>
     </div>
+  </div>
+</div>
+
+<!-- ===== PUBLICIDADE ROAS/ACOS ===== -->
+<div id="page-pub" class="page">
+  <div style="padding:24px 28px;max-width:780px;margin:0 auto">
+
+    <div style="margin-bottom:20px">
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:4px">📣 Calculadora de Publicidade</h2>
+      <p style="font-size:.76rem;color:var(--text2)">Descubra seu ROAS mínimo e ACOS máximo para anunciar sem prejuízo.</p>
+    </div>
+
+    <!-- Toggle -->
+    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:20px;width:fit-content">
+      <button id="pub-btn-dash" onclick="switchPubMode('dash')" style="padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:700;cursor:pointer;background:var(--bg);color:var(--text)">📦 Dashboard Produtos</button>
+      <button id="pub-btn-manual" onclick="switchPubMode('manual')" style="padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;background:none;color:var(--text2)">✏️ Novo Produto</button>
+    </div>
+
+    <!-- MODO DASHBOARD -->
+    <div id="pub-sec-dash">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">📦 SELECIONE O PRODUTO</div>
+        <select id="pub-produto-sel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:var(--bg2);outline:none;font-family:inherit;margin-bottom:12px">
+          <option value="">Carregando produtos...</option>
+        </select>
+        <!-- Preview produto -->
+        <div id="pub-preview" style="display:none;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Custo</div>
+            <div style="font-size:.88rem;font-weight:700;color:var(--text)" id="pub-pre-custo">—</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Preço calculado</div>
+            <div style="font-size:.88rem;font-weight:700;color:#c4b5fd" id="pub-pre-preco">—</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Margem</div>
+            <div style="font-size:.88rem;font-weight:700;color:#4ade80" id="pub-pre-margem">—</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Lucro/unid.</div>
+            <div style="font-size:.88rem;font-weight:700;color:var(--o)" id="pub-pre-payout">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">🎯 QUANTO QUER LUCRAR MESMO ANUNCIANDO? (%)</div>
+        <div class="field" style="margin-bottom:0">
+          <input type="number" id="pub-lucro-dash" placeholder="Ex: 10" min="0" max="100" step="0.1"
+            oninput="(function(){const idx=document.getElementById('pub-produto-sel').value;if(idx==='')return;const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');calcularPublicidadeDash(prods[parseInt(idx)]);})()" style="background:var(--bg2)">
+          <div class="note">% de margem que quer garantir após pagar os anúncios</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODO MANUAL -->
+    <div id="pub-sec-manual" style="display:none">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">📋 DADOS DO PRODUTO</div>
+        <div class="row2" style="margin-bottom:9px">
+          <div class="field">
+            <label>Preço de venda (R$)</label>
+            <input type="number" id="pub-m-preco" placeholder="Ex: 66,47" min="0" step="0.01" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
+          </div>
+          <div class="field">
+            <label>Custo do produto (R$)</label>
+            <input type="number" id="pub-m-custo" placeholder="Ex: 35,00" min="0" step="0.01" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
+          </div>
+        </div>
+        <div class="row2" style="margin-bottom:9px">
+          <div class="field">
+            <label>Taxa / Frete (R$)</label>
+            <input type="number" id="pub-m-taxa" placeholder="Ex: 8,00" min="0" step="0.01" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
+            <div class="note">Some frete + embalagem + insumos</div>
+          </div>
+          <div class="field">
+            <label>Comissão marketplace (%)</label>
+            <input type="number" id="pub-m-comissao" placeholder="Ex: 11,5" min="0" step="0.1" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Impostos (%)</label>
+            <input type="number" id="pub-m-imposto" placeholder="Ex: 7" min="0" step="0.1" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
+          </div>
+          <div class="field">
+            <label>Lucro desejado (%)</label>
+            <input type="number" id="pub-m-lucro" placeholder="Ex: 10" min="0" step="0.1" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
+            <div class="note">% de margem que quer garantir após os anúncios</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADO (compartilhado pelos dois modos) -->
+    <div id="pub-resultado" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">ROAS mínimo</div>
+          <div style="font-size:2rem;font-weight:900;color:#c4b5fd" id="pub-roas">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">retorno por R$ investido</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">ACOS máximo</div>
+          <div style="font-size:2rem;font-weight:900;color:#4ade80" id="pub-acos">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">do faturamento em ads</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Margem p/ ads</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--o)" id="pub-margem-ads">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">por venda realizada</div>
+        </div>
+      </div>
+
+      <!-- Explicação -->
+      <div class="breakdown">
+        <div class="bd-title">💡 O QUE ISSO SIGNIFICA?</div>
+        <div class="brow">
+          <span class="bl">Para cada R$ 1,00 em ads, você precisa vender</span>
+          <span class="br" id="pub-exp-roas" style="color:#c4b5fd">—</span>
+        </div>
+        <div class="brow">
+          <span class="bl">Seu custo de anúncio não pode passar de</span>
+          <span class="br" id="pub-exp-acos" style="color:#4ade80">—</span>
+        </div>
+        <div class="brow total">
+          <span class="bl">Você tem disponível por venda para investir em ads</span>
+          <span class="br" id="pub-exp-margem" style="color:var(--o)">—</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
