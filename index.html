@@ -300,8 +300,8 @@ body.light .gest-card{background:#fff;border-color:#d8d0f0}
 /* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:#0a0812;border-right:1px solid #1e1a2e;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:2px;z-index:500}
 body.light .sidebar{background:#ede9fe;border-color:#d8d0f0}
-.sb-logo{width:38px;height:38px;background:#6B21A822;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;cursor:pointer;flex-shrink:0}
-.sb-logo img{height:28px;object-fit:contain;filter:brightness(0) invert(1)}
+.sb-logo{width:42px;height:42px;background:#1e1a2e;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;cursor:pointer;flex-shrink:0}
+.sb-logo img{width:34px;height:34px;object-fit:contain;filter:none}
 body.light .sb-logo img{filter:none}
 .sb-item{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;flex-shrink:0;border:none;background:none}
 .sb-item:hover{background:#6B21A820}
@@ -329,7 +329,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
 <!-- SIDEBAR GLOBAL -->
 <div class="sidebar" id="sidebar" style="display:none">
   <div class="sb-logo" onclick="showPage('home')">
-    <img src="logo.png" alt="RealEcom">
+    <img src="logcon.png" alt="RealEcom" style="width:34px;height:34px;object-fit:contain">
   </div>
   <button class="sb-item" onclick="showPage('home')" title="Home">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a89ec8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -477,7 +477,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:780px;margin-bottom:12px">
       <div class="home-card" onclick="showPage('calc')" style="padding:22px 20px;border-color:var(--border);text-align:left">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-          <div style="width:44px;height:44px;background:#6B21A822;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">🧮</div>
+          <div style="width:44px;height:44px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px #6B21A840"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg></div>
           <div>
             <div style="font-size:1rem;font-weight:800;color:var(--text)">Calculadora</div>
             <div style="font-size:.72rem;color:var(--text2)">Precificação completa</div>
@@ -488,7 +488,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       </div>
       <div class="home-card" onclick="showPage('dash')" style="padding:22px 20px;border-color:var(--border);text-align:left">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-          <div style="width:44px;height:44px;background:#F0A07022;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">📊</div>
+          <div style="width:44px;height:44px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px #F0A07040"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
           <div>
             <div style="font-size:1rem;font-weight:800;color:var(--text)">Dashboard</div>
             <div style="font-size:.72rem;color:var(--text2)" id="home-dash-sub">Seus produtos salvos</div>
@@ -502,27 +502,27 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     <!-- Cards médios: 5 ferramentas -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:780px">
       <div class="home-card" onclick="showPage('metas')" style="padding:20px 14px;text-align:center">
-        <div style="width:40px;height:40px;background:#16a34a22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">🎯</div>
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #16a34a40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Metas</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Acompanhe seu progresso</div>
       </div>
       <div class="home-card" onclick="showPage('cal')" style="padding:20px 14px;text-align:center">
-        <div style="width:40px;height:40px;background:#F0A07022;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">📅</div>
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #2563eb40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Calendário</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Coletas e vencimentos</div>
       </div>
       <div class="home-card" onclick="showPage('gestao')" style="padding:20px 14px;text-align:center">
-        <div style="width:40px;height:40px;background:#7c3aed22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">📦</div>
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #7c3aed40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Giro</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Gestão de estoque</div>
       </div>
       <div class="home-card" onclick="showPage('simples')" style="padding:20px 14px;text-align:center">
-        <div style="width:40px;height:40px;background:#0ea5e922;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">🧾</div>
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0891b240"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Simples</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Alíquota efetiva</div>
       </div>
       <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:20px 14px;text-align:center">
-        <div style="width:40px;height:40px;background:#f59e0b22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px">🔍</div>
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #d9770640"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Marca registrada</div>
       </a>
