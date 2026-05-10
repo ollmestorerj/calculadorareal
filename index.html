@@ -458,19 +458,97 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     <div id="home-usuario" style="font-size:.82rem;color:var(--text2);margin-bottom:20px;text-align:center"></div>
 
     <!-- Métricas rápidas -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:780px;margin-bottom:16px">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px">Produtos salvos</div>
-        <div style="font-size:1.6rem;font-weight:900;color:#c4b5fd" id="home-kpi-prods">—</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:780px;margin-bottom:16px">
+
+      <!-- Dashboard de Produtos -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer" onclick="showPage('dash')">
+        <div style="font-size:.68rem;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:4px;font-weight:600">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard · <span id="home-kpi-prods" style="color:var(--o)">—</span> produtos
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-bottom:2px">
+              <span>Acima de 10%</span><span style="font-weight:700;color:#4ade80" id="home-m10">—</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="height:4px;background:#4ade80;border-radius:4px;transition:width .5s" id="home-bar10" style="width:0%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-bottom:2px">
+              <span>Acima de 15%</span><span style="font-weight:700;color:#F0A070" id="home-m15">—</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="height:4px;background:#F0A070;border-radius:4px;transition:width .5s" id="home-bar15" style="width:0%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-bottom:2px">
+              <span>Acima de 20%</span><span style="font-weight:700;color:#c4b5fd" id="home-m20">—</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="height:4px;background:#c4b5fd;border-radius:4px;transition:width .5s" id="home-bar20" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px">Margem média</div>
-        <div style="font-size:1.6rem;font-weight:900;color:#4ade80" id="home-kpi-margem">—</div>
+
+      <!-- Metas -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer" onclick="showPage('metas')">
+        <div style="font-size:.68rem;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:4px;font-weight:600">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+          Metas
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-bottom:2px">
+              <span>Dia</span><span style="font-weight:700;color:var(--text)" id="home-meta-dia">—</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="height:4px;background:#4ade80;border-radius:4px;transition:width .5s" id="home-bar-dia" style="width:0%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-bottom:2px">
+              <span>Semana</span><span style="font-weight:700;color:var(--text)" id="home-meta-sem">—</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="height:4px;background:#F0A070;border-radius:4px;transition:width .5s" id="home-bar-sem" style="width:0%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-bottom:2px">
+              <span>Mês</span><span style="font-weight:700;color:var(--text)" id="home-meta-mes">—</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="height:4px;background:#6B21A8;border-radius:4px;transition:width .5s" id="home-bar-mes" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px">Acesso válido até</div>
-        <div style="font-size:1rem;font-weight:900;color:var(--o);padding-top:5px" id="home-kpi-validade">—</div>
+
+      <!-- Calendário -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer" onclick="showPage('cal')">
+        <div style="font-size:.68rem;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:4px;font-weight:600">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="home-cal-titulo">Hoje</span>
+        </div>
+        <div id="home-cal-eventos" style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:.7rem;color:var(--text3)">Carregando...</div>
+        </div>
       </div>
+
+      <!-- Acesso -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px">
+        <div style="font-size:.68rem;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:4px;font-weight:600">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Acesso válido até
+        </div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--o);margin-bottom:6px" id="home-kpi-validade">—</div>
+        <div style="font-size:.68rem;color:var(--text3)" id="home-kpi-plano">—</div>
+      </div>
+
     </div>
 
     <!-- Cards grandes: Calculadora + Dashboard -->
