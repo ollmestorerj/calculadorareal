@@ -1352,48 +1352,44 @@ function exportarExcel(){
   <div style="padding:24px 28px;max-width:780px;margin:0 auto">
 
     <div style="margin-bottom:20px">
-      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:4px">📣 Calculadora de Publicidade</h2>
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:4px">Calculadora de Publicidade</h2>
       <p style="font-size:.76rem;color:var(--text2)">Descubra seu ROAS mínimo e ACOS máximo para anunciar sem prejuízo.</p>
     </div>
 
-    <!-- Toggle -->
-    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:20px;width:fit-content">
-      <button id="pub-btn-dash" onclick="switchPubMode('dash')" style="padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:700;cursor:pointer;background:var(--bg);color:var(--text)">📦 Dashboard Produtos</button>
-      <button id="pub-btn-manual" onclick="switchPubMode('manual')" style="padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;background:none;color:var(--text2)">✏️ Novo Produto</button>
+    <!-- Toggle igual calculadora -->
+    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:20px;gap:4px">
+      <button id="pub-btn-dash" onclick="switchPubMode('dash')" style="flex:1;padding:10px 22px;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;display:flex;align-items:center;gap:7px;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard Produtos
+      </button>
+      <button id="pub-btn-manual" onclick="switchPubMode('manual')" style="flex:1;padding:10px 22px;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;background:none;color:var(--text3);display:flex;align-items:center;gap:7px;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Novo Produto
+      </button>
     </div>
 
     <!-- MODO DASHBOARD -->
     <div id="pub-sec-dash">
       <div class="card" style="margin-bottom:14px">
-        <div class="card-title">📦 SELECIONE O PRODUTO</div>
-        <select id="pub-produto-sel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:var(--bg2);outline:none;font-family:inherit;margin-bottom:12px">
-          <option value="">Carregando produtos...</option>
-        </select>
-        <!-- Preview produto -->
+        <div class="card-title" style="display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          SELECIONE O PRODUTO
+        </div>
+        <select id="pub-produto-sel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:var(--bg2);outline:none;font-family:inherit;margin-bottom:12px"><option value="">Carregando produtos...</option></select>
         <div id="pub-preview" style="display:none;grid-template-columns:repeat(4,1fr);gap:8px">
-          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
-            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Custo</div>
-            <div style="font-size:.88rem;font-weight:700;color:var(--text)" id="pub-pre-custo">—</div>
-          </div>
-          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
-            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Preço calculado</div>
-            <div style="font-size:.88rem;font-weight:700;color:#c4b5fd" id="pub-pre-preco">—</div>
-          </div>
-          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
-            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Margem</div>
-            <div style="font-size:.88rem;font-weight:700;color:#4ade80" id="pub-pre-margem">—</div>
-          </div>
-          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px">
-            <div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Lucro/unid.</div>
-            <div style="font-size:.88rem;font-weight:700;color:var(--o)" id="pub-pre-payout">—</div>
-          </div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Custo</div><div style="font-size:.88rem;font-weight:700;color:var(--text)" id="pub-pre-custo">—</div></div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Preço calculado</div><div style="font-size:.88rem;font-weight:700;color:#c4b5fd" id="pub-pre-preco">—</div></div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Margem</div><div style="font-size:.88rem;font-weight:700;color:#4ade80" id="pub-pre-margem">—</div></div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Lucro/unid.</div><div style="font-size:.88rem;font-weight:700;color:var(--o)" id="pub-pre-payout">—</div></div>
         </div>
       </div>
       <div class="card" style="margin-bottom:14px">
-        <div class="card-title">🎯 QUANTO QUER LUCRAR MESMO ANUNCIANDO? (%)</div>
+        <div class="card-title" style="display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          QUANTO QUER LUCRAR MESMO ANUNCIANDO? (%)
+        </div>
         <div class="field" style="margin-bottom:0">
-          <input type="number" id="pub-lucro-dash" placeholder="Ex: 10" min="0" max="100" step="0.1"
-            oninput="(function(){const idx=document.getElementById('pub-produto-sel').value;if(idx==='')return;const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');calcularPublicidadeDash(prods[parseInt(idx)]);})()" style="background:var(--bg2)">
+          <input type="number" id="pub-lucro-dash" placeholder="Ex: 10" min="0" max="100" step="0.1" oninput="(function(){const idx=document.getElementById('pub-produto-sel').value;if(idx==='')return;const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');calcularPublicidadeDash(prods[parseInt(idx)]);})()">
           <div class="note">% de margem que quer garantir após pagar os anúncios</div>
         </div>
       </div>
@@ -1402,78 +1398,93 @@ function exportarExcel(){
     <!-- MODO MANUAL -->
     <div id="pub-sec-manual" style="display:none">
       <div class="card" style="margin-bottom:14px">
-        <div class="card-title">📋 DADOS DO PRODUTO</div>
+        <div class="card-title" style="display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          DADOS DO PRODUTO
+        </div>
+        <div class="field" style="margin-bottom:9px"><label>Nome do produto</label><input type="text" id="pub-m-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
         <div class="row2" style="margin-bottom:9px">
-          <div class="field">
-            <label>Preço de venda (R$)</label>
-            <input type="number" id="pub-m-preco" placeholder="Ex: 66,47" min="0" step="0.01" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
-          </div>
-          <div class="field">
-            <label>Custo do produto (R$)</label>
-            <input type="number" id="pub-m-custo" placeholder="Ex: 35,00" min="0" step="0.01" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
-          </div>
+          <div class="field"><label>Preço de venda (R$)</label><input type="number" id="pub-m-preco" placeholder="Ex: 66,47" min="0" step="0.01" oninput="calcularPublicidadeManual()"></div>
+          <div class="field"><label>Custo do produto (R$)</label><input type="number" id="pub-m-custo" placeholder="Ex: 35,00" min="0" step="0.01" oninput="calcularPublicidadeManual()"></div>
         </div>
         <div class="row2" style="margin-bottom:9px">
-          <div class="field">
-            <label>Taxa / Frete (R$)</label>
-            <input type="number" id="pub-m-taxa" placeholder="Ex: 8,00" min="0" step="0.01" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
-            <div class="note">Some frete + embalagem + insumos</div>
-          </div>
-          <div class="field">
-            <label>Comissão marketplace (%)</label>
-            <input type="number" id="pub-m-comissao" placeholder="Ex: 11,5" min="0" step="0.1" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
-          </div>
+          <div class="field"><label>Taxa / Frete (R$)</label><input type="number" id="pub-m-taxa" placeholder="Ex: 8,00" min="0" step="0.01" oninput="calcularPublicidadeManual()"><div class="note">Some frete + embalagem + insumos</div></div>
+          <div class="field"><label>Comissão marketplace (%)</label><input type="number" id="pub-m-comissao" placeholder="Ex: 11,5" min="0" step="0.1" oninput="calcularPublicidadeManual()"></div>
         </div>
         <div class="row2">
-          <div class="field">
-            <label>Impostos (%)</label>
-            <input type="number" id="pub-m-imposto" placeholder="Ex: 7" min="0" step="0.1" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
-          </div>
-          <div class="field">
-            <label>Lucro desejado (%)</label>
-            <input type="number" id="pub-m-lucro" placeholder="Ex: 10" min="0" step="0.1" oninput="calcularPublicidadeManual()" style="background:var(--bg2)">
-            <div class="note">% de margem que quer garantir após os anúncios</div>
-          </div>
+          <div class="field"><label>Impostos (%)</label><input type="number" id="pub-m-imposto" placeholder="Ex: 7" min="0" step="0.1" oninput="calcularPublicidadeManual()"></div>
+          <div class="field"><label>Lucro desejado (%)</label><input type="number" id="pub-m-lucro" placeholder="Ex: 10" min="0" step="0.1" oninput="calcularPublicidadeManual()"><div class="note">% de margem após os anúncios</div></div>
         </div>
       </div>
     </div>
 
-    <!-- RESULTADO (compartilhado pelos dois modos) -->
+    <!-- RESULTADO -->
     <div id="pub-resultado" style="display:none">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
-          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">ROAS mínimo</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px"><div style="width:22px;height:22px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">ROAS mínimo</span></div>
           <div style="font-size:2rem;font-weight:900;color:#c4b5fd" id="pub-roas">—</div>
           <div style="font-size:.68rem;color:var(--text3);margin-top:4px">retorno por R$ investido</div>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
-          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">ACOS máximo</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px"><div style="width:22px;height:22px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">ACOS máximo</span></div>
           <div style="font-size:2rem;font-weight:900;color:#4ade80" id="pub-acos">—</div>
           <div style="font-size:.68rem;color:var(--text3);margin-top:4px">do faturamento em ads</div>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
-          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Margem p/ ads</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px"><div style="width:22px;height:22px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Margem p/ ads</span></div>
           <div style="font-size:2rem;font-weight:900;color:var(--o)" id="pub-margem-ads">—</div>
           <div style="font-size:.68rem;color:var(--text3);margin-top:4px">por venda realizada</div>
         </div>
       </div>
+      <div class="breakdown" style="margin-bottom:14px">
+        <div class="bd-title">O que isso significa na prática?</div>
+        <div class="brow"><span class="bl">Para cada R$ 1,00 em ads, você precisa vender</span><span class="br" id="pub-exp-roas" style="color:#c4b5fd">—</span></div>
+        <div class="brow"><span class="bl">Seu custo de anúncio não pode passar de</span><span class="br" id="pub-exp-acos" style="color:#4ade80">—</span></div>
+        <div class="brow total"><span class="bl">Margem disponível por venda para investir em ads</span><span class="br" id="pub-exp-margem" style="color:var(--o)">—</span></div>
+      </div>
+      <div class="save-card" style="margin-bottom:14px">
+        <div class="save-title">Salvar esta análise</div>
+        <div id="pub-save-nome-wrap" style="display:none;margin-bottom:8px"><div class="field" style="margin-bottom:0"><label>Nome do produto</label><input type="text" id="pub-save-nome" placeholder="Ex: Camiseta Dry Fit P"></div></div>
+        <button onclick="salvarAnalisePublicidade()" class="btn-save">Salvar análise</button>
+      </div>
+    </div>
 
-      <!-- Explicação -->
-      <div class="breakdown">
-        <div class="bd-title">💡 O QUE ISSO SIGNIFICA?</div>
-        <div class="brow">
-          <span class="bl">Para cada R$ 1,00 em ads, você precisa vender</span>
-          <span class="br" id="pub-exp-roas" style="color:#c4b5fd">—</span>
+    <!-- Glossário -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleGlossario()">
+        <div class="card-title" style="margin-bottom:0;display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          O QUE É ROAS, ACOS E TACOS?
         </div>
-        <div class="brow">
-          <span class="bl">Seu custo de anúncio não pode passar de</span>
-          <span class="br" id="pub-exp-acos" style="color:#4ade80">—</span>
-        </div>
-        <div class="brow total">
-          <span class="bl">Você tem disponível por venda para investir em ads</span>
-          <span class="br" id="pub-exp-margem" style="color:var(--o)">—</span>
+        <span id="glossario-arrow" style="color:var(--text3);font-size:.8rem">▼</span>
+      </div>
+      <div id="glossario-body" style="display:none;margin-top:14px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="border-left:3px solid #c4b5fd;padding-left:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#6B21A822;color:#c4b5fd;border:1px solid #6B21A844;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700">ROAS</span><span style="font-size:.82rem;font-weight:700;color:var(--text)">Retorno sobre o gasto em anúncio</span></div>
+            <p style="font-size:.76rem;color:var(--text2);line-height:1.6">Indica quantos reais você fatura para cada R$ 1,00 gasto em ads. Gastou R$ 100 e vendeu R$ 500? Seu ROAS é <strong style="color:#c4b5fd">5x</strong>. Quanto maior, melhor.</p>
+          </div>
+          <div style="border-left:3px solid #4ade80;padding-left:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#16a34a22;color:#4ade80;border:1px solid #16a34a44;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700">ACOS</span><span style="font-size:.82rem;font-weight:700;color:var(--text)">Custo do anúncio sobre as vendas</span></div>
+            <p style="font-size:.76rem;color:var(--text2);line-height:1.6">Mostra quanto % do faturamento foi para pagar os anúncios. Gastou R$ 100 e vendeu R$ 500? ACOS de <strong style="color:#4ade80">20%</strong>. Quanto menor, melhor. É o inverso do ROAS.</p>
+          </div>
+          <div style="border-left:3px solid #F0A070;padding-left:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#F0A07022;color:#F0A070;border:1px solid #F0A07044;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700">TACOS</span><span style="font-size:.82rem;font-weight:700;color:var(--text)">Custo total do anúncio sobre todas as vendas</span></div>
+            <p style="font-size:.76rem;color:var(--text2);line-height:1.6">Igual ao ACOS, mas divide o gasto com ads pelo total de vendas — incluindo as orgânicas. Mostra o impacto real dos ads no negócio inteiro, não só nas vendas pagas.</p>
+          </div>
+          <div style="background:#1e1a2e;border-radius:9px;padding:10px 13px;font-size:.74rem;color:#a78bfa">💡 <strong>Dica:</strong> ROAS e ACOS são inversos — ROAS = 100 ÷ ACOS. ACOS máximo de 5% = ROAS mínimo de 20x.</div>
         </div>
       </div>
+    </div>
+
+    <!-- Histórico -->
+    <div id="pub-historico-wrap" style="display:none">
+      <div class="card-title" style="margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <div style="width:20px;height:20px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4"/><polyline points="3 16 3 11 8 11"/></svg></div>
+        ANÁLISES SALVAS
+      </div>
+      <div id="pub-historico"></div>
     </div>
 
   </div>
