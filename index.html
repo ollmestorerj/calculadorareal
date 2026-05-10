@@ -642,8 +642,8 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
   <div class="main-layout">
   <div class="left-panel">
     <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:12px;gap:4px">
-      <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff">💎 Cálculo pela Margem Desejada</button>
-      <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:none;color:var(--text3)">🌐 Cálculo pelo Valor Médio do Mercado</button>
+      <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Cálculo pela Margem Desejada</button>
+      <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:10px 6px;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;background:none;color:var(--text3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Cálculo pelo Valor Médio do Mercado</button>
     </div>
     <div id="mode-desc" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:11px;font-size:.76rem;color:var(--text2);line-height:1.5">
       <strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.
@@ -662,7 +662,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Frete & Outros Custos <span style="color:#f87171;font-size:.65rem">(obrigatório)</span></div>
       <div class="toggle-row">
         <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')">📐 Por Dimensões</button>
-        <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')">✏️ Manual</button>
+        <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Manual</button>
       </div>
       <div id="tab-dim">
         <div class="row4">
@@ -696,7 +696,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       <!-- Frete de Coleta Full -->
       <div style="border-top:1px solid #7c3aed44;margin-top:11px;padding-top:11px">
         <div style="background:#7c3aed18;border:1px solid #7c3aed44;border-radius:8px;padding:7px 10px;margin-bottom:10px;font-size:.72rem;color:#a78bfa;line-height:1.5">
-          📦 <strong>Frete de Coleta Full</strong> — custo do envio dos seus produtos ao CD do Mercado Livre.
+          <strong>Frete de Coleta Full</strong> — custo do envio dos seus produtos ao CD do Mercado Livre.
         </div>
         <div class="row2">
           <div class="field">
@@ -709,7 +709,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
           </div>
         </div>
         <div id="frete-full-result" style="display:none;background:#7c3aed18;border:1px solid #7c3aed44;border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7c3aed;text-align:center">
-          📦 Custo por unidade: <strong id="frete-full-unit" style="color:#6B21A8">—</strong>
+          Custo por unidade: <strong id="frete-full-unit" style="color:#6B21A8">—</strong>
         </div>
       </div>
     </div>
@@ -735,7 +735,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     </div>
     <button class="btn-calc" onclick="calcular()"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
     <div id="inpi-box" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:10px">
-      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">📋 Verificar Marca Registrada no INPI</div>
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Verificar Marca Registrada no INPI</div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
         <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">1</span><span>Na tela inicial, clique em <strong style="color:#c4b5fd">Continuar</strong> para acessar sem login</span></div>
         <div style="display:flex;gap:8px;align-items:flex-start;font-size:.76rem;color:var(--text2)"><span style="background:#1e1a2e;color:var(--o);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0">2</span><span>No menu, clique em <strong style="color:#c4b5fd">Marca</strong></span></div>
@@ -753,7 +753,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
     <div id="right-result" style="display:none">
       <div class="price-grid" id="price-grid">
         <div class="price-card calc">
-          <div class="pc-tag">🎯 Preço Ideal Calculado</div>
+          <div class="pc-tag">Preço Ideal Calculado</div>
           <div class="pc-price" id="pc-preco">R$ —</div>
           <div class="pc-badge" style="background:rgba(74,222,128,.2);color:#4ade80">✅ Preço mínimo seguro</div>
           <div class="pc-kpis">
@@ -763,7 +763,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
           </div>
         </div>
         <div class="price-card ml-none" id="pc-ml-card">
-          <div class="pc-tag" id="pc-ml-tag">💛 Preço Médio ML</div>
+          <div class="pc-tag" id="pc-ml-tag">Preço Médio ML</div>
           <div class="pc-price" id="pc-ml-preco">—</div>
           <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1);color:var(--text2)">Informe o preço médio</div>
           <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
@@ -792,7 +792,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
           <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
         </div>
         <div class="breakdown" style="margin-bottom:0">
-          <div class="bd-title">📈 Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unid.</div>
+          <div class="bd-title"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unid.</div>
           <!-- Cabeçalho 3 colunas -->
           <div id="proj-header-ml" style="display:none;margin-bottom:2px">
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding-bottom:6px;border-bottom:1.5px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em">
@@ -808,8 +808,8 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
             <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
             <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
             <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
-            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">💰 Lucro bruto</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
-            <div class="brow"><span class="bl">Caixa c/ imposto 💡</span><span class="br" id="proj-cx-bruto">—</span></div>
+            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">Lucro bruto</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
+            <div class="brow"><span class="bl">Caixa c/ imposto</span><span class="br" id="proj-cx-bruto">—</span></div>
             <div class="brow total"><span class="bl">Caixa líquido</span><span class="br" id="proj-cx">—</span></div>
           </div>
           <!-- Linhas duplas (com ML) -->
@@ -819,10 +819,10 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Total em impostos</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-imp-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-imp-b">—</span></div>
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Faturamento esperado</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-fat-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-fat-b">—</span></div>
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Lucro por unidade</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-pay-a">—</span><span style="text-align:right;font-weight:600" id="pd-pay-b">—</span></div>
-            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa c/ imposto 💡</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-bruto-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-bruto-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa c/ imposto</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-bruto-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-bruto-b">—</span></div>
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa líquido</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-b">—</span></div>
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:8px 0 2px;border-top:1.5px solid var(--border);margin-top:2px;font-size:.82rem">
-              <span style="color:#4ade80;font-weight:700">💰 Lucro bruto</span>
+              <span style="color:#4ade80;font-weight:700">Lucro bruto</span>
               <span style="text-align:right;color:#c4b5fd;font-weight:800;font-size:.95rem" id="pd-lb-a">—</span>
               <span style="text-align:right;font-weight:800;font-size:.95rem" id="pd-lb-b">—</span>
             </div>
@@ -905,7 +905,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
   <div class="dash-page">
     <div class="dash-header">
       <button class="btn-back" onclick="showPage('home')">← Voltar</button>
-      <h2>📊 Dashboard de <span>Produtos</span></h2>
+      <h2><span style="width:22px;height:22px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;margin-right:7px;vertical-align:middle;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Dashboard de <span>Produtos</span></h2>
       <button onclick="exportarExcel()" style="background:linear-gradient(135deg,#166534,#16a34a);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;white-space:nowrap">📥 Exportar Excel</button>
     </div>
     <div id="dash-content"></div>
@@ -986,7 +986,7 @@ function exportarExcel(){
   <div style="padding:20px 18px;max-width:700px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px">
       <button class="btn-back" onclick="showPage('home')">← Voltar</button>
-      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">📦 Calculadora de <span style="color:var(--o)">Giro</span></h2>
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)"><span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;margin-right:7px;vertical-align:middle;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Calculadora de <span style="color:var(--o)">Giro</span></h2>
       <div style="width:80px"></div>
     </div>
     <p style="font-size:.76rem;color:var(--text2);margin-bottom:18px;text-align:center;line-height:1.6">Descubra quanto estoque você precisa comprar e quando fazer o próximo pedido.</p>
@@ -1054,7 +1054,7 @@ function exportarExcel(){
       </div>
 
       <!-- Quanto comprar -->
-      <div class="gest-card-title" style="color:var(--text3);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">🛒 QUANTO COMPRAR NO PRÓXIMO PEDIDO</div>
+      <div class="gest-card-title" style="color:var(--text3);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">QUANTO COMPRAR NO PRÓXIMO PEDIDO</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px">
         <div class="gest-kpi" style="border-color:#1e3a5f">
           <div class="gk-label" style="color:#60a5fa">5 dias</div>
@@ -1100,7 +1100,7 @@ function exportarExcel(){
         <div style="font-size:.74rem;color:#a78bfa;margin-bottom:10px;padding:8px 11px;background:#6B21A810;border-radius:8px;line-height:1.6" id="giro-ponto-msg"></div>
         <!-- Botão adicionar ao calendário -->
         <button id="btn-add-cal" onclick="adicionarGiroCalendario()" style="display:none;width:100%;padding:11px;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer">
-          📅 Adicionar lembrete no Calendário
+          Adicionar lembrete no Calendário
         </button>
       </div>
 
@@ -1148,15 +1148,15 @@ function exportarExcel(){
         </div>
         <div id="meta-resumo" style="display:none;margin-bottom:14px">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-            <span style="font-size:.82rem;color:var(--text2)">📅 Semana</span>
+            <span style="font-size:.82rem;color:var(--text2)">Semana</span>
             <span style="font-size:.95rem;font-weight:800;color:var(--o)" id="meta-val-semana">—</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-            <span style="font-size:.82rem;color:var(--text2)">📆 Quinzena</span>
+            <span style="font-size:.82rem;color:var(--text2)">Quinzena</span>
             <span style="font-size:.95rem;font-weight:800;color:var(--o)" id="meta-val-quinzena">—</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0">
-            <span style="font-size:.82rem;color:var(--text2)">🗓️ Mês</span>
+            <span style="font-size:.82rem;color:var(--text2)">Mês</span>
             <span style="font-size:.95rem;font-weight:800;color:var(--o)" id="meta-val-mes">—</span>
           </div>
         </div>
@@ -1279,7 +1279,7 @@ function exportarExcel(){
   <div style="padding:20px 18px;max-width:680px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px">
       <button class="btn-back" onclick="showPage('home')">← Voltar</button>
-      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">🧾 Calculadora <span style="color:var(--o)">Simples Nacional</span></h2>
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)"><span style="width:22px;height:22px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;margin-right:7px;vertical-align:middle;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Calculadora <span style="color:var(--o)">Simples Nacional</span></h2>
       <div style="width:80px"></div>
     </div>
     <p style="font-size:.76rem;color:var(--text2);margin-bottom:20px;text-align:center;line-height:1.6">Anexo I — Comércio. Calcule sua alíquota efetiva e o imposto a pagar.</p>
