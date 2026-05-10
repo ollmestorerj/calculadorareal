@@ -372,6 +372,7 @@ function showPage(p,bypassCheck){
   if(p==='metas')carregarMetas();
   if(p==='gestao')calcularGestao();
   if(p==='simples'){document.getElementById('sn-resultado').style.display='none';document.getElementById('sn-empty').style.display='block';}
+  if(p==='pub'){switchPubMode('dash');}
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
@@ -728,7 +729,7 @@ async function salvarProduto(){
   if(!nome){alert('Informe o nome do produto.');return;}
   const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM;
   const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
-  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout};
+  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA};
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   prods.unshift(prod);
   localStorage.setItem('realecom_prods',JSON.stringify(prods));
@@ -1111,6 +1112,98 @@ function maskReal(el){
 
 function parseMasked(el){
   return parseFloat((el.value||'').replace(/[R$\s.]/g,'').replace(',','.'))||0;
+}
+
+// ============================================================
+// CALCULADORA DE PUBLICIDADE — ROAS/ACOS
+// ============================================================
+let pubMode = 'dash'; // 'dash' ou 'manual'
+
+function switchPubMode(mode){
+  pubMode = mode;
+  const btnDash = document.getElementById('pub-btn-dash');
+  const btnMan  = document.getElementById('pub-btn-manual');
+  const secDash = document.getElementById('pub-sec-dash');
+  const secMan  = document.getElementById('pub-sec-manual');
+  const ativo = 'padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:700;cursor:pointer;background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)';
+  const inativo = 'padding:8px 20px;border-radius:9px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;background:none;color:var(--text2)';
+  if(mode==='dash'){
+    btnDash.style.cssText=ativo; btnMan.style.cssText=inativo;
+    secDash.style.display='block'; secMan.style.display='none';
+    carregarProdutosPublicidade();
+  }else{
+    btnMan.style.cssText=ativo; btnDash.style.cssText=inativo;
+    secDash.style.display='none'; secMan.style.display='block';
+    calcularPublicidadeManual();
+  }
+}
+
+async function carregarProdutosPublicidade(){
+  const prods = JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const sel = document.getElementById('pub-produto-sel');
+  if(!sel) return;
+  if(!prods.length){
+    sel.innerHTML='<option value="">Nenhum produto salvo ainda</option>';
+    return;
+  }
+  sel.innerHTML='<option value="">Selecione um produto...</option>'+
+    prods.map((p,i)=>`<option value="${i}">${p.nome} — ${p.precoCalc?'R$ '+p.precoCalc.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'}</option>`).join('');
+  sel.onchange = ()=>selecionarProdutoPublicidade(prods);
+}
+
+function selecionarProdutoPublicidade(prods){
+  const idx = document.getElementById('pub-produto-sel').value;
+  const preview = document.getElementById('pub-preview');
+  const lucroEl = document.getElementById('pub-lucro-dash');
+  if(idx===''){preview.style.display='none';document.getElementById('pub-resultado').style.display='none';return;}
+  const p = prods[parseInt(idx)];
+  preview.style.display='grid';
+  document.getElementById('pub-pre-custo').textContent  = fmt(p.custoReal||0);
+  document.getElementById('pub-pre-preco').textContent  = fmt(p.precoCalc||0);
+  document.getElementById('pub-pre-margem').textContent = (p.margem||0).toFixed(1)+'%';
+  document.getElementById('pub-pre-payout').textContent = fmt(p.payout||0);
+  if(lucroEl) lucroEl.value = '';
+  calcularPublicidadeDash(p);
+}
+
+function calcularPublicidadeDash(p){
+  const lucroDesejado = parseFloat(document.getElementById('pub-lucro-dash').value)||0;
+  if(!p||!p.precoCalc) return;
+  const taxaFrete = (p.frete||0) + (p.ins||0);
+  const pI = p.pI||0, pC = p.pC||0, pA = p.pA||0;
+  const custos = p.custoReal + taxaFrete + p.precoCalc*(pI+pC+pA);
+  const margemAds = p.precoCalc - custos - (p.precoCalc*(lucroDesejado/100));
+  renderResultadoPublicidade(p.precoCalc, margemAds);
+}
+
+function calcularPublicidadeManual(){
+  const preco    = parseFloat(document.getElementById('pub-m-preco').value)||0;
+  const custo    = parseFloat(document.getElementById('pub-m-custo').value)||0;
+  const taxafrete= parseFloat(document.getElementById('pub-m-taxa').value)||0;
+  const comissao = (parseFloat(document.getElementById('pub-m-comissao').value)||0)/100;
+  const imposto  = (parseFloat(document.getElementById('pub-m-imposto').value)||0)/100;
+  const lucro    = (parseFloat(document.getElementById('pub-m-lucro').value)||0)/100;
+  if(!preco||!custo){document.getElementById('pub-resultado').style.display='none';return;}
+  const custos = custo + taxafrete + preco*(comissao+imposto);
+  const margemAds = preco - custos - (preco*lucro);
+  renderResultadoPublicidade(preco, margemAds);
+}
+
+function renderResultadoPublicidade(preco, margemAds){
+  const res = document.getElementById('pub-resultado');
+  if(margemAds<=0||preco<=0){
+    res.style.display='none';
+    return;
+  }
+  res.style.display='block';
+  const acos = (margemAds/preco)*100;
+  const roas = preco/margemAds;
+  document.getElementById('pub-roas').textContent = roas.toFixed(1)+'x';
+  document.getElementById('pub-acos').textContent = acos.toFixed(1)+'%';
+  document.getElementById('pub-margem-ads').textContent = fmt(margemAds);
+  document.getElementById('pub-exp-roas').textContent = fmt(preco);
+  document.getElementById('pub-exp-acos').textContent = acos.toFixed(1)+'%';
+  document.getElementById('pub-exp-margem').textContent = fmt(margemAds);
 }
 
 // ============================================================
