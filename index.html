@@ -321,6 +321,9 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
 /* Ajusta layouts internos */
 .main-layout{min-height:100vh}
 .dash-page,.cal-page,.metas-page{padding:20px 18px;max-width:960px;margin:0 auto}
+
+.sb-item.active{background:#6B21A833 !important}
+.sb-item.active svg{opacity:1}
 </style>
 </head>
 <body>
@@ -331,47 +334,47 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
   <div class="sb-logo" onclick="showPage('home')">
     <img src="logcon.png" alt="RealEcom" style="width:34px;height:34px;object-fit:contain">
   </div>
-  <button class="sb-item" onclick="showPage('home')" title="Home">
+  <button class="sb-item" id="sb-home" onclick="showPage('home')" title="Home">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a89ec8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span class="sb-tooltip">Home</span>
   </button>
-  <button class="sb-item" onclick="showPage('calc')" title="Calculadora">
+  <button class="sb-item" id="sb-calc" onclick="showPage('calc')" title="Calculadora">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
     </div>
     <span class="sb-tooltip">Calculadora</span>
   </button>
-  <button class="sb-item" onclick="showPage('dash')" title="Dashboard">
+  <button class="sb-item" id="sb-dash" onclick="showPage('dash')" title="Dashboard">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     </div>
     <span class="sb-tooltip">Dashboard</span>
   </button>
-  <button class="sb-item" onclick="showPage('metas')" title="Metas">
+  <button class="sb-item" id="sb-metas" onclick="showPage('metas')" title="Metas">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
     </div>
     <span class="sb-tooltip">Metas</span>
   </button>
-  <button class="sb-item" onclick="showPage('cal')" title="Calendário">
+  <button class="sb-item" id="sb-cal" onclick="showPage('cal')" title="Calendário">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     </div>
     <span class="sb-tooltip">Calendário</span>
   </button>
-  <button class="sb-item" onclick="showPage('gestao')" title="Calculadora de Giro">
+  <button class="sb-item" id="sb-gestao" onclick="showPage('gestao')" title="Calculadora de Giro">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
     </div>
     <span class="sb-tooltip">Calc. de Giro</span>
   </button>
-  <button class="sb-item" onclick="showPage('simples')" title="Simples Nacional">
+  <button class="sb-item" id="sb-simples" onclick="showPage('simples')" title="Simples Nacional">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     </div>
     <span class="sb-tooltip">Simples Nacional</span>
   </button>
-  <button class="sb-item" onclick="showPage('pub')" title="Publicidade ROAS/ACOS">
+  <button class="sb-item" id="sb-pub" onclick="showPage('pub')" title="Publicidade ROAS/ACOS">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
     </div>
