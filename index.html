@@ -163,18 +163,31 @@ body.light .btn-toggle{background:#f0ebff;border-color:#d8d0f0;color:var(--text2
 .cal-nav h3{font-size:1rem;font-weight:800;color:var(--text);min-width:160px;text-align:center}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
 .cal-day-header{text-align:center;font-size:.68rem;font-weight:700;color:var(--text3);padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
-body.light .cal-day-header{color:#9985c9}
+body.light .cal-day-header{color:#6B21A8;opacity:.7}
 .cal-day{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 6px;min-height:72px;cursor:pointer;transition:all .2s;position:relative}
 .cal-day:hover{border-color:var(--o)}
 .cal-day.today{border-color:var(--o);background:#F0A07010}
 .cal-day.other-month{opacity:.35}
 .cal-day .day-num{font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:4px}
 .cal-day.today .day-num{color:var(--o)}
-body.light .cal-day{background:#fff;border-color:#d8d0f0}
-body.light .cal-day .day-num{color:#4c1d95}
-body.light .cal-day.today{border-color:var(--o);background:#fff7f0}
+body.light .cal-day{background:#fff;border-color:#e2daf5;box-shadow:0 1px 3px rgba(107,33,168,.06)}
+body.light .cal-day:hover{border-color:#6B21A8;box-shadow:0 2px 8px rgba(107,33,168,.12)}
+body.light .cal-day .day-num{color:#6B21A8;font-weight:800}
+body.light .cal-day.today{border-color:var(--o);background:linear-gradient(135deg,#fff7f0,#fff3eb);box-shadow:0 2px 8px rgba(240,160,112,.2)}
 body.light .cal-day.today .day-num{color:var(--o)}
+body.light .cal-day.other-month{background:#f8f6ff;border-color:#ede9fe}
+body.light .cal-day-header{color:#6B21A8;font-weight:800;opacity:.8}
+body.light .cal-nav button{background:#f0ebff;border-color:#d8d0f0;color:#6B21A8;font-weight:700}
+body.light .cal-nav h3{color:#3b0764}
+body.light .cal-event-more{color:#9985c9}
 .cal-event{font-size:.62rem;border-radius:4px;padding:2px 5px;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+body.light .cal-event.full{background:#ede9fe;color:#6B21A8;border-left:2px solid #7c3aed}
+body.light .cal-event.conta{background:#fee2e2;color:#dc2626;border-left:2px solid #dc2626}
+body.light .cal-event.entrega{background:#dcfce7;color:#16a34a;border-left:2px solid #16a34a}
+body.light .cal-event.outro{background:#fff7ed;color:#ea580c;border-left:2px solid #F0A070}
+body.light .cal-event.sazonal{background:#fef3c7;color:#d97706;border-left:2px solid #d97706}
+body.light .cal-event.giro_pedido{background:#ede9fe;color:#7c3aed;border-left:2px solid #7c3aed}
+body.light .cal-event.giro_entrega{background:#dcfce7;color:#16a34a;border-left:2px solid #16a34a}
 .cal-event.sazonal{background:#F0A07022;color:var(--o);border-left:2px solid var(--o)}
 .cal-event.giro_pedido{background:#7c3aed33;color:#a78bfa;border-left:2px solid #7c3aed}
 .cal-event.giro_entrega{background:#16a34a33;color:#4ade80;border-left:2px solid #16a34a}
