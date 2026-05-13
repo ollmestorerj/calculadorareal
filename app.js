@@ -800,18 +800,32 @@ async function renderDash(){
 // SAZONALIDADE
 // ============================================================
 const DATAS_SAZONAIS = [
-  {id:'volta_aulas_jan', titulo:'Volta às Aulas — Janeiro', data:'2026-01-15', dias:[45,30,15], icon:'📚', cor:'#2563eb'},
-  {id:'carnaval',        titulo:'Carnaval',                 data:'2026-03-01', dias:[30,15],    icon:'🎭', cor:'#db2777'},
-  {id:'pascoa',          titulo:'Páscoa',                   data:'2026-04-05', dias:[45,30,15], icon:'🐣', cor:'#d97706'},
-  {id:'maes',            titulo:'Dia das Mães',             data:'2026-05-11', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
-  {id:'namorados',       titulo:'Dia dos Namorados',        data:'2026-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
-  {id:'inverno',         titulo:'Início do Inverno',        data:'2026-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
-  {id:'volta_aulas_jul', titulo:'Volta às Aulas — Julho',  data:'2026-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
-  {id:'pais',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
-  {id:'verao',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
-  {id:'criancas',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
-  {id:'blackfriday',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'🛍️', cor:'#1e1a2e'},
-  {id:'natal',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
+  // 2026
+  {id:'volta_aulas_jan_26', titulo:'Volta às Aulas — Janeiro', data:'2026-01-15', dias:[45,30,15], icon:'📚', cor:'#2563eb'},
+  {id:'carnaval_26',        titulo:'Carnaval',                 data:'2026-03-01', dias:[30,15],    icon:'🎭', cor:'#db2777'},
+  {id:'pascoa_26',          titulo:'Páscoa',                   data:'2026-04-05', dias:[45,30,15], icon:'🐣', cor:'#d97706'},
+  {id:'maes_26',            titulo:'Dia das Mães',             data:'2026-05-11', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
+  {id:'namorados_26',       titulo:'Dia dos Namorados',        data:'2026-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
+  {id:'inverno_26',         titulo:'Início do Inverno',        data:'2026-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
+  {id:'volta_aulas_jul_26', titulo:'Volta às Aulas — Julho',  data:'2026-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
+  {id:'pais_26',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
+  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
+  {id:'criancas_26',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
+  {id:'blackfriday_26',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'🛍️', cor:'#4a3f6b'},
+  {id:'natal_26',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
+  // 2027
+  {id:'volta_aulas_jan_27', titulo:'Volta às Aulas — Janeiro', data:'2027-01-15', dias:[45,30,15], icon:'📚', cor:'#2563eb'},
+  {id:'carnaval_27',        titulo:'Carnaval',                 data:'2027-02-14', dias:[30,15],    icon:'🎭', cor:'#db2777'},
+  {id:'pascoa_27',          titulo:'Páscoa',                   data:'2027-03-28', dias:[45,30,15], icon:'🐣', cor:'#d97706'},
+  {id:'maes_27',            titulo:'Dia das Mães',             data:'2027-05-09', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
+  {id:'namorados_27',       titulo:'Dia dos Namorados',        data:'2027-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
+  {id:'inverno_27',         titulo:'Início do Inverno',        data:'2027-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
+  {id:'volta_aulas_jul_27', titulo:'Volta às Aulas — Julho',  data:'2027-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
+  {id:'pais_27',            titulo:'Dia dos Pais',             data:'2027-08-08', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
+  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
+  {id:'criancas_27',        titulo:'Dia das Crianças',         data:'2027-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
+  {id:'blackfriday_27',     titulo:'Black Friday',             data:'2027-11-26', dias:[45,30,15], icon:'🛍️', cor:'#4a3f6b'},
+  {id:'natal_27',           titulo:'Natal',                    data:'2027-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
 ];
 
 function verificarSazonalidade(){
