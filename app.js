@@ -333,7 +333,15 @@ function entrarNoApp(dados, pagina){
   });
   registrarAtividade('login');
   inicializarPush();
-  setTimeout(()=>showPage(pagina||'home', true), 50);
+  setTimeout(()=>{
+    const paginaFinal = pagina||'home';
+    showPage(paginaFinal, true);
+    // Verifica sazonalidade após carregar (só na home)
+    setTimeout(()=>{
+      verificarSazonalidade();
+      verificarConfirmacoesSazonais();
+    }, 800);
+  }, 50);
 }
 
 // Verifica sessão ao carregar
@@ -793,7 +801,201 @@ async function renderDash(){
 }
 
 // ============================================================
-// PUSH NOTIFICATIONS
+// SAZONALIDADE
+// ============================================================
+const DATAS_SAZONAIS = [
+  {id:'volta_aulas_jan', titulo:'Volta às Aulas — Janeiro', data:'2026-01-15', dias:[45,30,15], icon:'📚', cor:'#2563eb'},
+  {id:'carnaval',        titulo:'Carnaval',                 data:'2026-03-01', dias:[30,15],    icon:'🎭', cor:'#db2777'},
+  {id:'pascoa',          titulo:'Páscoa',                   data:'2026-04-05', dias:[45,30,15], icon:'🐣', cor:'#d97706'},
+  {id:'maes',            titulo:'Dia das Mães',             data:'2026-05-11', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
+  {id:'namorados',       titulo:'Dia dos Namorados',        data:'2026-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
+  {id:'inverno',         titulo:'Início do Inverno',        data:'2026-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
+  {id:'volta_aulas_jul', titulo:'Volta às Aulas — Julho',  data:'2026-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
+  {id:'pais',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
+  {id:'verao',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
+  {id:'criancas',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
+  {id:'blackfriday',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'🛍️', cor:'#1e1a2e'},
+  {id:'natal',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
+];
+
+function verificarSazonalidade(){
+  const jaConfigurou = localStorage.getItem('realecom_sazonal_ok');
+  if(!jaConfigurou){
+    renderSazonalGrid();
+    showPage('sazonal', true);
+  }
+}
+
+function renderSazonalGrid(){
+  const el = document.getElementById('sazonal-grid');
+  if(!el) return;
+  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  el.innerHTML = DATAS_SAZONAIS.map(d => {
+    const dataEv = new Date(d.data + 'T00:00:00');
+    if(dataEv < hoje) return ''; // data já passou
+    const sel = selecionados.includes(d.id);
+    const diasRestantes = Math.round((dataEv - hoje) / (1000*60*60*24));
+    const dataFmt = d.data.split('-').reverse().join('/');
+    return `<div onclick="toggleSazonal('${d.id}',this)" data-id="${d.id}" style="background:var(--card);border:2px solid ${sel?d.cor+'88':'var(--border)'};border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s;${sel?'background:'+d.cor+'15':''}" class="sazonal-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.4rem">${d.icon}</span>
+        <div style="flex:1">
+          <div style="font-size:.82rem;font-weight:700;color:var(--text)">${d.titulo}</div>
+          <div style="font-size:.68rem;color:var(--text3)">${dataFmt} · em ${diasRestantes} dias</div>
+        </div>
+        <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${sel?d.cor:'var(--border)'};background:${sel?d.cor:'none'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">
+          ${sel?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
+        </div>
+      </div>
+      <div style="font-size:.68rem;color:var(--text3)">Lembretes: ${d.dias.map(x=>x+'d antes').join(', ')} + no dia</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSazonal(id, el){
+  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  const idx = selecionados.indexOf(id);
+  if(idx>=0) selecionados.splice(idx,1);
+  else selecionados.push(id);
+  localStorage.setItem('realecom_sazonal_sel', JSON.stringify(selecionados));
+  renderSazonalGrid();
+}
+
+function salvarSazonalidade(){
+  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  if(!selecionados.length){
+    if(!confirm('Nenhuma data selecionada. Deseja pular?')) return;
+    localStorage.setItem('realecom_sazonal_ok','1');
+    showPage('home');
+    return;
+  }
+
+  const evs = getEventos();
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  let criados = 0;
+
+  selecionados.forEach(id => {
+    const d = DATAS_SAZONAIS.find(x=>x.id===id);
+    if(!d) return;
+    const dataEv = new Date(d.data + 'T00:00:00');
+
+    // Evento principal no dia da data
+    const jaExiste = evs.some(e=>e.data===d.data&&e.titulo.includes(d.titulo));
+    if(!jaExiste){
+      evs.push({
+        id: Date.now()+Math.random(),
+        titulo: d.titulo,
+        tipo: 'sazonal',
+        data: d.data,
+        hora: '',
+        obs: 'Data sazonal — planejamento de estoque',
+        push: true,
+        sazonalId: d.id
+      });
+      criados++;
+    }
+
+    // Lembretes de antecedência
+    d.dias.forEach((diasAntes, i) => {
+      const dataLembrete = new Date(dataEv.getTime() - diasAntes*24*60*60*1000);
+      if(dataLembrete < hoje) return;
+      const dataStr = dataLembrete.toISOString().split('T')[0];
+      const jaTemLembrete = evs.some(e=>e.data===dataStr&&e.sazonalId===d.id);
+      if(!jaTemLembrete){
+        evs.push({
+          id: Date.now()+Math.random()+i,
+          titulo: `${d.titulo} em ${diasAntes} dias`,
+          tipo: 'sazonal',
+          data: dataStr,
+          hora: '09:00',
+          obs: `Faltam ${diasAntes} dias para ${d.titulo}. Você vai participar desta data?`,
+          push: true,
+          sazonalId: d.id,
+          lembrete: true,
+          diasAntes
+        });
+        criados++;
+      }
+    });
+  });
+
+  saveEventos(evs);
+  localStorage.setItem('realecom_sazonal_ok','1');
+
+  // Agenda notificações push para os eventos criados
+  if(Notification.permission==='granted'){
+    agendarTodasNotificacoes();
+  }
+
+  alert(`✅ ${criados} lembretes criados no seu calendário!`);
+  showPage('cal');
+}
+
+// Verificar se há notificação de confirmação de sazonalidade pendente
+function verificarConfirmacoesSazonais(){
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const notificados = JSON.parse(sessionStorage.getItem('sazonal_notif')||'[]');
+
+  getEventos().filter(e=>e.tipo==='sazonal'&&e.lembrete).forEach(ev=>{
+    const dataEv = new Date(ev.data+'T00:00:00');
+    const diff = Math.round((dataEv-hoje)/(1000*60*60*24));
+    if(diff!==0) return;
+    if(notificados.includes(ev.id)) return;
+
+    // Mostra notificação in-app perguntando se vai participar
+    setTimeout(()=>{
+      mostrarNotifSazonal(ev);
+      notificados.push(ev.id);
+      sessionStorage.setItem('sazonal_notif', JSON.stringify(notificados));
+    }, 2000);
+  });
+}
+
+function mostrarNotifSazonal(ev){
+  const d = DATAS_SAZONAIS.find(x=>x.id===ev.sazonalId);
+  const container = document.getElementById('notif-container');
+  const div = document.createElement('div');
+  div.className='notif outro';
+  div.style.borderColor='#F0A070';
+  div.style.maxWidth='340px';
+  div.innerHTML=`
+    <div class="notif-body" style="width:100%">
+      <div class="notif-title" style="color:#F0A070;margin-bottom:4px">${d?d.icon:''} ${ev.titulo.replace(/ em \d+ dias/,'')}</div>
+      <div class="notif-sub" style="margin-bottom:10px">${ev.obs}</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="confirmarSazonal('sim','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#16a34a22;border:1px solid #16a34a55;color:#4ade80;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">✅ Sim, vou participar</button>
+        <button onclick="confirmarSazonal('nao','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#7f1d1d22;border:1px solid #ef444455;color:#f87171;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">❌ Não vou participar</button>
+      </div>
+    </div>
+    <button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
+  container.appendChild(div);
+}
+
+function confirmarSazonal(resp, sazonalId, btn){
+  const notif = btn.closest('.notif');
+  if(resp==='nao'){
+    // Remove todos os lembretes futuros desta sazonalidade
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const evs = getEventos().filter(e=>{
+      if(e.sazonalId!==sazonalId) return true;
+      const dataEv = new Date(e.data+'T00:00:00');
+      return dataEv <= hoje; // mantém passados, remove futuros
+    });
+    saveEventos(evs);
+    // Remove da lista de selecionados
+    const sel = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]').filter(x=>x!==sazonalId);
+    localStorage.setItem('realecom_sazonal_sel', JSON.stringify(sel));
+    if(notif) notif.remove();
+    mostrarNotifMsg({tipo:'outro',data:''}, '✅ Lembretes removidos para esta data.', 1);
+  } else {
+    if(notif) notif.remove();
+    mostrarNotifMsg({tipo:'outro',data:''}, '🚀 Ótimo! Verifique seu calendário para se preparar.', 1);
+  }
+}
+
+// ============================================================
 // ============================================================
 let _swRegistration = null;
 
@@ -915,7 +1117,7 @@ function aplicarTemplate(tipo){ abrirModalTemplate(tipo); }
 // ============================================================
 // CALENDÁRIO
 // ============================================================
-const tipoInfo={full:{icon:'📦',label:'Coleta Full',cls:'full'},conta:{icon:'💰',label:'Vencimento de Conta',cls:'conta'},entrega:{icon:'🚚',label:'Entrega',cls:'entrega'},outro:{icon:'📌',label:'Outro',cls:'outro'}};
+const tipoInfo={full:{icon:'📦',label:'Coleta Full',cls:'full'},conta:{icon:'💰',label:'Vencimento de Conta',cls:'conta'},entrega:{icon:'🚚',label:'Entrega',cls:'entrega'},outro:{icon:'📌',label:'Outro',cls:'outro'},sazonal:{icon:'📅',label:'Data Sazonal',cls:'sazonal'},giro_pedido:{icon:'🛒',label:'Pedido Giro',cls:'outro'},giro_entrega:{icon:'📦',label:'Entrega Giro',cls:'entrega'}};
 const diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 function getEventos(){return JSON.parse(localStorage.getItem('realecom_eventos')||'[]');}
