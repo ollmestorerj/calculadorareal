@@ -838,7 +838,16 @@ function renderSazonalGrid(){
   if(!el) return;
   const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
   const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const datasFuturas = DATAS_SAZONAIS.filter(d=>new Date(d.data+'T00:00:00')>=hoje);
+
+  // Para cada nome de evento, pega só a próxima ocorrência futura
+  const titulosVistos = new Set();
+  const datasFuturas = DATAS_SAZONAIS.filter(d => {
+    const dataEv = new Date(d.data + 'T00:00:00');
+    if(dataEv < hoje) return false;
+    if(titulosVistos.has(d.titulo)) return false;
+    titulosVistos.add(d.titulo);
+    return true;
+  });
 
   el.innerHTML = datasFuturas.map(d => {
     const dataEv = new Date(d.data + 'T00:00:00');
@@ -867,7 +876,14 @@ function renderSazonalGrid(){
 
 function selecionarTodasSazonais(sel){
   const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const datasFuturas = DATAS_SAZONAIS.filter(d=>new Date(d.data+'T00:00:00')>=hoje).map(d=>d.id);
+  const titulosVistos = new Set();
+  const datasFuturas = DATAS_SAZONAIS.filter(d=>{
+    const dataEv = new Date(d.data+'T00:00:00');
+    if(dataEv < hoje) return false;
+    if(titulosVistos.has(d.titulo)) return false;
+    titulosVistos.add(d.titulo);
+    return true;
+  }).map(d=>d.id);
   localStorage.setItem('realecom_sazonal_sel', JSON.stringify(sel?datasFuturas:[]));
   renderSazonalGrid();
 }
