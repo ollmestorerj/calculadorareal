@@ -807,10 +807,10 @@ const DATAS_SAZONAIS = [
   {id:'maes_26',            titulo:'Dia das Mães',             data:'2026-05-11', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
   {id:'namorados_26',       titulo:'Dia dos Namorados',        data:'2026-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
   {id:'inverno_26',         titulo:'Início do Inverno',        data:'2026-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
-  {id:'volta_aulas_jul_26', titulo:'Volta às Aulas — Julho',  data:'2026-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
+  {id:'volta_aulas_jul_26', titulo:'Volta às Aulas — Julho',   data:'2026-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
   {id:'pais_26',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
-  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
   {id:'criancas_26',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
+  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
   {id:'blackfriday_26',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'🛍️', cor:'#4a3f6b'},
   {id:'natal_26',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
   // 2027
@@ -820,10 +820,10 @@ const DATAS_SAZONAIS = [
   {id:'maes_27',            titulo:'Dia das Mães',             data:'2027-05-09', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
   {id:'namorados_27',       titulo:'Dia dos Namorados',        data:'2027-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
   {id:'inverno_27',         titulo:'Início do Inverno',        data:'2027-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
-  {id:'volta_aulas_jul_27', titulo:'Volta às Aulas — Julho',  data:'2027-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
+  {id:'volta_aulas_jul_27', titulo:'Volta às Aulas — Julho',   data:'2027-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
   {id:'pais_27',            titulo:'Dia dos Pais',             data:'2027-08-08', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
-  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
   {id:'criancas_27',        titulo:'Dia das Crianças',         data:'2027-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
+  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
   {id:'blackfriday_27',     titulo:'Black Friday',             data:'2027-11-26', dias:[45,30,15], icon:'🛍️', cor:'#4a3f6b'},
   {id:'natal_27',           titulo:'Natal',                    data:'2027-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
 ];
@@ -839,15 +839,16 @@ function renderSazonalGrid(){
   const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
   const hoje = new Date(); hoje.setHours(0,0,0,0);
 
-  // Para cada nome de evento, pega só a próxima ocorrência futura
+  // Para cada nome de evento, pega só a próxima ocorrência futura, ordenada por data
   const titulosVistos = new Set();
-  const datasFuturas = DATAS_SAZONAIS.filter(d => {
-    const dataEv = new Date(d.data + 'T00:00:00');
-    if(dataEv < hoje) return false;
-    if(titulosVistos.has(d.titulo)) return false;
-    titulosVistos.add(d.titulo);
-    return true;
-  });
+  const datasFuturas = DATAS_SAZONAIS
+    .filter(d => new Date(d.data + 'T00:00:00') >= hoje)
+    .filter(d => {
+      if(titulosVistos.has(d.titulo)) return false;
+      titulosVistos.add(d.titulo);
+      return true;
+    })
+    .sort((a,b) => a.data.localeCompare(b.data));
 
   el.innerHTML = datasFuturas.map(d => {
     const dataEv = new Date(d.data + 'T00:00:00');
