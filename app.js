@@ -334,13 +334,8 @@ function entrarNoApp(dados, pagina){
   registrarAtividade('login');
   inicializarPush();
   setTimeout(()=>{
-    const paginaFinal = pagina||'home';
-    showPage(paginaFinal, true);
-    // Verifica sazonalidade após carregar (só na home)
-    setTimeout(()=>{
-      verificarSazonalidade();
-      verificarConfirmacoesSazonais();
-    }, 800);
+    showPage(pagina||'home', true);
+    setTimeout(()=>verificarConfirmacoesSazonais(), 800);
   }, 50);
 }
 
@@ -388,6 +383,7 @@ function showPage(p,bypassCheck){
   if(p==='gestao')calcularGestao();
   if(p==='simples'){document.getElementById('sn-resultado').style.display='none';document.getElementById('sn-empty').style.display='block';}
   if(p==='pub'){switchPubMode('dash');renderHistoricoPublicidade();}
+  if(p==='sazonal'){renderSazonalGrid();}
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
@@ -819,11 +815,8 @@ const DATAS_SAZONAIS = [
 ];
 
 function verificarSazonalidade(){
-  const jaConfigurou = localStorage.getItem('realecom_sazonal_ok');
-  if(!jaConfigurou){
-    renderSazonalGrid();
-    showPage('sazonal', true);
-  }
+  renderSazonalGrid();
+  showPage('sazonal', true);
 }
 
 function renderSazonalGrid(){
@@ -831,14 +824,14 @@ function renderSazonalGrid(){
   if(!el) return;
   const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
   const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const datasFuturas = DATAS_SAZONAIS.filter(d=>new Date(d.data+'T00:00:00')>=hoje);
 
-  el.innerHTML = DATAS_SAZONAIS.map(d => {
+  el.innerHTML = datasFuturas.map(d => {
     const dataEv = new Date(d.data + 'T00:00:00');
-    if(dataEv < hoje) return ''; // data já passou
     const sel = selecionados.includes(d.id);
     const diasRestantes = Math.round((dataEv - hoje) / (1000*60*60*24));
     const dataFmt = d.data.split('-').reverse().join('/');
-    return `<div onclick="toggleSazonal('${d.id}',this)" data-id="${d.id}" style="background:var(--card);border:2px solid ${sel?d.cor+'88':'var(--border)'};border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s;${sel?'background:'+d.cor+'15':''}" class="sazonal-card">
+    return `<div onclick="toggleSazonal('${d.id}')" data-id="${d.id}" style="background:var(--card);border:2px solid ${sel?d.cor+'88':'var(--border)'};border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s;${sel?'background:'+d.cor+'12':''}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:1.4rem">${d.icon}</span>
         <div style="flex:1">
@@ -846,90 +839,87 @@ function renderSazonalGrid(){
           <div style="font-size:.68rem;color:var(--text3)">${dataFmt} · em ${diasRestantes} dias</div>
         </div>
         <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${sel?d.cor:'var(--border)'};background:${sel?d.cor:'none'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">
-          ${sel?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
+          ${sel?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
         </div>
       </div>
-      <div style="font-size:.68rem;color:var(--text3)">Lembretes: ${d.dias.map(x=>x+'d antes').join(', ')} + no dia</div>
+      <div style="font-size:.66rem;color:var(--text3)">Lembretes: ${d.dias.map(x=>x+'d').join(', ')} antes + no dia</div>
     </div>`;
   }).join('');
+
+  // Atualiza contador
+  const count = document.getElementById('sazonal-count');
+  if(count) count.textContent = selecionados.filter(id=>datasFuturas.some(d=>d.id===id)).length + ' selecionadas';
 }
 
-function toggleSazonal(id, el){
-  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
-  const idx = selecionados.indexOf(id);
-  if(idx>=0) selecionados.splice(idx,1);
-  else selecionados.push(id);
-  localStorage.setItem('realecom_sazonal_sel', JSON.stringify(selecionados));
+function selecionarTodasSazonais(sel){
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const datasFuturas = DATAS_SAZONAIS.filter(d=>new Date(d.data+'T00:00:00')>=hoje).map(d=>d.id);
+  localStorage.setItem('realecom_sazonal_sel', JSON.stringify(sel?datasFuturas:[]));
   renderSazonalGrid();
 }
 
 function salvarSazonalidade(){
   const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
   if(!selecionados.length){
-    if(!confirm('Nenhuma data selecionada. Deseja pular?')) return;
-    localStorage.setItem('realecom_sazonal_ok','1');
-    showPage('home');
-    return;
+    if(!confirm('Nenhuma data selecionada. Deseja salvar assim mesmo?')) return;
   }
 
-  const evs = getEventos();
   const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  // Remove lembretes sazonais futuros existentes antes de recriar
+  let evs = getEventos().filter(e=>{
+    if(e.tipo!=='sazonal') return true;
+    const dataEv = new Date(e.data+'T00:00:00');
+    return dataEv < hoje; // mantém passados
+  });
+
   let criados = 0;
 
   selecionados.forEach(id => {
     const d = DATAS_SAZONAIS.find(x=>x.id===id);
     if(!d) return;
     const dataEv = new Date(d.data + 'T00:00:00');
+    if(dataEv < hoje) return;
 
-    // Evento principal no dia da data
-    const jaExiste = evs.some(e=>e.data===d.data&&e.titulo.includes(d.titulo));
-    if(!jaExiste){
-      evs.push({
-        id: Date.now()+Math.random(),
-        titulo: d.titulo,
-        tipo: 'sazonal',
-        data: d.data,
-        hora: '',
-        obs: 'Data sazonal — planejamento de estoque',
-        push: true,
-        sazonalId: d.id
-      });
-      criados++;
-    }
+    // Evento principal no dia
+    evs.push({
+      id: Date.now()+Math.random(),
+      titulo: d.titulo,
+      tipo: 'sazonal',
+      data: d.data,
+      hora: '',
+      obs: 'Data sazonal — planejamento de estoque',
+      push: true,
+      sazonalId: d.id
+    });
+    criados++;
 
     // Lembretes de antecedência
     d.dias.forEach((diasAntes, i) => {
       const dataLembrete = new Date(dataEv.getTime() - diasAntes*24*60*60*1000);
       if(dataLembrete < hoje) return;
       const dataStr = dataLembrete.toISOString().split('T')[0];
-      const jaTemLembrete = evs.some(e=>e.data===dataStr&&e.sazonalId===d.id);
-      if(!jaTemLembrete){
-        evs.push({
-          id: Date.now()+Math.random()+i,
-          titulo: `${d.titulo} em ${diasAntes} dias`,
-          tipo: 'sazonal',
-          data: dataStr,
-          hora: '09:00',
-          obs: `Faltam ${diasAntes} dias para ${d.titulo}. Você vai participar desta data?`,
-          push: true,
-          sazonalId: d.id,
-          lembrete: true,
-          diasAntes
-        });
-        criados++;
-      }
+      evs.push({
+        id: Date.now()+Math.random()+i,
+        titulo: `${d.titulo} em ${diasAntes} dias`,
+        tipo: 'sazonal',
+        data: dataStr,
+        hora: '09:00',
+        obs: `Faltam ${diasAntes} dias para ${d.titulo}. Você vai participar desta data?`,
+        push: true,
+        sazonalId: d.id,
+        lembrete: true,
+        diasAntes
+      });
+      criados++;
     });
   });
 
   saveEventos(evs);
-  localStorage.setItem('realecom_sazonal_ok','1');
 
-  // Agenda notificações push para os eventos criados
-  if(Notification.permission==='granted'){
-    agendarTodasNotificacoes();
-  }
+  if(Notification.permission==='granted') agendarTodasNotificacoes();
 
-  alert(`✅ ${criados} lembretes criados no seu calendário!`);
+  alert(`✅ ${criados} lembretes criados no calendário!`);
   showPage('cal');
 }
 
