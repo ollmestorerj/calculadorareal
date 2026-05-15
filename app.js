@@ -1990,102 +1990,225 @@ function calcDevolucao(){
 }
 
 // ============================================================
-// BUSCADOR DE NCM — com IA (Claude API)
+// BUSCADOR DE NCM — busca local aprimorada
 // ============================================================
+const BASE_NCM = [
+  // VESTUÁRIO MASCULINO
+  {cod:'6105.10.00', desc:'Camisetas de malha de algodão para homens', palavras:'camiseta camisa polo malha algodao homem masculino basica dry fit academia'},
+  {cod:'6105.20.00', desc:'Camisetas de malha de fibras sintéticas para homens', palavras:'camiseta camisa malha sintetica poliester masculino dry fit esporte'},
+  {cod:'6109.10.00', desc:'T-shirts e camisetas interiores de algodão', palavras:'tshirt camiseta basica algodao regata interior branca preta'},
+  {cod:'6203.42.00', desc:'Calças e bermudas de algodão para homens', palavras:'calca bermuda shorts jeans algodao masculino homem cargo jogger'},
+  {cod:'6203.32.00', desc:'Jaquetas e blusões de fibras sintéticas para homens', palavras:'jaqueta blusao corta vento sintetica masculino homem'},
+  {cod:'6203.22.00', desc:'Conjuntos de algodão para homens', palavras:'conjunto moletom algodao masculino agasalho'},
+  // VESTUÁRIO FEMININO
+  {cod:'6106.10.00', desc:'Blusas e camiseiros de malha de algodão para mulheres', palavras:'blusa blusao camiseiro malha algodao feminino mulher'},
+  {cod:'6104.62.00', desc:'Calças e bermudas de algodão para mulheres', palavras:'calca bermuda legging algodao feminino mulher'},
+  {cod:'6204.62.00', desc:'Calças e jardineiras de algodão para mulheres', palavras:'calca jeans algodao feminino mulher jardeira'},
+  {cod:'6104.13.00', desc:'Casacos e jaquetas de malha sintética para mulheres', palavras:'casaco jaqueta malha sintetica feminino mulher'},
+  {cod:'6104.43.00', desc:'Vestidos de malha sintética para mulheres', palavras:'vestido malha sintetica feminino mulher'},
+  {cod:'6108.21.00', desc:'Camisolas e pijamas de algodão para mulheres', palavras:'pijama camisola algodao feminino mulher dormir'},
+  // VESTUÁRIO INFANTIL
+  {cod:'6111.20.00', desc:'Vestuário de malha de algodão para bebês', palavras:'roupa bebe malha algodao infantil recem nascido body'},
+  {cod:'6209.20.00', desc:'Vestuário de algodão para bebês', palavras:'roupa bebe algodao infantil crianca macacão'},
+  {cod:'6110.20.10', desc:'Suéteres e pulôveres de algodão para crianças', palavras:'sueter pulover moletom algodao crianca infantil'},
+  // ACESSÓRIOS VESTUÁRIO
+  {cod:'6217.10.00', desc:'Acessórios de vestuário de malha', palavras:'gorro touca luva lenco cachecol acessorio malha'},
+  {cod:'6214.20.00', desc:'Xales, lenços e cachecóis de lã', palavras:'xale lenco cachecol la frio inverno'},
+  {cod:'6215.20.00', desc:'Gravatas e laços de seda ou fibras sintéticas', palavras:'gravata laco borboleta seda sintetica'},
+  // CALÇADOS
+  {cod:'6404.11.00', desc:'Tênis esportivos com sola de borracha e cabedal têxtil', palavras:'tenis esportivo corrida borracha textil sport academia running'},
+  {cod:'6404.19.00', desc:'Calçados casuais com sola de borracha e cabedal têxtil', palavras:'tenis casual sapatenis lona borracha textil'},
+  {cod:'6403.91.00', desc:'Calçados de couro com sola de borracha para adultos', palavras:'sapato social couro borracha adulto masculino feminino'},
+  {cod:'6402.99.00', desc:'Sandálias e chinelos de borracha ou plástico', palavras:'sandalia chinelo havaianas borracha plastico praia'},
+  {cod:'6401.92.00', desc:'Botas impermeáveis com biqueira protetora', palavras:'bota impermeavel biqueira protecao seguranca trabalho'},
+  {cod:'6403.51.00', desc:'Calçados de couro com biqueira metálica', palavras:'sapato social couro biqueira metal seguranca'},
+  {cod:'6405.20.00', desc:'Calçados com cabedal de matéria têxtil (outros)', palavras:'alpargata espadrille textil simples'},
+  // ELETRÔNICOS — ÁUDIO
+  {cod:'8518.30.00', desc:'Fones de ouvido (headphone/headset)', palavras:'fone ouvido headphone headset auricular bluetooth sem fio gamer'},
+  {cod:'8518.21.00', desc:'Alto-falantes em caixas acústicas', palavras:'caixa som alto falante speaker bluetooth portatil'},
+  {cod:'8518.22.00', desc:'Alto-falantes múltiplos em caixas acústicas', palavras:'caixa som home theater subwoofer'},
+  {cod:'8518.10.00', desc:'Microfones', palavras:'microfone estudio condensador dinamico usb'},
+  // ELETRÔNICOS — TELEFONIA
+  {cod:'8517.12.31', desc:'Telefone celular portátil (smartphone)', palavras:'celular smartphone telefone movel iphone android samsung'},
+  {cod:'8517.12.13', desc:'Outros aparelhos telefônicos sem fio', palavras:'telefone sem fio fixo residencial'},
+  // ELETRÔNICOS — INFORMÁTICA
+  {cod:'8471.30.12', desc:'Notebooks e laptops até 3,5kg', palavras:'notebook laptop computador portatil leve ultrafino'},
+  {cod:'8471.41.10', desc:'Computadores desktop', palavras:'computador desktop pc mesa torre processador'},
+  {cod:'8471.60.52', desc:'Teclados para computadores', palavras:'teclado computador mecanico membrana gamer wireless'},
+  {cod:'8471.60.53', desc:'Mouses para computadores', palavras:'mouse raton gamer optico wireless sem fio'},
+  {cod:'8528.72.20', desc:'Monitores de vídeo colorido', palavras:'monitor tela display computador gamer 4k'},
+  {cod:'8523.51.10', desc:'Cartões de memória flash e pen drives', palavras:'pendrive cartao memoria flash usb sd micro'},
+  {cod:'8504.40.40', desc:'Carregadores e fontes de alimentação', palavras:'carregador celular fonte adaptador notebook tomada'},
+  {cod:'8507.60.00', desc:'Baterias e acumuladores de íons de lítio', palavras:'bateria litio powerbank carregador portatil'},
+  {cod:'8443.32.29', desc:'Impressoras jato de tinta ou laser', palavras:'impressora jato tinta laser multifuncional'},
+  // ELETRÔNICOS — CÂMERAS
+  {cod:'9006.52.00', desc:'Máquinas fotográficas digitais', palavras:'camera fotografica digital reflex mirrorless'},
+  {cod:'8525.80.29', desc:'Câmeras de vídeo e action cameras', palavras:'camera video action cam gopro filmadora'},
+  {cod:'8525.80.11', desc:'Webcams e câmeras para computador', palavras:'webcam camera computador streaming videoconferencia'},
+  // ELETRÔNICOS — WEARABLES
+  {cod:'9102.12.00', desc:'Relógios de pulso eletrônicos (smartwatch)', palavras:'smartwatch relogio inteligente pulso digital smart'},
+  {cod:'8543.70.99', desc:'Pulseiras e rastreadores de atividade fitness', palavras:'pulseira fitness rastreador atividade banda smart'},
+  // ELETRÔNICOS — TV E VÍDEO
+  {cod:'8528.72.10', desc:'Televisores de tela plana', palavras:'televisao tv tela plana lcd led oled smart'},
+  {cod:'8521.90.19', desc:'Aparelhos de gravação e reprodução de vídeo', palavras:'dvd blu ray player reprodutor video'},
+  // BOLSAS E ACESSÓRIOS
+  {cod:'4202.12.00', desc:'Malas e mochilas de plástico ou matéria têxtil', palavras:'mochila mala bolsa viagem nylon poliester tecido'},
+  {cod:'4202.22.00', desc:'Bolsas de mão de matéria têxtil', palavras:'bolsa mao carteira clutch feminina textil tecido'},
+  {cod:'4202.11.00', desc:'Malas e maletas de couro natural', palavras:'mala maleta couro viagem executiva'},
+  {cod:'4202.31.00', desc:'Carteiras e porta-documentos de couro', palavras:'carteira porta documentos couro masculino feminino'},
+  {cod:'4205.00.00', desc:'Cintos e correias de couro', palavras:'cinto couro masculino feminino'},
+  // CASA E DECORAÇÃO
+  {cod:'3924.10.00', desc:'Louças e artigos domésticos de plástico', palavras:'pote vasilha caixa organizador plastico cozinha domestico'},
+  {cod:'3924.90.00', desc:'Outros artigos domésticos de plástico', palavras:'balde bacia plastico domestico'},
+  {cod:'6302.60.00', desc:'Toalhas de banho e mesa de algodão', palavras:'toalha banho mesa algodao'},
+  {cod:'9404.90.00', desc:'Almofadas travesseiros e artigos de cama', palavras:'almofada travesseiro edredom colcha cama'},
+  {cod:'6303.92.00', desc:'Cortinas e persianas de fibras sintéticas', palavras:'cortina persiana blackout sintetica'},
+  {cod:'7323.93.00', desc:'Artefatos de aço inoxidável para uso doméstico', palavras:'panela frigideira aco inox cozinha'},
+  {cod:'7323.94.00', desc:'Artefatos de ferro ou aço para uso doméstico', palavras:'forma assadeira ferro aco cozinha forno'},
+  {cod:'8516.60.00', desc:'Fornos elétricos e micro-ondas', palavras:'forno eletrico micro ondas cozinha'},
+  {cod:'8516.40.00', desc:'Ferros elétricos de passar roupa', palavras:'ferro passar roupa eletrico vapor'},
+  {cod:'8509.40.00', desc:'Batedeiras e misturadores de alimentos', palavras:'batedeira liquidificador mixer processador alimento cozinha'},
+  {cod:'8509.80.00', desc:'Aspiradores de pó', palavras:'aspirador po eletrico domestico'},
+  // MÓVEIS
+  {cod:'9403.20.00', desc:'Móveis de metal para uso doméstico', palavras:'rack suporte prateleira metal movel estante'},
+  {cod:'9403.30.00', desc:'Móveis de madeira para escritório', palavras:'mesa cadeira escritorio madeira'},
+  {cod:'9403.60.00', desc:'Móveis de madeira para uso doméstico', palavras:'armario guarda roupa estante madeira quarto'},
+  {cod:'9401.61.00', desc:'Assentos com armação de madeira estofados', palavras:'sofa poltrona cadeira madeira estofada'},
+  // BANHEIRO — ESPELHOS E ARMÁRIOS
+  {cod:'7009.92.00', desc:'Espelhos de vidro com moldura', palavras:'espelho moldura banheiro quarto parede vidro'},
+  {cod:'9403.60.00', desc:'Armários e gabinetes de madeira', palavras:'armario gabinete banheiro madeira mdf'},
+  {cod:'3922.10.00', desc:'Banheiras e artigos sanitários de plástico', palavras:'armario banheiro plastico plastico pvc sanitario'},
+  {cod:'7615.10.00', desc:'Artigos de uso doméstico de alumínio', palavras:'armario banheiro aluminio espelho'},
+  // BELEZA E CUIDADOS
+  {cod:'3304.10.00', desc:'Produtos de maquiagem para lábios', palavras:'batom lip gloss labial brilho maquiagem'},
+  {cod:'3304.20.00', desc:'Preparações para maquiagem dos olhos', palavras:'mascara rimel sombra delineador base olhos maquiagem'},
+  {cod:'3304.99.90', desc:'Outras preparações de beleza e maquiagem', palavras:'base po facial blush contorno maquiagem'},
+  {cod:'3305.10.00', desc:'Xampus para cabelo', palavras:'xampu shampoo cabelo higiene limpeza'},
+  {cod:'3305.30.00', desc:'Laquês para cabelo', palavras:'laque spray fixador cabelo'},
+  {cod:'3307.20.00', desc:'Desodorantes corporais e antitranspirantes', palavras:'desodorante antitranspirante roll on aerosol corpo'},
+  {cod:'3401.11.90', desc:'Sabões de toucador em barras', palavras:'sabao sabonete barra higiene banho'},
+  {cod:'3307.10.00', desc:'Preparações para barbear', palavras:'creme gel espuma barbear barba'},
+  {cod:'3304.30.00', desc:'Preparações para manicure e pedicure', palavras:'esmalte unha removedor acetona manicure'},
+  // ESPORTE E FITNESS
+  {cod:'9506.62.00', desc:'Bolas de futebol, basquete e outros esportes', palavras:'bola futebol basquete volei tenis esporte'},
+  {cod:'9506.91.00', desc:'Artigos e equipamentos para ginástica', palavras:'halter haltere peso musculacao fitness caneleira'},
+  {cod:'9506.11.00', desc:'Esquis e artigos de esqui aquático', palavras:'esqui prancha surf wakeboard'},
+  {cod:'9506.99.00', desc:'Outros artigos para esportes e lazer', palavras:'corda pular elástico exercicio treino'},
+  {cod:'9507.10.00', desc:'Varas de pesca', palavras:'vara pesca molinete carretilha pesca'},
+  // BRINQUEDOS
+  {cod:'9503.00.31', desc:'Brinquedos com motor elétrico', palavras:'brinquedo eletrico motor controle remoto carro drone'},
+  {cod:'9503.00.10', desc:'Bonecas e bonecos', palavras:'boneca boneco bebe barbie action figure'},
+  {cod:'9503.00.99', desc:'Outros brinquedos', palavras:'brinquedo plastico crianca educativo'},
+  {cod:'9504.50.00', desc:'Consoles e máquinas de videogame', palavras:'videogame console playstation xbox nintendo joystick controle'},
+  {cod:'9504.90.00', desc:'Jogos de tabuleiro, cartas e similares', palavras:'jogo tabuleiro carta baralho xadrez'},
+  // PETS
+  {cod:'4201.00.00', desc:'Arreios e artigos para animais', palavras:'coleira guia peitoral cachorro gato pet'},
+  {cod:'9508.90.00', desc:'Artigos e acessórios para animais de estimação', palavras:'cama casinha brinquedo pet comedouro bebedouro'},
+  {cod:'2309.10.00', desc:'Alimentos para cães e gatos', palavras:'racao cachorro gato pet alimento'},
+  // FERRAMENTAS
+  {cod:'8467.19.00', desc:'Ferramentas elétricas de uso manual', palavras:'furadeira parafusadeira lixadeira esmerilhadeira eletrica'},
+  {cod:'8205.20.00', desc:'Martelos e marretas', palavras:'martelo marreta ferramenta manual'},
+  {cod:'8211.93.00', desc:'Facas de mesa e de cozinha', palavras:'faca cozinha cutelaria chef corte'},
+  // PAPELARIA E ESCRITÓRIO
+  {cod:'4820.10.20', desc:'Cadernos escolares e universitários', palavras:'caderno escolar universitario espiral'},
+  {cod:'9608.10.00', desc:'Canetas esferográficas', palavras:'caneta esferografica bic escrita'},
+  {cod:'9612.10.00', desc:'Fitas para impressoras e máquinas de escrever', palavras:'toner cartucho tinta impressora'},
+  // SUPLEMENTOS E SAÚDE
+  {cod:'2106.90.90', desc:'Preparações alimentícias diversas (suplementos)', palavras:'suplemento proteina whey creatina bcaa pre treino'},
+  {cod:'3004.50.99', desc:'Medicamentos e vitaminas embalados para venda a retalho', palavras:'vitamina suplemento capsulas comprimido'},
+  // AUTOMÓVEIS E ACESSÓRIOS
+  {cod:'8708.99.90', desc:'Partes e acessórios para veículos automóveis', palavras:'acessorio carro auto veiculo'},
+  {cod:'8512.20.00', desc:'Aparelhos de iluminação para veículos', palavras:'farol lanterna luz led carro moto'},
+  {cod:'4011.10.00', desc:'Pneus novos para automóveis', palavras:'pneu carro automovel borracha'},
+];
+
+// Normaliza texto removendo acentos
+function normalizarTexto(t){
+  return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s]/g,'');
+}
+
+// Score de relevância entre query e NCM
+function calcularScore(query, ncm){
+  const tokens = normalizarTexto(query).split(/\s+/).filter(t=>t.length>2);
+  const haystack = normalizarTexto(ncm.desc + ' ' + ncm.palavras);
+  let score = 0;
+  tokens.forEach(t=>{
+    // Match exato de palavra completa vale mais
+    const re = new RegExp('\\b'+t, 'g');
+    const matches = (haystack.match(re)||[]).length;
+    if(matches>0) score += t.length * matches * 2;
+    // Match parcial
+    else if(haystack.includes(t)) score += t.length;
+  });
+  // Bônus se o token aparece na descrição oficial
+  tokens.forEach(t=>{
+    if(normalizarTexto(ncm.desc).includes(t)) score += 5;
+  });
+  return score;
+}
+
 let ncmSelecionado = null;
-let ncmBuscando = false;
 
 function buscarNCM(){
   const query = document.getElementById('ncm-input').value.trim();
   if(!query){alert('Digite o nome do produto.');return;}
-  _executarBuscaNCMIA(query);
+  _executarBuscaNCM(query);
 }
 
 function ncmAtalho(termo){
   document.getElementById('ncm-input').value = termo;
-  _executarBuscaNCMIA(termo);
+  _executarBuscaNCM(termo);
 }
 
-async function _executarBuscaNCMIA(query){
-  if(ncmBuscando) return;
-  ncmBuscando = true;
-
+function _executarBuscaNCM(query){
   const box = document.getElementById('ncm-resultados-box');
   const lista = document.getElementById('ncm-lista');
   const empty = document.getElementById('ncm-empty');
   const titulo = document.getElementById('ncm-resultado-titulo');
-  const btnBuscar = document.querySelector('#page-ncm button[onclick="buscarNCM()"]');
 
   empty.style.display='none';
-  box.style.display='block';
-  if(btnBuscar){btnBuscar.disabled=true;btnBuscar.textContent='Buscando...';}
-  lista.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:.82rem">Consultando IA...</div>';
-  titulo.textContent='BUSCANDO...';
 
-  try{
-    const prompt = `Você é um especialista em classificação fiscal brasileira. O usuário quer encontrar o código NCM (Nomenclatura Comum do Mercosul) correto para o seguinte produto:
+  // Pontua e filtra
+  const resultados = BASE_NCM
+    .map(n=>({...n, score:calcularScore(query,n)}))
+    .filter(n=>n.score>0)
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,5);
 
-"${query}"
-
-Retorne APENAS um JSON válido com exatamente 4 sugestões de NCM, do mais provável ao menos provável. Formato:
-[
-  {"cod":"XXXX.XX.XX","desc":"Descrição oficial do NCM","motivo":"Por que este NCM se aplica"},
-  ...
-]
-
-Não inclua nenhum texto fora do JSON. Apenas o array JSON.`;
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-
-    const data = await resp.json();
-    const text = data.content[0].text.trim();
-    const resultados = JSON.parse(text.replace(/```json|```/g,'').trim());
-
-    if(!resultados.length) throw new Error('Nenhum resultado');
-
-    titulo.textContent = `${resultados.length} sugestões encontradas`;
-    lista.innerHTML = resultados.map((n,i)=>`
-      <div onclick="selecionarNCM('${n.cod}','${n.desc.replace(/'/g,"\'")}','${(n.motivo||'').replace(/'/g,"\'")}')" style="border:${i===0?'1.5px solid #0f766e88':'1px solid var(--border)'};background:${i===0?'#0f766e12':'var(--bg2)'};border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;margin-bottom:${i<resultados.length-1?'7px':'0'}">
-        <div style="font-size:.82rem;font-weight:800;font-family:monospace;color:${i===0?'#0d9488':'var(--text)'};margin-bottom:3px">${n.cod}</div>
-        <div style="font-size:.72rem;color:var(--text2);line-height:1.4;margin-bottom:3px">${n.desc}</div>
-        ${n.motivo?`<div style="font-size:.68rem;color:var(--text3);font-style:italic">${n.motivo}</div>`:''}
-      </div>`).join('');
-
-    // Auto-seleciona o primeiro
-    selecionarNCM(resultados[0].cod, resultados[0].desc, resultados[0].motivo||'', false);
-
-  }catch(e){
-    console.error('Erro NCM IA:', e);
-    lista.innerHTML='<div style="color:#f87171;font-size:.8rem;padding:10px">Erro ao buscar. Tente novamente com uma descrição mais detalhada.</div>';
-    titulo.textContent='ERRO';
-  }finally{
-    ncmBuscando=false;
-    if(btnBuscar){btnBuscar.disabled=false;btnBuscar.textContent='Buscar';}
+  if(!resultados.length){
+    box.style.display='none';
+    empty.style.display='block';
+    empty.style.opacity='1';
+    empty.querySelector('p').textContent='Nenhum NCM encontrado. Tente descrever o material e o uso do produto.';
+    return;
   }
+
+  box.style.display='block';
+  titulo.textContent=`${resultados.length} resultado${resultados.length>1?'s':''} encontrado${resultados.length>1?'s':''}`;
+
+  lista.innerHTML=resultados.map((n,i)=>`
+    <div onclick="selecionarNCM('${n.cod}','${n.desc.replace(/'/g,"\'")}',${n.score})" style="border:${i===0?'1.5px solid #0f766e88':'1px solid var(--border)'};background:${i===0?'#0f766e12':'var(--bg2)'};border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;margin-bottom:${i<resultados.length-1?'7px':'0'}">
+      <div style="font-size:.82rem;font-weight:800;font-family:monospace;color:${i===0?'#0d9488':'var(--text)'};margin-bottom:3px">${n.cod}</div>
+      <div style="font-size:.72rem;color:var(--text2);line-height:1.4">${n.desc}</div>
+    </div>`).join('');
+
+  selecionarNCM(resultados[0].cod, resultados[0].desc, resultados[0].score, false);
 }
 
-function selecionarNCM(cod, desc, motivo, salvarHist=true){
+function selecionarNCM(cod, desc, score, salvarHist=true){
   ncmSelecionado = {cod, desc};
   document.getElementById('ncm-detalhe').style.display='block';
   document.getElementById('ncm-detalhe-empty').style.display='none';
-  document.getElementById('ncm-codigo-display').textContent = cod;
-  document.getElementById('ncm-desc-display').textContent = desc;
+  document.getElementById('ncm-codigo-display').textContent=cod;
+  document.getElementById('ncm-desc-display').textContent=desc;
 
   if(salvarHist){
-    const query = document.getElementById('ncm-input').value.trim();
-    const hist = JSON.parse(localStorage.getItem('realecom_ncm_hist')||'[]');
-    const jaExiste = hist.findIndex(h=>h.cod===cod);
+    const query=document.getElementById('ncm-input').value.trim();
+    const hist=JSON.parse(localStorage.getItem('realecom_ncm_hist')||'[]');
+    const jaExiste=hist.findIndex(h=>h.cod===cod);
     if(jaExiste>=0) hist.splice(jaExiste,1);
-    hist.unshift({cod, desc, query});
-    localStorage.setItem('realecom_ncm_hist', JSON.stringify(hist.slice(0,10)));
+    hist.unshift({cod,desc,query});
+    localStorage.setItem('realecom_ncm_hist',JSON.stringify(hist.slice(0,10)));
     renderHistoricoNCM();
   }
 }
@@ -2095,18 +2218,18 @@ function copiarNCM(){
   navigator.clipboard.writeText(ncmSelecionado.cod).then(()=>{
     mostrarNotifMsg({tipo:'outro',data:''},'Código NCM copiado: '+ncmSelecionado.cod,1);
   }).catch(()=>{
-    prompt('Copie o código NCM:', ncmSelecionado.cod);
+    prompt('Copie o código NCM:',ncmSelecionado.cod);
   });
 }
 
 function renderHistoricoNCM(){
-  const hist = JSON.parse(localStorage.getItem('realecom_ncm_hist')||'[]');
-  const box = document.getElementById('ncm-historico-box');
-  const lista = document.getElementById('ncm-historico-lista');
+  const hist=JSON.parse(localStorage.getItem('realecom_ncm_hist')||'[]');
+  const box=document.getElementById('ncm-historico-box');
+  const lista=document.getElementById('ncm-historico-lista');
   if(!box||!lista) return;
   if(!hist.length){box.style.display='none';return;}
   box.style.display='block';
-  lista.innerHTML = hist.map((h,i)=>`
+  lista.innerHTML=hist.map((h,i)=>`
     <div onclick="ncmAtalho('${h.query}')" style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;${i<hist.length-1?'border-bottom:1px solid var(--border)':''};cursor:pointer">
       <span style="font-size:.76rem;color:var(--text2)">${h.query||h.desc.substring(0,30)}</span>
       <span style="font-size:.7rem;font-family:monospace;color:var(--text3)">${h.cod}</span>
