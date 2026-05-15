@@ -690,10 +690,8 @@ function resetar(){
   // Limpa painel direito
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
-  document.getElementById('inpi-box').style.display='none';
   document.getElementById('bottom-wrapper').style.display='none';
 
-  // Limpa todos os inputs da calculadora
   // Custo dos produtos — reseta para 1 item vazio
   const list=document.getElementById('items-list');
   list.innerHTML='<div class="item-row"><input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01"><button class="remove-btn" onclick="removeItem(this)">×</button></div>';
