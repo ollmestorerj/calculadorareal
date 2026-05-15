@@ -677,7 +677,6 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
 }
 
 function finalizarCalculo(){
-  document.getElementById('inpi-box').style.display='block';
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
   
