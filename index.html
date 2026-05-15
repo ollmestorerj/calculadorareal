@@ -28,17 +28,17 @@ body.light .app-header{background:#ede9fe}
 .right-panel{padding:16px 15px;overflow-y:auto;background:var(--bg2)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
 .card-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px}
-.margem-card{background:linear-gradient(135deg,#1e0a3c,#2d1060);border:1.5px solid var(--p2);border-radius:14px;padding:14px;margin-bottom:10px}
+.margem-card{background:var(--card);border:1.5px solid var(--p2);border-radius:14px;padding:14px;margin-bottom:10px}
 .margem-card .card-title{color:var(--p2)}
-.margem-card input{border-color:var(--p2)!important;font-size:1.1rem!important;font-weight:700!important;color:#c4b5fd!important;text-align:center}
+.margem-card input{border-color:var(--p2)!important;font-size:1.1rem!important;font-weight:700!important;color:var(--text)!important;text-align:center}
 .margem-hint{font-size:.72rem;color:var(--p2);text-align:center;margin-top:5px;opacity:.8}
-body.light .margem-card{background:linear-gradient(135deg,#f0ebff,#e8dfff);border-color:var(--p2)}
-body.light .margem-card input{background:#fff!important;color:#1a1030!important;border-color:var(--p2)!important}
+body.light .margem-card{background:#fff;border-color:var(--p2)}
+body.light .margem-card input{background:#f5f3ff!important;color:#1a1030!important;border-color:var(--p2)!important}
 .field{margin-bottom:9px}
 .field label{display:block;font-size:.76rem;color:var(--text2);margin-bottom:3px;font-weight:500}
-.field input,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;transition:border .2s}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--o);background:#1e1830}
-body.light .field input,body.light .field textarea{background:#e8e8e8;border-color:#d8d0f0;color:#1a1030}
+.field input,.field textarea,.item-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.9rem;color:var(--text);background:#1a1428;transition:border .2s}
+.field input:focus,.field textarea:focus,.item-input:focus{outline:none;border-color:var(--o);background:#1e1830}
+body.light .field input,body.light .field textarea,body.light .item-input{background:#e8e8e8;border-color:#d8d0f0;color:#1a1030}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -54,7 +54,7 @@ input[type=number]{-moz-appearance:textfield}
 .toggle-btn{flex:1;padding:7px;border-radius:9px;border:1.5px solid var(--border);background:#1a1428;color:var(--text3);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
 .toggle-btn.active{border-color:var(--o);color:var(--o);background:#F0A07010}
 body.light .toggle-btn{background:#e5e5e5;color:#888;border-color:#ccc}
-body.light .toggle-btn.active{background:#F0A07015;border-color:var(--o);color:var(--o)}
+body.light .toggle-btn.active{background:#ede9fe;border-color:var(--p2);color:var(--p)}
 .peso-info{background:#1a1428;border:1px solid var(--border);border-radius:9px;padding:9px 11px;margin-top:7px;font-size:.78rem;display:none;flex-wrap:wrap;gap:10px}
 .peso-info .pi{color:var(--text2)}.peso-info .pi strong{color:var(--o)}
 body.light .peso-info{background:#f0ebff;border-color:#d8d0f0}
@@ -70,7 +70,7 @@ body.light .ft th{background:#ede9fe;color:var(--text2)}
 body.light .ft td{background:#fff;color:var(--text3)}
 body.light .ft td.pcol{background:#ede9fe;color:var(--p)}
 .frete-badge{background:#F0A07010;border:1px solid #F0A07040;border-radius:9px;padding:7px 11px;font-size:.79rem;color:var(--o);font-weight:600;margin-top:7px;display:none}
-body.light .frete-badge{background:#fff7f0;border-color:#F0A07066}
+body.light .frete-badge{background:#ede9fe;border-color:var(--p2)}
 .btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:12px;font-size:.97rem;font-weight:700;cursor:pointer;margin-top:4px}
 .btn-calc:hover{opacity:.88}
 .btn-reset{width:100%;padding:10px;background:var(--card);color:var(--text2);border:1px solid var(--border);border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px}
@@ -791,7 +791,8 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       </div>
     </div>
 
-    <button class="btn-calc" onclick="calcular()" style="padding:12px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
+    <button class="btn-calc" onclick="calcular()" style="padding:12px;margin-bottom:6px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
+    <button class="btn-reset" onclick="resetar()" style="width:100%;margin-top:0">← Novo Cálculo</button>
 
   </div>
   <div class="right-panel">
@@ -930,7 +931,6 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
             <button class="btn-save" onclick="salvarProduto()"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>Salvar no Dashboard</button>
           </div>
         </div>
-        <button class="btn-reset" onclick="resetar()" style="width:100%">← Novo Cálculo</button>
       </div>
     </div>
   </div>
