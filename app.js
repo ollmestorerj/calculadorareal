@@ -1228,7 +1228,7 @@ function renderCal(){
 function abrirModal(data,evId){
   evEditId=evId||null;
   const ev=evId?getEventos().find(e=>e.id===evId):null;
-  document.getElementById('ev-data').value=ev?ev.data:(data||new Date().toISOString().split('T')[0]);
+  document.getElementById('ev-data').value=ev?ev.data:(data||'');
   document.getElementById('ev-titulo').value=ev?ev.titulo:'';
   document.getElementById('ev-hora').value=ev?ev.hora:'';
   document.getElementById('ev-obs').value=ev?ev.obs:'';
