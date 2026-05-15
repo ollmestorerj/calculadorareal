@@ -1145,6 +1145,34 @@ function getEventos(){return JSON.parse(localStorage.getItem('realecom_eventos')
 function saveEventos(evs){localStorage.setItem('realecom_eventos',JSON.stringify(evs));fbSet('eventos',evs);}
 function navMes(dir){calMes+=dir;if(calMes>11){calMes=0;calAno++;}if(calMes<0){calMes=11;calAno--;}renderCal();}
 
+// Cores por tipo para pills
+const tipoCores={
+  full:        {bg:'#7c3aed18',color:'#a78bfa',dot:'#7c3aed'},
+  conta:       {bg:'#dc262618',color:'#f87171',dot:'#dc2626'},
+  entrega:     {bg:'#16a34a18',color:'#4ade80',dot:'#16a34a'},
+  outro:       {bg:'#F0A07018',color:'#F0A070',dot:'#F0A070'},
+  sazonal:     {bg:'#d9770618',color:'#fbbf24',dot:'#d97706'},
+  giro_pedido: {bg:'#7c3aed18',color:'#a78bfa',dot:'#7c3aed'},
+  giro_entrega:{bg:'#16a34a18',color:'#4ade80',dot:'#16a34a'},
+};
+
+function nomesCurto(titulo){
+  const mapa={
+    'Pagamento DAS':'DAS','Coleta Full':'Coleta Full','Pagar Cartão':'Cartão',
+    'Ver Estoque':'Estoque','Pedido ao Fornecedor':'Fornecedor',
+    'Fazer pedido ao fornecedor':'Pedido','Chegada do novo lote':'Lote',
+    'Volta às Aulas — Janeiro':'Volta Aulas','Volta às Aulas — Julho':'Volta Aulas',
+    'Carnaval':'Carnaval','Páscoa':'Páscoa','Dia das Mães':'Dia das Mães',
+    'Dia dos Namorados':'Namorados','Início do Inverno':'Inverno',
+    'Dia dos Pais':'Dia dos Pais','Início do Verão':'Verão',
+    'Dia das Crianças':'Crianças','Black Friday':'Black Friday','Natal':'Natal',
+  };
+  if(mapa[titulo]) return mapa[titulo];
+  const base=titulo.replace(/ em \d+ dias?$/,'');
+  if(mapa[base]) return mapa[base];
+  return titulo.length>12?titulo.substring(0,11)+'…':titulo;
+}
+
 function renderCal(){
   document.getElementById('cal-titulo').textContent=`${meses[calMes]} ${calAno}`;
   const grid=document.getElementById('cal-grid');
@@ -1154,19 +1182,27 @@ function renderCal(){
   const diasNoMes=new Date(calAno,calMes+1,0).getDate();
   let h='';
   diasSemana.forEach(d=>h+=`<div class="cal-day-header">${d}</div>`);
-  for(let i=0;i<primeiroDia;i++){const d=new Date(calAno,calMes,0).getDate()-primeiroDia+i+1;h+=`<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;}
+  for(let i=0;i<primeiroDia;i++){
+    const d=new Date(calAno,calMes,0).getDate()-primeiroDia+i+1;
+    h+=`<div class="cal-day other-month" style="height:82px"><div class="day-num">${d}</div></div>`;
+  }
   for(let d=1;d<=diasNoMes;d++){
     const dataStr=`${calAno}-${String(calMes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isHoje=hoje.getFullYear()===calAno&&hoje.getMonth()===calMes&&hoje.getDate()===d;
     const evsDia=eventos.filter(e=>e.data===dataStr);
     const max=3;
-    let evsHtml=evsDia.slice(0,max).map(e=>`<div class="cal-event ${tipoInfo[e.tipo].cls}" onclick="event.stopPropagation();abrirModal('${dataStr}',${e.id})" title="${e.titulo}">${tipoInfo[e.tipo].icon} ${e.titulo}</div>`).join('');
-    if(evsDia.length>max)evsHtml+=`<div class="cal-event-more">+${evsDia.length-max} mais</div>`;
-    h+=`<div class="cal-day${isHoje?' today':''}" onclick="abrirModal('${dataStr}')"><div class="day-num">${d}</div>${evsHtml}</div>`;
+    let pillsHtml=evsDia.slice(0,max).map(e=>{
+      const tipo=e.tipo||(e.titulo==='Pagamento DAS'?'conta':'outro');
+      const c=tipoCores[tipo]||tipoCores.outro;
+      const nome=nomesCurto(e.titulo);
+      return `<div onclick="event.stopPropagation();abrirModal('${dataStr}',${e.id})" title="${e.titulo}" style="display:flex;align-items:center;gap:3px;background:${c.bg};border-radius:4px;padding:2px 5px;margin-top:2px;cursor:pointer;overflow:hidden"><span style="width:5px;height:5px;border-radius:50%;background:${c.dot};flex-shrink:0"></span><span style="font-size:.6rem;color:${c.color};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nome}</span></div>`;
+    }).join('');
+    if(evsDia.length>max) pillsHtml+=`<div style="font-size:.58rem;color:var(--text3);padding-left:3px;margin-top:1px">+${evsDia.length-max}</div>`;
+    h+=`<div class="cal-day${isHoje?' today':''}" onclick="abrirModal('${dataStr}')" style="height:82px;overflow:hidden"><div class="day-num">${d}</div>${pillsHtml}</div>`;
   }
   const total=primeiroDia+diasNoMes;
   const resto=total%7===0?0:7-(total%7);
-  for(let i=1;i<=resto;i++)h+=`<div class="cal-day other-month"><div class="day-num">${i}</div></div>`;
+  for(let i=1;i<=resto;i++) h+=`<div class="cal-day other-month" style="height:82px"><div class="day-num">${i}</div></div>`;
   grid.innerHTML=h;
 }
 
