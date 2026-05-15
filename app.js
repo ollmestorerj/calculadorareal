@@ -801,31 +801,31 @@ async function renderDash(){
 // ============================================================
 const DATAS_SAZONAIS = [
   // 2026
-  {id:'volta_aulas_jan_26', titulo:'Volta às Aulas — Janeiro', data:'2026-01-15', dias:[45,30,15], icon:'📚', cor:'#2563eb'},
-  {id:'carnaval_26',        titulo:'Carnaval',                 data:'2026-03-01', dias:[30,15],    icon:'🎭', cor:'#db2777'},
-  {id:'pascoa_26',          titulo:'Páscoa',                   data:'2026-04-05', dias:[45,30,15], icon:'🐣', cor:'#d97706'},
-  {id:'maes_26',            titulo:'Dia das Mães',             data:'2026-05-11', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
-  {id:'namorados_26',       titulo:'Dia dos Namorados',        data:'2026-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
-  {id:'inverno_26',         titulo:'Início do Inverno',        data:'2026-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
-  {id:'volta_aulas_jul_26', titulo:'Volta às Aulas — Julho',   data:'2026-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
-  {id:'pais_26',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
-  {id:'criancas_26',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
-  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
-  {id:'blackfriday_26',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'🛍️', cor:'#4a3f6b'},
-  {id:'natal_26',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
+  {id:'volta_aulas_jan_26', titulo:'Volta às Aulas — Janeiro', data:'2026-01-15', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/></svg></span>', cor:'#2563eb'},
+  {id:'carnaval_26',        titulo:'Carnaval',                 data:'2026-03-01', dias:[30,15],    icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#db2777'},
+  {id:'pascoa_26',          titulo:'Páscoa',                   data:'2026-04-05', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'#d97706'},
+  {id:'maes_26',            titulo:'Dia das Mães',             data:'2026-05-11', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#ec4899,#be185d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></span>', cor:'#ec4899'},
+  {id:'namorados_26',       titulo:'Dia dos Namorados',        data:'2026-06-12', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#f43f5e,#e11d48);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></span>', cor:'#f43f5e'},
+  {id:'inverno_26',         titulo:'Início do Inverno',        data:'2026-06-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"2\" x2=\"12\" y2=\"22\"/><path d=\"M17 7l-5-5-5 5\"/><path d=\"M17 17l-5 5-5-5\"/><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"/><path d=\"M7 7l-5 5 5 5\"/><path d=\"M17 7l5 5-5 5\"/></svg></span>', cor:'#0891b2'},
+  {id:'volta_aulas_jul_26', titulo:'Volta às Aulas — Julho',   data:'2026-07-01', dias:[30,15],    icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 20V10a8 8 0 0 1 16 0v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z\"/><path d=\"M9 20v-5a3 3 0 0 1 6 0v5\"/><line x1=\"8\" y1=\"10\" x2=\"16\" y2=\"10\"/></svg></span>', cor:'#7c3aed'},
+  {id:'pais_26',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44z\"/><path d=\"M10.59 4.59l.6 3.4-3.4-.6z\"/></svg></span>', cor:'#16a34a'},
+  {id:'criancas_26',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#6B21A8'},
+  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'#F0A070'},
+  {id:'blackfriday_26',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#4a3f6b,#2d2460);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"23\"/><path d=\"M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"/></svg></span>', cor:'#4a3f6b'},
+  {id:'natal_26',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#16a34a'},
   // 2027
-  {id:'volta_aulas_jan_27', titulo:'Volta às Aulas — Janeiro', data:'2027-01-15', dias:[45,30,15], icon:'📚', cor:'#2563eb'},
-  {id:'carnaval_27',        titulo:'Carnaval',                 data:'2027-02-14', dias:[30,15],    icon:'🎭', cor:'#db2777'},
-  {id:'pascoa_27',          titulo:'Páscoa',                   data:'2027-03-28', dias:[45,30,15], icon:'🐣', cor:'#d97706'},
-  {id:'maes_27',            titulo:'Dia das Mães',             data:'2027-05-09', dias:[45,30,15], icon:'💐', cor:'#ec4899'},
-  {id:'namorados_27',       titulo:'Dia dos Namorados',        data:'2027-06-12', dias:[45,30,15], icon:'❤️', cor:'#f43f5e'},
-  {id:'inverno_27',         titulo:'Início do Inverno',        data:'2027-06-21', dias:[45,30,15], icon:'🧥', cor:'#0891b2'},
-  {id:'volta_aulas_jul_27', titulo:'Volta às Aulas — Julho',   data:'2027-07-01', dias:[30,15],    icon:'🎒', cor:'#7c3aed'},
-  {id:'pais_27',            titulo:'Dia dos Pais',             data:'2027-08-08', dias:[45,30,15], icon:'👔', cor:'#16a34a'},
-  {id:'criancas_27',        titulo:'Dia das Crianças',         data:'2027-10-12', dias:[45,30,15], icon:'🎠', cor:'#6B21A8'},
-  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'☀️', cor:'#F0A070'},
-  {id:'blackfriday_27',     titulo:'Black Friday',             data:'2027-11-26', dias:[45,30,15], icon:'🛍️', cor:'#4a3f6b'},
-  {id:'natal_27',           titulo:'Natal',                    data:'2027-12-25', dias:[45,30,15], icon:'🎄', cor:'#16a34a'},
+  {id:'volta_aulas_jan_27', titulo:'Volta às Aulas — Janeiro', data:'2027-01-15', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/></svg></span>', cor:'#2563eb'},
+  {id:'carnaval_27',        titulo:'Carnaval',                 data:'2027-02-14', dias:[30,15],    icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#db2777'},
+  {id:'pascoa_27',          titulo:'Páscoa',                   data:'2027-03-28', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'#d97706'},
+  {id:'maes_27',            titulo:'Dia das Mães',             data:'2027-05-09', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#ec4899,#be185d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></span>', cor:'#ec4899'},
+  {id:'namorados_27',       titulo:'Dia dos Namorados',        data:'2027-06-12', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#f43f5e,#e11d48);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></span>', cor:'#f43f5e'},
+  {id:'inverno_27',         titulo:'Início do Inverno',        data:'2027-06-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"2\" x2=\"12\" y2=\"22\"/><path d=\"M17 7l-5-5-5 5\"/><path d=\"M17 17l-5 5-5-5\"/><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"/><path d=\"M7 7l-5 5 5 5\"/><path d=\"M17 7l5 5-5 5\"/></svg></span>', cor:'#0891b2'},
+  {id:'volta_aulas_jul_27', titulo:'Volta às Aulas — Julho',   data:'2027-07-01', dias:[30,15],    icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 20V10a8 8 0 0 1 16 0v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z\"/><path d=\"M9 20v-5a3 3 0 0 1 6 0v5\"/><line x1=\"8\" y1=\"10\" x2=\"16\" y2=\"10\"/></svg></span>', cor:'#7c3aed'},
+  {id:'pais_27',            titulo:'Dia dos Pais',             data:'2027-08-08', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44z\"/><path d=\"M10.59 4.59l.6 3.4-3.4-.6z\"/></svg></span>', cor:'#16a34a'},
+  {id:'criancas_27',        titulo:'Dia das Crianças',         data:'2027-10-12', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#6B21A8'},
+  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'#F0A070'},
+  {id:'blackfriday_27',     titulo:'Black Friday',             data:'2027-11-26', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#4a3f6b,#2d2460);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"23\"/><path d=\"M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"/></svg></span>', cor:'#4a3f6b'},
+  {id:'natal_27',           titulo:'Natal',                    data:'2027-12-25', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#16a34a'},
 ];
 
 function verificarSazonalidade(){
@@ -833,13 +833,20 @@ function verificarSazonalidade(){
   showPage('sazonal', true);
 }
 
+function toggleSazonal(id){
+  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  const idx = selecionados.indexOf(id);
+  if(idx>=0) selecionados.splice(idx,1);
+  else selecionados.push(id);
+  localStorage.setItem('realecom_sazonal_sel', JSON.stringify(selecionados));
+  renderSazonalGrid();
+}
+
 function renderSazonalGrid(){
   const el = document.getElementById('sazonal-grid');
   if(!el) return;
   const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
   const hoje = new Date(); hoje.setHours(0,0,0,0);
-
-  // Para cada nome de evento, pega só a próxima ocorrência futura, ordenada por data
   const titulosVistos = new Set();
   const datasFuturas = DATAS_SAZONAIS
     .filter(d => new Date(d.data + 'T00:00:00') >= hoje)
@@ -855,26 +862,23 @@ function renderSazonalGrid(){
     const sel = selecionados.includes(d.id);
     const diasRestantes = Math.round((dataEv - hoje) / (1000*60*60*24));
     const dataFmt = d.data.split('-').reverse().join('/');
-    return `<div onclick="toggleSazonal('${d.id}')" data-id="${d.id}" style="background:var(--card);border:2px solid ${sel?d.cor+'88':'var(--border)'};border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s;${sel?'background:'+d.cor+'12':''}">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.4rem">${d.icon}</span>
-        <div style="flex:1">
-          <div style="font-size:.82rem;font-weight:700;color:var(--text)">${d.titulo}</div>
-          <div style="font-size:.68rem;color:var(--text3)">${dataFmt} · em ${diasRestantes} dias</div>
-        </div>
-        <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${sel?d.cor:'var(--border)'};background:${sel?d.cor:'none'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">
-          ${sel?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
-        </div>
-      </div>
-      <div style="font-size:.66rem;color:var(--text3)">Lembretes: ${d.dias.map(x=>x+'d').join(', ')} antes + no dia</div>
-    </div>`;
+    return '<div onclick="toggleSazonal(\'' + d.id + '\')" data-id="' + d.id + '" style="background:var(--card);border:2px solid ' + (sel?d.cor+'88':'var(--border)') + ';border-radius:12px;padding:12px 14px;cursor:pointer;user-select:none;transition:all .2s;' + (sel?'background:'+d.cor+'12':'') + '">' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span style="pointer-events:none;display:flex">' + d.icon + '</span>' +
+        '<div style="flex:1;pointer-events:none">' +
+          '<div style="font-size:.82rem;font-weight:700;color:var(--text)">' + d.titulo + '</div>' +
+          '<div style="font-size:.68rem;color:var(--text3)">' + dataFmt + ' · em ' + diasRestantes + ' dias</div>' +
+        '</div>' +
+        '<div style="width:20px;height:20px;border-radius:50%;border:2px solid ' + (sel?d.cor:'var(--border)') + ';background:' + (sel?d.cor:'none') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;pointer-events:none;transition:all .2s">' +
+          (sel?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'') +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }).join('');
 
-  // Atualiza contador
   const count = document.getElementById('sazonal-count');
   if(count) count.textContent = selecionados.filter(id=>datasFuturas.some(d=>d.id===id)).length + ' selecionadas';
 }
-
 function selecionarTodasSazonais(sel){
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const titulosVistos = new Set();
@@ -983,7 +987,7 @@ function mostrarNotifSazonal(ev){
   div.style.maxWidth='340px';
   div.innerHTML=`
     <div class="notif-body" style="width:100%">
-      <div class="notif-title" style="color:#F0A070;margin-bottom:4px">${d?d.icon:''} ${ev.titulo.replace(/ em \d+ dias/,'')}</div>
+      <div class="notif-title" style="color:#F0A070;margin-bottom:4px">${ev.titulo.replace(/ em \d+ dias/,'')}</div>
       <div class="notif-sub" style="margin-bottom:10px">${ev.obs}</div>
       <div style="display:flex;gap:8px">
         <button onclick="confirmarSazonal('sim','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#16a34a22;border:1px solid #16a34a55;color:#4ade80;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">✅ Sim, vou participar</button>
