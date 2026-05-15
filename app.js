@@ -1149,7 +1149,7 @@ function getEventos(){return JSON.parse(localStorage.getItem('realecom_eventos')
 function saveEventos(evs){localStorage.setItem('realecom_eventos',JSON.stringify(evs));fbSet('eventos',evs);}
 function navMes(dir){calMes+=dir;if(calMes>11){calMes=0;calAno++;}if(calMes<0){calMes=11;calAno--;}renderCal();}
 
-// Cores por tipo para pills
+// Cores por tipo para pills — dark mode
 const tipoCores={
   full:        {bg:'#7c3aed18',color:'#a78bfa',dot:'#7c3aed'},
   conta:       {bg:'#dc262618',color:'#f87171',dot:'#dc2626'},
@@ -1159,6 +1159,23 @@ const tipoCores={
   giro_pedido: {bg:'#7c3aed18',color:'#a78bfa',dot:'#7c3aed'},
   giro_entrega:{bg:'#16a34a18',color:'#4ade80',dot:'#16a34a'},
 };
+
+// Cores por tipo para pills — light mode
+const tipoCoresLight={
+  full:        {bg:'#ede9fe',color:'#5b21b6',dot:'#7c3aed'},
+  conta:       {bg:'#fee2e2',color:'#b91c1c',dot:'#dc2626'},
+  entrega:     {bg:'#dcfce7',color:'#15803d',dot:'#16a34a'},
+  outro:       {bg:'#fff7ed',color:'#c2410c',dot:'#ea580c'},
+  sazonal:     {bg:'#fef3c7',color:'#92400e',dot:'#d97706'},
+  giro_pedido: {bg:'#ede9fe',color:'#5b21b6',dot:'#7c3aed'},
+  giro_entrega:{bg:'#dcfce7',color:'#15803d',dot:'#16a34a'},
+};
+
+function getTipoCores(tipo){
+  const isLight = document.body.classList.contains('light');
+  const mapa = isLight ? tipoCoresLight : tipoCores;
+  return mapa[tipo] || (isLight ? {bg:'#f3f4f6',color:'#374151',dot:'#6b7280'} : tipoCores.outro);
+}
 
 function nomesCurto(titulo){
   const mapa={
@@ -1197,7 +1214,7 @@ function renderCal(){
     const max=3;
     let pillsHtml=evsDia.slice(0,max).map(e=>{
       const tipo=e.tipo||(e.titulo==='Pagamento DAS'?'conta':'outro');
-      const c=tipoCores[tipo]||tipoCores.outro;
+      const c=getTipoCores(tipo);
       const nome=nomesCurto(e.titulo);
       return `<div onclick="event.stopPropagation();abrirModal('${dataStr}',${e.id})" title="${e.titulo}" style="display:flex;align-items:center;gap:3px;background:${c.bg};border-radius:4px;padding:2px 5px;margin-top:2px;cursor:pointer;overflow:hidden"><span style="width:5px;height:5px;border-radius:50%;background:${c.dot};flex-shrink:0"></span><span style="font-size:.6rem;color:${c.color};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nome}</span></div>`;
     }).join('');
