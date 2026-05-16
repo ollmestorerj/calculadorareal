@@ -737,7 +737,7 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       </div>
     </div>
 
-    <!-- LINHA 2: Frete entrega | Insumos + Afiliados -->
+    <!-- LINHA 2: Frete entrega | Taxas -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
       <div class="card" style="margin-bottom:0;padding:10px 12px">
         <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Frete Entrega <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></div>
@@ -776,20 +776,28 @@ body.light .sb-tooltip{background:#fff;color:#1a1030;border-color:#d8d0f0}
       </div>
     </div>
 
-    <!-- LINHA 3: Margem | Projeção -->
+    <!-- LINHA 3: Insumos | Margem -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div class="card" style="margin-bottom:0;padding:10px 12px">
+        <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>Insumos / Embalagem</div>
+        <div class="field" style="margin-bottom:0"><label style="font-size:.68rem">Valor (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
+      </div>
       <div class="margem-card" id="margem-block" style="margin-bottom:0;padding:10px 12px">
         <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>Margem Desejada <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></div>
         <div class="field" style="margin-bottom:4px"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" style="font-size:1.1rem;font-weight:700;text-align:center"></div>
         <div class="margem-hint" style="font-size:.68rem">↑ Meta de lucro em % sobre o preço de venda</div>
       </div>
+    </div>
+
+    <!-- LINHA 4: Projeção -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
       <div class="card" style="margin-bottom:0;padding:10px 12px">
         <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Projeção</div>
         <div class="field" style="margin-bottom:8px"><label style="font-size:.68rem">Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1"></div>
         <div class="field" style="margin-bottom:0"><label id="ml-label" style="font-size:.68rem"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01"></div>
       </div>
+      <div style="display:flex;flex-direction:column;gap:0;justify-content:flex-end"></div>
     </div>
-
     <button class="btn-calc" onclick="calcular()" style="padding:12px;margin-bottom:6px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
     <button class="btn-reset" onclick="resetar()" style="width:100%;margin-top:0">← Novo Cálculo</button>
 
