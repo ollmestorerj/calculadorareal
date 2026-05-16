@@ -1124,8 +1124,9 @@ const templatesEvento = {
 function abrirModalTemplate(tipo){
   const t = templatesEvento[tipo];
   if(!t) return;
-  const hoje = new Date().toISOString().split('T')[0];
-  abrirModal(hoje);
+  // Usa a data já preenchida no modal (dia clicado) ou hoje como fallback
+  const dataAtual = document.getElementById('ev-data').value || new Date().toISOString().split('T')[0];
+  abrirModal(dataAtual);
   setTimeout(()=>{
     document.getElementById('ev-titulo').value = t.titulo;
     document.getElementById('ev-tipo').value = t.tipo;
