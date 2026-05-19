@@ -1630,7 +1630,25 @@ function calcularPublicidadeManual(){
 
 function renderResultadoPublicidade(preco, margemAds){
   const res = document.getElementById('pub-resultado');
-  if(margemAds<=0||preco<=0){res.style.display='none';return;}
+  // Mostrar alerta quando margem para ads é zero ou negativa
+  let alerta = document.getElementById('pub-alerta');
+  if(!alerta){
+    alerta = document.createElement('div');
+    alerta.id = 'pub-alerta';
+    alerta.style.cssText = 'background:#7f1d1d22;border:1px solid #ef444455;border-radius:10px;padding:10px 14px;font-size:.78rem;color:#f87171;margin-top:8px;line-height:1.5;display:none';
+    res.parentNode.insertBefore(alerta, res);
+  }
+  if(margemAds<=0||preco<=0){
+    res.style.display='none';
+    alerta.style.display='block';
+    if(margemAds<=0 && preco>0){
+      alerta.textContent='⚠️ A margem que você quer garantir é igual ou maior que a margem do produto — não sobra nada para investir em anúncios. Reduza a margem desejada ou melhore o custo do produto.';
+    } else {
+      alerta.textContent='Preencha o preço e o custo do produto para calcular.';
+    }
+    return;
+  }
+  alerta.style.display='none';
   res.style.display='block';
   const acos = (margemAds/preco)*100;
   const roas = preco/margemAds;
