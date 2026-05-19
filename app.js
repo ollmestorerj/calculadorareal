@@ -385,6 +385,7 @@ function showPage(p,bypassCheck){
   if(p==='pub'){switchPubMode('dash');renderHistoricoPublicidade();}
   if(p==='sazonal'){renderSazonalGrid();}
   if(p==='ncm'){renderHistoricoNCM();}
+  if(p!=='login') registrarAtividade('nav_'+p);
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
 }
