@@ -1630,7 +1630,6 @@ function calcularPublicidadeManual(){
 
 function renderResultadoPublicidade(preco, margemAds){
   const res = document.getElementById('pub-resultado');
-  // Mostrar alerta quando margem para ads é zero ou negativa
   let alerta = document.getElementById('pub-alerta');
   if(!alerta){
     alerta = document.createElement('div');
@@ -1652,6 +1651,13 @@ function renderResultadoPublicidade(preco, margemAds){
   res.style.display='block';
   const acos = (margemAds/preco)*100;
   const roas = preco/margemAds;
+  // Guarda contra valores absurdos (margemAds quase zero)
+  if(!isFinite(roas)||roas>9999||acos<0.01){
+    res.style.display='none';
+    const al = document.getElementById('pub-alerta');
+    if(al){al.style.display='block';al.textContent='⚠️ A margem que você quer garantir é igual ou maior que a margem do produto — não sobra nada para investir em anúncios. Reduza a margem desejada ou melhore o custo do produto.';}
+    return;
+  }
   document.getElementById('pub-roas').textContent = roas.toFixed(1)+'x';
   document.getElementById('pub-acos').textContent = acos.toFixed(1)+'%';
   document.getElementById('pub-margem-ads').textContent = fmt(margemAds);
