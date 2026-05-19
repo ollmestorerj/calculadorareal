@@ -347,7 +347,8 @@ function renderUsuarios(){
   const planoLabels={mentorado:'🎓 Mentorado',mensal:'📅 Mensal',trimestral:'📆 Trimestral',anual:'🗓️ Anual',vitalicio:'♾️ Vitalício'};
   tbody.innerHTML=[...todosUsuarios].sort((a,b)=>(b.ultimaAtividade||0)-(a.ultimaAtividade||0)).map(u=>{
     const diff=Math.floor((agora-(u.ultimaAtividade||0))/(1000*60*60*24));
-    const statusBadge=diff===0?'<span class="badge recente">🟡 Hoje</span>':diff<=7?'<span class="badge ativo">✅ Ativo</span>':u.ultimaAtividade?`<span class="badge inativo">⚫ ${diff}d atrás</span>`:'<span class="badge inativo">⚫ Nunca</span>';
+    const statusBadge=u.ultimaAtividade?(diff===0?'<span class="badge recente">🟡 Hoje</span>':diff<=7?`<span class="badge ativo">✅ ${diff}d atrás</span>`:`<span class="badge inativo">⚫ ${diff}d atrás</span>`):'<span class="badge inativo" style="opacity:.5">Nunca acessou</span>';
+    const ultimaAtivStr = u.ultimaAtividade ? new Date(u.ultimaAtividade).toLocaleString('pt-BR') : '<span style="opacity:.4">—</span>';
     const ativoBadge=u.ativo!==false?'<span class="badge ativo">✅</span>':'<span class="badge inativo">❌</span>';
     return`<tr>
       <td><strong style="color:var(--text)">${u.nome||'—'}</strong></td>
@@ -355,7 +356,7 @@ function renderUsuarios(){
       <td style="font-size:.72rem">${planoLabels[u.plano]||u.plano||'—'}</td>
       <td style="font-size:.72rem">${u.validade||'Sem expiração'}</td>
       <td>${ativoBadge} ${statusBadge}</td>
-      <td style="font-size:.72rem">${u.ultimaAtividade?new Date(u.ultimaAtividade).toLocaleString('pt-BR'):'—'}</td>
+      <td style="font-size:.72rem">${ultimaAtivStr}</td>
       <td style="text-align:center"><strong style="color:#c4b5fd">${u.produtos.length}</strong></td>
       <td style="display:flex;gap:5px;flex-wrap:wrap">
         <button class="btn-edit" onclick="preencherEdicao('${u.email||u.id}','${u.plano||''}','${u.validade||''}')">✏️</button>
