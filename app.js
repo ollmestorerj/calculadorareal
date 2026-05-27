@@ -15,15 +15,32 @@ const FIREBASE_CONFIG = {
 };
 
 // ============================================================
-// FIREBASE — camada de dados
+// FIREBASE — inicialização garantida
 // ============================================================
-let _db = null;
+let _firebaseInitialized = false;
 
-async function getDB(){
-  if(_db) return _db;
-  if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+function ensureFirebase() {
+  if (_firebaseInitialized) return;
+  if (!firebase.apps.length) {
+    firebase.initializeApp(FIREBASE_CONFIG);
+  }
+  _firebaseInitialized = true;
+}
+
+let _db = null;
+async function getDB() {
+  ensureFirebase();
+  if (_db) return _db;
   _db = firebase.firestore();
   return _db;
+}
+
+let _auth = null;
+async function getAuth() {
+  ensureFirebase();
+  if (_auth) return _auth;
+  _auth = firebase.auth();
+  return _auth;
 }
 
 function loadScript(src){
@@ -36,13 +53,28 @@ function loadScript(src){
 }
 
 // Retorna o identificador do usuário atual (email do Firebase Auth ou chave legada)
-async function getUserId(){
+async function getUserId() {
+  ensureFirebase();
   const auth = firebase.auth();
-  const user = auth.currentUser;
-  if(user && user.email) return user.email;
-  // fallback para sessão legada
+
+  // Se já tem usuário logado, retorna direto
+  if (auth.currentUser && auth.currentUser.email) {
+    return auth.currentUser.email;
+  }
+
+  // Aguarda o Auth resolver o estado (evita retornar null antes do onAuthStateChanged)
+  const user = await new Promise((resolve) => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      unsubscribe();
+      resolve(u);
+    });
+  });
+
+  if (user && user.email) return user.email;
+
+  // Fallback para sessão legada
   const s = verificarSessao();
-  return s ? s.chave : null;
+  return s ? (s.email || s.chave) : null;
 }
 
 // Retorna ref do doc do usuário atual
@@ -110,14 +142,6 @@ async function registrarAtividade(acao){
 // ============================================================
 // LOGIN — Firebase Auth (email + senha)
 // ============================================================
-
-let _auth = null;
-async function getAuth(){
-  if(_auth) return _auth;
-  if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-  _auth = firebase.auth();
-  return _auth;
-}
 
 function verificarSessao(){
   // Compatibilidade: retorna usuário do Firebase ou sessão antiga
@@ -1737,8 +1761,6 @@ function removerAnalisePublicidade(id){
   renderHistoricoPublicidade();
 }
 
-// Atualizar switchPubMode para mostrar campo de nome no modo manual ao ter resultado
-
 // ============================================================
 const SN_ANEXO1 = [
   {faixa:'1ª Faixa', min:0.01,       max:180000,    nominal:0.04,  deducao:0,      irpj:0.055, csll:0.035, cofins:0.1274, pis:0.0276, cpp:0.415,  icms:0.34},
@@ -1800,10 +1822,6 @@ function calcularSimples(){
 }
 
 // ============================================================
-// METAS
-// ============================================================
-
-// ============================================================
 // METAS — Nova versão com períodos
 // ============================================================
 
@@ -1813,19 +1831,16 @@ function carregarMetas(){
   const elDias=document.getElementById('meta-dias-semana');
   if(m.prodDia&&elDia)elDia.value=m.prodDia;
   if(m.diasSemana&&elDias)elDias.value=m.diasSemana;
-  // Sempre atualiza painel de qualidade, mesmo sem meta definida
   atualizarQualidade();
-  // Recalcula metas de progresso se tiver os valores
   if(m.prodDia&&m.diasSemana)recalcularMetas();
 }
 
 function atualizarQualidade(){
-  if(!document.getElementById('qual-total'))return; // página metas não está ativa
+  if(!document.getElementById('qual-total'))return;
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
   const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
-  // Produtos dos últimos 30 dias
   const agora=Date.now();
   const limite30=agora-(30*24*60*60*1000);
   const prodsMes=todos.filter(p=>{
@@ -1836,7 +1851,6 @@ function atualizarQualidade(){
   const qualTotal=document.getElementById('qual-total');
   if(qualTotal)qualTotal.textContent=prodsMes.length;
 
-  // Margem: 10-14,99% / 15-19,99% / 20%+
   const roi160=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=10&&parseFloat(p.margem)<15).length;
   const roi180=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=15&&parseFloat(p.margem)<20).length;
   const roi200=prodsMes.filter(p=>p.margem&&parseFloat(p.margem)>=20).length;
@@ -1879,11 +1893,10 @@ function atualizarNota(v){
   document.getElementById('nota-display').textContent=parseFloat(v).toFixed(1).replace('.',',');
 }
 
-
 function recalcularMetas(){
   const elDia=document.getElementById('meta-prod-dia');
   const elDias=document.getElementById('meta-dias-semana');
-  if(!elDia||!elDias)return; // elementos ainda não existem no DOM
+  if(!elDia||!elDias)return;
   const prodDia=parseInt(elDia.value)||0;
   const diasSem=parseInt(elDias.value)||0;
   if(!prodDia||!diasSem)return;
@@ -1901,11 +1914,9 @@ function recalcularMetas(){
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
-  // Filtro por período: usa o id do produto (timestamp de quando foi salvo)
   function prodsPeriodo(dias){
     const agora=Date.now();
     const limiteMs=agora-(dias*24*60*60*1000);
-    // Usa o maior entre dataInicio e (agora - dias)
     const limiteReal=Math.max(dataInicio.getTime(),limiteMs);
     return prods.filter(p=>{
       const ts=typeof p.id==='number'?p.id:parseInt(p.id);
@@ -1951,7 +1962,6 @@ function recalcularMetas(){
   const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,314);
   const mn=atualizarGrafico('mes',prodsMes,metaMes,314);
 
-  // Atualizar painel de qualidade
   atualizarQualidade();
 }
 
@@ -1971,7 +1981,6 @@ function calcFreteFullUnit(){
     res.style.display='none';
   }
 }
-
 
 // ============================================================
 // DEVOLUÇÃO
@@ -2110,8 +2119,7 @@ const BASE_NCM = [
   {cod:'9401.61.00', desc:'Assentos com armação de madeira estofados', palavras:'sofa poltrona cadeira madeira estofada'},
   // BANHEIRO — ESPELHOS E ARMÁRIOS
   {cod:'7009.92.00', desc:'Espelhos de vidro com moldura', palavras:'espelho moldura banheiro quarto parede vidro'},
-  {cod:'9403.60.00', desc:'Armários e gabinetes de madeira', palavras:'armario gabinete banheiro madeira mdf'},
-  {cod:'3922.10.00', desc:'Banheiras e artigos sanitários de plástico', palavras:'armario banheiro plastico plastico pvc sanitario'},
+  {cod:'3922.10.00', desc:'Banheiras e artigos sanitários de plástico', palavras:'armario banheiro plastico pvc sanitario'},
   {cod:'7615.10.00', desc:'Artigos de uso doméstico de alumínio', palavras:'armario banheiro aluminio espelho'},
   // BELEZA E CUIDADOS
   {cod:'3304.10.00', desc:'Produtos de maquiagem para lábios', palavras:'batom lip gloss labial brilho maquiagem'},
@@ -2167,14 +2175,11 @@ function calcularScore(query, ncm){
   const haystack = normalizarTexto(ncm.desc + ' ' + ncm.palavras);
   let score = 0;
   tokens.forEach(t=>{
-    // Match exato de palavra completa vale mais
     const re = new RegExp('\\b'+t, 'g');
     const matches = (haystack.match(re)||[]).length;
     if(matches>0) score += t.length * matches * 2;
-    // Match parcial
     else if(haystack.includes(t)) score += t.length;
   });
-  // Bônus se o token aparece na descrição oficial
   tokens.forEach(t=>{
     if(normalizarTexto(ncm.desc).includes(t)) score += 5;
   });
@@ -2202,7 +2207,6 @@ function _executarBuscaNCM(query){
 
   empty.style.display='none';
 
-  // Pontua e filtra
   const resultados = BASE_NCM
     .map(n=>({...n, score:calcularScore(query,n)}))
     .filter(n=>n.score>0)
