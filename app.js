@@ -35,21 +35,31 @@ function loadScript(src){
   });
 }
 
+// Retorna o identificador do usuário atual (email do Firebase Auth ou chave legada)
+async function getUserId(){
+  const auth = firebase.auth();
+  const user = auth.currentUser;
+  if(user && user.email) return user.email;
+  // fallback para sessão legada
+  const s = verificarSessao();
+  return s ? s.chave : null;
+}
+
 // Retorna ref do doc do usuário atual
 async function userDoc(colecao){
-  const s=verificarSessao();
-  if(!s) return null;
+  const uid = await getUserId();
+  if(!uid) return null;
   const db=await getDB();
-  return db.collection('usuarios').doc(s.chave).collection(colecao);
+  return db.collection('usuarios').doc(uid).collection(colecao);
 }
 
 // Salva array no Firebase (sobrescreve a coleção com um único doc "data")
 async function fbSet(colecao, dados){
   try{
-    const s=verificarSessao();
-    if(!s) return;
+    const uid = await getUserId();
+    if(!uid) return;
     const db=await getDB();
-    await db.collection('usuarios').doc(s.chave)
+    await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data')
       .set({payload: JSON.stringify(dados), ts: Date.now()});
   }catch(e){ console.warn('Firebase write error:', e); }
@@ -58,10 +68,10 @@ async function fbSet(colecao, dados){
 // Lê array do Firebase, fallback para localStorage
 async function fbGet(colecao, localKey, fallback){
   try{
-    const s=verificarSessao();
-    if(!s) return JSON.parse(localStorage.getItem(localKey)||fallback);
+    const uid = await getUserId();
+    if(!uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
     const db=await getDB();
-    const doc=await db.collection('usuarios').doc(s.chave)
+    const doc=await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data').get();
     if(doc.exists){
       const dados=JSON.parse(doc.data().payload);
@@ -84,12 +94,13 @@ async function fbGet(colecao, localKey, fallback){
 // Registra atividade do usuário no Firebase (para o admin ver)
 async function registrarAtividade(acao){
   try{
+    const uid = await getUserId();
+    if(!uid) return;
     const s=verificarSessao();
-    if(!s) return;
     const db=await getDB();
-    await db.collection('usuarios').doc(s.chave).set({
-      nome: s.nome,
-      chave: s.chave,
+    await db.collection('usuarios').doc(uid).set({
+      nome: s?s.nome:'',
+      email: uid,
       ultimaAtividade: Date.now(),
       ultimaAcao: acao
     },{merge:true});
