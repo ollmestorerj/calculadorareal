@@ -374,15 +374,71 @@ function entrarNoApp(dados, pagina){
   }, 50);
 }
 
-// Verifica sessão ao carregar
+// Verifica sessão ao carregar — baseado no Firebase Auth
 (function(){
-  const s=verificarSessao();
-  if(s){
-    const ultimaPagina=localStorage.getItem('realecom_pagina')||'home';
-    entrarNoApp(s, ultimaPagina);
-  }
+  // Tema pode ser aplicado imediatamente, não depende de auth
   const t=localStorage.getItem('realecom_theme');
   if(t==='light'){document.body.classList.add('light');document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='🌙 Escuro');}
+
+  ensureFirebase();
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if(!user){
+      // Sem sessão Firebase — limpa localStorage legado e fica na tela de login
+      localStorage.removeItem('realecom_sessao');
+      return;
+    }
+
+    // Tem usuário Firebase — valida no Firestore se ainda está ativo e dentro do prazo
+    try{
+      const db = await getDB();
+      const doc = await db.collection('usuarios').doc(user.email).get();
+
+      if(!doc.exists){
+        await firebase.auth().signOut();
+        localStorage.removeItem('realecom_sessao');
+        return;
+      }
+
+      const dados = doc.data();
+
+      if(!dados.ativo){
+        await firebase.auth().signOut();
+        localStorage.removeItem('realecom_sessao');
+        mostrarErroLogin('Sua conta está inativa. Entre em contato com o suporte.');
+        return;
+      }
+
+      if(dados.validade){
+        const partes = dados.validade.split('/');
+        const validade = new Date(partes[2], partes[1]-1, partes[0]);
+        validade.setHours(23,59,59);
+        if(new Date() > validade){
+          await firebase.auth().signOut();
+          localStorage.removeItem('realecom_sessao');
+          mostrarErroLogin('Seu acesso expirou em '+dados.validade+'. Renove sua assinatura.');
+          return;
+        }
+      }
+
+      // Tudo ok — entra no app
+      const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
+      entrarNoApp({
+        email: user.email,
+        nome: dados.nome || user.email,
+        validade: dados.validade || '—',
+        plano: dados.plano || ''
+      }, ultimaPagina);
+
+    }catch(e){
+      console.warn('Erro ao validar sessão:', e);
+      // Em caso de erro de rede, usa cache do localStorage como fallback
+      const s = verificarSessao();
+      if(s){
+        const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
+        entrarNoApp(s, ultimaPagina);
+      }
+    }
+  });
 })();
 
 // ============================================================
