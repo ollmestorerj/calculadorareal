@@ -830,7 +830,31 @@ async function salvarProduto(){
   if(!nome){alert('Informe o nome do produto.');return;}
   const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM;
   const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
-  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA};
+
+  // Captura todos os inputs para restaurar o cálculo depois
+  const snapshot={
+    calcMode,
+    itens:[...(document.querySelectorAll('.item-input')||[])].map(el=>parseFloat(el.value)||0).filter(v=>v>0),
+    freteMode,
+    freteSel,
+    freteSel_col,
+    freteManual:parseFloat(document.getElementById('frete-manual').value)||0,
+    peso:parseFloat(document.getElementById('peso').value)||0,
+    comp:parseFloat(document.getElementById('comp').value)||0,
+    larg:parseFloat(document.getElementById('larg').value)||0,
+    alt:parseFloat(document.getElementById('alt').value)||0,
+    insumos:parseFloat(document.getElementById('insumos').value)||0,
+    freteFullTotal:parseFloat(document.getElementById('frete-full').value)||0,
+    freteFullQtd:parseInt(document.getElementById('frete-full-qtd').value)||1,
+    impostos:parseFloat(document.getElementById('impostos').value)||0,
+    comissao:parseFloat(document.getElementById('comissao').value)||0,
+    afiliados:parseFloat(document.getElementById('afiliados').value)||0,
+    margem:parseFloat(document.getElementById('margem').value)||0,
+    quantidade:parseInt(document.getElementById('quantidade').value)||1,
+    precoML:parseFloat(document.getElementById('preco-ml').value)||0,
+  };
+
+  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   prods.unshift(prod);
   localStorage.setItem('realecom_prods',JSON.stringify(prods));
@@ -870,6 +894,7 @@ async function renderDash(){
       <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div></div>
       <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div></div>
       <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar como comprado':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1rem;transition:all .2s" onmouseover="this.style.borderColor='#16a34a'" onmouseout="this.style.borderColor='${p.comprado?'#16a34a55':'var(--border)'}'">${p.comprado?'⭐':'☆'}</button>
+      <button onclick="verNaCalculadora(${p.id})" title="Ver na Calculadora" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.7rem;font-weight:700;color:var(--o);transition:all .2s" onmouseover="this.style.borderColor='var(--o)'" onmouseout="this.style.borderColor='var(--border)'">🧮 Calcular</button>
       <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
       <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
     </div>
@@ -1496,6 +1521,91 @@ function toggleComprado(id){
   const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   const p=prods.find(p=>p.id===id);
   if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);renderDash();}
+}
+
+// ============================================================
+// VER NA CALCULADORA — restaura o cálculo salvo
+// ============================================================
+function verNaCalculadora(id){
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const p=prods.find(p=>p.id===id);
+  if(!p){alert('Produto não encontrado.');return;}
+
+  const s=p.snapshot;
+
+  // Navega para a calculadora primeiro
+  showPage('calc', true);
+
+  // Pequeno delay para garantir que a página renderizou
+  setTimeout(()=>{
+    // Reseta tudo antes de preencher
+    resetar();
+
+    if(!s){
+      // Produto antigo sem snapshot — preenche só o que temos
+      const list=document.getElementById('items-list');
+      list.innerHTML=`<div class="item-row"><input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01" value="${p.custoReal||0}"><button class="remove-btn" onclick="removeItem(this)">×</button></div>`;
+      if(p.frete)document.getElementById('frete-manual').value=p.frete;
+      switchFrete('manual');
+      if(p.pI)document.getElementById('impostos').value=(p.pI*100).toFixed(2);
+      if(p.pC)document.getElementById('comissao').value=(p.pC*100).toFixed(2);
+      if(p.pA)document.getElementById('afiliados').value=(p.pA*100).toFixed(2);
+      if(p.margem)document.getElementById('margem').value=p.margem.toFixed(2);
+      if(p.precoML)document.getElementById('preco-ml').value=p.precoML;
+      setMode(1);
+      calcular();
+      return;
+    }
+
+    // Restaura modo
+    setMode(s.calcMode||1);
+
+    // Restaura itens de custo
+    const list=document.getElementById('items-list');
+    const itens=s.itens&&s.itens.length?s.itens:[p.custoReal||0];
+    list.innerHTML='';
+    itens.forEach((v,i)=>{
+      const d=document.createElement('div');d.className='item-row';
+      d.innerHTML=`<input type="number" class="item-input" placeholder="Custo item ${i+1} (R$)" min="0" step="0.01" value="${v}"><button class="remove-btn" onclick="removeItem(this)" style="display:${itens.length>1?'flex':'none'}">×</button>`;
+      list.appendChild(d);
+    });
+
+    // Restaura frete
+    switchFrete(s.freteMode||'dim');
+    if(s.freteMode==='manual'){
+      document.getElementById('frete-manual').value=s.freteManual||0;
+    }else{
+      if(s.peso)document.getElementById('peso').value=s.peso;
+      if(s.comp)document.getElementById('comp').value=s.comp;
+      if(s.larg)document.getElementById('larg').value=s.larg;
+      if(s.alt)document.getElementById('alt').value=s.alt;
+      if(s.peso||s.comp)calcPeso();
+      // Restaura seleção da faixa de frete se existia
+      if(s.freteSel&&s.freteSel_col!==undefined){
+        setTimeout(()=>selFrete(s.freteSel_col, s.freteSel), 100);
+      }
+    }
+
+    // Restaura insumos e Full
+    if(s.insumos)document.getElementById('insumos').value=s.insumos;
+    if(s.freteFullTotal)document.getElementById('frete-full').value=s.freteFullTotal;
+    if(s.freteFullQtd&&s.freteFullQtd>1)document.getElementById('frete-full-qtd').value=s.freteFullQtd;
+    if(s.freteFullTotal)calcFreteFullUnit();
+
+    // Restaura taxas
+    if(s.impostos)document.getElementById('impostos').value=s.impostos;
+    if(s.comissao)document.getElementById('comissao').value=s.comissao;
+    if(s.afiliados)document.getElementById('afiliados').value=s.afiliados;
+    if(s.margem)document.getElementById('margem').value=s.margem;
+
+    // Restaura projeção
+    if(s.quantidade&&s.quantidade>1)document.getElementById('quantidade').value=s.quantidade;
+    if(s.precoML)document.getElementById('preco-ml').value=s.precoML;
+
+    // Executa o cálculo
+    calcular();
+
+  }, 100);
 }
 
 // ============================================================
