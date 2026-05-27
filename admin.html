@@ -102,7 +102,6 @@ tr:hover td{background:#1a1428}
 
   <div class="container">
 
-    <!-- KPIs -->
     <div class="kpis">
       <div class="kpi"><div class="kl">Total usuários</div><div class="kv" id="kpi-usuarios">—</div></div>
       <div class="kpi"><div class="kl">Ativos hoje</div><div class="kv" id="kpi-hoje" style="color:#4ade80">—</div></div>
@@ -113,10 +112,8 @@ tr:hover td{background:#1a1428}
       <div class="kpi"><div class="kl">Vencem em 7d</div><div class="kv" id="kpi-vencendo" style="color:#f87171">—</div></div>
     </div>
 
-    <!-- Alertas vencimento -->
     <div id="alertas-box" style="margin-bottom:16px"></div>
 
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab active" onclick="showTab('cadastrar')">Cadastrar</button>
       <button class="tab" onclick="showTab('usuarios')">Usuários</button>
@@ -276,19 +273,47 @@ tr:hover td{background:#1a1428}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script>
-const SENHA_ADMIN='pingpong';
-const FIREBASE_CONFIG={apiKey:"AIzaSyAv4knEI4IgKH6fRpr_3BuiuijvP2Ul2ms",authDomain:"calculadora-real-ecom.firebaseapp.com",projectId:"calculadora-real-ecom",storageBucket:"calculadora-real-ecom.firebasestorage.app",messagingSenderId:"845239286688",appId:"1:845239286688:web:71018a44cabee0025842c5"};
-firebase.initializeApp(FIREBASE_CONFIG);
-const db=firebase.firestore();
-const auth=firebase.auth();
-let todosUsuarios=[],todosProdutos=[],filtroPlanoAtivo='todos';
+const SENHA_ADMIN = 'pingpong';
+const ADMIN_EMAIL = 'ollmestorerj@gmail.com';
+const ADMIN_PASS  = 'Filipe060892!';
 
-function loginAdmin(){
-  if(document.getElementById('senha-admin').value===SENHA_ADMIN){
-    document.getElementById('login-admin').style.display='none';
-    document.getElementById('app-admin').style.display='block';
-    atualizarValidade(); carregarTudo();
-  }else{document.getElementById('erro-admin').style.display='block';}
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAv4knEI4IgKH6fRpr_3BuiuijvP2Ul2ms",
+  authDomain: "calculadora-real-ecom.firebaseapp.com",
+  projectId: "calculadora-real-ecom",
+  storageBucket: "calculadora-real-ecom.firebasestorage.app",
+  messagingSenderId: "845239286688",
+  appId: "1:845239286688:web:71018a44cabee0025842c5"
+};
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const db  = firebase.firestore();
+const auth = firebase.auth();
+
+let todosUsuarios = [], todosProdutos = [], filtroPlanoAtivo = 'todos';
+
+async function loginAdmin(){
+  const senhaDigitada = document.getElementById('senha-admin').value;
+  const erroEl = document.getElementById('erro-admin');
+  erroEl.style.display = 'none';
+
+  if(senhaDigitada !== SENHA_ADMIN){
+    erroEl.textContent = 'Senha incorreta.';
+    erroEl.style.display = 'block';
+    return;
+  }
+
+  try{
+    // Loga com conta admin dedicada para ter permissão de leitura no Firestore
+    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS);
+    document.getElementById('login-admin').style.display = 'none';
+    document.getElementById('app-admin').style.display = 'block';
+    atualizarValidade();
+    carregarTudo();
+  }catch(e){
+    erroEl.textContent = 'Erro ao conectar com Firebase: ' + e.message;
+    erroEl.style.display = 'block';
+  }
 }
 
 function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -342,7 +367,10 @@ async function carregarTudo(){
     }
     renderKPIs();renderAlertas();renderUsuarios();renderProdutos();renderInsights();
     document.getElementById('ultima-atualizacao').textContent='Atualizado: '+new Date().toLocaleTimeString('pt-BR');
-  }catch(e){document.getElementById('ultima-atualizacao').textContent='Erro ao carregar';console.error(e);}
+  }catch(e){
+    document.getElementById('ultima-atualizacao').textContent='Erro ao carregar';
+    console.error(e);
+  }
 }
 
 function renderKPIs(){
@@ -518,21 +546,25 @@ async function cadastrarUsuario(){
   if(!nome||!email||!senha){msgErr.textContent='Preencha nome, e-mail e senha.';msgErr.style.display='block';return;}
   if(senha.length<6){msgErr.textContent='Senha mínimo 6 caracteres.';msgErr.style.display='block';return;}
   try{
+    // Cria usuário — Firebase loga como ele automaticamente
     const cred=await auth.createUserWithEmailAndPassword(email,senha);
     await cred.user.updateProfile({displayName:nome});
     let validadeStr='';
     if(val&&plano!=='vitalicio'&&plano!=='mentorado')validadeStr=new Date(val+'T00:00:00').toLocaleDateString('pt-BR');
     await db.collection('usuarios').doc(email).set({nome,email,plano,validade:validadeStr,ativo:true,criadoEm:Date.now(),uid:cred.user.uid,obs:obs||''});
     await auth.sendPasswordResetEmail(email);
-    await auth.signOut();
+    // Volta a logar como admin após criar o usuário
+    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS);
     msgOk.style.display='block';
     ['novo-nome','novo-email','novo-obs'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('novo-senha').value='Realecom@2025';
     setTimeout(carregarTudo,1500);
   }catch(e){
-    await auth.signOut().catch(()=>{});
+    // Tenta relog como admin mesmo em caso de erro
+    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS).catch(()=>{});
     const msgs={'auth/email-already-in-use':'E-mail já cadastrado.','auth/invalid-email':'E-mail inválido.','auth/weak-password':'Senha muito fraca.'};
-    msgErr.textContent=msgs[e.code]||'Erro: '+e.message;msgErr.style.display='block';
+    msgErr.textContent=msgs[e.code]||'Erro: '+e.message;
+    msgErr.style.display='block';
   }
 }
 
