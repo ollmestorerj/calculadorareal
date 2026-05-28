@@ -1,0 +1,154 @@
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const fetch = require('node-fetch');
+
+admin.initializeApp();
+const db = admin.firestore();
+
+// Credenciais Z-API
+const ZAPI_INSTANCE = '3F3C2AB9748DA13591CC6627BE24201D';
+const ZAPI_TOKEN    = '6C654631A8EC0C05995F885C';
+const ZAPI_URL      = `https://api.z-api.io/instances/${ZAPI_INSTANCE}/token/${ZAPI_TOKEN}/send-text`;
+
+// ============================================================
+// Envia mensagem WhatsApp via Z-API
+// ============================================================
+async function enviarWhatsApp(telefone, mensagem) {
+  // Formata número: remove tudo que não é número, garante 55 na frente
+  let numero = telefone.replace(/\D/g, '');
+  if (!numero.startsWith('55')) numero = '55' + numero;
+
+  try {
+    const resp = await fetch(ZAPI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: numero, message: mensagem })
+    });
+    const data = await resp.json();
+    console.log(`✅ WhatsApp enviado para ${numero}:`, data);
+    return true;
+  } catch (e) {
+    console.error(`❌ Erro ao enviar para ${numero}:`, e);
+    return false;
+  }
+}
+
+// ============================================================
+// Calcula dias até a data do evento
+// ============================================================
+function diasAte(dataStr) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const dataEv = new Date(dataStr + 'T00:00:00');
+  return Math.round((dataEv - hoje) / (1000 * 60 * 60 * 24));
+}
+
+// ============================================================
+// Monta a mensagem certa para cada tipo de evento
+// ============================================================
+function montarMensagem(ev, diffDias) {
+  const msgFull = {
+    5: `📦 *RealEcom* — Olá! Sua *Coleta Full* está marcada em 5 dias. Vai enviar? Se não for, fique de olho no prazo de cancelamento!`,
+    4: `📦 *RealEcom* — Coleta Full em 4 dias! Se for alterar a data, atenção para não tomar multa!`,
+    3: `📦 *RealEcom* — Coleta Full em 3 dias! Já conferiu todos os produtos do envio?`,
+    2: `📦 *RealEcom* — Coleta Full em 2 dias! Etiquetou tudo? Não esquece de cobrir o código de barras!`,
+    1: `📦 *RealEcom* — Coleta Full *amanhã*! Prepare tudo!`,
+    0: `📦 *RealEcom* — Hoje é o dia da Coleta Full! Não esquece a Autorização de Entrada e a Nota de Remessa! 🚛`
+  };
+
+  if (ev.tipo === 'full' && msgFull[diffDias] !== undefined) {
+    return msgFull[diffDias];
+  }
+
+  if (ev.titulo === 'Pagamento DAS') {
+    const msgs = {
+      0: `💰 *RealEcom* — Hoje é o vencimento do *DAS*! Não esqueça de pagar.`,
+      1: `💰 *RealEcom* — O *DAS* vence amanhã! Já separou o valor?`,
+      2: `💰 *RealEcom* — O *DAS* vence em 2 dias.`,
+      3: `💰 *RealEcom* — O *DAS* vence em 3 dias.`,
+      4: `💰 *RealEcom* — O *DAS* vence em 4 dias.`,
+      5: `💰 *RealEcom* — O *DAS* vence em 5 dias.`
+    };
+    return msgs[diffDias];
+  }
+
+  // Evento genérico
+  const icones = { conta: '💰', entrega: '🚚', outro: '📌', sazonal: '📅', giro_pedido: '🛒', giro_entrega: '📦' };
+  const icone = icones[ev.tipo] || '📌';
+
+  if (diffDias === 0) return `${icone} *RealEcom* — Lembrete: *${ev.titulo}* é hoje!${ev.obs ? '\n' + ev.obs : ''}`;
+  if (diffDias === 1) return `${icone} *RealEcom* — Lembrete: *${ev.titulo}* é amanhã!${ev.obs ? '\n' + ev.obs : ''}`;
+  return `${icone} *RealEcom* — Lembrete: *${ev.titulo}* em ${diffDias} dias.${ev.obs ? '\n' + ev.obs : ''}`;
+}
+
+// ============================================================
+// CRON — roda todo dia às 8h horário de Brasília (11h UTC)
+// ============================================================
+exports.notificacoesWhatsApp = functions
+  .region('southamerica-east1')
+  .pubsub.schedule('0 11 * * *')
+  .timeZone('America/Sao_Paulo')
+  .onRun(async (context) => {
+    console.log('🔔 Iniciando envio de notificações WhatsApp...');
+
+    const snapshot = await db.collection('usuarios').get();
+    let totalEnviados = 0;
+
+    for (const doc of snapshot.docs) {
+      const usuario = doc.data();
+      const email   = doc.id;
+
+      // Pula usuários sem telefone ou conta inativa
+      if (!usuario.telefone) continue;
+      if (usuario.ativo === false) continue;
+
+      // Carrega eventos do usuário
+      let eventos = [];
+      try {
+        const evDoc = await db.collection('usuarios').doc(email)
+          .collection('eventos').doc('data').get();
+        if (evDoc.exists) {
+          eventos = JSON.parse(evDoc.data().payload || '[]');
+        }
+      } catch (e) {
+        console.warn(`Erro ao carregar eventos de ${email}:`, e);
+        continue;
+      }
+
+      // Verifica cada evento
+      for (const ev of eventos) {
+        if (!ev.data) continue;
+
+        const diff = diasAte(ev.data);
+
+        // Regras de quando notificar (igual ao frontend)
+        let deveNotificar = false;
+
+        if (ev.titulo === 'Pagamento DAS' && diff >= 0 && diff <= 5) {
+          deveNotificar = true;
+        } else if (ev.tipo === 'full' && diff >= 0 && diff <= 5) {
+          deveNotificar = true;
+        } else if (ev.tipo !== 'full' && ev.titulo !== 'Pagamento DAS' && (diff === 0 || diff === 1)) {
+          deveNotificar = true;
+        } else if ((ev.tipo === 'giro_pedido' || ev.tipo === 'giro_entrega') && diff >= 0 && diff <= 3) {
+          deveNotificar = true;
+        } else if (ev.tipo === 'sazonal' && ev.lembrete && diff === 0) {
+          deveNotificar = true;
+        }
+
+        if (!deveNotificar) continue;
+
+        const mensagem = montarMensagem(ev, diff);
+        if (!mensagem) continue;
+
+        const enviado = await enviarWhatsApp(usuario.telefone, mensagem);
+        if (enviado) totalEnviados++;
+
+        // Pequena pausa para não sobrecarregar a Z-API
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
+
+    console.log(`✅ Concluído. Total enviados: ${totalEnviados}`);
+    return null;
+  });
