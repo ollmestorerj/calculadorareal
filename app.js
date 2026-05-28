@@ -469,7 +469,7 @@ function showPage(p,bypassCheck){
   if(mapa[p]){const el=document.getElementById(mapa[p]);if(el)el.classList.add('active');}
 
   if(p==='dash')renderDash();
-  if(p==='cal')renderCal();
+  if(p==='cal'){renderCal();carregarTelefoneWhatsApp();}
   if(p==='metas')carregarMetas();
   if(p==='gestao')calcularGestao();
   if(p==='simples'){document.getElementById('sn-resultado').style.display='none';document.getElementById('sn-empty').style.display='block';}
@@ -2443,4 +2443,107 @@ function renderHistoricoNCM(){
 function limparHistoricoNCM(){
   localStorage.removeItem('realecom_ncm_hist');
   renderHistoricoNCM();
+}
+
+// ============================================================
+// WHATSAPP — cadastro de telefone
+// ============================================================
+
+// Salva telefone no Firestore e localStorage
+async function salvarTelefone(){
+  const input = document.getElementById('wpp-telefone');
+  if(!input) return;
+  const tel = input.value.replace(/\D/g,'');
+  if(tel.length < 10 || tel.length > 11){
+    alert('Informe um número válido com DDD (ex: 21999998888)');
+    return;
+  }
+  try{
+    const uid = await getUserId();
+    if(!uid){ alert('Você precisa estar logado.'); return; }
+    const db = await getDB();
+    await db.collection('usuarios').doc(uid).set({ telefone: tel }, { merge: true });
+    localStorage.setItem('realecom_telefone', tel);
+    atualizarBannerWhatsApp(tel);
+    mostrarNotifMsg({tipo:'outro',data:''},'✅ Número salvo! Você receberá lembretes no WhatsApp.',1);
+  }catch(e){
+    alert('Erro ao salvar: ' + e.message);
+  }
+}
+
+// Remove telefone
+async function removerTelefone(){
+  if(!confirm('Deseja parar de receber notificações no WhatsApp?')) return;
+  try{
+    const uid = await getUserId();
+    if(!uid) return;
+    const db = await getDB();
+    await db.collection('usuarios').doc(uid).update({ telefone: firebase.firestore.FieldValue.delete() });
+    localStorage.removeItem('realecom_telefone');
+    atualizarBannerWhatsApp(null);
+    mostrarNotifMsg({tipo:'outro',data:''},'Notificações WhatsApp desativadas.',1);
+  }catch(e){
+    alert('Erro: ' + e.message);
+  }
+}
+
+// Atualiza o banner no calendário conforme estado
+function atualizarBannerWhatsApp(tel){
+  const banner = document.getElementById('wpp-banner');
+  if(!banner) return;
+  if(tel){
+    const formatado = tel.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '+$1 ($2) $3-$4');
+    banner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="width:36px;height:36px;background:#16a34a;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:.82rem;font-weight:700;color:#4ade80">✅ WhatsApp ativo</div>
+          <div style="font-size:.7rem;color:var(--text3)">${formatado} · lembretes automáticos ativados</div>
+        </div>
+        <button onclick="removerTelefone()" style="background:#7f1d1d22;border:1px solid #ef444444;color:#f87171;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">Remover</button>
+      </div>`;
+  } else {
+    banner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="width:36px;height:36px;background:#16a34a22;border:1px solid #16a34a44;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#4ade80"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:.82rem;font-weight:700;color:var(--text)">Receba lembretes no WhatsApp</div>
+          <div style="font-size:.7rem;color:var(--text3)">Cadastre seu número e receba os mesmos avisos do calendário direto no zap</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="tel" id="wpp-telefone" placeholder="DDD + número" maxlength="11"
+            style="padding:7px 10px;border:1.5px solid #16a34a44;border-radius:8px;background:var(--bg2);color:var(--text);font-size:.82rem;outline:none;width:150px;font-family:inherit"
+            onkeydown="if(event.key==='Enter')salvarTelefone()">
+          <button onclick="salvarTelefone()" style="background:#16a34a;border:none;color:#fff;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap">Ativar</button>
+        </div>
+      </div>`;
+  }
+}
+
+// Carrega telefone ao entrar no calendário
+async function carregarTelefoneWhatsApp(){
+  const banner = document.getElementById('wpp-banner');
+  if(!banner) return;
+  // Tenta do cache primeiro
+  const cache = localStorage.getItem('realecom_telefone');
+  if(cache){ atualizarBannerWhatsApp(cache); return; }
+  // Busca no Firestore
+  try{
+    const uid = await getUserId();
+    if(!uid){ atualizarBannerWhatsApp(null); return; }
+    const db = await getDB();
+    const doc = await db.collection('usuarios').doc(uid).get();
+    if(doc.exists && doc.data().telefone){
+      localStorage.setItem('realecom_telefone', doc.data().telefone);
+      atualizarBannerWhatsApp(doc.data().telefone);
+    } else {
+      atualizarBannerWhatsApp(null);
+    }
+  }catch(e){
+    atualizarBannerWhatsApp(null);
+  }
 }
