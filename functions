@@ -1,3 +1,4 @@
+// v2 - Client-Token fix
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
@@ -6,8 +7,9 @@ admin.initializeApp();
 const db = admin.firestore();
 
 // Credenciais Z-API
-const ZAPI_INSTANCE = '3F3C2AB9748DA13591CC6627BE24201D';
+const ZAPI_INSTANCE = '3F3C2AB974BDA13591CC6627BE24201D';
 const ZAPI_TOKEN    = '6C654631A8EC0C05995F885C';
+const ZAPI_CLIENT_TOKEN = 'F229439fc0a6e46ba859cd5887b6ff58dS';
 const ZAPI_URL      = `https://api.z-api.io/instances/${ZAPI_INSTANCE}/token/${ZAPI_TOKEN}/send-text`;
 
 // ============================================================
@@ -21,7 +23,7 @@ async function enviarWhatsApp(telefone, mensagem) {
   try {
     const resp = await fetch(ZAPI_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json", "Client-Token": ZAPI_CLIENT_TOKEN },
       body: JSON.stringify({ phone: numero, message: mensagem })
     });
     const data = await resp.json();
