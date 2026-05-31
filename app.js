@@ -107,16 +107,14 @@ async function fbGet(colecao, localKey, fallback){
       .collection(colecao).doc('data').get();
     if(doc.exists){
       const dados=JSON.parse(doc.data().payload);
-      // Atualiza cache local
+      // Atualiza cache local com dados deste usuário
       localStorage.setItem(localKey, JSON.stringify(dados));
       return dados;
     }
-    // Sem dado no Firebase — sobe o que tem no localStorage
-    const local=JSON.parse(localStorage.getItem(localKey)||fallback);
-    if(local && (Array.isArray(local)?local.length:Object.keys(local).length)){
-      await fbSet(colecao, local);
-    }
-    return local;
+    // Sem dado no Firebase — limpa cache local e retorna vazio
+    // NUNCA subir dados do localStorage para evitar vazamento entre usuários
+    localStorage.removeItem(localKey);
+    return JSON.parse(fallback);
   }catch(e){
     console.warn('Firebase read error:', e);
     return JSON.parse(localStorage.getItem(localKey)||fallback);
