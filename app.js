@@ -117,7 +117,10 @@ async function fbGet(colecao, localKey, fallback){
     return JSON.parse(fallback);
   }catch(e){
     console.warn('Firebase read error:', e);
-    return JSON.parse(localStorage.getItem(localKey)||fallback);
+    // Só usa cache local se o usuário atual está logado
+    const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+    if(uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
+    return JSON.parse(fallback);
   }
 }
 
@@ -162,7 +165,9 @@ async function sair(){
   const sb=document.getElementById('sidebar');
   if(sb)sb.style.display='none';
   try{const auth=await getAuth();await auth.signOut();}catch(e){}
-  localStorage.removeItem('realecom_sessao');
+  // Limpa TODOS os dados do usuário do localStorage ao sair
+  // Evita vazamento para quem logar depois neste mesmo PC
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel','realecom_telefone'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
@@ -853,25 +858,27 @@ async function salvarProduto(){
   };
 
   const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
-  prods.unshift(prod);
-  localStorage.setItem('realecom_prods',JSON.stringify(prods));
-  fbSet('produtos', prods);
+  // Lê do Firebase para não perder produtos salvos em outros dispositivos
+  const prodsAtuais = await fbGet('produtos','realecom_prods','[]');
+  prodsAtuais.unshift(prod);
+  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtuais));
+  fbSet('produtos', prodsAtuais);
   registrarAtividade('salvar_produto');
   document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
   alert('✅ Produto salvo no Dashboard!');
 }
 
-function salvarObs(id,val){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+async function salvarObs(id,val){
+  const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
   if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);}
 }
-function deletarProduto(id){
+async function deletarProduto(id){
   if(!confirm('Remover este produto?'))return;
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]').filter(p=>p.id!==id);
-  localStorage.setItem('realecom_prods',JSON.stringify(prods));
-  fbSet('produtos',prods);
+  const prods = await fbGet('produtos','realecom_prods','[]');
+  const prodsAtualizados = prods.filter(p=>p.id!==id);
+  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtualizados));
+  fbSet('produtos',prodsAtualizados);
   renderDash();
 }
 function toggleDetail(id){const det=document.getElementById('det-'+id);const btn=document.getElementById('tbtn-'+id);const open=det.style.display==='block';det.style.display=open?'none':'block';btn.textContent=open?'+ detalhes':'− fechar';}
@@ -1515,8 +1522,8 @@ function exportarExcel(){
 // ============================================================
 // DASHBOARD — toggleComprado
 // ============================================================
-function toggleComprado(id){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+async function toggleComprado(id){
+  const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
   if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);renderDash();}
 }
