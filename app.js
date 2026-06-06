@@ -53,28 +53,45 @@ function loadScript(src){
 }
 
 // Retorna o identificador do usuário atual (email do Firebase Auth ou chave legada)
+// Cache do usuário atual — evita criar múltiplos listeners
+let _cachedUserId = null;
+let _authResolved = false;
+let _authResolveCallbacks = [];
+
+// Chamado uma única vez pelo onAuthStateChanged global
+function _setAuthUser(user) {
+  _cachedUserId = (user && user.email) ? user.email : null;
+  _authResolved = true;
+  _authResolveCallbacks.forEach(cb => cb(_cachedUserId));
+  _authResolveCallbacks = [];
+}
+
 async function getUserId() {
   ensureFirebase();
-  const auth = firebase.auth();
 
-  // Se já tem usuário logado, retorna direto
+  // Já resolvido — retorna direto sem criar novo listener
+  if (_authResolved) return _cachedUserId;
+
+  // Se Firebase já tem usuário, retorna imediatamente
+  const auth = firebase.auth();
   if (auth.currentUser && auth.currentUser.email) {
     return auth.currentUser.email;
   }
 
-  // Aguarda o Auth resolver o estado (evita retornar null antes do onAuthStateChanged)
-  const user = await new Promise((resolve) => {
-    const unsubscribe = auth.onAuthStateChanged((u) => {
-      unsubscribe();
-      resolve(u);
+  // Aguarda resolução com timeout de 5s para não travar eternamente
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      // Timeout — remove callback e retorna null
+      _authResolveCallbacks = _authResolveCallbacks.filter(cb => cb !== resolve);
+      const s = verificarSessao();
+      resolve(s ? (s.email || s.chave) : null);
+    }, 5000);
+
+    _authResolveCallbacks.push((uid) => {
+      clearTimeout(timer);
+      resolve(uid);
     });
   });
-
-  if (user && user.email) return user.email;
-
-  // Fallback para sessão legada
-  const s = verificarSessao();
-  return s ? (s.email || s.chave) : null;
 }
 
 // Retorna ref do doc do usuário atual
@@ -168,6 +185,9 @@ async function sair(){
   // Limpa TODOS os dados do usuário do localStorage ao sair
   // Evita vazamento para quem logar depois neste mesmo PC
   ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel','realecom_telefone'].forEach(k=>localStorage.removeItem(k));
+  // Reseta cache de auth para não usar userId do usuário anterior
+  _cachedUserId = null;
+  _authResolved = false;
   location.reload();
 }
 
@@ -385,6 +405,9 @@ function entrarNoApp(dados, pagina){
 
   ensureFirebase();
   firebase.auth().onAuthStateChanged(async (user) => {
+    // Resolve o cache de userId para todas as chamadas pendentes
+    _setAuthUser(user);
+
     if(!user){
       // Sem sessão Firebase — limpa localStorage legado e fica na tela de login
       localStorage.removeItem('realecom_sessao');
