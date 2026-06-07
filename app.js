@@ -205,6 +205,8 @@ async function fazerLogin(){
 
   try{
     const auth=await getAuth();
+    // SESSION = sessão expira quando o navegador fecha (não fica logado para sempre)
+    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
     const cred=await auth.signInWithEmailAndPassword(email,senha);
     const uid=cred.user.uid;
 
