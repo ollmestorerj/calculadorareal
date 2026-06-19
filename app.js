@@ -175,8 +175,6 @@ function verificarSessao(){
 function salvarSessao(dados){
   const expira=Date.now()+(SESSAO_DURACAO_H*60*60*1000);
   localStorage.setItem('realecom_sessao',JSON.stringify({...dados,expira}));
-  // Flag que zera automaticamente ao fechar o navegador
-  sessionStorage.setItem('realecom_sessao_ativa','1');
 }
 
 async function sair(){
@@ -187,7 +185,6 @@ async function sair(){
   // Limpa TODOS os dados do usuário do localStorage ao sair
   // Evita vazamento para quem logar depois neste mesmo PC
   ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel','realecom_telefone'].forEach(k=>localStorage.removeItem(k));
-  sessionStorage.removeItem('realecom_sessao_ativa');
   // Reseta cache de auth para não usar userId do usuário anterior
   _cachedUserId = null;
   _authResolved = false;
@@ -208,8 +205,6 @@ async function fazerLogin(){
 
   try{
     const auth=await getAuth();
-    // SESSION = sessão expira quando o navegador fecha (não fica logado para sempre)
-    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
     const cred=await auth.signInWithEmailAndPassword(email,senha);
     const uid=cred.user.uid;
 
@@ -410,10 +405,6 @@ function entrarNoApp(dados, pagina){
 
   ensureFirebase();
 
-  // Força SESSION persistence na inicialização — derruba sessões antigas (LOCAL)
-  // que ficavam salvas permanentemente antes dessa correção
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(()=>{});
-
   // Flag para evitar loop no onAuthStateChanged quando fazemos signOut manual
   let _fazendoLogout = false;
 
@@ -426,17 +417,6 @@ function entrarNoApp(dados, pagina){
 
     if(!user){
       localStorage.removeItem('realecom_sessao');
-      return;
-    }
-
-    // Verifica se o navegador foi fechado e reaberto (sessionStorage não persiste)
-    if(!sessionStorage.getItem('realecom_sessao_ativa')){
-      _fazendoLogout = true;
-      await firebase.auth().signOut();
-      localStorage.removeItem('realecom_sessao');
-      _cachedUserId = null;
-      _authResolved = false;
-      _fazendoLogout = false;
       return;
     }
 
