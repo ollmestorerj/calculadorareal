@@ -188,6 +188,7 @@ async function sair(){
   // Reseta cache de auth para não usar userId do usuário anterior
   _cachedUserId = null;
   _authResolved = false;
+  _jaEntrou = false;
   location.reload();
 }
 
@@ -405,37 +406,50 @@ function entrarNoApp(dados, pagina){
 
   ensureFirebase();
 
-  // Flag para evitar loop no onAuthStateChanged quando fazemos signOut manual
+  // Flags de controle — evitam loops e re-execuções desnecessárias
   let _fazendoLogout = false;
+  let _jaEntrou = false; // Garante que a validação completa só roda uma vez por sessão
 
   firebase.auth().onAuthStateChanged(async (user) => {
-    // Se estamos no meio de um logout manual, ignora
+    // Se estamos fazendo logout manual, ignora completamente
     if(_fazendoLogout) return;
 
     // Resolve o cache de userId para todas as chamadas pendentes
     _setAuthUser(user);
 
     if(!user){
-      localStorage.removeItem('realecom_sessao');
+      // Só limpa e mostra login se não estamos fazendo logout manual
+      if(!_fazendoLogout){
+        localStorage.removeItem('realecom_sessao');
+        _jaEntrou = false;
+      }
       return;
     }
 
-    // Tem usuário Firebase — valida no Firestore se ainda está ativo e dentro do prazo
+    // Se já entrou no app nesta sessão, ignora disparos subsequentes do onAuthStateChanged
+    // (Firebase dispara ao renovar token, ao mudar foco da aba, etc.)
+    if(_jaEntrou) return;
+
+    // Primeira vez — valida no Firestore se está ativo e dentro do prazo
     try{
       const db = await getDB();
       const doc = await db.collection('usuarios').doc(user.email).get();
 
       if(!doc.exists){
+        _fazendoLogout = true;
         await firebase.auth().signOut();
         localStorage.removeItem('realecom_sessao');
+        _fazendoLogout = false;
         return;
       }
 
       const dados = doc.data();
 
       if(!dados.ativo){
+        _fazendoLogout = true;
         await firebase.auth().signOut();
         localStorage.removeItem('realecom_sessao');
+        _fazendoLogout = false;
         mostrarErroLogin('Sua conta está inativa. Entre em contato com o suporte.');
         return;
       }
@@ -445,14 +459,17 @@ function entrarNoApp(dados, pagina){
         const validade = new Date(partes[2], partes[1]-1, partes[0]);
         validade.setHours(23,59,59);
         if(new Date() > validade){
+          _fazendoLogout = true;
           await firebase.auth().signOut();
           localStorage.removeItem('realecom_sessao');
+          _fazendoLogout = false;
           mostrarErroLogin('Seu acesso expirou em '+dados.validade+'. Renove sua assinatura.');
           return;
         }
       }
 
-      // Tudo ok — entra no app
+      // Tudo ok — marca que já entrou e vai para o app
+      _jaEntrou = true;
       const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
       entrarNoApp({
         email: user.email,
@@ -465,12 +482,36 @@ function entrarNoApp(dados, pagina){
       console.warn('Erro ao validar sessão:', e);
       // Em caso de erro de rede, usa cache do localStorage como fallback
       const s = verificarSessao();
-      if(s){
+      if(s && !_jaEntrou){
+        _jaEntrou = true;
         const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
         entrarNoApp(s, ultimaPagina);
       }
     }
   });
+
+  // Logout automático por inatividade — 2 horas sem interação
+  let _timerInatividade;
+  function resetarTimerInatividade(){
+    clearTimeout(_timerInatividade);
+    _timerInatividade = setTimeout(async ()=>{
+      if(firebase.auth().currentUser){
+        _fazendoLogout = true;
+        _jaEntrou = false;
+        await firebase.auth().signOut();
+        ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel','realecom_telefone'].forEach(k=>localStorage.removeItem(k));
+        _cachedUserId = null;
+        _authResolved = false;
+        _fazendoLogout = false;
+        location.reload();
+      }
+    }, 2 * 60 * 60 * 1000); // 2 horas
+  }
+  // Reseta o timer em qualquer interação do usuário
+  ['click','keydown','touchstart','scroll'].forEach(ev=>{
+    document.addEventListener(ev, resetarTimerInatividade, {passive:true});
+  });
+  resetarTimerInatividade();
 })();
 
 // ============================================================
