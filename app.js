@@ -184,7 +184,7 @@ async function sair(){
   try{const auth=await getAuth();await auth.signOut();}catch(e){}
   // Limpa TODOS os dados do usuário do localStorage ao sair
   // Evita vazamento para quem logar depois neste mesmo PC
-  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel','realecom_telefone'].forEach(k=>localStorage.removeItem(k));
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
   // Reseta cache de auth para não usar userId do usuário anterior
   _cachedUserId = null;
   _authResolved = false;
@@ -470,6 +470,12 @@ function entrarNoApp(dados, pagina){
 
       // Tudo ok — marca que já entrou e vai para o app
       _jaEntrou = true;
+      // Carrega telefone já aqui para o banner do calendário funcionar imediatamente
+      if(dados.telefone){
+        localStorage.setItem('realecom_telefone', dados.telefone);
+      } else {
+        localStorage.removeItem('realecom_telefone');
+      }
       const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
       entrarNoApp({
         email: user.email,
@@ -499,7 +505,7 @@ function entrarNoApp(dados, pagina){
         _fazendoLogout = true;
         _jaEntrou = false;
         await firebase.auth().signOut();
-        ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel','realecom_telefone'].forEach(k=>localStorage.removeItem(k));
+        ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
         _cachedUserId = null;
         _authResolved = false;
         _fazendoLogout = false;
