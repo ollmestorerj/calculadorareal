@@ -1053,20 +1053,18 @@ async function renderDash(){
     const compBadge=p.comprado?'<span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700;margin-left:5px">✅</span>':'';
     const detId='det2-'+p.id;
     return`<tr style="${zebra};border-bottom:1px solid var(--border)">
-      <td style="padding:10px 10px;vertical-align:middle">
+      <td style="padding:8px 10px;vertical-align:middle">
         <div style="font-size:.82rem;font-weight:700;color:var(--text)">${p.nome}${compBadge}</div>
         <div style="font-size:.68rem;color:var(--text3);margin-top:2px">🏭 ${p.forn} · ${p.cod}</div>
       </td>
-      <td style="padding:10px;text-align:center;vertical-align:middle">${mgBadge(p.margem)}</td>
-      <td style="padding:10px;text-align:center;vertical-align:middle">${mgBadge(p.margemML)}</td>
-      <td style="padding:10px;text-align:center;vertical-align:middle">${linkChips(p)}</td>
-      <td style="padding:10px;text-align:center;vertical-align:middle">
-        <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
-          <button onclick="verNaCalculadora(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.7rem;font-weight:700;color:var(--o)">🧮 Cálculo</button>
-          <button onclick="document.getElementById('${detId}').style.display=document.getElementById('${detId}').style.display==='table-row'?'none':'table-row';this.textContent=document.getElementById('${detId}').style.display==='table-row'?'− fechar':'+ detalhes'" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.7rem;color:var(--text2)">+ detalhes</button>
-          <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:8px;padding:5px 8px;cursor:pointer;font-size:.85rem">${p.comprado?'⭐':'☆'}</button>
-          <button onclick="deletarProduto(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer" class="btn-del">${svgDel}</button>
-        </div>
+      <td style="padding:8px 10px;text-align:center;vertical-align:middle">${mgBadge(p.margem)}</td>
+      <td style="padding:8px 10px;text-align:center;vertical-align:middle">${mgBadge(p.margemML!==undefined&&p.margemML!==null?p.margemML:(p.precoML>0?((p.precoML-p.custoReal-(p.frete||0)-(p.ins||0)-p.precoML*(p.pI||0)-p.precoML*(p.pC||0)-p.precoML*(p.pA||0))/p.precoML)*100:null))}</td>
+      <td style="padding:8px 10px;text-align:center;vertical-align:middle">${linkChips(p)}</td>
+      <td style="padding:8px 10px;text-align:center;vertical-align:middle;white-space:nowrap">
+        <button onclick="verNaCalculadora(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;font-weight:700;color:var(--o);margin-right:3px">🧮 Cálculo</button>
+        <button onclick="document.getElementById('${detId}').style.display=document.getElementById('${detId}').style.display==='table-row'?'none':'table-row';this.textContent=document.getElementById('${detId}').style.display==='table-row'?'− fechar':'+ detalhes'" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;color:var(--text2);margin-right:3px">+ detalhes</button>
+        <button onclick="toggleComprado(${p.id})" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:7px;padding:4px 6px;cursor:pointer;font-size:.75rem;margin-right:3px">${p.comprado?'⭐':'☆'}</button>
+        <button onclick="deletarProduto(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 6px;cursor:pointer" class="btn-del">${svgDel}</button>
       </td>
     </tr>
     <tr id="${detId}" style="display:none;background:var(--bg2)">
@@ -1724,6 +1722,10 @@ function verNaCalculadora(id){
     if(document.getElementById('save-link1'))document.getElementById('save-link1').value=p.link1||'';
     if(document.getElementById('save-link2'))document.getElementById('save-link2').value=p.link2||'';
     if(document.getElementById('save-link3'))document.getElementById('save-link3').value=p.link3||'';
+    // Abre seção de links se houver algum preenchido
+    if((p.link1||p.link2||p.link3)&&document.getElementById('links-anuncio')){
+      document.getElementById('links-anuncio').style.display='flex';
+    }
     // Mostra botão atualizar e esconde salvar
     const btnAtualizar=document.getElementById('btn-atualizar');
     const btnSalvar=document.getElementById('btn-salvar-prod');
