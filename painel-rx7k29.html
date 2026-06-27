@@ -121,6 +121,7 @@ tr:hover td{background:#1a1428}
       <button class="tab" onclick="showTab('engajamento')">Engajamento</button>
       <button class="tab" onclick="showTab('produtos')">Produtos</button>
       <button class="tab" onclick="showTab('insights')">Insights</button>
+      <button class="tab" style="border-color:#f87171;color:#f87171" onclick="showTab('vazamento')">⚠️ Vazamento</button>
     </div>
 
     <!-- CADASTRAR -->
@@ -252,6 +253,20 @@ tr:hover td{background:#1a1428}
         <input type="text" class="search-input" id="busca-prod" placeholder="Buscar produto..." oninput="filtrarProdutos()">
       </div>
       <div id="lista-produtos"><div class="loading">Carregando...</div></div>
+    </div>
+
+    <!-- VAZAMENTO -->
+    <div id="tab-vazamento" style="display:none">
+      <div style="background:#7f1d1d22;border:1px solid #ef444444;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:.8rem;font-weight:700;color:#f87171;margin-bottom:5px">⚠️ Auditoria de Vazamento de Dados</div>
+        <div style="font-size:.74rem;color:#fca5a5;line-height:1.6">Esta ferramenta identifica contas que têm produtos que parecem não ser delas — baseado na comparação entre produtos iguais em contas diferentes. Use para identificar e limpar dados contaminados.</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <button onclick="auditarVazamento()" style="background:#dc2626;color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:.8rem;font-weight:700;cursor:pointer">🔍 Rodar auditoria agora</button>
+        <button onclick="limparProdsContaminados()" id="btn-limpar-vaz" style="display:none;background:#7f1d1d;color:#fca5a5;border:1px solid #ef444444;border-radius:9px;padding:9px 18px;font-size:.8rem;font-weight:700;cursor:pointer">🗑️ Limpar produtos selecionados</button>
+      </div>
+      <div id="vaz-status" style="font-size:.78rem;color:var(--text3);margin-bottom:10px"></div>
+      <div id="vaz-resultado"></div>
     </div>
 
     <!-- INSIGHTS -->
@@ -532,6 +547,150 @@ function renderInsights(){
   const comM2=todosProdutos.filter(p=>p.margem!=null);
   const maxCM=Math.max(...faixasM.map(f=>comM2.filter(p=>parseFloat(p.margem)>=f.min&&parseFloat(p.margem)<f.max).length),1);
   document.getElementById('dist-margens').innerHTML=faixasM.map(f=>{const c=comM2.filter(p=>parseFloat(p.margem)>=f.min&&parseFloat(p.margem)<f.max).length;const pct=Math.round(c/maxCM*100);return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span style="color:var(--text2)">${f.l}</span><span style="color:${f.cor};font-weight:700">${c} prod</span></div><div class="eng-bar"><div class="eng-fill" style="width:${pct}%;background:${f.cor}"></div></div></div>`;}).join('');
+}
+
+// ============================================================
+// AUDITORIA DE VAZAMENTO DE DADOS
+// ============================================================
+
+// Mapa de produtos selecionados para limpeza
+let _prodsParaLimpar = {}; // { email: [prodId, ...] }
+
+async function auditarVazamento(){
+  const statusEl = document.getElementById('vaz-status');
+  const resultEl = document.getElementById('vaz-resultado');
+  statusEl.textContent = 'Carregando dados de todas as contas...';
+  resultEl.innerHTML = '<div class="loading">Analisando...</div>';
+
+  // Carrega todos os produtos de todas as contas
+  const snap = await db.collection('usuarios').get();
+  const contasProdutos = []; // { email, nome, prods[] }
+
+  for(const doc of snap.docs){
+    const email = doc.id;
+    try{
+      const prodDoc = await db.collection('usuarios').doc(email)
+        .collection('produtos').doc('data').get();
+      if(prodDoc.exists){
+        const prods = JSON.parse(prodDoc.data().payload || '[]');
+        if(prods.length > 0){
+          contasProdutos.push({ email, nome: doc.data().nome || email, prods });
+        }
+      }
+    }catch(e){ console.warn('Erro ao carregar', email, e); }
+  }
+
+  statusEl.textContent = `${contasProdutos.length} contas com produtos analisadas.`;
+
+  // Detectar produtos duplicados entre contas
+  // Um produto é suspeito se tem o mesmo nome E mesmo custo em contas diferentes
+  const todosProd = [];
+  contasProdutos.forEach(c => {
+    c.prods.forEach(p => {
+      todosProd.push({ ...p, _email: c.email, _nome_conta: c.nome });
+    });
+  });
+
+  // Agrupar por nome + custoReal para detectar duplicatas
+  const grupos = {};
+  todosProd.forEach(p => {
+    const key = (p.nome||'').toLowerCase().trim() + '_' + (p.custoReal||0);
+    if(!grupos[key]) grupos[key] = [];
+    grupos[key].push(p);
+  });
+
+  // Filtrar grupos com mais de 1 conta diferente
+  const suspeitos = Object.entries(grupos).filter(([k, prods]) => {
+    const emails = [...new Set(prods.map(p => p._email))];
+    return emails.length > 1;
+  });
+
+  if(!suspeitos.length){
+    resultEl.innerHTML = '<div style="background:#0a1f1222;border:1px solid #16a34a44;border-radius:10px;padding:14px;color:#4ade80;font-size:.8rem">✅ Nenhum vazamento detectado! Todos os produtos parecem únicos por conta.</div>';
+    return;
+  }
+
+  _prodsParaLimpar = {};
+  document.getElementById('btn-limpar-vaz').style.display = '';
+
+  // Identificar qual conta é a "original" (a que salvou primeiro — menor ID/timestamp)
+  let html = `<div style="font-size:.8rem;font-weight:700;color:#f87171;margin-bottom:12px">⚠️ ${suspeitos.length} produto(s) suspeito(s) encontrado(s) em múltiplas contas:</div>`;
+
+  suspeitos.forEach(([key, prods]) => {
+    const emails = [...new Set(prods.map(p => p._email))];
+    // Conta original = quem tem o prod com menor timestamp (id)
+    const sorted = [...prods].sort((a,b) => (a.id||0) - (b.id||0));
+    const original = sorted[0]._email;
+    const contaminadas = prods.filter(p => p._email !== original);
+
+    html += `<div style="background:#1c1c20;border:1px solid #ef444433;border-radius:10px;padding:12px;margin-bottom:8px">
+      <div style="font-size:.82rem;font-weight:700;color:#f0f0f0;margin-bottom:6px">${prods[0].nome || '—'}</div>
+      <div style="font-size:.72rem;color:var(--text3);margin-bottom:8px">Custo: R$ ${(prods[0].custoReal||0).toFixed(2)} · Margem: ${(prods[0].margem||0).toFixed(1)}%</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#0a1f1222;border-radius:7px;border:1px solid #16a34a44">
+          <span style="font-size:.7rem;background:#16a34a22;color:#4ade80;padding:1px 7px;border-radius:20px;font-weight:700">ORIGINAL</span>
+          <span style="font-size:.76rem;color:#e8e8e8">${original}</span>
+          <span style="font-size:.68rem;color:var(--text3);margin-left:auto">${sorted[0].id ? new Date(sorted[0].id).toLocaleDateString('pt-BR') : '—'}</span>
+        </div>
+        ${contaminadas.map(p => {
+          const cbId = 'cb_' + p._email.replace(/[^a-z0-9]/gi,'_') + '_' + (p.id||0);
+          if(!_prodsParaLimpar[p._email]) _prodsParaLimpar[p._email] = [];
+          _prodsParaLimpar[p._email].push(p.id);
+          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#7f1d1d22;border-radius:7px;border:1px solid #ef444433">
+            <input type="checkbox" id="${cbId}" checked style="accent-color:#f87171;width:14px;height:14px" data-email="${p._email}" data-id="${p.id||0}">
+            <span style="font-size:.7rem;background:#dc262622;color:#f87171;padding:1px 7px;border-radius:20px;font-weight:700">CONTAMINADO</span>
+            <span style="font-size:.76rem;color:#fca5a5">${p._email}</span>
+            <span style="font-size:.68rem;color:var(--text3);margin-left:auto">${p.id ? new Date(p.id).toLocaleDateString('pt-BR') : '—'}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+
+  resultEl.innerHTML = html;
+  statusEl.textContent = `Análise concluída. Marque os produtos contaminados e clique em "Limpar".`;
+}
+
+async function limparProdsContaminados(){
+  // Coletar checkboxes marcados
+  const checkboxes = document.querySelectorAll('#vaz-resultado input[type=checkbox]:checked');
+  if(!checkboxes.length){ alert('Nenhum produto selecionado para limpeza.'); return; }
+
+  const confirmMsg = `Você está prestes a REMOVER ${checkboxes.length} produto(s) de contas contaminadas.
+
+Essa ação é IRREVERSÍVEL.
+
+Confirma?`;
+  if(!confirm(confirmMsg)) return;
+
+  let removidos = 0;
+  const porConta = {};
+
+  checkboxes.forEach(cb => {
+    const email = cb.dataset.email;
+    const id = parseInt(cb.dataset.id);
+    if(!porConta[email]) porConta[email] = [];
+    porConta[email].push(id);
+  });
+
+  for(const [email, ids] of Object.entries(porConta)){
+    try{
+      const prodDoc = await db.collection('usuarios').doc(email)
+        .collection('produtos').doc('data').get();
+      if(!prodDoc.exists) continue;
+      let prods = JSON.parse(prodDoc.data().payload || '[]');
+      const antes = prods.length;
+      prods = prods.filter(p => !ids.includes(p.id));
+      await db.collection('usuarios').doc(email)
+        .collection('produtos').doc('data').set({ payload: JSON.stringify(prods) });
+      removidos += antes - prods.length;
+    }catch(e){
+      console.error('Erro ao limpar', email, e);
+    }
+  }
+
+  alert(`✅ ${removidos} produto(s) removido(s) com sucesso.`);
+  auditarVazamento(); // Roda de novo para confirmar
 }
 
 async function cadastrarUsuario(){
