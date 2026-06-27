@@ -73,7 +73,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .sb-avatar{width:34px;height:34px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;font-weight:800;cursor:pointer;flex-shrink:0;border:none;position:relative}
 .sb-avatar:hover .sb-tooltip{opacity:1}
 .page.active:not(#page-login){margin-left:60px}
-#page-login.active{margin-left:0}
+#page-login{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;position:relative;overflow:hidden;background:var(--bg);margin-left:0!important}
+#page-login.active{display:flex!important;margin-left:0!important}
 .app-header{display:none}
 .sb-item.active{background:var(--sb-hover)!important}
 
@@ -91,7 +92,11 @@ h1,h2,.page-heading{font-family:'Outfit',sans-serif;font-weight:800;letter-spaci
 /* ============================================================ CARDS ============================================================ */
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:7px}
 .card-title{font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:8px}
-body.light .card-title{color:#111}
+body.light .card-title{color:#333}
+body.light .card-title span[style*="color:#a78bfa"]{display:none}
+body.light .card-title span[style*="color:#60a5fa"]{display:none}
+/* No tema claro os ícones coloridos dos cards ficam com opacidade reduzida */
+body.light .left-panel .card-title > span:first-child{opacity:.7}
 
 /* Card de margem — roxo */
 .margem-card{background:linear-gradient(135deg,#2d1060,#4c1d95);border:1px solid #7c3aed55;border-radius:10px;padding:11px 13px;margin-bottom:7px}
@@ -132,6 +137,7 @@ input[type=number]{-moz-appearance:textfield}
 .toggle-row{display:flex;gap:6px;margin-bottom:9px}
 .toggle-btn{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text4);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
 .toggle-btn.active{border-color:var(--text);background:var(--text);color:var(--bg)}
+body.light .toggle-btn.active{background:#111;color:#fff;border-color:#111}
 
 /* ============================================================ ITEMS / LISTAS ============================================================ */
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
@@ -179,9 +185,12 @@ input[type=number]{-moz-appearance:textfield}
 .explain-box .ex-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:6px}
 .breakdown{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px}
 .bd-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:8px}
+body.light .bd-title{color:#333}
 .brow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:.77rem}
 .brow:last-child{border:none}
 .brow .bl{color:var(--text3)}.brow .br{color:var(--text2);font-weight:600}
+body.light .brow .br{color:#111;font-weight:600}
+body.light .brow.total .br{color:#111;font-weight:800}
 .brow.total{padding-top:8px;border-top:1px solid var(--border2);border-bottom:none;margin-top:2px}
 .brow.total .bl{color:var(--text);font-weight:700}
 .brow.total .br{color:var(--text);font-weight:800;font-size:.88rem}
@@ -190,6 +199,7 @@ input[type=number]{-moz-appearance:textfield}
 /* ============================================================ SAVE CARD ============================================================ */
 .save-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px}
 .save-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:9px}
+body.light .save-title{color:#333}
 
 /* ============================================================ DASHBOARD ============================================================ */
 .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
@@ -261,8 +271,8 @@ body.light .cal-event.sazonal{background:#fef3c7;color:#b45309}
 body.light 
 
 /* ============================================================ LOGIN ============================================================ */
-#page-login{min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;position:relative;overflow:hidden;background:var(--bg)}
-#page-login.active{display:flex}
+#page-login{min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;position:relative;overflow:hidden;background:var(--bg);display:none}
+#page-login.active{display:flex!important;margin-left:0!important}
 .login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:420px;position:relative;z-index:1}
 @media(max-width:480px){.login-box{padding:28px 20px}}
 .login-logo{text-align:center;margin-bottom:28px}
@@ -708,7 +718,7 @@ body.light .login-logo img{filter:none}
     <!-- LINHA 1: Custo | Frete Full -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
       <div class="card" style="margin-bottom:0;padding:10px 12px">
-        <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>Custo dos Produtos <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></div>
+        <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>Custo dos Produtos <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></div>
         <div class="item-list" id="items-list">
           <div class="item-row">
             <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
@@ -730,7 +740,7 @@ body.light .login-logo img{filter:none}
     <!-- LINHA 2: Frete entrega | Taxas -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
       <div class="card" style="margin-bottom:0;padding:10px 12px">
-        <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Frete Entrega <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></div>
+        <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Frete Entrega <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></div>
         <div class="toggle-row" style="margin-bottom:7px">
           <button class="toggle-btn active" id="btn-dim" onclick="switchFrete('dim')" style="font-size:.7rem;padding:5px">Por Dimensões</button>
           <button class="toggle-btn" id="btn-manual" onclick="switchFrete('manual')" style="font-size:.7rem;padding:5px">Manual</button>
@@ -774,7 +784,7 @@ body.light .login-logo img{filter:none}
           <div class="field" style="margin-bottom:0"><label style="font-size:.68rem">Valor (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
         </div>
         <div class="margem-card" id="margem-block" style="margin-bottom:0;padding:10px 12px">
-          <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>Margem Desejada <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></div>
+          <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>Margem Desejada <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></div>
           <div class="field" style="margin-bottom:4px"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" style="font-size:1.1rem;font-weight:700;text-align:center"></div>
           <div class="margem-hint" style="font-size:.68rem">↑ Meta de lucro em % sobre o preço de venda</div>
         </div>
@@ -782,7 +792,7 @@ body.light .login-logo img{filter:none}
       <div class="card" style="margin-bottom:0;padding:10px 12px">
         <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Projeção</div>
         <div class="field" style="margin-bottom:8px"><label style="font-size:.68rem">Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1"></div>
-        <div class="field" style="margin-bottom:0"><label id="ml-label" style="font-size:.68rem"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01"></div>
+        <div class="field" style="margin-bottom:0"><label id="ml-label" style="font-size:.68rem"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01"></div>
       </div>
     </div>
     <button class="btn-calc" onclick="calcular()" style="padding:12px;margin-bottom:6px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
