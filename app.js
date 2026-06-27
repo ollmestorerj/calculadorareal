@@ -107,6 +107,9 @@ async function fbSet(colecao, dados){
   try{
     const uid = await getUserId();
     if(!uid) return;
+    // Atualiza cache isolado por usuário
+    const userKey = localKey(colecao === 'produtos' ? 'realecom_prods' : colecao === 'eventos' ? 'realecom_eventos' : colecao === 'metas' ? 'realecom_metas' : colecao);
+    if(userKey) localStorage.setItem(userKey, JSON.stringify(dados));
     const db=await getDB();
     await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data')
@@ -115,28 +118,51 @@ async function fbSet(colecao, dados){
 }
 
 // Lê array do Firebase, fallback para localStorage
-async function fbGet(colecao, localKey, fallback){
+// Retorna chave de localStorage isolada por usuário — NUNCA compartilha dados entre contas
+function localKey(baseKey){
+  const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+  if(!uid) return null;
+  return baseKey + '_' + uid.replace(/[^a-zA-Z0-9]/g,'_');
+}
+
+// Lê dados do cache do usuário atual de forma segura
+function getCached(baseKey, fallback='[]'){
+  const key = localKey(baseKey);
+  if(!key) return JSON.parse(fallback);
+  return JSON.parse(localStorage.getItem(key)||fallback);
+}
+
+// Salva dados no cache do usuário atual de forma segura
+function setCached(baseKey, dados){
+  const key = localKey(baseKey);
+  if(key) localStorage.setItem(key, JSON.stringify(dados));
+}
+
+async function fbGet(colecao, baseKey, fallback){
   try{
     const uid = await getUserId();
-    if(!uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
+    if(!uid) return JSON.parse(fallback); // sem uid, nunca usa cache
+    const userKey = localKey(baseKey);
     const db=await getDB();
     const doc=await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data').get();
     if(doc.exists){
       const dados=JSON.parse(doc.data().payload);
-      // Atualiza cache local com dados deste usuário
-      localStorage.setItem(localKey, JSON.stringify(dados));
+      // Cache isolado por usuário
+      if(userKey) localStorage.setItem(userKey, JSON.stringify(dados));
       return dados;
     }
-    // Sem dado no Firebase — limpa cache local e retorna vazio
-    // NUNCA subir dados do localStorage para evitar vazamento entre usuários
-    localStorage.removeItem(localKey);
+    // Sem dado no Firebase — limpa cache e retorna vazio
+    if(userKey) localStorage.removeItem(userKey);
     return JSON.parse(fallback);
   }catch(e){
     console.warn('Firebase read error:', e);
-    // Só usa cache local se o usuário atual está logado
-    const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
-    if(uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
+    // Em erro de rede, usa cache APENAS do usuário atual
+    const userKey = localKey(baseKey);
+    if(userKey){
+      const cached = localStorage.getItem(userKey);
+      if(cached) return JSON.parse(cached);
+    }
     return JSON.parse(fallback);
   }
 }
@@ -184,7 +210,14 @@ async function sair(){
   try{const auth=await getAuth();await auth.signOut();}catch(e){}
   // Limpa TODOS os dados do usuário do localStorage ao sair
   // Evita vazamento para quem logar depois neste mesmo PC
-  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
+  // Limpa chaves genéricas (legado) e chaves por usuário
+  const _uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+  const _safeUid = _uid ? _uid.replace(/[^a-zA-Z0-9]/g,'_') : null;
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel',
+   'realecom_telefone'].forEach(k=>{
+    localStorage.removeItem(k);
+    if(_safeUid) localStorage.removeItem(k+'_'+_safeUid);
+  });
   // Reseta cache de auth para não usar userId do usuário anterior
   _cachedUserId = null;
   _authResolved = false;
@@ -313,7 +346,7 @@ function entrarNoApp(dados, pagina){
   if(elPlano) elPlano.textContent=dados.plano?'Plano '+dados.plano:'Acesso liberado';
 
   fbGet('produtos','realecom_prods','[]').then(prods=>{
-    localStorage.setItem('realecom_prods',JSON.stringify(prods));
+    // Cache já é salvo com chave por usuário dentro do fbGet — não salva na chave genérica
 
     // Dashboard KPI — total e distribuição de margem
     const elProds=document.getElementById('home-kpi-prods');
@@ -505,7 +538,14 @@ function entrarNoApp(dados, pagina){
         _fazendoLogout = true;
         _jaEntrou = false;
         await firebase.auth().signOut();
-        ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
+        // Limpa chaves genéricas (legado) e chaves por usuário
+  const _uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+  const _safeUid = _uid ? _uid.replace(/[^a-zA-Z0-9]/g,'_') : null;
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel',
+   'realecom_telefone'].forEach(k=>{
+    localStorage.removeItem(k);
+    if(_safeUid) localStorage.removeItem(k+'_'+_safeUid);
+  });
         _cachedUserId = null;
         _authResolved = false;
         _fazendoLogout = false;
@@ -937,7 +977,7 @@ async function atualizarProduto(){
   const idx=prods.findIndex(p=>p.id===_prodEditId);
   if(idx===-1){alert('Produto não encontrado. Salve como novo.');return;}
   prods[idx]={...prods[idx],nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),link1,link2,link3,custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,margemML,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
-  localStorage.setItem('realecom_prods',JSON.stringify(prods));
+  setCached('realecom_prods',prods);
   fbSet('produtos',prods);
   _prodEditId=null;
   document.getElementById('btn-atualizar').style.display='none';
@@ -988,7 +1028,7 @@ async function salvarProduto(){
   // Lê do Firebase para não perder produtos salvos em outros dispositivos
   const prodsAtuais = await fbGet('produtos','realecom_prods','[]');
   prodsAtuais.unshift(prod);
-  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtuais));
+  setCached('realecom_prods',prodsAtuais);
   fbSet('produtos', prodsAtuais);
   registrarAtividade('salvar_produto');
   document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
@@ -1005,13 +1045,13 @@ async function salvarProduto(){
 async function salvarObs(id,val){
   const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
-  if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);}
+  if(p){p.obs=val;setCached('realecom_prods',prods);fbSet('produtos',prods);}
 }
 async function deletarProduto(id){
   if(!confirm('Remover este produto?'))return;
   const prods = await fbGet('produtos','realecom_prods','[]');
   const prodsAtualizados = prods.filter(p=>p.id!==id);
-  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtualizados));
+  setCached('realecom_prods',prodsAtualizados);
   fbSet('produtos',prodsAtualizados);
   renderDash();
 }
@@ -1649,7 +1689,7 @@ document.addEventListener('wheel',e=>{
 verificarNotificacoes();
 
 function exportarExcel(){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods=getCached('realecom_prods','[]');
   if(!prods.length){alert('Nenhum produto no Dashboard para exportar.');return;}
 
   const fmt2=(v)=>typeof v==='number'?v.toFixed(2).replace('.',','):v||'';
@@ -1696,14 +1736,14 @@ function exportarExcel(){
 async function toggleComprado(id){
   const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
-  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);renderDash();}
+  if(p){p.comprado=!p.comprado;setCached('realecom_prods',prods);fbSet('produtos',prods);renderDash();}
 }
 
 // ============================================================
 // VER NA CALCULADORA — restaura o cálculo salvo
 // ============================================================
 function verNaCalculadora(id){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods=getCached('realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
   if(!p){alert('Produto não encontrado.');return;}
 
@@ -1979,7 +2019,7 @@ function switchPubMode(mode){
 }
 
 async function carregarProdutosPublicidade(){
-  const prods = JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods = getCached('realecom_prods','[]');
   const sel = document.getElementById('pub-produto-sel');
   if(!sel) return;
   if(!prods.length){
@@ -2087,7 +2127,7 @@ function salvarAnalisePublicidade(){
   let nome='';
   if(pubMode==='dash'){
     const idx=document.getElementById('pub-produto-sel').value;
-    const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+    const prods=getCached('realecom_prods','[]');
     nome=idx!==''?prods[parseInt(idx)].nome:'Produto do Dashboard';
   }else{
     nome=document.getElementById('pub-m-nome').value.trim();
@@ -2204,7 +2244,7 @@ function atualizarQualidade(){
   if(!document.getElementById('qual-total'))return;
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
-  const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const todos=getCached('realecom_prods','[]');
 
   const agora=Date.now();
   const limite30=agora-(30*24*60*60*1000);
@@ -2277,7 +2317,7 @@ function recalcularMetas(){
 
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods=getCached('realecom_prods','[]');
 
   function prodsPeriodo(dias){
     const agora=Date.now();
