@@ -1060,11 +1060,13 @@ async function renderDash(){
       <td style="padding:8px 10px;text-align:center;vertical-align:middle">${mgBadge(p.margem)}</td>
       <td style="padding:8px 10px;text-align:center;vertical-align:middle">${mgBadge(p.margemML!==undefined&&p.margemML!==null?p.margemML:(p.precoML>0?((p.precoML-p.custoReal-(p.frete||0)-(p.ins||0)-p.precoML*(p.pI||0)-p.precoML*(p.pC||0)-p.precoML*(p.pA||0))/p.precoML)*100:null))}</td>
       <td style="padding:8px 10px;text-align:center;vertical-align:middle">${linkChips(p)}</td>
-      <td style="padding:8px 10px;text-align:center;vertical-align:middle;white-space:nowrap">
-        <button onclick="verNaCalculadora(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;font-weight:700;color:var(--o);margin-right:3px">🧮 Cálculo</button>
-        <button onclick="document.getElementById('${detId}').style.display=document.getElementById('${detId}').style.display==='table-row'?'none':'table-row';this.textContent=document.getElementById('${detId}').style.display==='table-row'?'− fechar':'+ detalhes'" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;color:var(--text2);margin-right:3px">+ detalhes</button>
-        <button onclick="toggleComprado(${p.id})" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:7px;padding:4px 6px;cursor:pointer;font-size:.75rem;margin-right:3px">${p.comprado?'⭐':'☆'}</button>
-        <button onclick="deletarProduto(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 6px;cursor:pointer" class="btn-del">${svgDel}</button>
+      <td style="padding:8px 10px;vertical-align:middle">
+        <div style="display:flex;gap:4px;align-items:center;flex-wrap:nowrap">
+          <button onclick="verNaCalculadora(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;font-weight:700;color:var(--o);white-space:nowrap;flex-shrink:0">🧮 Cálculo</button>
+          <button onclick="var r=document.getElementById('${detId}');var open=r.style.display==='table-row';r.style.display=open?'none':'table-row';this.textContent=open?'+ detalhes':'− fechar'" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;color:var(--text2);white-space:nowrap;flex-shrink:0">+ detalhes</button>
+          <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a44':'var(--border)'};border-radius:7px;padding:4px 7px;cursor:pointer;font-size:.68rem;font-weight:700;color:${p.comprado?'#4ade80':'var(--text2)'};flex-shrink:0">${p.comprado?'★':'☆'}</button>
+          <button onclick="deletarProduto(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" class="btn-del">${svgDel}</button>
+        </div>
       </td>
     </tr>
     <tr id="${detId}" style="display:none;background:var(--bg2)">
