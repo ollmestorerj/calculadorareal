@@ -903,6 +903,48 @@ function resetar(){
   pesoUsado=0;freteSel=0;freteSel_col=undefined;lastCalc=null;
 }
 
+// ID do produto sendo editado (null = novo produto)
+let _prodEditId = null;
+
+// Atualiza produto existente no dashboard
+async function atualizarProduto(){
+  if(!lastCalc||!_prodEditId) return;
+  const nome=document.getElementById('save-nome').value.trim();
+  if(!nome){alert('Informe o nome do produto.');return;}
+  const fator=1-lastCalc.pI-lastCalc.pC-lastCalc.pA-lastCalc.pM;
+  const custoIdeal=lastCalc.precoML>0&&lastCalc.precoML<lastCalc.preco?(lastCalc.precoML*fator-lastCalc.frete-lastCalc.ins):null;
+  let margemML=null;
+  if(lastCalc.precoML>0){
+    const mlPayout=lastCalc.precoML-lastCalc.base-lastCalc.precoML*lastCalc.pI-lastCalc.precoML*lastCalc.pC-lastCalc.precoML*lastCalc.pA;
+    margemML=(mlPayout/lastCalc.precoML)*100;
+  }
+  const snapshot={
+    calcMode,itens:[...(document.querySelectorAll('.item-input')||[])].map(el=>parseFloat(el.value)||0).filter(v=>v>0),
+    freteMode,freteSel,freteSel_col,freteManual:parseFloat(document.getElementById('frete-manual').value)||0,
+    peso:parseFloat(document.getElementById('peso').value)||0,comp:parseFloat(document.getElementById('comp').value)||0,
+    larg:parseFloat(document.getElementById('larg').value)||0,alt:parseFloat(document.getElementById('alt').value)||0,
+    insumos:parseFloat(document.getElementById('insumos').value)||0,
+    freteFullTotal:parseFloat(document.getElementById('frete-full').value)||0,freteFullQtd:parseInt(document.getElementById('frete-full-qtd').value)||1,
+    impostos:parseFloat(document.getElementById('impostos').value)||0,comissao:parseFloat(document.getElementById('comissao').value)||0,
+    afiliados:parseFloat(document.getElementById('afiliados').value)||0,margem:parseFloat(document.getElementById('margem').value)||0,
+    quantidade:parseInt(document.getElementById('quantidade').value)||1,precoML:parseFloat(document.getElementById('preco-ml').value)||0,
+  };
+  const link1=document.getElementById('save-link1')?document.getElementById('save-link1').value.trim():'';
+  const link2=document.getElementById('save-link2')?document.getElementById('save-link2').value.trim():'';
+  const link3=document.getElementById('save-link3')?document.getElementById('save-link3').value.trim():'';
+
+  const prods=await fbGet('produtos','realecom_prods','[]');
+  const idx=prods.findIndex(p=>p.id===_prodEditId);
+  if(idx===-1){alert('Produto não encontrado. Salve como novo.');return;}
+  prods[idx]={...prods[idx],nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),link1,link2,link3,custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,margemML,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
+  localStorage.setItem('realecom_prods',JSON.stringify(prods));
+  fbSet('produtos',prods);
+  _prodEditId=null;
+  document.getElementById('btn-atualizar').style.display='none';
+  document.getElementById('btn-salvar-prod').style.display='';
+  alert('✅ Produto atualizado no Dashboard!');
+}
+
 async function salvarProduto(){
   if(!lastCalc)return;
   const nome=document.getElementById('save-nome').value.trim();
@@ -933,7 +975,16 @@ async function salvarProduto(){
     precoML:parseFloat(document.getElementById('preco-ml').value)||0,
   };
 
-  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
+  // Calcula margem no preço ML (se informado)
+  let margemML = null;
+  if(lastCalc.precoML>0){
+    const mlPayout=lastCalc.precoML-lastCalc.base-lastCalc.precoML*lastCalc.pI-lastCalc.precoML*lastCalc.pC-lastCalc.precoML*lastCalc.pA;
+    margemML=(mlPayout/lastCalc.precoML)*100;
+  }
+  const link1=document.getElementById('save-link1')?document.getElementById('save-link1').value.trim():'';
+  const link2=document.getElementById('save-link2')?document.getElementById('save-link2').value.trim():'';
+  const link3=document.getElementById('save-link3')?document.getElementById('save-link3').value.trim():'';
+  const prod={id:Date.now(),nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),link1,link2,link3,custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,margemML,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
   // Lê do Firebase para não perder produtos salvos em outros dispositivos
   const prodsAtuais = await fbGet('produtos','realecom_prods','[]');
   prodsAtuais.unshift(prod);
@@ -941,6 +992,13 @@ async function salvarProduto(){
   fbSet('produtos', prodsAtuais);
   registrarAtividade('salvar_produto');
   document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
+  if(document.getElementById('save-link1'))document.getElementById('save-link1').value='';
+  if(document.getElementById('save-link2'))document.getElementById('save-link2').value='';
+  if(document.getElementById('save-link3'))document.getElementById('save-link3').value='';
+  _prodEditId=null;
+  const btnUpdate=document.getElementById('btn-atualizar');
+  if(btnUpdate)btnUpdate.style.display='none';
+  document.getElementById('btn-salvar-prod').style.display='';
   alert('✅ Produto salvo no Dashboard!');
 }
 
@@ -964,32 +1022,69 @@ async function renderDash(){
   el.innerHTML='<div style="text-align:center;padding:40px;opacity:.4;font-size:.8rem;color:#888">Carregando...</div>';
   const prods=await fbGet('produtos','realecom_prods','[]');
   if(!prods.length){el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';return;}
-  el.innerHTML=prods.map(p=>{
-    const rc=p.roi>=10?'#4ade80':p.roi>=5?'#F0A070':'#f87171';
-    const mc=p.margem>=10?'#4ade80':p.margem>=5?'#F0A070':'#f87171';
-    const mkc=p.markup>=1.5?'#4ade80':p.markup>=1.2?'#F0A070':'#f87171';
-    return`<div class="prod-card" style="${p.comprado?'border-color:#16a34a55;':''}""><div class="prod-card-top">
-      <div class="prod-name"><h3>${p.nome}${p.comprado?' <span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:700">✅ Comprado</span>':''}</h3><p>🏭 ${p.forn} · ${p.cod}</p></div>
-      <div class="prod-metric"><div class="pm-label">Preço</div><div class="pm-value" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
-      <div class="prod-metric"><div class="pm-label">ROI</div><div class="pm-value" style="color:${rc}">${fmtP(p.roi)}</div></div>
-      <div class="prod-metric"><div class="pm-label">Margem</div><div class="pm-value" style="color:${mc}">${fmtP(p.margem)}</div></div>
-      <div class="prod-metric"><div class="pm-label">Markup</div><div class="pm-value" style="color:${mkc}">${p.markup.toFixed(2).replace('.',',')}</div></div>
-      <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar como comprado':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1rem;transition:all .2s" onmouseover="this.style.borderColor='#16a34a'" onmouseout="this.style.borderColor='${p.comprado?'#16a34a55':'var(--border)'}'">${p.comprado?'⭐':'☆'}</button>
-      <button onclick="verNaCalculadora(${p.id})" title="Ver na Calculadora" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.7rem;font-weight:700;color:var(--o);transition:all .2s" onmouseover="this.style.borderColor='var(--o)'" onmouseout="this.style.borderColor='var(--border)'">🧮 Calcular</button>
-      <button class="btn-toggle" id="tbtn-${p.id}" onclick="toggleDetail(${p.id})">+ detalhes</button>
-      <button class="btn-del" onclick="deletarProduto(${p.id})" title="Remover"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
-    </div>
-    <div class="prod-card-detail" id="det-${p.id}">
-      <div class="prod-detail-grid">
-        <div class="pd-item"><div class="pdl">Custo Real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
-        <div class="pd-item"><div class="pdl">Custo Ideal</div><div class="pdv" style="color:${p.custoIdeal!==null?'#4ade80':'#4a3f6b'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
-        <div class="pd-item"><div class="pdl">Preço Médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
-        <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
-      </div>
-      <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
-      <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
-    </div></div>`;
+
+  function mgBadge(v){
+    if(v===null||v===undefined||isNaN(v))return'<span style="font-size:.72rem;color:var(--text3)">—</span>';
+    const cor=v>=15?'background:#16a34a22;color:#4ade80':v>=10?'background:#F0A07022;color:#F0A070':'background:#dc262622;color:#f87171';
+    return`<span style="${cor};padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:700">${fmtP(v)}</span>`;
+  }
+
+  function linkChips(p){
+    const links=[p.link1,p.link2,p.link3].filter(l=>l&&l.trim());
+    if(!links.length)return'<span style="font-size:.7rem;color:var(--text3)">—</span>';
+    return links.map((l,i)=>`<a href="${l}" target="_blank" style="display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:6px;font-size:.68rem;color:var(--o);text-decoration:none;white-space:nowrap" title="${l}">🔗 Anúncio ${i+1}</a>`).join(' ');
+  }
+
+  const svgDel=`<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
+
+  const header=`<table style="width:100%;border-collapse:collapse;font-size:.78rem">
+    <thead>
+      <tr style="border-bottom:1.5px solid var(--border)">
+        <th style="padding:8px 10px;text-align:left;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:32%">Produto</th>
+        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:13%">Margem calc.</th>
+        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:13%">Margem ML</th>
+        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:20%">Links</th>
+        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:22%">Ações</th>
+      </tr>
+    </thead><tbody>`;
+
+  const rows=prods.map((p,idx)=>{
+    const zebra=idx%2===0?'background:var(--card)':'background:var(--bg2)';
+    const compBadge=p.comprado?'<span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700;margin-left:5px">✅</span>':'';
+    const detId='det2-'+p.id;
+    return`<tr style="${zebra};border-bottom:1px solid var(--border)">
+      <td style="padding:10px 10px;vertical-align:middle">
+        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${p.nome}${compBadge}</div>
+        <div style="font-size:.68rem;color:var(--text3);margin-top:2px">🏭 ${p.forn} · ${p.cod}</div>
+      </td>
+      <td style="padding:10px;text-align:center;vertical-align:middle">${mgBadge(p.margem)}</td>
+      <td style="padding:10px;text-align:center;vertical-align:middle">${mgBadge(p.margemML)}</td>
+      <td style="padding:10px;text-align:center;vertical-align:middle">${linkChips(p)}</td>
+      <td style="padding:10px;text-align:center;vertical-align:middle">
+        <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+          <button onclick="verNaCalculadora(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.7rem;font-weight:700;color:var(--o)">🧮 Cálculo</button>
+          <button onclick="document.getElementById('${detId}').style.display=document.getElementById('${detId}').style.display==='table-row'?'none':'table-row';this.textContent=document.getElementById('${detId}').style.display==='table-row'?'− fechar':'+ detalhes'" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.7rem;color:var(--text2)">+ detalhes</button>
+          <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a55':'var(--border)'};border-radius:8px;padding:5px 8px;cursor:pointer;font-size:.85rem">${p.comprado?'⭐':'☆'}</button>
+          <button onclick="deletarProduto(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer" class="btn-del">${svgDel}</button>
+        </div>
+      </td>
+    </tr>
+    <tr id="${detId}" style="display:none;background:var(--bg2)">
+      <td colspan="5" style="padding:14px 16px;border-bottom:1px solid var(--border)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px">
+          <div class="pd-item"><div class="pdl">Preço calc.</div><div class="pdv" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
+          <div class="pd-item"><div class="pdl">Preço médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
+          <div class="pd-item"><div class="pdl">Custo real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
+          <div class="pd-item"><div class="pdl">Custo ideal</div><div class="pdv" style="color:${p.custoIdeal!==null&&p.custoIdeal>0?'#4ade80':'var(--text3)'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
+          <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
+        </div>
+        <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
+        <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
+      </td>
+    </tr>`;
   }).join('');
+
+  el.innerHTML=header+rows+'</tbody></table>';
 }
 
 // ============================================================
@@ -1612,10 +1707,29 @@ function verNaCalculadora(id){
   const p=prods.find(p=>p.id===id);
   if(!p){alert('Produto não encontrado.');return;}
 
+  // Ativa modo edição
+  _prodEditId=id;
+
   const s=p.snapshot;
 
   // Navega para a calculadora primeiro
   showPage('calc', true);
+
+  // Preenche campos do save-card com dados do produto
+  setTimeout(()=>{
+    if(document.getElementById('save-nome'))document.getElementById('save-nome').value=p.nome||'';
+    if(document.getElementById('save-forn'))document.getElementById('save-forn').value=p.forn||'';
+    if(document.getElementById('save-cod'))document.getElementById('save-cod').value=p.cod||'';
+    if(document.getElementById('save-obs'))document.getElementById('save-obs').value=p.obs||'';
+    if(document.getElementById('save-link1'))document.getElementById('save-link1').value=p.link1||'';
+    if(document.getElementById('save-link2'))document.getElementById('save-link2').value=p.link2||'';
+    if(document.getElementById('save-link3'))document.getElementById('save-link3').value=p.link3||'';
+    // Mostra botão atualizar e esconde salvar
+    const btnAtualizar=document.getElementById('btn-atualizar');
+    const btnSalvar=document.getElementById('btn-salvar-prod');
+    if(btnAtualizar)btnAtualizar.style.display='';
+    if(btnSalvar)btnSalvar.style.display='none';
+  },200);
 
   // Pequeno delay para garantir que a página renderizou
   setTimeout(()=>{
