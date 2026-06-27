@@ -638,7 +638,7 @@ function setMode(m){
     b2.style.background='none';b2.style.color='#4a3f6b';
     mb.style.display='block';mlInput.placeholder='Obrigatório';
     mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span>';
-    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
+    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--text3)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
     document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
     document.getElementById('pc-ml-card').style.display='block';
   }else{
@@ -646,7 +646,7 @@ function setMode(m){
     b1.style.background='none';b1.style.color='#4a3f6b';
     mb.style.display='none';mlInput.placeholder='Obrigatório';
     mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171">*</span>';
-    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--o)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
+    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--text3)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
   }
 }
 
@@ -834,12 +834,12 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     s('pd-fat-b').textContent=fmt(precoML*qtd);
     const elPayB=s('pd-pay-b');
     elPayB.textContent=fmt(mlPayout);
-    elPayB.style.color=mlPayout>=0?'#F0A070':'#f87171';
+    elPayB.style.color=mlPayout>=0?'var(--text2)':'#f87171';
     s('pd-cx-bruto-b').textContent=fmt(inv+mlPayout*qtd+mlImp);
     s('pd-cx-b').textContent=fmt(inv+mlPayout*qtd);
     const elLbB=s('pd-lb-b');
     elLbB.textContent=fmt(mlPayout*qtd);
-    elLbB.style.color=mlPayout*qtd>=0?'#F0A070':'#f87171';
+    elLbB.style.color=mlPayout*qtd>=0?'var(--text2)':'#f87171';
   }else{
     if(header)header.style.display='none';
     if(simple)simple.style.display='block';
@@ -1072,8 +1072,8 @@ async function renderDash(){
     <tr id="${detId}" style="display:none;background:var(--bg2)">
       <td colspan="5" style="padding:14px 16px;border-bottom:1px solid var(--border)">
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px">
-          <div class="pd-item"><div class="pdl">Preço calc.</div><div class="pdv" style="color:#c4b5fd">${fmt(p.precoCalc)}</div></div>
-          <div class="pd-item"><div class="pdl">Preço médio ML</div><div class="pdv" style="color:#F0A070">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
+          <div class="pd-item"><div class="pdl">Preço calc.</div><div class="pdv">${fmt(p.precoCalc)}</div></div>
+          <div class="pd-item"><div class="pdl">Preço médio ML</div><div class="pdv">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
           <div class="pd-item"><div class="pdl">Custo real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
           <div class="pd-item"><div class="pdl">Custo ideal</div><div class="pdv" style="color:${p.custoIdeal!==null&&p.custoIdeal>0?'#4ade80':'var(--text3)'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
           <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
