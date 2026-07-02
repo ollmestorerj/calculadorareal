@@ -107,9 +107,6 @@ async function fbSet(colecao, dados){
   try{
     const uid = await getUserId();
     if(!uid) return;
-    // Atualiza cache isolado por usuário
-    const userKey = localKey(colecao === 'produtos' ? 'realecom_prods' : colecao === 'eventos' ? 'realecom_eventos' : colecao === 'metas' ? 'realecom_metas' : colecao);
-    if(userKey) localStorage.setItem(userKey, JSON.stringify(dados));
     const db=await getDB();
     await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data')
@@ -118,51 +115,28 @@ async function fbSet(colecao, dados){
 }
 
 // Lê array do Firebase, fallback para localStorage
-// Retorna chave de localStorage isolada por usuário — NUNCA compartilha dados entre contas
-function localKey(baseKey){
-  const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
-  if(!uid) return null;
-  return baseKey + '_' + uid.replace(/[^a-zA-Z0-9]/g,'_');
-}
-
-// Lê dados do cache do usuário atual de forma segura
-function getCached(baseKey, fallback='[]'){
-  const key = localKey(baseKey);
-  if(!key) return JSON.parse(fallback);
-  return JSON.parse(localStorage.getItem(key)||fallback);
-}
-
-// Salva dados no cache do usuário atual de forma segura
-function setCached(baseKey, dados){
-  const key = localKey(baseKey);
-  if(key) localStorage.setItem(key, JSON.stringify(dados));
-}
-
-async function fbGet(colecao, baseKey, fallback){
+async function fbGet(colecao, localKey, fallback){
   try{
     const uid = await getUserId();
-    if(!uid) return JSON.parse(fallback); // sem uid, nunca usa cache
-    const userKey = localKey(baseKey);
+    if(!uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
     const db=await getDB();
     const doc=await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data').get();
     if(doc.exists){
       const dados=JSON.parse(doc.data().payload);
-      // Cache isolado por usuário
-      if(userKey) localStorage.setItem(userKey, JSON.stringify(dados));
+      // Atualiza cache local com dados deste usuário
+      localStorage.setItem(localKey, JSON.stringify(dados));
       return dados;
     }
-    // Sem dado no Firebase — limpa cache e retorna vazio
-    if(userKey) localStorage.removeItem(userKey);
+    // Sem dado no Firebase — limpa cache local e retorna vazio
+    // NUNCA subir dados do localStorage para evitar vazamento entre usuários
+    localStorage.removeItem(localKey);
     return JSON.parse(fallback);
   }catch(e){
     console.warn('Firebase read error:', e);
-    // Em erro de rede, usa cache APENAS do usuário atual
-    const userKey = localKey(baseKey);
-    if(userKey){
-      const cached = localStorage.getItem(userKey);
-      if(cached) return JSON.parse(cached);
-    }
+    // Só usa cache local se o usuário atual está logado
+    const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+    if(uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
     return JSON.parse(fallback);
   }
 }
@@ -210,18 +184,12 @@ async function sair(){
   try{const auth=await getAuth();await auth.signOut();}catch(e){}
   // Limpa TODOS os dados do usuário do localStorage ao sair
   // Evita vazamento para quem logar depois neste mesmo PC
-  // Limpa chaves genéricas (legado) e chaves por usuário
-  const _uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
-  const _safeUid = _uid ? _uid.replace(/[^a-zA-Z0-9]/g,'_') : null;
-  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel',
-   'realecom_telefone'].forEach(k=>{
-    localStorage.removeItem(k);
-    if(_safeUid) localStorage.removeItem(k+'_'+_safeUid);
-  });
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
   // Reseta cache de auth para não usar userId do usuário anterior
   _cachedUserId = null;
   _authResolved = false;
   _jaEntrou = false;
+  _fazendoLogout = false;
   location.reload();
 }
 
@@ -346,7 +314,7 @@ function entrarNoApp(dados, pagina){
   if(elPlano) elPlano.textContent=dados.plano?'Plano '+dados.plano:'Acesso liberado';
 
   fbGet('produtos','realecom_prods','[]').then(prods=>{
-    // Cache já é salvo com chave por usuário dentro do fbGet — não salva na chave genérica
+    localStorage.setItem('realecom_prods',JSON.stringify(prods));
 
     // Dashboard KPI — total e distribuição de margem
     const elProds=document.getElementById('home-kpi-prods');
@@ -432,6 +400,10 @@ function entrarNoApp(dados, pagina){
 }
 
 // Verifica sessão ao carregar — baseado no Firebase Auth
+// Flags globais de controle de auth — precisam ser acessíveis pelo sair()
+let _fazendoLogout = false;
+let _jaEntrou = false;
+
 (function(){
   // Tema pode ser aplicado imediatamente, não depende de auth
   const t=localStorage.getItem('realecom_theme');
@@ -439,13 +411,11 @@ function entrarNoApp(dados, pagina){
 
   ensureFirebase();
 
-  // Flags de controle — evitam loops e re-execuções desnecessárias
-  let _fazendoLogout = false;
-  let _jaEntrou = false; // Garante que a validação completa só roda uma vez por sessão
-
   firebase.auth().onAuthStateChanged(async (user) => {
     // Se estamos fazendo logout manual, ignora completamente
     if(_fazendoLogout) return;
+    // Se _jaEntrou já está true, ignora disparos subsequentes (renovação de token, foco de aba)
+    if(_jaEntrou && user) return;
 
     // Resolve o cache de userId para todas as chamadas pendentes
     _setAuthUser(user);
@@ -519,12 +489,17 @@ function entrarNoApp(dados, pagina){
 
     }catch(e){
       console.warn('Erro ao validar sessão:', e);
-      // Em caso de erro de rede, usa cache do localStorage como fallback
+      // Em caso de erro de rede, usa sessão salva como fallback
       const s = verificarSessao();
       if(s && !_jaEntrou){
         _jaEntrou = true;
         const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
-        entrarNoApp(s, ultimaPagina);
+        entrarNoApp({
+          email: user.email,
+          nome: s.nome || user.email,
+          validade: s.validade || '—',
+          plano: s.plano || ''
+        }, ultimaPagina);
       }
     }
   });
@@ -538,14 +513,7 @@ function entrarNoApp(dados, pagina){
         _fazendoLogout = true;
         _jaEntrou = false;
         await firebase.auth().signOut();
-        // Limpa chaves genéricas (legado) e chaves por usuário
-  const _uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
-  const _safeUid = _uid ? _uid.replace(/[^a-zA-Z0-9]/g,'_') : null;
-  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel',
-   'realecom_telefone'].forEach(k=>{
-    localStorage.removeItem(k);
-    if(_safeUid) localStorage.removeItem(k+'_'+_safeUid);
-  });
+        ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
         _cachedUserId = null;
         _authResolved = false;
         _fazendoLogout = false;
@@ -898,6 +866,19 @@ function finalizarCalculo(){
 }
 
 function resetar(){
+  // Reseta modo edição — CRÍTICO: sem isso, salvar após "Novo Cálculo" atualiza o produto anterior
+  _prodEditId = null;
+  const btnAtualizar = document.getElementById('btn-atualizar');
+  const btnSalvar = document.getElementById('btn-salvar-prod');
+  if(btnAtualizar) btnAtualizar.style.display = 'none';
+  if(btnSalvar) btnSalvar.style.display = '';
+  // Limpa campos do save-card
+  ['save-nome','save-forn','save-cod','save-obs','save-link1','save-link2','save-link3']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  // Fecha seção de links
+  const linksDiv = document.getElementById('links-anuncio');
+  if(linksDiv) linksDiv.style.display = 'none';
+
   // Limpa painel direito
   document.getElementById('right-empty').style.display='flex';
   document.getElementById('right-result').style.display='none';
@@ -977,7 +958,7 @@ async function atualizarProduto(){
   const idx=prods.findIndex(p=>p.id===_prodEditId);
   if(idx===-1){alert('Produto não encontrado. Salve como novo.');return;}
   prods[idx]={...prods[idx],nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),link1,link2,link3,custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,margemML,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
-  setCached('realecom_prods',prods);
+  localStorage.setItem('realecom_prods',JSON.stringify(prods));
   fbSet('produtos',prods);
   _prodEditId=null;
   document.getElementById('btn-atualizar').style.display='none';
@@ -1028,7 +1009,7 @@ async function salvarProduto(){
   // Lê do Firebase para não perder produtos salvos em outros dispositivos
   const prodsAtuais = await fbGet('produtos','realecom_prods','[]');
   prodsAtuais.unshift(prod);
-  setCached('realecom_prods',prodsAtuais);
+  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtuais));
   fbSet('produtos', prodsAtuais);
   registrarAtividade('salvar_produto');
   document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
@@ -1045,13 +1026,13 @@ async function salvarProduto(){
 async function salvarObs(id,val){
   const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
-  if(p){p.obs=val;setCached('realecom_prods',prods);fbSet('produtos',prods);}
+  if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);}
 }
 async function deletarProduto(id){
   if(!confirm('Remover este produto?'))return;
   const prods = await fbGet('produtos','realecom_prods','[]');
   const prodsAtualizados = prods.filter(p=>p.id!==id);
-  setCached('realecom_prods',prodsAtualizados);
+  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtualizados));
   fbSet('produtos',prodsAtualizados);
   renderDash();
 }
@@ -1689,7 +1670,7 @@ document.addEventListener('wheel',e=>{
 verificarNotificacoes();
 
 function exportarExcel(){
-  const prods=getCached('realecom_prods','[]');
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   if(!prods.length){alert('Nenhum produto no Dashboard para exportar.');return;}
 
   const fmt2=(v)=>typeof v==='number'?v.toFixed(2).replace('.',','):v||'';
@@ -1736,14 +1717,14 @@ function exportarExcel(){
 async function toggleComprado(id){
   const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
-  if(p){p.comprado=!p.comprado;setCached('realecom_prods',prods);fbSet('produtos',prods);renderDash();}
+  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);renderDash();}
 }
 
 // ============================================================
 // VER NA CALCULADORA — restaura o cálculo salvo
 // ============================================================
 function verNaCalculadora(id){
-  const prods=getCached('realecom_prods','[]');
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   const p=prods.find(p=>p.id===id);
   if(!p){alert('Produto não encontrado.');return;}
 
@@ -2019,7 +2000,7 @@ function switchPubMode(mode){
 }
 
 async function carregarProdutosPublicidade(){
-  const prods = getCached('realecom_prods','[]');
+  const prods = JSON.parse(localStorage.getItem('realecom_prods')||'[]');
   const sel = document.getElementById('pub-produto-sel');
   if(!sel) return;
   if(!prods.length){
@@ -2127,7 +2108,7 @@ function salvarAnalisePublicidade(){
   let nome='';
   if(pubMode==='dash'){
     const idx=document.getElementById('pub-produto-sel').value;
-    const prods=getCached('realecom_prods','[]');
+    const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
     nome=idx!==''?prods[parseInt(idx)].nome:'Produto do Dashboard';
   }else{
     nome=document.getElementById('pub-m-nome').value.trim();
@@ -2244,7 +2225,7 @@ function atualizarQualidade(){
   if(!document.getElementById('qual-total'))return;
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
-  const todos=getCached('realecom_prods','[]');
+  const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
   const agora=Date.now();
   const limite30=agora-(30*24*60*60*1000);
@@ -2317,7 +2298,7 @@ function recalcularMetas(){
 
   const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
-  const prods=getCached('realecom_prods','[]');
+  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
 
   function prodsPeriodo(dias){
     const agora=Date.now();
