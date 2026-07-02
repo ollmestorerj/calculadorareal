@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Calculadora REAL | RealEcom</title>
 <link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1051,7 +1054,7 @@ body.light .login-logo img{filter:none}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=1783018259"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
@@ -1732,5 +1735,30 @@ function exportarExcel(){
   </div>
 </div>
 
+<script>
+// Cache bust v1783018259 — força browser a usar versão nova
+(function(){
+  // Limpa caches antigos do browser
+  if('caches' in window){
+    caches.keys().then(function(names){
+      names.forEach(function(name){
+        if(!name.includes('firebase') && !name.includes('firestore')){
+          caches.delete(name);
+        }
+      });
+    });
+  }
+  // Força atualização de service workers registrados
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(reg){
+        if(reg.scope && !reg.scope.includes('firebase-messaging')){
+          reg.update();
+        }
+      });
+    });
+  }
+})();
+</script>
 </body>
 </html>
