@@ -114,8 +114,10 @@ body.light .margem-hint{color:#6B21A8}
 /* ============================================================ FORMULÁRIOS ============================================================ */
 .field{margin-bottom:8px}
 .field label{display:block;font-size:.72rem;color:var(--text3);margin-bottom:3px;font-weight:500}
-.field input,.field textarea,.item-input,.gest-input,.meta-input{width:100%;padding:8px 11px;border:1px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text2);background:var(--input-bg);transition:border .15s;font-family:'DM Sans',sans-serif;outline:none}
-.field input:focus,.field textarea:focus,.item-input:focus,.gest-input:focus,.meta-input:focus{border-color:var(--p);background:var(--card)}
+.field input,.field textarea,.item-input,.gest-input,.meta-input{width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);transition:border .15s,background .15s;font-family:'DM Sans',sans-serif;outline:none;font-weight:500}
+.field input:focus,.field textarea:focus,.item-input:focus,.gest-input:focus,.meta-input:focus{border-color:var(--p);background:var(--card);color:var(--text)}
+body.light .field input,body.light .field textarea,body.light .item-input{background:#fff;border-color:#d0d0cc;color:#111}
+body.light .field input:focus,body.light .field textarea:focus,body.light .item-input:focus{border-color:#6B21A8;background:#fff}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
 .note{font-size:.67rem;color:var(--text4);margin-top:3px}
@@ -621,95 +623,139 @@ body.light .login-logo img{filter:none}
       <strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.
     </div>
 
-    <!-- LINHA 1: Custo + Insumos | Frete Entrega -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <!-- OPÇÃO C: coluna única, blocos agrupados, títulos destacados -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:8px">
 
-      <!-- Custo + Insumos juntos -->
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div class="card" style="margin-bottom:0;padding:10px 12px">
-          <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>Custo dos Produtos <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></div>
-          <div class="item-list" id="items-list">
-            <div class="item-row">
-              <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
-              <button class="remove-btn" onclick="removeItem(this)">×</button>
-            </div>
-          </div>
-          <button class="add-item" onclick="addItem()" style="margin-top:5px">+ Adicionar item</button>
+      <!-- BLOCO 1: Custo + Insumos + Frete Full -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#6B21A844">
+        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>
+          CUSTO DOS PRODUTOS
+          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'DM Sans',sans-serif">obrigatório</span>
         </div>
-        <div class="card" style="margin-bottom:0;padding:10px 12px">
-          <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>Insumos / Embalagem</div>
-          <div class="field" style="margin-bottom:6px"><label style="font-size:.68rem">Valor (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
-          <!-- Toggle Frete Full como custo -->
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;cursor:pointer" onclick="toggleFreteFullVisivel()">
-            <span style="font-size:.72rem;color:var(--text2);font-weight:600">+ Incluir Frete de Coleta Full</span>
-            <div id="toggle-frete-full" style="width:32px;height:18px;background:var(--border);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0">
-              <div id="toggle-frete-full-dot" style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s"></div>
-            </div>
+        <div class="item-list" id="items-list">
+          <div class="item-row">
+            <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
+            <button class="remove-btn" onclick="removeItem(this)">×</button>
           </div>
-          <div id="frete-full-panel" style="display:none">
-            <div class="field" style="margin-bottom:5px"><label style="font-size:.66rem">Valor total do frete (R$)</label><input type="number" id="frete-full" placeholder="Ex: 200,00" min="0" step="0.01" oninput="calcFreteFullUnit()"></div>
-            <div class="field" style="margin-bottom:5px"><label style="font-size:.66rem">Qtd. unidades no envio</label><input type="number" id="frete-full-qtd" placeholder="Ex: 200" min="1" step="1" oninput="calcFreteFullUnit()"></div>
-            <div id="frete-full-result" style="display:none;background:#7c3aed18;border:1px solid #7c3aed44;border-radius:7px;padding:5px 9px;font-size:.74rem;color:#a78bfa;text-align:center">
-              Custo/unidade: <strong id="frete-full-unit" style="color:#a78bfa">—</strong>
-            </div>
+        </div>
+        <button class="add-item" onclick="addItem()" style="margin-top:7px">+ Adicionar item</button>
+
+        <div style="height:1px;background:var(--border);margin:12px 0"></div>
+
+        <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>
+          INSUMOS / EMBALAGEM
+        </div>
+        <div class="field" style="margin-bottom:10px"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--bg2);border-radius:8px;cursor:pointer;border:1px solid var(--border)" onclick="toggleFreteFullVisivel()">
+          <span style="font-size:.76rem;font-weight:700;color:var(--text2)">+ Incluir Frete de Coleta Full</span>
+          <div id="toggle-frete-full" style="width:34px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0">
+            <div id="toggle-frete-full-dot" style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>
+          </div>
+        </div>
+        <div id="frete-full-panel" style="display:none;margin-top:9px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor total do frete (R$)</label><input type="number" id="frete-full" placeholder="Ex: 200,00" min="0" step="0.01" oninput="calcFreteFullUnit()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Qtd. unidades no envio</label><input type="number" id="frete-full-qtd" placeholder="Ex: 200" min="1" step="1" oninput="calcFreteFullUnit()"></div>
+          </div>
+          <div id="frete-full-result" style="display:none;background:#7c3aed18;border:1px solid #7c3aed44;border-radius:7px;padding:6px 10px;font-size:.76rem;color:#a78bfa;text-align:center;margin-top:7px">
+            Custo/unidade: <strong id="frete-full-unit" style="color:#c4b5fd">—</strong>
           </div>
         </div>
       </div>
 
-      <!-- Frete Entrega — Manual primeiro, depois Dimensões -->
-      <div class="card" style="margin-bottom:0;padding:10px 12px">
-        <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Frete Entrega <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></div>
-        <div class="toggle-row" style="margin-bottom:7px">
-          <button class="toggle-btn active" id="btn-manual" onclick="switchFrete('manual')" style="font-size:.7rem;padding:5px">Manual</button>
-          <button class="toggle-btn" id="btn-dim" onclick="switchFrete('dim')" style="font-size:.7rem;padding:5px">Por Dimensões</button>
+      <!-- BLOCO 2: Frete Entrega -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#7c3aed44">
+        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
+          FRETE ENTREGA
+          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'DM Sans',sans-serif">obrigatório</span>
+        </div>
+        <div class="toggle-row" style="margin-bottom:10px">
+          <button class="toggle-btn active" id="btn-manual" onclick="switchFrete('manual')" style="font-size:.74rem;padding:7px">Manual</button>
+          <button class="toggle-btn" id="btn-dim" onclick="switchFrete('dim')" style="font-size:.74rem;padding:7px">Por Dimensões</button>
         </div>
         <div id="tab-manual">
-          <div class="field" style="margin-bottom:0"><label style="font-size:.68rem">Valor do frete (R$)</label><input type="number" id="frete-manual" placeholder="Ex: 15.90" min="0" step="0.01"></div>
+          <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor do frete (R$)</label><input type="number" id="frete-manual" placeholder="Ex: 15.90" min="0" step="0.01"></div>
         </div>
         <div id="tab-dim" style="display:none">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px">
-            <div class="field" style="margin-bottom:0"><label style="font-size:.66rem">Peso (kg)</label><input type="number" id="peso" placeholder="1.5" min="0" step="0.001" oninput="calcPeso()"></div>
-            <div class="field" style="margin-bottom:0"><label style="font-size:.66rem">Comp. (cm)</label><input type="number" id="comp" placeholder="30" min="0" step="0.1" oninput="calcPeso()"></div>
-            <div class="field" style="margin-bottom:0"><label style="font-size:.66rem">Larg. (cm)</label><input type="number" id="larg" placeholder="20" min="0" step="0.1" oninput="calcPeso()"></div>
-            <div class="field" style="margin-bottom:0"><label style="font-size:.66rem">Alt. (cm)</label><input type="number" id="alt" placeholder="15" min="0" step="0.1" oninput="calcPeso()"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Peso (kg)</label><input type="number" id="peso" placeholder="1.5" min="0" step="0.001" oninput="calcPeso()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Comp. (cm)</label><input type="number" id="comp" placeholder="30" min="0" step="0.1" oninput="calcPeso()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Larg. (cm)</label><input type="number" id="larg" placeholder="20" min="0" step="0.1" oninput="calcPeso()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Alt. (cm)</label><input type="number" id="alt" placeholder="15" min="0" step="0.1" oninput="calcPeso()"></div>
           </div>
-          <div class="peso-info" id="peso-info" style="font-size:.68rem">
+          <div class="peso-info" id="peso-info" style="font-size:.7rem">
             <span class="pi">Real: <strong id="pi-real">—</strong></span>
             <span class="pi">Vol.: <strong id="pi-vol">—</strong></span>
             <span class="pi">Usado: <strong id="pi-usado">—</strong></span>
           </div>
-          <div id="frete-section" style="display:none;margin-top:7px">
-            <div style="font-size:.62rem;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Selecione a faixa de preço</div>
+          <div id="frete-section" style="display:none;margin-top:8px">
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Reputação do vendedor</div>
+            <div style="display:flex;gap:5px;margin-bottom:8px">
+              <button onclick="freteReputacao='verde';this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='');this.style.background='#16a34a33';this.style.borderColor='#16a34a';renderTable(freteSel_col??-1)" style="flex:1;padding:4px;border-radius:6px;border:1px solid #16a34a;background:#16a34a33;color:#4ade80;font-size:.66rem;font-weight:700;cursor:pointer">🟢 Verde</button>
+              <button onclick="freteReputacao='amarela';this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='';b.style.borderColor='var(--border)'});this.style.background='#d9770622';this.style.borderColor='#d97706';renderTable(freteSel_col??-1)" style="flex:1;padding:4px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text3);font-size:.66rem;font-weight:700;cursor:pointer">🟡 Amarela</button>
+              <button onclick="freteReputacao='vermelha';this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='';b.style.borderColor='var(--border)'});this.style.background='#dc262622';this.style.borderColor='#dc2626';renderTable(freteSel_col??-1)" style="flex:1;padding:4px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text3);font-size:.66rem;font-weight:700;cursor:pointer">🔴 Vermelha</button>
+            </div>
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Selecione a faixa de preço</div>
             <div class="frete-wrap"><table class="ft" id="frete-table"></table></div>
             <div class="frete-badge" id="frete-badge" style="font-size:.74rem">Frete: <span id="frete-val">—</span></div>
             <div id="frete-aviso" style="display:none;border-radius:8px;padding:7px 10px;font-size:.72rem;line-height:1.5;margin-top:5px"></div>
           </div>
-          <div class="note" style="font-size:.64rem">Peso vol. = C × L × A ÷ 6000. Usa-se o maior.</div>
+          <div class="note" style="font-size:.65rem;margin-top:5px">Peso vol. = C × L × A ÷ 6000. Usa-se o maior.</div>
         </div>
       </div>
-    </div>
 
-    <!-- LINHA 2: Custos Percentuais | Margem+Projeção -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-      <div class="card" style="margin-bottom:0;padding:10px 12px">
-        <div class="card-title" style="margin-bottom:10px">Custos Percentuais</div>
-        <div class="field" style="margin-bottom:8px"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Impostos (%)</label><input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1"></div>
-        <div class="field" style="margin-bottom:0"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>Comissão Marketplace (%)</label><input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1"></div>
-        <!-- campo afiliados oculto mas mantido no DOM para compatibilidade -->
+      <!-- BLOCO 3: Custos Percentuais -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#d9770644">
+        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          CUSTOS PERCENTUAIS
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:5px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span>Impostos (%)</label>
+            <input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:5px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg></span>Comissão ML (%)</label>
+            <input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1">
+          </div>
+        </div>
         <input type="hidden" id="afiliados" value="0">
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div class="margem-card" id="margem-block" style="margin-bottom:0;padding:10px 12px">
-          <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>Margem Desejada <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></div>
-          <div class="field" style="margin-bottom:4px"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" style="font-size:1.1rem;font-weight:700;text-align:center"></div>
-          <div class="margem-hint" style="font-size:.68rem">↑ Meta de lucro em % sobre o preço de venda</div>
+
+      <!-- BLOCO 4: Margem Desejada -->
+      <div class="margem-card" id="margem-block" style="margin-bottom:0;padding:14px 16px">
+        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:#e9d5ff;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:rgba(255,255,255,.15);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+          MARGEM DESEJADA
+          <span style="font-size:.6rem;font-weight:700;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(220,38,38,.4);border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'DM Sans',sans-serif">obrigatório</span>
         </div>
-        <div class="card" style="margin-bottom:0;padding:10px 12px">
-          <div class="card-title" style="margin-bottom:7px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Preço Concorrência / Projeção Vendas</div>
-          <div class="field" style="margin-bottom:8px"><label style="font-size:.68rem">Qtd. unidades compradas</label><input type="number" id="quantidade" placeholder="100" min="1" step="1"></div>
-          <div class="field" style="margin-bottom:0"><label id="ml-label" style="font-size:.68rem"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#dc2626;font-size:.6rem">(obrigatório)</span></label><input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01"></div>
+        <div class="field" style="margin-bottom:6px"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" style="font-size:1.4rem;font-weight:800;text-align:center;letter-spacing:-.02em"></div>
+        <div class="margem-hint" style="font-size:.72rem">↑ Meta de lucro em % sobre o preço de venda</div>
+      </div>
+
+      <!-- BLOCO 5: Preço Concorrência / Projeção -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#16a34a44">
+        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+          PREÇO CONCORRÊNCIA / PROJEÇÃO
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Qtd. unidades compradas</label>
+            <input type="number" id="quantidade" placeholder="100" min="1" step="1">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label id="ml-label" style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></label>
+            <input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01">
+          </div>
         </div>
       </div>
+
     </div>
     <button class="btn-calc" onclick="calcular()" style="padding:12px;margin-bottom:6px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
     <button class="btn-reset" onclick="resetar()" style="width:100%;margin-top:0">← Novo Cálculo</button>
@@ -773,6 +819,11 @@ body.light .login-logo img{filter:none}
           </div>
           <!-- Linhas simples (sem ML) -->
           <div id="proj-simple">
+            <div style="background:#2d106022;border:1px solid #6B21A844;border-radius:9px;padding:10px;text-align:center;margin-bottom:10px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:4px">Payout por unidade</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#c4b5fd;letter-spacing:-.02em" id="proj-payout-destaque">—</div>
+              <div style="font-size:.66rem;color:#7c6af7;margin-top:2px">lucro líquido por venda</div>
+            </div>
             <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
             <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
             <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
@@ -795,6 +846,19 @@ body.light .login-logo img{filter:none}
               <span style="color:#4ade80;font-weight:700">Lucro bruto</span>
               <span style="text-align:right;color:#c4b5fd;font-weight:800;font-size:.95rem" id="pd-lb-a">—</span>
               <span style="text-align:right;font-weight:800;font-size:.95rem" id="pd-lb-b">—</span>
+            </div>
+            <!-- Payout destacado por cenário -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+              <div style="background:#2d106022;border:1px solid #6B21A844;border-radius:9px;padding:10px;text-align:center">
+                <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:4px">Payout · Preço Margem</div>
+                <div style="font-size:1.1rem;font-weight:800;color:#c4b5fd;letter-spacing:-.02em" id="pd-payout-destaque-a">—</div>
+                <div style="font-size:.66rem;color:#7c6af7;margin-top:2px">por unidade vendida</div>
+              </div>
+              <div style="background:#16a34a11;border:1px solid #16a34a44;border-radius:9px;padding:10px;text-align:center">
+                <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F0A070;margin-bottom:4px">Payout · Preço Médio ML</div>
+                <div style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em" id="pd-payout-destaque-b" style="color:#4ade80">—</div>
+                <div style="font-size:.66rem;color:var(--text3);margin-top:2px">por unidade vendida</div>
+              </div>
             </div>
           </div>
         </div>
