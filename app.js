@@ -2833,3 +2833,193 @@ async function carregarTelefoneWhatsApp(){
     atualizarBannerWhatsApp(null);
   }
 }
+
+// ============================================================
+// PROMPT FOTOS ML
+// ============================================================
+
+function gerarPromptsFotos(){
+  const produto = (document.getElementById('pf-produto').value||'').trim();
+  const caract  = (document.getElementById('pf-caract').value||'').trim();
+
+  const prod = produto || '[nome do produto]';
+  const car  = caract  || '[características obrigatórias]';
+
+  const prompts = {
+    '01': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Diretrizes criativas:
+• Não vender o produto — vender o motivo da compra.
+• A imagem deve parecer uma campanha publicitária de uma grande marca.
+• Pergunta-guia: "Qual cena faria alguém clicar neste anúncio em menos de 2 segundos?"
+
+Regras técnicas:
+• Produto fiel à referência.
+• Produto ocupando entre 60% e 80% da imagem.
+• Fundo ambientado.
+• Ultra realista — qualidade fotográfica premium.
+• Sem aparência de IA.
+• Sem selos, preços, ícones ou informações técnicas.
+• Criar composição emocional e diferenciada dos concorrentes.
+• Formato: 1200 x 1200 px.`,
+
+    '02': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Diretrizes criativas:
+• Mostrar cada item incluso individualmente.
+• Organização premium — estilo catálogo de marca.
+• Visual limpo e fácil leitura no celular.
+• A imagem deve transmitir que o cliente recebe um conjunto completo.
+
+Regras técnicas:
+• Fundo ambientado elegante.
+• Produto fiel.
+• Sem aparência de IA.
+• Cada item claramente identificado.
+• Alta nitidez.
+• Visual profissional.
+• Formato: 1200 x 1540 px.`,
+
+    '03': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Diretrizes criativas:
+• Mostrar uso real com pessoas utilizando o produto naturalmente.
+• Vender o resultado — não vender o produto.
+• Pergunta-guia: "Como a vida do cliente fica melhor depois da compra?"
+
+Regras técnicas:
+• Produto fiel.
+• Ambiente coerente com o uso.
+• Emoção visível.
+• Realismo extremo — qualidade publicitária.
+• Sem aparência de IA.
+• Formato: 1200 x 1540 px.`,
+
+    '04': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Diretrizes criativas:
+• Transformar características em benefícios visuais.
+• Não mostrar apenas o produto — mostrar visualmente o benefício.
+• Exemplo: em vez de "Material Oxford", mostrar "Maior resistência para a rotina diária".
+
+Regras técnicas:
+• Visual premium.
+• Fácil leitura no celular.
+• Pouco texto — benefícios claros e diretos.
+• Produto fiel.
+• Formato: 1200 x 1540 px.`,
+
+    '05': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Mostrar obrigatoriamente:
+• Acabamentos.
+• Materiais.
+• Estruturas e detalhes construtivos.
+
+Diretrizes criativas:
+• Estilo propaganda de produto premium.
+• Iluminação dramática nos detalhes.
+• Close nos detalhes construtivos.
+
+Regras técnicas:
+• Produto fiel.
+• Sem marcas inventadas.
+• Sem aparência de IA.
+• Alta nitidez.
+• Formato: 1200 x 1540 px.`,
+
+    '06': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Mostrar obrigatoriamente:
+• Medidas reais.
+• Compartimentos.
+• Capacidade e peso.
+• Especificações relevantes.
+
+Diretrizes criativas:
+• Visual moderno — infográfico premium.
+• Informações organizadas e hierarquizadas.
+• Fácil leitura no celular.
+
+Regras técnicas:
+• Produto fiel.
+• Visual profissional.
+• Formato: 1200 x 1540 px.`,
+
+    '07': `Produto:
+• ${prod}
+
+Características que não podem ser alteradas:
+• ${car}
+
+Reforçar obrigatoriamente:
+• Qualidade.
+• Garantia.
+• Conjunto completo.
+• Benefícios principais.
+
+Diretrizes criativas:
+• Pergunta-guia: "Por que comprar este produto agora?"
+• Visual elegante com poucos elementos.
+• Sensação de decisão de compra — não de ansiedade.
+
+Regras técnicas:
+• Produto fiel.
+• Fundo ambientado.
+• Aparência premium.
+• Sem aparência de IA.
+• Formato: 1200 x 1540 px.`
+  };
+
+  Object.entries(prompts).forEach(([num, txt]) => {
+    const el = document.getElementById('pf-txt-' + num);
+    if(el) el.textContent = txt;
+  });
+}
+
+function copiarPrompt(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    // Feedback visual no botão
+    const btn = el.previousElementSibling
+      ? null
+      : null;
+    // Encontra o botão pelo DOM
+    const card = el.closest('.card');
+    if(!card) return;
+    const b = card.querySelector('button');
+    if(!b) return;
+    const orig = b.innerHTML;
+    b.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copiado!';
+    b.style.color = '#4ade80';
+    b.style.borderColor = '#16a34a44';
+    setTimeout(()=>{ b.innerHTML = orig; b.style.color = ''; b.style.borderColor = ''; }, 1800);
+  });
+}
+
+// Gera os prompts ao entrar na página (com placeholder)
