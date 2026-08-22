@@ -842,8 +842,15 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
   document.getElementById('proj-imp').textContent=fmt(totalImp);
   document.getElementById('proj-fat').textContent=fmt(preco*qtd);
   document.getElementById('proj-pay').textContent=fmt(payout);
+  // payout aqui = margem em R$ (já subtraiu custo+frete+ins)
+  // Payout REAL ML = preco - totalImp(vI) - vC*preco - vA*preco = o que cai na conta
+  // Como preencherDetalhes recebe vI,vC,vA e preco, calcular aqui:
   const elPD=document.getElementById('proj-payout-destaque');
-  if(elPD){elPD.textContent=fmt(payout);elPD.style.color=payout>=0?'#c4b5fd':'#f87171';}
+  if(elPD){
+    const payoutReal=preco-vI-vC-vA;
+    elPD.textContent=fmt(payoutReal);
+    elPD.style.color=payoutReal>=0?'#c4b5fd':'#f87171';
+  }
   document.getElementById('proj-lb').textContent=fmt(payout*qtd);
   document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+totalImp);
   document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
@@ -887,10 +894,15 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     elLbB.textContent=fmt(mlPayout*qtd);
     elLbB.style.color=mlPayout*qtd>=0?'var(--text2)':'#f87171';
     // Payout destacado por cenário
+    // Payout REAL ML = preço - comissões ML (o que cai na conta antes de pagar custos)
+    // lastCalc.preco = preço calculado, payout da variável local = margem em R$ (já subtrai custo+frete)
+    // Payout real cenário A = preco - vI - vC - vA
+    const payoutRealA = preco - vI - vC - vA;
+    const payoutRealB = precoML - mlvI - mlvC - mlvA;
     const elPA=s('pd-payout-destaque-a');
-    if(elPA){elPA.textContent=fmt(payout);elPA.style.color=payout>=0?'#c4b5fd':'#f87171';}
+    if(elPA){elPA.textContent=fmt(payoutRealA);elPA.style.color=payoutRealA>=0?'#c4b5fd':'#f87171';}
     const elPB=s('pd-payout-destaque-b');
-    if(elPB){elPB.textContent=fmt(mlPayout);elPB.style.color=mlPayout>=0?'#4ade80':'#f87171';}
+    if(elPB){elPB.textContent=fmt(payoutRealB);elPB.style.color=payoutRealB>=0?'#4ade80':'#f87171';}
   }else{
     if(header)header.style.display='none';
     if(simple)simple.style.display='block';
