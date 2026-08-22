@@ -537,7 +537,7 @@ const precoFaixas=[0,19,49,79,100,120,150,200];
 const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119','R$120–149','R$150–199','R$200+'];
 const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
 
-let pesoUsado=0,freteSel=0,freteSel_col=undefined,freteMode='dim',lastCalc=null,calcMode=1;
+let pesoUsado=0,freteSel=0,freteSel_col=undefined,freteMode='manual',lastCalc=null,calcMode=1;
 let calAno=new Date().getFullYear(),calMes=new Date().getMonth(),evEditId=null;
 
 function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -627,6 +627,26 @@ function renderTable(selCol){
 }
 
 function switchFrete(mode){freteMode=mode;document.getElementById('tab-dim').style.display=mode==='dim'?'block':'none';document.getElementById('tab-manual').style.display=mode==='manual'?'block':'none';document.getElementById('btn-dim').className='toggle-btn'+(mode==='dim'?' active':'');document.getElementById('btn-manual').className='toggle-btn'+(mode==='manual'?' active':'');}
+
+// Toggle Frete Full visível
+let _freteFullVisivel = false;
+function toggleFreteFullVisivel(){
+  _freteFullVisivel = !_freteFullVisivel;
+  const panel = document.getElementById('frete-full-panel');
+  const tog = document.getElementById('toggle-frete-full');
+  const dot = document.getElementById('toggle-frete-full-dot');
+  if(panel) panel.style.display = _freteFullVisivel ? 'block' : 'none';
+  if(tog) tog.style.background = _freteFullVisivel ? '#7c3aed' : 'var(--border)';
+  if(dot) dot.style.left = _freteFullVisivel ? '16px' : '2px';
+  if(!_freteFullVisivel){
+    const ff = document.getElementById('frete-full');
+    const ffq = document.getElementById('frete-full-qtd');
+    const ffr = document.getElementById('frete-full-result');
+    if(ff) ff.value='';
+    if(ffq) ffq.value='';
+    if(ffr) ffr.style.display='none';
+  }
+}
 function sumItems(){return[...document.querySelectorAll('.item-input')].reduce((s,e)=>s+(parseFloat(e.value)||0),0);}
 function addItem(){
   const list=document.getElementById('items-list');if(list.children.length>=10)return;
@@ -903,6 +923,14 @@ function resetar(){
   document.getElementById('frete-full').value='';
   document.getElementById('frete-full-qtd').value='';
   document.getElementById('frete-full-result').style.display='none';
+  // Reset toggle frete full
+  _freteFullVisivel = false;
+  const _panel = document.getElementById('frete-full-panel');
+  const _tog = document.getElementById('toggle-frete-full');
+  const _dot = document.getElementById('toggle-frete-full-dot');
+  if(_panel) _panel.style.display='none';
+  if(_tog) _tog.style.background='var(--border)';
+  if(_dot) _dot.style.left='2px';
 
   // Taxas
   document.getElementById('impostos').value='';
@@ -1808,9 +1836,12 @@ function verNaCalculadora(id){
 
     // Restaura insumos e Full
     if(s.insumos)document.getElementById('insumos').value=s.insumos;
-    if(s.freteFullTotal)document.getElementById('frete-full').value=s.freteFullTotal;
-    if(s.freteFullQtd&&s.freteFullQtd>1)document.getElementById('frete-full-qtd').value=s.freteFullQtd;
-    if(s.freteFullTotal)calcFreteFullUnit();
+    if(s.freteFullTotal){
+      toggleFreteFullVisivel(); // abre o painel
+      document.getElementById('frete-full').value=s.freteFullTotal;
+      if(s.freteFullQtd&&s.freteFullQtd>1)document.getElementById('frete-full-qtd').value=s.freteFullQtd;
+      calcFreteFullUnit();
+    }
 
     // Restaura taxas
     if(s.impostos)document.getElementById('impostos').value=s.impostos;
