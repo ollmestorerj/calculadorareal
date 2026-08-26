@@ -270,6 +270,8 @@ body.light .cal-event.sazonal{background:#fef3c7;color:#b45309}
 /* ============================================================ HOME ============================================================ */
 .home-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 18px;text-align:center;cursor:pointer;transition:all .15s;text-decoration:none;display:block;color:inherit;user-select:none}
 .home-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+@media(max-width:720px){.home-tools-grid{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:420px){.home-tools-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}}
 #page-home *:not(input):not(textarea):not(button){cursor:default}
 #page-home .home-card,#page-home .home-card *{cursor:pointer}
 
@@ -407,6 +409,12 @@ body.light .login-logo img{filter:none}
     </div>
     <span class="sb-tooltip">INPI</span>
   </a>
+  <button class="sb-item" id="sb-conc" onclick="showPage('conc')" title="Conciliação ML/MP">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="9" x2="12" y2="9"/></svg>
+    </div>
+    <span class="sb-tooltip">Conciliação ML/MP</span>
+  </button>
   <button class="sb-item" id="sb-prompt" onclick="showPage('prompt')" title="Prompt Fotos">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -563,8 +571,8 @@ body.light .login-logo img{filter:none}
       </div>
     </div>
 
-    <!-- Cards médios: 5 ferramentas -->
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:100%;max-width:780px">
+    <!-- Cards médios: 8 ferramentas em 2 fileiras de 4 -->
+    <div class="home-tools-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:780px">
 
       <div class="home-card" onclick="showPage('cal')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #2563eb40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
@@ -596,6 +604,11 @@ body.light .login-logo img{filter:none}
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Marca registrada</div>
       </a>
+      <div class="home-card" onclick="showPage('conc')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0891b240"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Conciliação</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">ML + Mercado Pago</div>
+      </div>
       <div class="home-card" onclick="showPage('prompt')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #7c3aed40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Prompt Fotos</div>
@@ -1039,10 +1052,12 @@ body.light .login-logo img{filter:none}
   </div>
 </div>
 
+<!-- SheetJS — leitura dos .xlsx da conciliação -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1783018259"></script>
+<script src="app.js?v=1787783602"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
@@ -1748,6 +1763,149 @@ function exportarExcel(){
   }
 })();
 </script>
+<!-- ===== CONCILIAÇÃO ML + MP ===== -->
+<div id="page-conc" class="page">
+  <div style="max-width:1400px;margin:0 auto;padding:20px 18px">
+
+    <!-- Toasts -->
+    <div id="conc-toasts" style="position:fixed;top:16px;right:16px;z-index:3000;display:flex;flex-direction:column;gap:5px;pointer-events:none"></div>
+
+    <!-- Header -->
+    <div style="margin-bottom:18px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
+          <span style="width:28px;height:28px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+          Conciliação ML + Mercado Pago
+        </div>
+        <div style="font-size:.74rem;color:var(--text4);text-transform:uppercase;letter-spacing:.08em">3 camadas · venda → liberação → recebimento</div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="card" style="padding:16px;margin-bottom:14px;border-color:#0891b244">
+      <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:4px">CARREGAR RELATÓRIOS</div>
+      <div style="font-size:.72rem;color:var(--text4);margin-bottom:12px;line-height:1.6">
+        <strong style="color:var(--text3)">Mercado Livre:</strong> Menu → Faturamento → Tarifas e Pagamentos → Conciliação (obrigatório, baixar Vendas e Liberações)<br>
+        <strong style="color:var(--text3)">Mercado Pago:</strong> Site (PC) → Relatórios → Extrair relatórios de venda e recebimento → baixar em XLS (opcional)
+      </div>
+
+      <!-- Drop zone -->
+      <div id="conc-drop"
+        ondrop="concDrop(event)" ondragover="concDragOver(event)" ondragleave="concDragLeave()"
+        onclick="concPickFile()"
+        style="border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:12px">
+        <input type="file" id="conc-file-input" multiple accept=".xlsx,.xls" style="display:none" onchange="concFileChange(event)">
+        <div style="font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:5px">Arraste os arquivos aqui ou clique para selecionar</div>
+        <div style="font-size:.72rem;color:var(--text4)">Aceita múltiplos arquivos de uma vez · a ferramenta identifica cada um automaticamente · formato .xlsx ou .xls</div>
+      </div>
+
+      <!-- Status dos arquivos -->
+      <div id="conc-files-lista" style="margin-bottom:12px"></div>
+
+      <button id="conc-btn" onclick="conciliarAgora()" disabled
+        style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;opacity:.5;transition:opacity .2s"
+        onfocus="this.style.opacity='1'" onblur="this.style.opacity=this.disabled?'.5':'1'">
+        Conciliar agora
+      </button>
+      <style>#conc-btn:not([disabled]){opacity:1}</style>
+    </div>
+
+    <!-- RESULTADO (oculto até conciliar) -->
+    <div id="conc-resultado" style="display:none">
+
+      <!-- Avisos -->
+      <div id="conc-avisos" style="margin-bottom:10px"></div>
+
+      <!-- KPIs -->
+      <div id="conc-kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:14px"></div>
+
+      <!-- Tarifas + MP -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="card" style="padding:14px">
+          <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Para onde foi o dinheiro — tarifas cobradas</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="text-align:left;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Tarifa</th>
+              <th style="text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Ops</th>
+              <th style="text-align:right;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Total</th>
+            </tr></thead>
+            <tbody id="conc-tb-tarifas"></tbody>
+          </table>
+        </div>
+        <div class="card" style="padding:14px">
+          <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Camada Mercado Pago</div>
+          <div id="conc-mp-box"></div>
+        </div>
+      </div>
+
+      <!-- Tabela principal -->
+      <div class="card" style="padding:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <select id="conc-f-status" onchange="concFiltrar()" style="background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:.76rem;color:var(--text);outline:none">
+            <option value="">Todos os status</option>
+            <option value="OK">OK</option>
+            <option value="Aguardando liberação">Aguardando liberação</option>
+            <option value="Competência anterior">Competência anterior</option>
+            <option value="Tarifa não prevista">Tarifa não prevista</option>
+            <option value="Devolução / reclamação">Devolução / reclamação</option>
+            <option value="Recebeu a menos sem explicação">⚠️ Recebeu a menos</option>
+            <option value="Recebeu a mais">Recebeu a mais</option>
+          </select>
+          <input type="text" id="conc-f-busca" oninput="concFiltrar()" placeholder="Buscar operação, item ou SKU..."
+            style="background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:.76rem;color:var(--text);outline:none;flex:1;min-width:200px">
+          <button onclick="concSoReclamar()"
+            style="background:#dc262622;border:1px solid #dc262644;border-radius:7px;padding:6px 12px;font-size:.74rem;font-weight:700;color:#f87171;cursor:pointer;white-space:nowrap">
+            ⚠️ Só o que dá para reclamar
+          </button>
+          <button onclick="concExportarCSV()"
+            style="background:var(--text);color:var(--bg);border:none;border-radius:7px;padding:6px 12px;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:auto">
+            Exportar CSV
+          </button>
+        </div>
+        <div style="overflow-x:auto;max-height:520px;overflow-y:auto;border:1px solid var(--border);border-radius:8px">
+          <table style="width:100%;border-collapse:collapse;font-size:.73rem">
+            <thead>
+              <tr style="background:var(--card);position:sticky;top:0;z-index:1">
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Operação</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Data</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Item</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">SKU</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Com. prev.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Com. cobr.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Δ com.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Frete prev.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Frete cobr.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Δ frete</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Liq. previsto</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Lib. venda</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Lib. envio</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Liq. recebido</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Diferença</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Status</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Explicação</th>
+              </tr>
+            </thead>
+            <tbody id="conc-tbody"></tbody>
+          </table>
+        </div>
+        <div id="conc-contagem" style="font-size:.7rem;color:var(--text4);margin-top:8px"></div>
+      </div>
+
+    </div><!-- /resultado -->
+
+    <!-- Explicação das camadas -->
+    <div class="card" style="padding:16px;margin-top:14px">
+      <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Como a conciliação funciona</div>
+      <div style="font-size:.74rem;color:var(--text3);line-height:1.75">
+        <strong style="color:var(--text2)">Camada 1 — Venda → Liberação:</strong> o ML liberou o que prometeu? Agrupa por Número da operação (cada venda ocupa 2 linhas: item e frete). A "Liberação de envio" vem sem número de operação — liga só pelo Número do envio.<br>
+        <strong style="color:var(--text2)">Camada 2 — Tarifas pelo nome:</strong> compara a lista de tarifas da venda com a da liberação. Tarifa que só apareceu na liberação → "Tarifa não prevista" (custo real, não erro de pagamento).<br>
+        <strong style="color:var(--text2)">Camada 3 — Mercado Pago:</strong> confirma se o valor liberado pelo ML entrou no saldo do MP. Compara com a Liberação (não com o recebido total) — o relatório de cobranças do MP não inclui a Liberação de envio.
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ===== PROMPT FOTOS ML ===== -->
 <div id="page-prompt" class="page">
   <div style="max-width:800px;margin:0 auto;padding:20px 18px">
