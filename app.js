@@ -103,10 +103,35 @@ async function userDoc(colecao){
 }
 
 // Salva array no Firebase (sobrescreve a coleção com um único doc "data")
+// ============================================================
+// ISOLAMENTO DE DADOS POR USUÁRIO — evita vazamento entre contas
+// no mesmo navegador. Chaves genéricas de localStorage eram
+// compartilhadas: quem logasse depois via os dados do anterior.
+// ============================================================
+function localKey(baseKey){
+  const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+  if(!uid) return null;                     // sem usuário logado → nunca usa cache
+  return baseKey + '_' + uid.replace(/[^a-zA-Z0-9]/g,'_');
+}
+
+function getCached(baseKey, fallback='[]'){
+  const key = localKey(baseKey);
+  if(!key) return JSON.parse(fallback);
+  return JSON.parse(localStorage.getItem(key) || fallback);
+}
+
+function setCached(baseKey, dados){
+  const key = localKey(baseKey);
+  if(key) localStorage.setItem(key, JSON.stringify(dados));
+}
+
+const _MAPA_COLECAO = {produtos:'realecom_prods', eventos:'realecom_eventos', metas:'realecom_metas'};
+
 async function fbSet(colecao, dados){
   try{
     const uid = await getUserId();
     if(!uid) return;
+    setCached(_MAPA_COLECAO[colecao] || colecao, dados);
     const db=await getDB();
     await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data')
@@ -115,28 +140,28 @@ async function fbSet(colecao, dados){
 }
 
 // Lê array do Firebase, fallback para localStorage
-async function fbGet(colecao, localKey, fallback){
+async function fbGet(colecao, baseKey, fallback){
   try{
     const uid = await getUserId();
-    if(!uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
+    if(!uid) return JSON.parse(fallback);   // sem uid → nunca usa cache
+    const userKey = localKey(baseKey);
     const db=await getDB();
     const doc=await db.collection('usuarios').doc(uid)
       .collection(colecao).doc('data').get();
     if(doc.exists){
       const dados=JSON.parse(doc.data().payload);
-      // Atualiza cache local com dados deste usuário
-      localStorage.setItem(localKey, JSON.stringify(dados));
+      if(userKey) localStorage.setItem(userKey, JSON.stringify(dados));
       return dados;
     }
-    // Sem dado no Firebase — limpa cache local e retorna vazio
-    // NUNCA subir dados do localStorage para evitar vazamento entre usuários
-    localStorage.removeItem(localKey);
+    if(userKey) localStorage.removeItem(userKey);
     return JSON.parse(fallback);
   }catch(e){
     console.warn('Firebase read error:', e);
-    // Só usa cache local se o usuário atual está logado
-    const uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
-    if(uid) return JSON.parse(localStorage.getItem(localKey)||fallback);
+    const userKey = localKey(baseKey);      // em erro de rede: cache SÓ do usuário atual
+    if(userKey){
+      const cached = localStorage.getItem(userKey);
+      if(cached) return JSON.parse(cached);
+    }
     return JSON.parse(fallback);
   }
 }
@@ -184,7 +209,11 @@ async function sair(){
   try{const auth=await getAuth();await auth.signOut();}catch(e){}
   // Limpa TODOS os dados do usuário do localStorage ao sair
   // Evita vazamento para quem logar depois neste mesmo PC
-  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
+  const _uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+  const _safe = _uid ? _uid.replace(/[^a-zA-Z0-9]/g,'_') : null;
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas',
+   'realecom_sazonal_sel','realecom_telefone','realecom_pub_historico','realecom_ncm_hist']
+   .forEach(k=>{ localStorage.removeItem(k); if(_safe) localStorage.removeItem(k+'_'+_safe); });
   // Reseta cache de auth para não usar userId do usuário anterior
   _cachedUserId = null;
   _authResolved = false;
@@ -314,7 +343,7 @@ function entrarNoApp(dados, pagina){
   if(elPlano) elPlano.textContent=dados.plano?'Plano '+dados.plano:'Acesso liberado';
 
   fbGet('produtos','realecom_prods','[]').then(prods=>{
-    localStorage.setItem('realecom_prods',JSON.stringify(prods));
+    setCached('realecom_prods',prods);
 
     // Dashboard KPI — total e distribuição de margem
     const elProds=document.getElementById('home-kpi-prods');
@@ -333,7 +362,7 @@ function entrarNoApp(dados, pagina){
     setTxt('home-m20',m20); setBar('home-bar20',m20,total);
 
     // Metas KPI
-    const metaObj=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+    const metaObj=getCached('realecom_metas','{}');
     const prodDia=parseInt(metaObj.prodDia)||0;
     const diasSem=parseInt(metaObj.diasSemana)||0;
     if(prodDia&&diasSem){
@@ -355,7 +384,7 @@ function entrarNoApp(dados, pagina){
     }
   });
   fbGet('eventos','realecom_eventos','[]').then(evs=>{
-    localStorage.setItem('realecom_eventos',JSON.stringify(evs));
+    setCached('realecom_eventos',evs);
     // Calendário home — eventos de hoje e próximos
     const hoje=new Date();hoje.setHours(0,0,0,0);
     const hojeStr=hoje.toISOString().split('T')[0];
@@ -389,7 +418,7 @@ function entrarNoApp(dados, pagina){
     }
   });
   fbGet('metas','realecom_metas','{}').then(m=>{
-    localStorage.setItem('realecom_metas',JSON.stringify(m));
+    setCached('realecom_metas',m);
   });
   registrarAtividade('login');
   inicializarPush();
@@ -475,9 +504,9 @@ let _jaEntrou = false;
       _jaEntrou = true;
       // Carrega telefone já aqui para o banner do calendário funcionar imediatamente
       if(dados.telefone){
-        localStorage.setItem('realecom_telefone', dados.telefone);
+        setCached('realecom_telefone', dados.telefone);
       } else {
-        localStorage.removeItem('realecom_telefone');
+        (function(){const k=localKey('realecom_telefone');if(k)localStorage.removeItem(k);})();
       }
       const ultimaPagina = localStorage.getItem('realecom_pagina')||'home';
       entrarNoApp({
@@ -513,7 +542,11 @@ let _jaEntrou = false;
         _fazendoLogout = true;
         _jaEntrou = false;
         await firebase.auth().signOut();
-        ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas','realecom_sazonal_sel'].forEach(k=>localStorage.removeItem(k));
+        const _uid = firebase.auth().currentUser ? firebase.auth().currentUser.email : null;
+  const _safe = _uid ? _uid.replace(/[^a-zA-Z0-9]/g,'_') : null;
+  ['realecom_sessao','realecom_prods','realecom_eventos','realecom_metas',
+   'realecom_sazonal_sel','realecom_telefone','realecom_pub_historico','realecom_ncm_hist']
+   .forEach(k=>{ localStorage.removeItem(k); if(_safe) localStorage.removeItem(k+'_'+_safe); });
         _cachedUserId = null;
         _authResolved = false;
         _fazendoLogout = false;
@@ -531,8 +564,8 @@ let _jaEntrou = false;
 // ============================================================
 // APP
 // ============================================================
-const pesoFaixas=[[0,.3],[.3,.5],[.5,1],[1,1.5],[1.5,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,11],[11,13],[13,15],[15,17],[17,20],[20,25],[25,30],[30,40],[40,50],[50,60],[60,70],[70,80],[80,90],[90,100],[100,125],[125,150],[150,1e9]];
-const pesoLabels=['Até 0,3kg','0,3–0,5kg','0,5–1kg','1–1,5kg','1,5–2kg','2–3kg','3–4kg','4–5kg','5–6kg','6–7kg','7–8kg','8–9kg','9–11kg','11–13kg','13–15kg','15–17kg','17–20kg','20–25kg','25–30kg','30–40kg','40–50kg','50–60kg','60–70kg','70–80kg','80–90kg','90–100kg','100–125kg','125–150kg','+150kg'];
+const pesoFaixas=[[0,.3],[.3,.5],[.5,1],[1,1.5],[1.5,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,13],[13,15],[15,17],[17,20],[20,25],[25,30],[30,40],[40,50],[50,60],[60,70],[70,80],[80,90],[90,100],[100,125],[125,150],[150,1e9]];
+const pesoLabels=['Até 0,3kg','0,3–0,5kg','0,5–1kg','1–1,5kg','1,5–2kg','2–3kg','3–4kg','4–5kg','5–6kg','6–7kg','7–8kg','8–9kg','9–10kg','10–11kg','11–13kg','13–15kg','15–17kg','17–20kg','20–25kg','25–30kg','30–40kg','40–50kg','50–60kg','60–70kg','70–80kg','80–90kg','90–100kg','100–125kg','125–150kg','+150kg'];
 const precoFaixas=[0,19,49,79,100,120,150,200];
 const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119','R$120–149','R$150–199','R$200+'];
 // TABELAS DE FRETE ML — vigentes desde 02/03/2026 (verificadas 22/07/2026)
@@ -540,13 +573,13 @@ const precoLabels=['R$0–18','R$19–48','R$49–78','R$79–99','R$100–119',
 // Linhas = 29 faixas de peso | Colunas = 8 faixas de preço
 
 // Verde — MercadoLíder, reputação verde ou sem reputação (menor custo)
-const T=[[5.65,6.55,7.75,12.35,14.35,16.45,18.45,20.95],[5.95,6.65,7.85,13.25,15.45,17.65,19.85,22.55],[6.05,6.75,7.95,13.85,16.15,18.45,20.75,23.65],[6.15,6.85,8.05,14.15,16.45,18.85,21.15,24.65],[6.25,6.95,8.15,14.45,16.85,19.25,21.65,24.65],[6.35,7.95,8.55,15.75,18.35,21.05,23.65,26.25],[6.45,8.15,8.95,17.05,19.85,22.65,25.55,28.35],[6.55,8.35,9.75,18.45,21.55,24.65,27.75,30.75],[6.65,8.55,9.95,25.45,28.55,32.65,35.75,39.75],[6.75,8.75,10.15,27.05,31.05,36.05,40.05,44.05],[6.85,8.95,10.35,28.85,33.65,38.45,43.25,48.05],[6.95,9.15,10.55,29.65,34.55,39.55,44.45,49.35],[7.05,9.55,10.95,41.25,48.05,54.95,61.75,68.65],[7.15,9.95,11.35,42.15,49.25,56.25,63.25,70.25],[7.25,10.15,11.55,45.05,52.45,59.95,67.45,74.95],[7.35,10.35,11.75,48.55,56.05,63.55,70.75,78.65],[7.45,10.55,11.95,54.75,63.85,72.95,82.05,91.15],[7.65,10.95,12.15,64.05,75.05,84.75,95.35,105.95],[7.75,11.15,12.35,65.95,75.45,85.55,96.25,106.95],[7.85,11.35,12.55,67.75,78.95,88.95,99.15,107.05],[7.95,11.55,12.75,70.25,81.05,92.05,102.55,110.75],[8.05,11.75,12.95,74.95,86.45,98.15,109.35,118.15],[8.15,11.95,13.15,80.25,92.95,105.05,117.15,126.55],[8.25,12.15,13.35,83.95,97.05,109.85,122.45,132.25],[8.35,12.35,13.55,93.25,107.45,122.05,136.05,146.95],[8.45,12.55,13.75,106.55,123.95,139.55,155.55,167.95],[8.55,12.75,13.95,119.25,138.05,156.05,173.95,187.95],[8.65,12.75,14.15,126.55,146.15,165.65,184.65,199.45],[8.75,12.75,14.35,166.15,192.45,217.55,242.55,261.95]];
+const T=[[5.65,6.85,8.15,12.95,14.95,16.95,19.05,21.65],[5.95,6.95,8.25,13.85,16.15,18.15,20.45,23.25],[6.05,7.15,8.45,14.45,16.85,19.05,21.35,24.45],[6.15,7.35,8.65,14.75,17.15,19.45,21.75,25.45],[6.25,7.45,8.75,15.05,17.65,19.85,22.25,25.55],[6.35,8.65,9.15,16.45,19.15,21.65,24.35,27.05],[6.45,8.75,9.75,17.85,20.75,23.35,26.35,29.25],[6.55,8.85,10.25,19.75,22.85,26.05,29.25,32.45],[6.65,8.95,10.35,25.95,29.15,33.35,36.45,40.85],[6.75,9.05,10.45,27.55,31.65,36.75,40.85,45.25],[6.85,9.25,10.55,29.45,34.35,39.25,44.15,49.35],[6.95,9.35,10.65,30.25,35.25,40.35,45.35,50.75],[7.05,9.45,10.85,38.25,45.05,51.95,58.75,65.85],[7.05,9.65,11.05,41.65,48.55,55.45,62.35,69.35],[7.15,10.05,11.45,42.55,49.75,56.85,63.85,70.95],[7.25,10.25,11.65,45.55,52.95,60.55,68.15,75.65],[7.35,10.45,11.85,48.95,56.55,64.05,71.35,79.35],[7.45,10.65,12.05,55.15,64.35,73.55,82.75,91.95],[7.65,11.05,12.25,64.55,75.75,85.45,96.25,106.85],[7.75,11.25,12.45,66.45,76.05,86.25,97.15,107.85],[7.85,11.45,12.65,68.35,79.65,89.75,100.05,107.95],[7.95,11.65,12.85,70.95,81.85,92.85,103.45,111.65],[8.05,11.85,13.05,75.55,87.25,99.05,110.25,119.05],[8.15,12.05,13.25,80.95,93.75,105.95,118.05,127.45],[8.25,12.25,13.45,84.65,97.95,110.75,123.35,133.15],[8.35,12.45,13.65,94.05,108.35,122.95,136.95,147.85],[8.45,12.65,13.85,107.45,124.85,140.45,156.45,168.85],[8.55,12.85,14.05,120.15,138.95,156.95,174.85,188.85],[8.65,12.85,14.25,127.45,147.05,166.55,185.55,200.35],[8.75,12.85,14.45,167.05,193.35,218.45,243.45,262.85]];
 
 // Amarela — ~15% a mais nas faixas até R$78,99 e ~20% a mais acima de R$79
-const T_AMA=[[6.46,7.49,8.86,14.82,17.22,19.74,22.14,25.14],[6.80,7.60,8.97,15.90,18.54,21.18,23.82,27.06],[6.91,7.71,9.09,16.62,19.38,22.14,24.90,28.38],[7.03,7.83,9.20,16.98,19.74,22.62,25.38,29.58],[7.14,7.94,9.31,17.34,20.22,23.10,25.98,29.58],[7.26,9.09,9.77,18.90,22.02,25.26,28.38,31.50],[7.37,9.31,10.23,20.46,23.82,27.18,30.66,34.02],[7.49,9.54,11.14,22.14,25.86,29.58,33.30,36.90],[7.60,9.77,11.37,30.54,34.26,39.18,42.90,47.70],[7.71,10.00,11.60,32.46,37.26,43.26,48.06,52.86],[7.83,10.23,11.83,34.62,40.38,46.14,51.90,57.66],[7.94,10.46,12.06,35.58,41.46,47.46,53.34,59.22],[8.06,10.91,12.51,49.50,57.66,65.94,74.10,82.38],[8.17,11.37,12.97,50.58,59.10,67.50,75.90,84.30],[8.29,11.60,13.20,54.06,62.94,71.94,80.94,89.94],[8.40,11.83,13.43,58.26,67.26,76.26,84.90,94.38],[8.51,12.06,13.66,65.70,76.62,87.54,98.46,109.38],[8.74,12.51,13.89,76.86,90.06,101.70,114.42,127.14],[8.86,12.74,14.11,79.14,90.54,102.66,115.50,128.34],[8.97,12.97,14.34,81.30,94.74,106.74,118.98,128.46],[9.09,13.20,14.57,84.30,97.26,110.46,123.06,132.90],[9.20,13.43,14.80,89.94,103.74,117.78,131.22,141.78],[9.31,13.66,15.03,96.30,111.54,126.06,140.58,151.86],[9.43,13.89,15.26,100.74,116.46,131.82,146.94,158.70],[9.54,14.11,15.49,111.90,128.94,146.46,163.26,176.34],[9.66,14.34,15.71,127.86,148.74,167.46,186.66,201.54],[9.77,14.57,15.94,143.10,165.66,187.26,208.74,225.54],[9.89,14.57,16.17,151.86,175.38,198.78,221.58,239.34],[10.00,14.57,16.40,199.38,230.94,261.06,291.06,314.34]];
+const T_AMA=[[6.5,7.88,9.37,15.54,17.94,20.34,22.86,25.98],[6.84,7.99,9.49,16.62,19.38,21.78,24.54,27.9],[6.96,8.22,9.72,17.34,20.22,22.86,25.62,29.34],[7.07,8.45,9.95,17.7,20.58,23.34,26.1,30.54],[7.19,8.57,10.06,18.06,21.18,23.82,26.7,30.66],[7.3,9.95,10.52,19.74,22.98,25.98,29.22,32.46],[7.42,10.06,11.21,21.42,24.9,28.02,31.62,35.1],[7.53,10.18,11.79,23.7,27.42,31.26,35.1,38.94],[7.65,10.29,11.9,31.14,34.98,40.02,43.74,49.02],[7.76,10.41,12.02,33.06,37.98,44.1,49.02,54.3],[7.88,10.64,12.13,35.34,41.22,47.1,52.98,59.22],[7.99,10.75,12.25,36.3,42.3,48.42,54.42,60.9],[8.11,10.87,12.48,45.9,54.06,62.34,70.5,79.02],[8.11,11.1,12.71,49.98,58.26,66.54,74.82,83.22],[8.22,11.56,13.17,51.06,59.7,68.22,76.62,85.14],[8.34,11.79,13.4,54.66,63.54,72.66,81.78,90.78],[8.45,12.02,13.63,58.74,67.86,76.86,85.62,95.22],[8.57,12.25,13.86,66.18,77.22,88.26,99.3,110.34],[8.8,12.71,14.09,77.46,90.9,102.54,115.5,128.22],[8.91,12.94,14.32,79.74,91.26,103.5,116.58,129.42],[9.03,13.17,14.55,82.02,95.58,107.7,120.06,129.54],[9.14,13.4,14.78,85.14,98.22,111.42,124.14,133.98],[9.26,13.63,15.01,90.66,104.7,118.86,132.3,142.86],[9.37,13.86,15.24,97.14,112.5,127.14,141.66,152.94],[9.49,14.09,15.47,101.58,117.54,132.9,148.02,159.78],[9.6,14.32,15.7,112.86,130.02,147.54,164.34,177.42],[9.72,14.55,15.93,128.94,149.82,168.54,187.74,202.62],[9.83,14.78,16.16,144.18,166.74,188.34,209.82,226.62],[9.95,14.78,16.39,152.94,176.46,199.86,222.66,240.42],[10.06,14.78,16.62,200.46,232.02,262.14,292.14,315.42]];
 
 // Laranja/Vermelha — tabela cheia, sem desconto (~dobro do verde acima de R$79)
-const T_VER=[[8.07,9.36,11.07,24.70,28.70,32.90,36.90,41.90],[8.50,9.50,11.21,26.50,30.90,35.30,39.70,45.10],[8.64,9.64,11.36,27.70,32.30,36.90,41.50,47.30],[8.79,9.79,11.50,28.30,32.90,37.70,42.30,49.30],[8.93,9.93,11.64,28.90,33.70,38.50,43.30,49.30],[9.07,11.36,12.21,31.50,36.70,42.10,47.30,52.50],[9.21,11.64,12.79,34.10,39.70,45.30,51.10,56.70],[9.36,11.93,13.93,36.90,43.10,49.30,55.50,61.50],[9.50,12.21,14.21,50.90,57.10,65.30,71.50,79.50],[9.64,12.50,14.50,54.10,62.10,72.10,80.10,88.10],[9.79,12.79,14.79,57.70,67.30,76.90,86.50,96.10],[9.93,13.07,15.07,59.30,69.10,79.10,88.90,98.70],[10.07,13.64,15.64,82.50,96.10,109.90,123.50,137.30],[10.21,14.21,16.21,84.30,98.50,112.50,126.50,140.50],[10.36,14.50,16.50,90.10,104.90,119.90,134.90,149.90],[10.50,14.79,16.79,97.10,112.10,127.10,141.50,157.30],[10.64,15.07,17.07,109.50,127.70,145.90,164.10,182.30],[10.93,15.64,17.36,128.10,150.10,169.50,190.70,211.90],[11.07,15.93,17.64,131.90,150.90,171.10,192.50,213.90],[11.21,16.21,17.93,135.50,157.90,177.90,198.30,214.10],[11.36,16.50,18.21,140.50,162.10,184.10,205.10,221.50],[11.50,16.79,18.50,149.90,172.90,196.30,218.70,236.30],[11.64,17.07,18.79,160.50,185.90,210.10,234.30,253.10],[11.79,17.36,19.07,167.90,194.10,219.70,244.90,264.50],[11.93,17.64,19.36,186.50,214.90,244.10,272.10,293.90],[12.07,17.93,19.64,213.10,247.90,279.10,311.10,335.90],[12.21,18.21,19.93,238.50,276.10,312.10,347.90,375.90],[12.36,18.21,20.21,253.10,292.30,331.30,369.30,398.90],[12.50,18.21,20.50,332.30,384.90,435.10,485.10,523.90]];
+const T_VER=[[8.08,9.8,11.65,25.9,29.9,33.9,38.1,43.3],[8.51,9.94,11.8,27.7,32.3,36.3,40.9,46.5],[8.65,10.22,12.08,28.9,33.7,38.1,42.7,48.9],[8.79,10.51,12.37,29.5,34.3,38.9,43.5,50.9],[8.94,10.65,12.51,30.1,35.3,39.7,44.5,51.1],[9.08,12.37,13.08,32.9,38.3,43.3,48.7,54.1],[9.22,12.51,13.94,35.7,41.5,46.7,52.7,58.5],[9.37,12.66,14.66,39.5,45.7,52.1,58.5,64.9],[9.51,12.8,14.8,51.9,58.3,66.7,72.9,81.7],[9.65,12.94,14.94,55.1,63.3,73.5,81.7,90.5],[9.8,13.23,15.09,58.9,68.7,78.5,88.3,98.7],[9.94,13.37,15.23,60.5,70.5,80.7,90.7,101.5],[10.08,13.51,15.52,76.5,90.1,103.9,117.5,131.7],[10.08,13.8,15.8,83.3,97.1,110.9,124.7,138.7],[10.22,14.37,16.37,85.1,99.5,113.7,127.7,141.9],[10.37,14.66,16.66,91.1,105.9,121.1,136.3,151.3],[10.51,14.94,16.95,97.9,113.1,128.1,142.7,158.7],[10.65,15.23,17.23,110.3,128.7,147.1,165.5,183.9],[10.94,15.8,17.52,129.1,151.5,170.9,192.5,213.7],[11.08,16.09,17.8,132.9,152.1,172.5,194.3,215.7],[11.23,16.37,18.09,136.7,159.3,179.5,200.1,215.9],[11.37,16.66,18.38,141.9,163.7,185.7,206.9,223.3],[11.51,16.95,18.66,151.1,174.5,198.1,220.5,238.1],[11.65,17.23,18.95,161.9,187.5,211.9,236.1,254.9],[11.8,17.52,19.23,169.3,195.9,221.5,246.7,266.3],[11.94,17.8,19.52,188.1,216.7,245.9,273.9,295.7],[12.08,18.09,19.81,214.9,249.7,280.9,312.9,337.7],[12.23,18.38,20.09,240.3,277.9,313.9,349.7,377.7],[12.37,18.38,20.38,254.9,294.1,333.1,371.1,400.7],[12.51,18.38,20.66,334.1,386.7,436.9,486.9,525.7]];
 
 // Tabela ativa (verde por padrão)
 let freteReputacao='verde'; // 'verde' | 'amarela' | 'vermelha'
@@ -847,7 +880,11 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
   // Como preencherDetalhes recebe vI,vC,vA e preco, calcular aqui:
   const elPD=document.getElementById('proj-payout-destaque');
   if(elPD){
-    const payoutReal=preco-vI-vC-vA;
+    // Payout ML = preço - impostos - comissão ML - afiliados - frete entrega
+    // O ML desconta todos esses do repasse antes de depositar
+    // Payout ML = preço − comissão ML − afiliados − frete
+    // Imposto (vI) NÃO é descontado pelo ML — é recolhido separadamente pelo vendedor
+    const payoutReal=preco-vC-vA-frete;
     elPD.textContent=fmt(payoutReal);
     elPD.style.color=payoutReal>=0?'#c4b5fd':'#f87171';
   }
@@ -897,8 +934,10 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     // Payout REAL ML = preço - comissões ML (o que cai na conta antes de pagar custos)
     // lastCalc.preco = preço calculado, payout da variável local = margem em R$ (já subtrai custo+frete)
     // Payout real cenário A = preco - vI - vC - vA
-    const payoutRealA = preco - vI - vC - vA;
-    const payoutRealB = precoML - mlvI - mlvC - mlvA;
+    // Payout real = preço - impostos - comissão - afiliados - frete
+    const payoutRealA = preco - vC - vA - frete;
+    // Cenário B usa o mesmo frete físico do produto
+    const payoutRealB = precoML - mlvC - mlvA - frete;
     const elPA=s('pd-payout-destaque-a');
     if(elPA){elPA.textContent=fmt(payoutRealA);elPA.style.color=payoutRealA>=0?'#c4b5fd':'#f87171';}
     const elPB=s('pd-payout-destaque-b');
@@ -1021,7 +1060,7 @@ async function atualizarProduto(){
   const idx=prods.findIndex(p=>p.id===_prodEditId);
   if(idx===-1){alert('Produto não encontrado. Salve como novo.');return;}
   prods[idx]={...prods[idx],nome,forn:document.getElementById('save-forn').value.trim()||'—',cod:document.getElementById('save-cod').value.trim()||'—',obs:document.getElementById('save-obs').value.trim(),link1,link2,link3,custoReal:lastCalc.custo,custoIdeal,precoCalc:lastCalc.preco,precoML:lastCalc.precoML,markup:lastCalc.markup,roi:lastCalc.roi,margem:lastCalc.pM*100,margemML,payout:lastCalc.payout,frete:lastCalc.frete,ins:lastCalc.ins,pI:lastCalc.pI,pC:lastCalc.pC,pA:lastCalc.pA,snapshot};
-  localStorage.setItem('realecom_prods',JSON.stringify(prods));
+  setCached('realecom_prods',prods);
   fbSet('produtos',prods);
   _prodEditId=null;
   document.getElementById('btn-atualizar').style.display='none';
@@ -1072,7 +1111,7 @@ async function salvarProduto(){
   // Lê do Firebase para não perder produtos salvos em outros dispositivos
   const prodsAtuais = await fbGet('produtos','realecom_prods','[]');
   prodsAtuais.unshift(prod);
-  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtuais));
+  setCached('realecom_prods',prodsAtuais);
   fbSet('produtos', prodsAtuais);
   registrarAtividade('salvar_produto');
   document.getElementById('save-nome').value='';document.getElementById('save-forn').value='';document.getElementById('save-cod').value='';document.getElementById('save-obs').value='';
@@ -1089,13 +1128,13 @@ async function salvarProduto(){
 async function salvarObs(id,val){
   const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
-  if(p){p.obs=val;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);}
+  if(p){p.obs=val;setCached('realecom_prods',prods);fbSet('produtos',prods);}
 }
 async function deletarProduto(id){
   if(!confirm('Remover este produto?'))return;
   const prods = await fbGet('produtos','realecom_prods','[]');
   const prodsAtualizados = prods.filter(p=>p.id!==id);
-  localStorage.setItem('realecom_prods',JSON.stringify(prodsAtualizados));
+  setCached('realecom_prods',prodsAtualizados);
   fbSet('produtos',prodsAtualizados);
   renderDash();
 }
@@ -1209,18 +1248,18 @@ function verificarSazonalidade(){
 }
 
 function toggleSazonal(id){
-  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  const selecionados = getCached('realecom_sazonal_sel','[]');
   const idx = selecionados.indexOf(id);
   if(idx>=0) selecionados.splice(idx,1);
   else selecionados.push(id);
-  localStorage.setItem('realecom_sazonal_sel', JSON.stringify(selecionados));
+  setCached('realecom_sazonal_sel', selecionados);
   renderSazonalGrid();
 }
 
 function renderSazonalGrid(){
   const el = document.getElementById('sazonal-grid');
   if(!el) return;
-  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  const selecionados = getCached('realecom_sazonal_sel','[]');
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const titulosVistos = new Set();
   const datasFuturas = DATAS_SAZONAIS
@@ -1264,12 +1303,12 @@ function selecionarTodasSazonais(sel){
     titulosVistos.add(d.titulo);
     return true;
   }).map(d=>d.id);
-  localStorage.setItem('realecom_sazonal_sel', JSON.stringify(sel?datasFuturas:[]));
+  setCached('realecom_sazonal_sel', sel?datasFuturas:[]);
   renderSazonalGrid();
 }
 
 function salvarSazonalidade(){
-  const selecionados = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]');
+  const selecionados = getCached('realecom_sazonal_sel','[]');
   if(!selecionados.length){
     if(!confirm('Nenhuma data selecionada. Deseja salvar assim mesmo?')) return;
   }
@@ -1385,8 +1424,8 @@ function confirmarSazonal(resp, sazonalId, btn){
     });
     saveEventos(evs);
     // Remove da lista de selecionados
-    const sel = JSON.parse(localStorage.getItem('realecom_sazonal_sel')||'[]').filter(x=>x!==sazonalId);
-    localStorage.setItem('realecom_sazonal_sel', JSON.stringify(sel));
+    const sel = getCached('realecom_sazonal_sel','[]').filter(x=>x!==sazonalId);
+    setCached('realecom_sazonal_sel', sel);
     if(notif) notif.remove();
     mostrarNotifMsg({tipo:'outro',data:''}, '✅ Lembretes removidos para esta data.', 1);
   } else {
@@ -1521,8 +1560,8 @@ function aplicarTemplate(tipo){ abrirModalTemplate(tipo); }
 const tipoInfo={full:{icon:'📦',label:'Coleta Full',cls:'full'},conta:{icon:'💰',label:'Vencimento de Conta',cls:'conta'},entrega:{icon:'🚚',label:'Entrega',cls:'entrega'},outro:{icon:'📌',label:'Outro',cls:'outro'},sazonal:{icon:'📅',label:'Data Sazonal',cls:'sazonal'},giro_pedido:{icon:'🛒',label:'Pedido Giro',cls:'outro'},giro_entrega:{icon:'📦',label:'Entrega Giro',cls:'entrega'}};
 const diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-function getEventos(){return JSON.parse(localStorage.getItem('realecom_eventos')||'[]');}
-function saveEventos(evs){localStorage.setItem('realecom_eventos',JSON.stringify(evs));fbSet('eventos',evs);}
+function getEventos(){return getCached('realecom_eventos','[]');}
+function saveEventos(evs){setCached('realecom_eventos',evs);fbSet('eventos',evs);}
 function navMes(dir){calMes+=dir;if(calMes>11){calMes=0;calAno++;}if(calMes<0){calMes=11;calAno--;}renderCal();}
 
 // Cores por tipo para pills — dark mode
@@ -1733,7 +1772,7 @@ document.addEventListener('wheel',e=>{
 verificarNotificacoes();
 
 function exportarExcel(){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods=getCached('realecom_prods','[]');
   if(!prods.length){alert('Nenhum produto no Dashboard para exportar.');return;}
 
   const fmt2=(v)=>typeof v==='number'?v.toFixed(2).replace('.',','):v||'';
@@ -1780,14 +1819,14 @@ function exportarExcel(){
 async function toggleComprado(id){
   const prods = await fbGet('produtos','realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
-  if(p){p.comprado=!p.comprado;localStorage.setItem('realecom_prods',JSON.stringify(prods));fbSet('produtos',prods);renderDash();}
+  if(p){p.comprado=!p.comprado;setCached('realecom_prods',prods);fbSet('produtos',prods);renderDash();}
 }
 
 // ============================================================
 // VER NA CALCULADORA — restaura o cálculo salvo
 // ============================================================
 function verNaCalculadora(id){
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods=getCached('realecom_prods','[]');
   const p=prods.find(p=>p.id===id);
   if(!p){alert('Produto não encontrado.');return;}
 
@@ -2066,7 +2105,7 @@ function switchPubMode(mode){
 }
 
 async function carregarProdutosPublicidade(){
-  const prods = JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods = getCached('realecom_prods','[]');
   const sel = document.getElementById('pub-produto-sel');
   if(!sel) return;
   if(!prods.length){
@@ -2174,22 +2213,22 @@ function salvarAnalisePublicidade(){
   let nome='';
   if(pubMode==='dash'){
     const idx=document.getElementById('pub-produto-sel').value;
-    const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+    const prods=getCached('realecom_prods','[]');
     nome=idx!==''?prods[parseInt(idx)].nome:'Produto do Dashboard';
   }else{
     nome=document.getElementById('pub-m-nome').value.trim();
     if(!nome){alert('Informe o nome do produto para salvar.');document.getElementById('pub-m-nome').focus();return;}
   }
 
-  const historico=JSON.parse(localStorage.getItem('realecom_pub_historico')||'[]');
+  const historico=getCached('realecom_pub_historico','[]');
   historico.unshift({id:Date.now(),nome,roas,acos,margem});
-  localStorage.setItem('realecom_pub_historico',JSON.stringify(historico));
+  setCached('realecom_pub_historico',historico);
   renderHistoricoPublicidade();
   alert('✅ Análise salva!');
 }
 
 function renderHistoricoPublicidade(){
-  const historico=JSON.parse(localStorage.getItem('realecom_pub_historico')||'[]');
+  const historico=getCached('realecom_pub_historico','[]');
   const wrap=document.getElementById('pub-historico-wrap');
   const el=document.getElementById('pub-historico');
   if(!wrap||!el)return;
@@ -2208,8 +2247,8 @@ function renderHistoricoPublicidade(){
 }
 
 function removerAnalisePublicidade(id){
-  const historico=JSON.parse(localStorage.getItem('realecom_pub_historico')||'[]').filter(h=>h.id!==id);
-  localStorage.setItem('realecom_pub_historico',JSON.stringify(historico));
+  const historico=getCached('realecom_pub_historico','[]').filter(h=>h.id!==id);
+  setCached('realecom_pub_historico',historico);
   renderHistoricoPublicidade();
 }
 
@@ -2278,7 +2317,7 @@ function calcularSimples(){
 // ============================================================
 
 function carregarMetas(){
-  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  const m=getCached('realecom_metas','{}');
   const elDia=document.getElementById('meta-prod-dia');
   const elDias=document.getElementById('meta-dias-semana');
   if(m.prodDia&&elDia)elDia.value=m.prodDia;
@@ -2289,9 +2328,9 @@ function carregarMetas(){
 
 function atualizarQualidade(){
   if(!document.getElementById('qual-total'))return;
-  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  const m=getCached('realecom_metas','{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date(0);
-  const todos=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const todos=getCached('realecom_prods','[]');
 
   const agora=Date.now();
   const limite30=agora-(30*24*60*60*1000);
@@ -2327,12 +2366,12 @@ function salvarMetas(){
     alert('Preencha os campos: quantos produtos por dia e quantos dias por semana.');
     return;
   }
-  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  const m=getCached('realecom_metas','{}');
   m.prodDia=prodDia;
   m.diasSemana=diasSemana;
   if(!m.dataInicio)m.dataInicio=new Date().toISOString();
   try{
-    localStorage.setItem('realecom_metas',JSON.stringify(m));
+    setCached('realecom_metas',m);
     fbSet('metas', m);
     recalcularMetas();
     alert('✅ Metas salvas com sucesso!');
@@ -2362,9 +2401,9 @@ function recalcularMetas(){
   document.getElementById('meta-val-quinzena').textContent=metaQuinzena+' produtos';
   document.getElementById('meta-val-mes').textContent=metaMes+' produtos';
 
-  const m=JSON.parse(localStorage.getItem('realecom_metas')||'{}');
+  const m=getCached('realecom_metas','{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
-  const prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  const prods=getCached('realecom_prods','[]');
 
   function prodsPeriodo(dias){
     const agora=Date.now();
@@ -2694,11 +2733,11 @@ function selecionarNCM(cod, desc, score, salvarHist=true){
 
   if(salvarHist){
     const query=document.getElementById('ncm-input').value.trim();
-    const hist=JSON.parse(localStorage.getItem('realecom_ncm_hist')||'[]');
+    const hist=getCached('realecom_ncm_hist','[]');
     const jaExiste=hist.findIndex(h=>h.cod===cod);
     if(jaExiste>=0) hist.splice(jaExiste,1);
     hist.unshift({cod,desc,query});
-    localStorage.setItem('realecom_ncm_hist',JSON.stringify(hist.slice(0,10)));
+    setCached('realecom_ncm_hist',hist.slice(0,10));
     renderHistoricoNCM();
   }
 }
@@ -2713,7 +2752,7 @@ function copiarNCM(){
 }
 
 function renderHistoricoNCM(){
-  const hist=JSON.parse(localStorage.getItem('realecom_ncm_hist')||'[]');
+  const hist=getCached('realecom_ncm_hist','[]');
   const box=document.getElementById('ncm-historico-box');
   const lista=document.getElementById('ncm-historico-lista');
   if(!box||!lista) return;
@@ -2749,7 +2788,7 @@ async function salvarTelefone(){
     if(!uid){ alert('Você precisa estar logado.'); return; }
     const db = await getDB();
     await db.collection('usuarios').doc(uid).set({ telefone: tel }, { merge: true });
-    localStorage.setItem('realecom_telefone', tel);
+    setCached('realecom_telefone', tel);
     atualizarBannerWhatsApp(tel);
     mostrarNotifMsg({tipo:'outro',data:''},'✅ Número salvo! Você receberá lembretes no WhatsApp.',1);
   }catch(e){
@@ -2765,7 +2804,7 @@ async function removerTelefone(){
     if(!uid) return;
     const db = await getDB();
     await db.collection('usuarios').doc(uid).update({ telefone: firebase.firestore.FieldValue.delete() });
-    localStorage.removeItem('realecom_telefone');
+    (function(){const k=localKey('realecom_telefone');if(k)localStorage.removeItem(k);})();
     atualizarBannerWhatsApp(null);
     mostrarNotifMsg({tipo:'outro',data:''},'Notificações WhatsApp desativadas.',1);
   }catch(e){
@@ -2815,7 +2854,7 @@ async function carregarTelefoneWhatsApp(){
   const banner = document.getElementById('wpp-banner');
   if(!banner) return;
   // Tenta do cache primeiro
-  const cache = localStorage.getItem('realecom_telefone');
+  const cache = getCached('realecom_telefone','null');
   if(cache){ atualizarBannerWhatsApp(cache); return; }
   // Busca no Firestore
   try{
@@ -2824,7 +2863,7 @@ async function carregarTelefoneWhatsApp(){
     const db = await getDB();
     const doc = await db.collection('usuarios').doc(uid).get();
     if(doc.exists && doc.data().telefone){
-      localStorage.setItem('realecom_telefone', doc.data().telefone);
+      setCached('realecom_telefone', doc.data().telefone);
       atualizarBannerWhatsApp(doc.data().telefone);
     } else {
       atualizarBannerWhatsApp(null);
@@ -3023,3 +3062,754 @@ function copiarPrompt(id){
 }
 
 // Gera os prompts ao entrar na página (com placeholder)
+
+/* ============================================================================
+ * MOTOR DE CONCILIAÇÃO MERCADO LIVRE + MERCADO PAGO — Calculadora Realecom
+ * v2 — três camadas
+ * ----------------------------------------------------------------------------
+ *  Camada 1  VENDA  → LIBERAÇÃO   "o ML liberou o que prometeu?"
+ *  Camada 2  TARIFAS nominais     "qual tarifa apareceu que não estava na venda?"
+ *  Camada 3  LIBERAÇÃO → MERCADO PAGO → SAQUE   "o dinheiro entrou e saiu certo?"
+ *
+ * Puro: sem DOM, sem framework.
+ * ==========================================================================*/
+
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ConciliacaoML = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var TOLERANCIA = 0.10;
+
+  var VENDA_TIPO = 'Venda', VENDA_STATUS = 'Pago';
+  var LIB_TIPOS_OPERACAO = ['Liberação', 'Estorno de liberação', 'Estorno de envio'];
+  var LIB_TIPO_ENVIO = 'Liberação de envio';
+
+  /* ---------------------------------------------------------------- helpers */
+
+  function num(v) {
+    if (v === null || v === undefined || v === '') return 0;
+    if (typeof v === 'number') return isFinite(v) ? v : 0;
+    var s = String(v).trim().replace(/[R$\s ]/g, '');
+    if (!s || s === '-' || s.toLowerCase() === 'nan') return 0;
+    var hasDot = s.indexOf('.') >= 0, hasCom = s.indexOf(',') >= 0;
+    if (hasDot && hasCom) {
+      s = s.lastIndexOf(',') > s.lastIndexOf('.')
+        ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+    } else if (hasCom) {
+      s = /,\d{1,2}$/.test(s) ? s.replace(',', '.') : s.replace(/,/g, '');
+    }
+    var n = parseFloat(s);
+    return isFinite(n) ? n : 0;
+  }
+  function txt(v) {
+    if (v === null || v === undefined) return '';
+    var s = String(v).trim();
+    return (s === 'nan' || s === 'NaT' || s === 'undefined') ? '' : s;
+  }
+  function r2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
+
+  /* ------------------------------------------------------- parser de tarifas
+   * A coluna "Detalhes de tarifas" traz blocos assim:
+   *   {Tarifa 2
+   *    ID da tarifa: 67578146752;
+   *    Nome da tarifa: Tarifa de envio extra ou intermunicipal;
+   *    Valor bruto: R$24,42;
+   *    Desconto aplicado: R$7,33;
+   *    Valor líquido: R$17,09;
+   *    Pós-paga: 0;}
+   * É AQUI que mora a explicação de quase toda divergência aparente:
+   * comparando a lista da VENDA com a da LIBERAÇÃO você descobre o NOME
+   * da tarifa que apareceu depois — deixa de ser "recebi a menos" sem motivo.
+   * -------------------------------------------------------------------------*/
+
+  var RX_NOME = /Nome da tarifa:\s*([^;]+);/;
+  var RX_LIQ = /Valor líquido:\s*R\$\s*([\d.,-]+)\s*;/;
+  var RX_BRUTO = /Valor bruto:\s*R\$\s*([\d.,-]+)\s*;/;
+  var RX_DESC = /Desconto aplicado:\s*R\$\s*([\d.,-]+)\s*;/;
+
+  function moeda(s) {
+    // no relatório o formato é sempre pt-BR: 1.234,56
+    return num(String(s).replace(/\./g, '').replace(',', '.'));
+  }
+
+  function parseTarifas(detalhe) {
+    var out = {};
+    if (typeof detalhe !== 'string' || !detalhe) return out;
+    detalhe.split('{').forEach(function (bloco) {
+      var n = RX_NOME.exec(bloco), l = RX_LIQ.exec(bloco);
+      if (!n || !l) return;
+      var nome = n[1].trim();
+      var b = RX_BRUTO.exec(bloco), d = RX_DESC.exec(bloco);
+      if (!out[nome]) out[nome] = { nome: nome, liquido: 0, bruto: 0, desconto: 0 };
+      out[nome].liquido += moeda(l[1]);
+      if (b) out[nome].bruto += moeda(b[1]);
+      if (d) out[nome].desconto += moeda(d[1]);
+    });
+    return out;
+  }
+
+  function somarTarifas(destino, origem) {
+    Object.keys(origem).forEach(function (k) {
+      if (!destino[k]) destino[k] = { nome: k, liquido: 0, bruto: 0, desconto: 0 };
+      destino[k].liquido += origem[k].liquido;
+      destino[k].bruto += origem[k].bruto;
+      destino[k].desconto += origem[k].desconto;
+    });
+    return destino;
+  }
+
+  /* ---------------------------------------------------------------- colunas */
+
+  var COL = {
+    op: 'Número da operação', envio: 'Número do envio', pacote: 'Número do pacote',
+    tipo: 'Tipo de operação', status: 'Status da operação',
+    dataOp: 'Data da operação', dataLib: 'Data da liberação',
+    item: 'Item', sku: 'SKU', categoria: 'Categoria', anuncio: 'Tipo de anúncio',
+    qtd: 'Quantidade de itens', valorItem: 'Valor do item',
+    fretePagoComprador: 'Envio pago pelo comprador (+)',
+    parcelamentoComprador: 'Taxa de parcelamento paga pelo comprador (+)',
+    bruto: 'Valor bruto (=)',
+    tarifas: 'Valor total de tarifas (desconto já aplicado)',
+    tarifasPos: 'Valor total de tarifas pós-pagas',
+    liquido: 'Valor líquido após tarifas',
+    fretePagoVendedor: 'Envio pago pelo vendedor',
+    reclamacoes: 'Reclamações e devoluções',
+    metodoEnvio: 'Método de envio', detalheTarifas: 'Detalhes de tarifas'
+  };
+
+  // Colunas do Mercado Pago (header na linha 0, ao contrário do ML)
+  var MP = {
+    op: 'Número da venda no Mercado Livre (order_id)',
+    dataCompra: 'Data da compra (date_created)',
+    dataLiberado: 'Data de liberação do dinheiro (date_released)',
+    status: 'Status da operação (status)',
+    statusDet: 'Detalhe do status da operação (status_detail)',
+    valorProduto: 'Valor do produto (transaction_amount)',
+    taxaMP: 'Tarifa do Mercado Pago (mercadopago_fee)',
+    taxaMarketplace: 'Tarifa pelo uso da plataforma de terceiros (marketplace_fee)',
+    frete: 'Frete (shipping_cost)',
+    financiamento: 'Custos de parcelamento (financing_fee)',
+    cupom: 'Desconto para a sua contraparte (coupon_fee)',
+    liquido: 'Valor total recebido (net_received_amount)',
+    devolvido: 'Valor devolvido (amount_refunded)',
+    claim: 'Número da reclamação (claim_id)',
+    chargeback: 'Número da contestação (chargeback_id)',
+    // saques
+    wData: 'Data de criação da retirada (date_created)',
+    wId: 'Número da retirada (withdraw_id)',
+    wStatus: 'Status (status)',
+    wValor: 'Valor (amount)',
+    wTaxa: 'Taxa (fee)',
+    wBanco: 'Nome do banco (bank_name)',
+    // reclamações / devoluções
+    aFluxo: 'Fluxo (flow)',
+    aData: 'Data de criação (date_created)',
+    aStatus: 'Status (status)',
+    aMotivo: 'Motivo detalhado (reason_detail)',
+    aValor: 'Valor (amount)',
+    aRetido: 'Dinheiro da decisão retido (resolution_money_blocked)',
+    aOp: 'ID do pedido (order_id)'
+  };
+
+  var CAMPOS_SOMA = [COL.qtd, COL.valorItem, COL.fretePagoComprador, COL.parcelamentoComprador,
+    COL.bruto, COL.tarifas, COL.tarifasPos, COL.liquido, COL.fretePagoVendedor, COL.reclamacoes];
+  var CAMPOS_PRIMEIRO = [COL.dataOp, COL.dataLib, COL.item, COL.sku, COL.categoria,
+    COL.anuncio, COL.envio, COL.pacote, COL.metodoEnvio, COL.status];
+
+  function agrupar(linhas, chaveCol) {
+    var mapa = new Map();
+    linhas.forEach(function (l) {
+      var k = txt(l[chaveCol]);
+      if (!k) return;
+      var acc = mapa.get(k);
+      if (!acc) { acc = { _chave: k, _linhas: 0, _tarifas: {} }; mapa.set(k, acc); }
+      acc._linhas++;
+      CAMPOS_SOMA.forEach(function (c) { acc[c] = (acc[c] || 0) + num(l[c]); });
+      CAMPOS_PRIMEIRO.forEach(function (c) { if (!acc[c]) acc[c] = txt(l[c]); });
+      somarTarifas(acc._tarifas, parseTarifas(l[COL.detalheTarifas]));
+    });
+    return mapa;
+  }
+
+  /* ---------------------------------------------------------- classificação */
+
+  var ST = {
+    OK: 'OK',
+    PENDENTE: 'Aguardando liberação',
+    COMPETENCIA: 'Competência anterior',
+    TARIFA: 'Tarifa não prevista',
+    DEVOLUCAO: 'Devolução / reclamação',
+    MENOS: 'Recebeu a menos sem explicação',
+    MAIS: 'Recebeu a mais'
+  };
+
+  // Ordem importa: só sobra em MENOS o que nenhuma explicação cobriu.
+  // É esse status — e só ele — que vira reclamação com o ML.
+  function classificar(l) {
+    if (!l.temLiberacao) return ST.PENDENTE;
+    if (Math.abs(l.diferenca) <= TOLERANCIA) return ST.OK;
+    if (l.liquidoEsperado < 0 && l.liquidoRecebido > 0) return ST.COMPETENCIA;
+    if (l.reclamacoes > TOLERANCIA) return ST.DEVOLUCAO;
+    // a falta bate (dentro da tolerância) com tarifas que só apareceram na liberação?
+    if (l.diferenca < -TOLERANCIA && l.tarifasSurpresa.length &&
+        Math.abs(l.diferenca + l.valorTarifasSurpresa) <= TOLERANCIA) return ST.TARIFA;
+    if (l.diferenca < -TOLERANCIA) return ST.MENOS;
+    if (l.diferenca > TOLERANCIA) return ST.MAIS;
+    return ST.OK;
+  }
+
+  /* =================================================== CAMADA 1 + 2 (ML) === */
+
+  function conciliar(vendasRaw, liberacoesRaw, mp) {
+    var avisos = [];
+
+    var vendas = vendasRaw.filter(function (l) {
+      return txt(l[COL.tipo]) === VENDA_TIPO && txt(l[COL.status]) === VENDA_STATUS;
+    });
+    var mapaVendas = agrupar(vendas, COL.op);
+
+    var mapaLib = agrupar(liberacoesRaw.filter(function (l) {
+      return LIB_TIPOS_OPERACAO.indexOf(txt(l[COL.tipo])) >= 0;
+    }), COL.op);
+
+    // Liberação de envio: SEM Número da operação. Só liga pelo Número do envio.
+    var mapaEnvio = new Map();
+    liberacoesRaw.forEach(function (l) {
+      if (txt(l[COL.tipo]) !== LIB_TIPO_ENVIO) return;
+      var k = txt(l[COL.envio]);
+      if (!k) return;
+      mapaEnvio.set(k, (mapaEnvio.get(k) || 0) + num(l[COL.liquido]));
+    });
+
+    // Quantas operações dividem o mesmo envio (pack / carrinho).
+    // Numa venda em pack, o ML cobra o frete extra em UMA das operações —
+    // sem isso a outra parece ter recebido a menos.
+    var opsPorEnvio = new Map();
+    mapaVendas.forEach(function (v) {
+      var e = txt(v[COL.envio]); if (!e) return;
+      opsPorEnvio.set(e, (opsPorEnvio.get(e) || 0) + 1);
+    });
+
+    var linhas = [];
+    mapaVendas.forEach(function (v, op) {
+      var lib = mapaLib.get(op) || null;
+      var envioKey = txt(v[COL.envio]);
+      var libEnv = envioKey ? (mapaEnvio.get(envioKey) || 0) : 0;
+
+      var tarV = v._tarifas, tarL = lib ? lib._tarifas : {};
+
+      // CAMADA 2 — diff nominal das tarifas
+      var surpresa = [], sumiu = [], mudou = [], vSurpresa = 0;
+      Object.keys(tarL).forEach(function (k) {
+        if (!tarV[k]) { surpresa.push({ nome: k, valor: r2(tarL[k].liquido), bruto: r2(tarL[k].bruto), desconto: r2(tarL[k].desconto) }); vSurpresa += tarL[k].liquido; }
+        else if (Math.abs(tarL[k].liquido - tarV[k].liquido) > TOLERANCIA) {
+          mudou.push({ nome: k, previsto: r2(tarV[k].liquido), cobrado: r2(tarL[k].liquido), delta: r2(tarL[k].liquido - tarV[k].liquido) });
+          vSurpresa += (tarL[k].liquido - tarV[k].liquido);
+        }
+      });
+      Object.keys(tarV).forEach(function (k) {
+        if (!tarL[k] && lib) sumiu.push({ nome: k, valor: r2(tarV[k].liquido) });
+      });
+
+      var liquidoEsperado = r2(num(v[COL.liquido]));
+      var liquidoLib = lib ? r2(num(lib[COL.liquido])) : 0;
+      var liquidoRecebido = r2(liquidoLib + libEnv);
+
+      var l = {
+        operacao: op, envio: envioKey, pacote: txt(v[COL.pacote]),
+        dataVenda: v[COL.dataOp] || '', dataLiberacao: lib ? (lib[COL.dataLib] || '') : '',
+        item: v[COL.item] || '', sku: v[COL.sku] || '', categoria: v[COL.categoria] || '',
+        tipoAnuncio: v[COL.anuncio] || '', metodoEnvio: v[COL.metodoEnvio] || '',
+        quantidade: num(v[COL.qtd]),
+        opsNoMesmoEnvio: envioKey ? (opsPorEnvio.get(envioKey) || 1) : 1,
+
+        // previsto (venda)
+        valorItem: r2(num(v[COL.valorItem])),
+        fretePagoComprador: r2(num(v[COL.fretePagoComprador])),
+        brutoEsperado: r2(num(v[COL.bruto])),
+        comissaoEsperada: r2(num(v[COL.tarifas]) + num(v[COL.tarifasPos])),
+        freteEsperado: r2(num(v[COL.fretePagoVendedor])),
+        liquidoEsperado: liquidoEsperado,
+        tarifasVenda: Object.keys(tarV).map(function (k) { return { nome: k, valor: r2(tarV[k].liquido) }; }),
+
+        // realizado (liberação)
+        brutoLiberado: lib ? r2(num(lib[COL.bruto])) : 0,
+        comissaoCobrada: lib ? r2(num(lib[COL.tarifas]) + num(lib[COL.tarifasPos])) : 0,
+        freteCobrado: lib ? r2(num(lib[COL.fretePagoVendedor])) : 0,
+        reclamacoes: lib ? r2(num(lib[COL.reclamacoes])) : 0,
+        liquidoLiberacao: liquidoLib, liquidoEnvio: r2(libEnv),
+        liquidoRecebido: liquidoRecebido,
+        temLiberacao: !!lib, eventosLiberacao: lib ? lib._linhas : 0,
+        tarifasLiberacao: Object.keys(tarL).map(function (k) { return { nome: k, valor: r2(tarL[k].liquido) }; }),
+
+        // camada 2
+        tarifasSurpresa: surpresa, tarifasCanceladas: sumiu, tarifasAlteradas: mudou,
+        valorTarifasSurpresa: r2(vSurpresa)
+      };
+
+      l.diferenca = r2(liquidoRecebido - liquidoEsperado);
+      l.difComissao = r2(l.comissaoCobrada - l.comissaoEsperada);
+      l.difFrete = r2(l.freteCobrado - l.freteEsperado);
+      l.status = classificar(l);
+      l.explicacao = explicar(l);
+      linhas.push(l);
+    });
+
+    // liberações sem venda no período carregado
+    var opsVenda = new Set(mapaVendas.keys()); var orfas = 0, valorOrfas = 0;
+    mapaLib.forEach(function (x, op) { if (!opsVenda.has(op)) { orfas++; valorOrfas += num(x[COL.liquido]); } });
+    if (orfas) avisos.push(orfas + ' liberação(ões) sem venda correspondente no período carregado (R$ ' +
+      r2(valorOrfas).toFixed(2) + ') — normalmente vendas de meses anteriores. Carregue o mês anterior para fechar 100%.');
+
+    var kpis = calcularKpis(linhas);
+    kpis.liberacoesOrfas = orfas;
+
+    // catálogo de tarifas — para onde o dinheiro foi
+    var catalogo = {};
+    linhas.forEach(function (l) {
+      l.tarifasLiberacao.forEach(function (t) {
+        if (!catalogo[t.nome]) catalogo[t.nome] = { nome: t.nome, total: 0, ops: 0 };
+        catalogo[t.nome].total += t.valor; catalogo[t.nome].ops++;
+      });
+    });
+    var tarifasResumo = Object.keys(catalogo).map(function (k) {
+      catalogo[k].total = r2(catalogo[k].total); return catalogo[k];
+    }).sort(function (a, b) { return b.total - a.total; });
+
+    var resultado = { linhas: linhas, kpis: kpis, avisos: avisos, tarifas: tarifasResumo, STATUS: ST };
+
+    /* ============================================== CAMADA 3 (Mercado Pago) */
+    if (mp && (mp.collection || mp.withdraw || mp.afterCollection)) {
+      resultado.mercadoPago = conciliarMercadoPago(mp, linhas, avisos);
+    }
+    return resultado;
+  }
+
+  function fmt(n) { return Math.abs(n).toFixed(2).replace('.', ','); }
+
+  function explicar(l) {
+    if (l.status === ST.OK) return '';
+    if (l.status === ST.PENDENTE) return 'Ainda sem liberação — dentro do prazo do ML.';
+    if (l.status === ST.COMPETENCIA)
+      return 'Item faturado em período anterior: no relatório de vendas sobrou só a linha de frete. Não é erro.';
+    if (l.status === ST.DEVOLUCAO)
+      return 'Liberação estornada por reclamação/devolução (R$ ' + l.reclamacoes.toFixed(2) +
+             '). Confira se o produto voltou ao estoque antes de contestar.';
+    if (l.status === ST.TARIFA) {
+      var nomes = l.tarifasSurpresa.map(function (t) { return t.nome + ' (R$ ' + fmt(t.valor) + ')'; })
+        .concat(l.tarifasAlteradas.map(function (t) { return t.nome + ' (+R$ ' + fmt(t.delta) + ')'; }));
+      return 'Cobrança que não estava prevista na venda: ' + nomes.join(', ') + '.' +
+        (l.opsNoMesmoEnvio > 1 ? ' Envio compartilhado com ' + (l.opsNoMesmoEnvio - 1) +
+          ' outra(s) venda(s) — o ML cobrou o frete extra só nesta.' : '');
+    }
+    if (l.status === ST.MENOS)
+      return 'Faltou R$ ' + fmt(l.diferenca) + ' e nenhuma tarifa, estorno ou devolução explica. Reclamar.';
+    if (l.status === ST.MAIS) return 'Recebeu R$ ' + fmt(l.diferenca) + ' a mais que o previsto. Conferir.';
+    return '';
+  }
+
+  function calcularKpis(linhas) {
+    var k = { totalOperacoes: linhas.length, ok: 0, pendentes: 0, competencia: 0,
+      tarifaNaoPrevista: 0, devolucoes: 0, aMenos: 0, aMais: 0,
+      valorEsperado: 0, valorRecebido: 0,
+      impactoTarifaNaoPrevista: 0, impactoDevolucoes: 0, impactoAMenos: 0, impactoAMais: 0,
+      totalComissao: 0, totalFrete: 0 };
+    linhas.forEach(function (l) {
+      if (l.status === ST.OK) k.ok++;
+      else if (l.status === ST.PENDENTE) k.pendentes++;
+      else if (l.status === ST.COMPETENCIA) k.competencia++;
+      else if (l.status === ST.TARIFA) { k.tarifaNaoPrevista++; k.impactoTarifaNaoPrevista += l.diferenca; }
+      else if (l.status === ST.DEVOLUCAO) { k.devolucoes++; k.impactoDevolucoes += l.diferenca; }
+      else if (l.status === ST.MENOS) { k.aMenos++; k.impactoAMenos += l.diferenca; }
+      else if (l.status === ST.MAIS) { k.aMais++; k.impactoAMais += l.diferenca; }
+      if (l.temLiberacao) { k.valorEsperado += l.liquidoEsperado; k.valorRecebido += l.liquidoRecebido; }
+      k.totalComissao += l.comissaoCobrada; k.totalFrete += l.freteCobrado;
+    });
+    ['valorEsperado','valorRecebido','impactoTarifaNaoPrevista','impactoDevolucoes',
+     'impactoAMenos','impactoAMais','totalComissao','totalFrete'].forEach(function (x) { k[x] = r2(k[x]); });
+    var base = Math.max(1, k.totalOperacoes - k.pendentes);
+    k.taxaConformidade = r2(100 * (k.ok + k.competencia) / base);
+    return k;
+  }
+
+  /* ==================================================== CAMADA 3 — MP ===== */
+
+  function conciliarMercadoPago(mp, linhas, avisos) {
+    var col = mp.collection || [], wit = mp.withdraw || [], aft = mp.afterCollection || [];
+
+    // recebimentos por operação
+    var porOp = new Map();
+    col.forEach(function (r) {
+      var op = txt(r[MP.op]); if (!op) return;
+      var acc = porOp.get(op);
+      if (!acc) { acc = { op: op, liquido: 0, produto: 0, taxaMP: 0, taxaMkt: 0, frete: 0,
+                          financiamento: 0, devolvido: 0, status: [], liberadoEm: '' }; porOp.set(op, acc); }
+      var st = txt(r[MP.status]);
+      acc.status.push(st);
+      if (st === 'approved') {
+        acc.liquido += num(r[MP.liquido]); acc.produto += num(r[MP.valorProduto]);
+        acc.taxaMP += num(r[MP.taxaMP]); acc.taxaMkt += num(r[MP.taxaMarketplace]);
+        acc.frete += num(r[MP.frete]); acc.financiamento += num(r[MP.financiamento]);
+      }
+      acc.devolvido += num(r[MP.devolvido]);
+      if (!acc.liberadoEm) acc.liberadoEm = txt(r[MP.dataLiberado]);
+    });
+
+    // cruza com as linhas da camada 1
+    var casadas = 0, semMP = 0, divergentesMP = [];
+    linhas.forEach(function (l) {
+      var m = porOp.get(l.operacao);
+      if (!m) { l.mpEncontrado = false; semMP++; return; }
+      casadas++;
+      l.mpEncontrado = true;
+      l.mpLiquido = r2(m.liquido);
+      l.mpProduto = r2(m.produto);
+      l.mpTaxaMP = r2(m.taxaMP);
+      l.mpTaxaMarketplace = r2(m.taxaMkt);
+      l.mpFrete = r2(m.frete);
+      l.mpFinanciamento = r2(m.financiamento);
+      l.mpDevolvido = r2(m.devolvido);
+      l.mpLiberadoEm = m.liberadoEm;
+      l.mpStatus = m.status.join(',');
+      // O Mercado Pago confirma o valor que o ML disse ter liberado?
+      // ⚠️ Comparar com liquidoLIBERACAO, não com liquidoRecebido:
+      // o relatório de cobranças do MP é por PAGAMENTO do comprador e não inclui
+      // a "Liberação de envio" — ela cai no saldo como movimento separado.
+      l.difMP = r2(m.liquido - l.liquidoLiberacao);
+      if (Math.abs(l.difMP) > TOLERANCIA && l.temLiberacao && m.status.indexOf('approved') >= 0) {
+        divergentesMP.push(l);
+      }
+    });
+
+    // saques
+    var saques = { total: 0, taxas: 0, quantidade: 0, aprovados: 0, linhas: [] };
+    wit.forEach(function (r) {
+      var v = num(r[MP.wValor]), t = num(r[MP.wTaxa]), st = txt(r[MP.wStatus]);
+      saques.quantidade++;
+      if (st === 'approved') { saques.aprovados++; saques.total += v; saques.taxas += t; }
+      saques.linhas.push({ data: txt(r[MP.wData]), id: txt(r[MP.wId]), status: st,
+                           valor: r2(v), taxa: r2(t), banco: txt(r[MP.wBanco]) });
+    });
+    saques.total = r2(saques.total); saques.taxas = r2(saques.taxas);
+
+    // reclamações e devoluções
+    var disputas = { claims: 0, refunds: 0, valorRetido: 0, valorTotal: 0, linhas: [] };
+    aft.forEach(function (r) {
+      var fluxo = txt(r[MP.aFluxo]), v = num(r[MP.aValor]);
+      if (fluxo === 'claim') disputas.claims++; else if (fluxo === 'refund') disputas.refunds++;
+      if (txt(r[MP.aRetido]).toLowerCase() === 'true') disputas.valorRetido += v;
+      disputas.valorTotal += v;
+      disputas.linhas.push({ fluxo: fluxo, data: txt(r[MP.aData]), operacao: txt(r[MP.aOp]),
+        motivo: txt(r[MP.aMotivo]), status: txt(r[MP.aStatus]), valor: r2(v),
+        retido: txt(r[MP.aRetido]).toLowerCase() === 'true' });
+    });
+    disputas.valorRetido = r2(disputas.valorRetido); disputas.valorTotal = r2(disputas.valorTotal);
+
+    // recebimentos do MP sem venda correspondente no período do ML
+    var opsML = new Set(linhas.map(function (l) { return l.operacao; }));
+    var mpOrfas = 0, mpOrfasValor = 0;
+    porOp.forEach(function (m, op) {
+      if (!opsML.has(op)) { mpOrfas++; mpOrfasValor += m.liquido; }
+    });
+
+    if (semMP) avisos.push(semMP + ' venda(s) do ML sem recebimento correspondente no relatório do ' +
+      'Mercado Pago carregado — confira se o período do MP cobre o mesmo intervalo.');
+    if (mpOrfas) avisos.push(mpOrfas + ' recebimento(s) do Mercado Pago sem venda no período do ML (R$ ' +
+      r2(mpOrfasValor).toFixed(2) + ').');
+
+    var totalMP = 0; porOp.forEach(function (m) { totalMP += m.liquido; });
+
+    return {
+      operacoesCasadas: casadas,
+      vendasSemRecebimento: semMP,
+      recebimentosSemVenda: mpOrfas,
+      totalRecebidoMP: r2(totalMP),
+      divergenciasMP: divergentesMP.length,
+      impactoMP: r2(divergentesMP.reduce(function (s, l) { return s + l.difMP; }, 0)),
+      saques: saques,
+      disputas: disputas
+    };
+  }
+
+  return {
+    conciliar: conciliar,
+    parseTarifas: parseTarifas,
+    STATUS: ST, COL: COL, MP: MP,
+    TOLERANCIA: TOLERANCIA,
+    HEADER_ROW: 2,       // relatórios do ML
+    HEADER_ROW_MP: 0,    // relatórios do Mercado Pago
+    _num: num
+  };
+});
+
+
+
+// ============================================================
+// CONCILIAÇÃO — UI
+// ============================================================
+
+var _concFiles = {}; // { vendas, liberacoes, collection, withdraw, afterCollection }
+var _concResultado = null;
+
+function concDrop(ev){ ev.preventDefault(); ev.stopPropagation(); concProcessFiles(ev.dataTransfer.files); }
+function concDragOver(ev){ ev.preventDefault(); document.getElementById('conc-drop').classList.add('conc-over'); }
+function concDragLeave(){ document.getElementById('conc-drop').classList.remove('conc-over'); }
+function concPickFile(){ document.getElementById('conc-file-input').click(); }
+function concFileChange(ev){ concProcessFiles(ev.target.files); ev.target.value=''; }
+
+function concProcessFiles(files){
+  if(!files||!files.length) return;
+  Array.from(files).forEach(function(file){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      try{
+        var wb = XLSX.read(e.target.result, {type:'array'});
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        // Detecta tipo pelo cabeçalho da linha 2 (ML) ou 0 (MP)
+        var raw0 = XLSX.utils.sheet_to_json(ws, {range:0, header:1, defval:''});
+        var tipo = concDetectarTipo(raw0, file.name);
+        if(!tipo){ concToast('Arquivo não reconhecido: ' + file.name, 'err'); return; }
+        var headerRow = (tipo==='collection'||tipo==='withdraw'||tipo==='afterCollection') ? 0 : 2;
+        var dados = XLSX.utils.sheet_to_json(ws, {range:headerRow, defval:''});
+        _concFiles[tipo] = dados;
+        concRenderArquivos();
+        concToast('✓ ' + file.name + ' → ' + concTipoLabel(tipo), 'ok');
+      }catch(err){ concToast('Erro ao ler ' + file.name + ': ' + err.message, 'err'); }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function concDetectarTipo(raw0, nome){
+  // Linha 0 raw (sem header) para detectar pela assinatura de colunas
+  var row2 = raw0[2] || [], row0 = raw0[0] || [];
+  var cols2 = row2.join('|'), cols0 = row0.join('|');
+  // ML: linha 2 tem "Número da operação"
+  if(cols2.indexOf('Número da operação')>=0){
+    if(cols2.indexOf('Valor bruto (=)')>=0 && nome.toLowerCase().indexOf('libera')>=0) return 'liberacoes';
+    if(cols2.indexOf('Valor bruto (=)')>=0) return 'vendas';
+  }
+  // MP: linha 0
+  if(cols0.indexOf('Número da venda no Mercado Livre')>=0) return 'collection';
+  if(cols0.indexOf('Número da retirada')>=0 || cols0.indexOf('withdraw_id')>=0) return 'withdraw';
+  if(cols0.indexOf('Fluxo (flow)')>=0) return 'afterCollection';
+  // fallback por nome
+  var n = nome.toLowerCase();
+  if(n.indexOf('venda')>=0||n.indexOf('sale')>=0) return 'vendas';
+  if(n.indexOf('liber')>=0||n.indexOf('release')>=0) return 'liberacoes';
+  if(n.indexOf('collection')>=0||n.indexOf('cobran')>=0) return 'collection';
+  if(n.indexOf('withdraw')>=0||n.indexOf('saque')>=0) return 'withdraw';
+  if(n.indexOf('after')>=0||n.indexOf('reclama')>=0) return 'afterCollection';
+  return null;
+}
+
+function concTipoLabel(t){
+  return {vendas:'Conciliação por Vendas (ML)', liberacoes:'Conciliação por Liberações (ML)',
+    collection:'Cobranças — collection (MP)', withdraw:'Saques — withdraw (MP)',
+    afterCollection:'Reclamações — after_collection (MP)'}[t] || t;
+}
+
+function concRemoverArquivo(tipo){
+  delete _concFiles[tipo];
+  concRenderArquivos();
+}
+
+function concRenderArquivos(){
+  var el = document.getElementById('conc-files-lista');
+  if(!el) return;
+  var tipos = ['vendas','liberacoes','collection','withdraw','afterCollection'];
+  var labels = {vendas:'Vendas ML', liberacoes:'Liberações ML', collection:'Cobranças MP', withdraw:'Saques MP', afterCollection:'Reclamações MP'};
+  var cores = {vendas:'#7c3aed44', liberacoes:'#16a34a44', collection:'#0891b244', withdraw:'#d9770644', afterCollection:'#dc262644'};
+  el.innerHTML = tipos.map(function(t){
+    var tem = !!_concFiles[t];
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'
+      +'<span style="width:10px;height:10px;border-radius:50%;background:'+(tem?'#4ade80':'var(--border)')+';flex-shrink:0"></span>'
+      +'<span style="font-size:.76rem;color:'+(tem?'var(--text)':'var(--text4)')+';flex:1">'+labels[t]+'</span>'
+      +(tem?'<button onclick="concRemoverArquivo(\''+t+'\')" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:.8rem" title="Remover">×</button>':'')
+      +'</div>';
+  }).join('');
+  // Habilitar botão conciliar
+  var btn = document.getElementById('conc-btn');
+  if(btn) btn.disabled = !(_concFiles.vendas && _concFiles.liberacoes);
+}
+
+function conciliarAgora(){
+  if(!_concFiles.vendas||!_concFiles.liberacoes){ concToast('Carregue os dois relatórios do ML', 'err'); return; }
+  var btn = document.getElementById('conc-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Processando...'; }
+  setTimeout(function(){
+    try{
+      var mp = {};
+      if(_concFiles.collection) mp.collection = _concFiles.collection;
+      if(_concFiles.withdraw) mp.withdraw = _concFiles.withdraw;
+      if(_concFiles.afterCollection) mp.afterCollection = _concFiles.afterCollection;
+      _concResultado = ConciliacaoML.conciliar(_concFiles.vendas, _concFiles.liberacoes, Object.keys(mp).length?mp:null);
+      concRenderResultado(_concResultado);
+    }catch(err){
+      concToast('Erro na conciliação: '+err.message,'err');
+      console.error(err);
+    }
+    if(btn){ btn.disabled=false; btn.textContent='Conciliar agora'; }
+  },50);
+}
+
+function concRenderResultado(r){
+  var el = document.getElementById('conc-resultado');
+  if(!el) return;
+  el.style.display='block';
+
+  var k = r.kpis;
+  var ST = ConciliacaoML.STATUS;
+
+  // KPIs
+  function kpiCard(label, val, note, cor){
+    return '<div class="card" style="padding:14px;text-align:center;border-color:'+(cor||'var(--border)')+'40">'
+      +'<div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:4px">'+label+'</div>'
+      +'<div style="font-family:Outfit,sans-serif;font-size:1.4rem;font-weight:800;color:'+(cor||'var(--text)')+'">'+val+'</div>'
+      +(note?'<div style="font-size:.66rem;color:var(--text3);margin-top:2px">'+note+'</div>':'')
+      +'</div>';
+  }
+
+  var kpis = document.getElementById('conc-kpis');
+  if(kpis) kpis.innerHTML =
+    kpiCard('Operações',''+k.totalOperacoes)+
+    kpiCard('OK ✓',''+k.ok,'conformidade '+k.taxaConformidade+'%','#16a34a')+
+    kpiCard('Aguardando',''+k.pendentes,'prazo ML')+
+    kpiCard('Tarifa não prevista',''+k.tarifaNaoPrevista,(k.impactoTarifaNaoPrevista?'−R$ '+Math.abs(k.impactoTarifaNaoPrevista).toFixed(2):''),'#d97706')+
+    kpiCard('Devoluções',''+k.devolucoes,(k.impactoDevolucoes?'−R$ '+Math.abs(k.impactoDevolucoes).toFixed(2):''),'#6B21A8')+
+    kpiCard('⚠️ Recebeu a menos',''+k.aMenos,(k.impactoAMenos?'−R$ '+Math.abs(k.impactoAMenos).toFixed(2):''),'#dc2626')+
+    kpiCard('Recebeu a mais',''+k.aMais,(k.impactoAMais?'+R$ '+k.impactoAMais.toFixed(2):''));
+
+  // Avisos
+  var avDiv = document.getElementById('conc-avisos');
+  if(avDiv) avDiv.innerHTML = r.avisos.length
+    ? r.avisos.map(function(a){ return '<div style="background:#d9770618;border:1px solid #d9770644;border-radius:8px;padding:8px 12px;font-size:.76rem;color:#fbbf24;margin-bottom:7px">⚠️ '+a+'</div>'; }).join('')
+    : '';
+
+  // Tarifas
+  var tbT = document.getElementById('conc-tb-tarifas');
+  if(tbT) tbT.innerHTML = r.tarifas.map(function(t){
+    return '<tr><td style="text-align:left;font-size:.75rem;color:var(--text2)">'+t.nome+'</td>'
+      +'<td style="font-size:.75rem;color:var(--text3)">'+t.ops+'</td>'
+      +'<td style="font-size:.75rem;font-weight:700;color:#f87171">−R$ '+t.total.toFixed(2).replace('.',',')+'</td></tr>';
+  }).join('');
+
+  // Mercado Pago
+  var mpBox = document.getElementById('conc-mp-box');
+  if(mpBox && r.mercadoPago){
+    var mp = r.mercadoPago;
+    mpBox.innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
+      +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">OPERAÇÕES CASADAS</div><div style="font-size:1.1rem;font-weight:800;color:#4ade80">'+mp.operacoesCasadas+'</div></div>'
+      +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">DIVERGÊNCIAS MP</div><div style="font-size:1.1rem;font-weight:800;color:'+(mp.divergenciasMP?'#f87171':'#4ade80')+'">'+mp.divergenciasMP+'</div></div>'
+      +'</div>'
+      +'<div style="font-size:.74rem;color:var(--text3);margin-bottom:5px">Saques: R$ '+mp.saques.total.toFixed(2)+' · '+mp.saques.aprovados+' aprovados</div>'
+      +'<div style="font-size:.74rem;color:var(--text3)">Disputas: '+mp.disputas.claims+' reclamações · '+mp.disputas.refunds+' devoluções · Retido: R$ '+mp.disputas.valorRetido.toFixed(2)+'</div>';
+  } else if(mpBox){
+    mpBox.innerHTML = '<div style="font-size:.76rem;color:var(--text4)">Carregue os relatórios do Mercado Pago para ver esta camada.</div>';
+  }
+
+  // Renderizar tabela
+  concRenderTabela(r.linhas, '');
+}
+
+var _concLinhasFiltradas = [];
+
+function concRenderTabela(linhas, filtroStatus, filtroBusca){
+  filtroStatus = filtroStatus||'';
+  filtroBusca = (filtroBusca||'').toLowerCase();
+  _concLinhasFiltradas = linhas.filter(function(l){
+    if(filtroStatus && l.status!==filtroStatus) return false;
+    if(filtroBusca && (l.operacao+l.item+l.sku).toLowerCase().indexOf(filtroBusca)<0) return false;
+    return true;
+  });
+
+  var ST = ConciliacaoML.STATUS;
+  var corStatus = {};
+  corStatus[ST.OK]='background:#16a34a22;color:#4ade80';
+  corStatus[ST.PENDENTE]='background:var(--bg2);color:var(--text4)';
+  corStatus[ST.COMPETENCIA]='background:#2563eb22;color:#60a5fa';
+  corStatus[ST.TARIFA]='background:#d9770622;color:#fbbf24';
+  corStatus[ST.DEVOLUCAO]='background:#6B21A822;color:#c4b5fd';
+  corStatus[ST.MENOS]='background:#dc262622;color:#f87171;font-weight:700';
+  corStatus[ST.MAIS]='background:#0891b222;color:#22d3ee';
+
+  function fmt(n){ return n===undefined||n===null?'—':(n>=0?'':'-')+'R$ '+Math.abs(n).toFixed(2).replace('.',','); }
+  function fmtD(n){ return n===undefined?'—':(n>0.1?'<span style="color:#f87171">+R$ '+n.toFixed(2).replace('.',',')+'</span>':n<-0.1?'<span style="color:#f87171">−R$ '+Math.abs(n).toFixed(2).replace('.',',')+'</span>':'<span style="color:#4ade80">R$ 0,00</span>'); }
+
+  var tbody = document.getElementById('conc-tbody');
+  if(!tbody) return;
+
+  if(!_concLinhasFiltradas.length){
+    tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--text4)">Nenhum resultado</td></tr>';
+  } else {
+    tbody.innerHTML = _concLinhasFiltradas.map(function(l){
+      return '<tr>'
+        +'<td style="font-size:.72rem;color:var(--text2);white-space:nowrap">'+l.operacao+'</td>'
+        +'<td style="font-size:.72rem;color:var(--text3);white-space:nowrap">'+(l.dataVenda?l.dataVenda.substring(0,10):'—')+'</td>'
+        +'<td style="font-size:.72rem;color:var(--text);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+l.item+'">'+l.item+'</td>'
+        +'<td style="font-size:.72rem;color:var(--text3)">'+l.sku+'</td>'
+        +'<td style="font-size:.72rem">'+fmt(l.comissaoEsperada)+'</td>'
+        +'<td style="font-size:.72rem">'+fmt(l.comissaoCobrada)+'</td>'
+        +'<td style="font-size:.72rem">'+fmtD(l.difComissao)+'</td>'
+        +'<td style="font-size:.72rem">'+fmt(l.freteEsperado)+'</td>'
+        +'<td style="font-size:.72rem">'+fmt(l.freteCobrado)+'</td>'
+        +'<td style="font-size:.72rem">'+fmtD(l.difFrete)+'</td>'
+        +'<td style="font-size:.72rem;font-weight:600">'+fmt(l.liquidoEsperado)+'</td>'
+        +'<td style="font-size:.72rem">'+fmt(l.liquidoLiberacao)+'</td>'
+        +'<td style="font-size:.72rem">'+fmt(l.liquidoEnvio)+'</td>'
+        +'<td style="font-size:.72rem;font-weight:600">'+fmt(l.liquidoRecebido)+'</td>'
+        +'<td style="font-size:.72rem">'+fmtD(l.diferenca)+'</td>'
+        +'<td style="font-size:.72rem"><span style="'+corStatus[l.status]+';padding:2px 8px;border-radius:20px;font-size:.68rem;white-space:nowrap">'+l.status+'</span></td>'
+        +'<td style="font-size:.7rem;color:var(--text3);max-width:220px;white-space:normal">'+l.explicacao+'</td>'
+        +'</tr>';
+    }).join('');
+  }
+
+  var cnt = document.getElementById('conc-contagem');
+  if(cnt) cnt.textContent = _concLinhasFiltradas.length + ' de ' + (_concResultado?_concResultado.linhas.length:0) + ' operações';
+}
+
+function concFiltrar(){
+  if(!_concResultado) return;
+  var st = (document.getElementById('conc-f-status')||{}).value||'';
+  var busca = (document.getElementById('conc-f-busca')||{}).value||'';
+  concRenderTabela(_concResultado.linhas, st, busca);
+}
+
+function concSoReclamar(){
+  if(!_concResultado) return;
+  if(document.getElementById('conc-f-status')) document.getElementById('conc-f-status').value=ConciliacaoML.STATUS.MENOS;
+  concFiltrar();
+}
+
+function concExportarCSV(){
+  if(!_concLinhasFiltradas||!_concLinhasFiltradas.length) return;
+  var cabecalho = ['Operação','Data','Item','SKU','Com.Prevista','Com.Cobrada','ΔCom','FretePrevisto','FreteCobrado','ΔFrete','Liq.Previsto','Liberação','Lib.Envio','Liq.Recebido','Diferença','Status','Explicação'];
+  var linhas = _concLinhasFiltradas.map(function(l){
+    function n(v){ return v===undefined||v===null?'':v.toFixed(2).replace('.',','); }
+    return [l.operacao,l.dataVenda?l.dataVenda.substring(0,10):'',l.item,l.sku,
+      n(l.comissaoEsperada),n(l.comissaoCobrada),n(l.difComissao),
+      n(l.freteEsperado),n(l.freteCobrado),n(l.difFrete),
+      n(l.liquidoEsperado),n(l.liquidoLiberacao),n(l.liquidoEnvio),n(l.liquidoRecebido),n(l.diferenca),
+      l.status,l.explicacao].map(function(v){ return '"'+(v||'').toString().replace(/"/g,'\"')+'"'; }).join(',');
+  });
+  var csv = '﻿' + [cabecalho.join(',')].concat(linhas).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'conciliacao_realecom.csv';
+  a.click();
+}
+
+function concToast(msg, tipo){
+  var c = document.getElementById('conc-toasts');
+  if(!c) return;
+  var d = document.createElement('div');
+  d.style.cssText='padding:8px 14px;border-radius:8px;font-size:.78rem;font-weight:600;margin-bottom:6px;'
+    +(tipo==='err'?'background:#dc262622;border:1px solid #dc262644;color:#f87171':'background:#16a34a22;border:1px solid #16a34a44;color:#4ade80');
+  d.textContent = msg;
+  c.appendChild(d);
+  setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 3500);
+}
