@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <title>Calculadora REAL | RealEcom</title>
 <link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -34,6 +34,10 @@
   --sb-hover:#1c1c20;
   --input-bg:#141418;
   --input-border:#2a2a2e;
+  --mark:#F2D024; --mark-fg:#1A1500; --mark-soft:#F2D02426;
+  --in:#3DBD78;  --in-bg:#0F2A1B;  --in-line:#1B4630;
+  --out:#E0574F;
+  --seg-a:#3E3E47; --seg-b:#2E2E36; --seg-c:#4A3A20; --seg-d:#4A2A28;
   --o:#F0A070;
   --p:#7c6af7;
   --p2:#9d8af7;
@@ -55,12 +59,16 @@ body.light{
   --sb-hover:#e0e0de;
   --input-bg:#f0f0ee;
   --input-border:#e0e0dc;
+  --mark:#FFE94D; --mark-fg:#1A1500; --mark-soft:#FFE94D80;
+  --in:#0F7A3D;  --in-bg:#E8F4EC;  --in-line:#C4E2CF;
+  --out:#B3352D;
+  --seg-a:#C6C6CB; --seg-b:#DDDDE1; --seg-c:#E8D9A8; --seg-d:#EBC0BC;
   --o:#ea580c;
   --p:#6B21A8;
   --p2:#7c3aed;
 }
 
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .2s,color .2s}
+body{font-family:'Figtree',sans-serif;font-variant-numeric:tabular-nums;background:var(--bg);color:var(--text);min-height:100vh;transition:background .2s,color .2s}
 .page{display:none}.page.active{display:block}
 
 /* ============================================================ SIDEBAR ============================================================ */
@@ -82,8 +90,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .sb-item.active{background:var(--sb-hover)!important}
 
 /* ============================================================ TIPOGRAFIA ============================================================ */
-h1,h2,.page-heading{font-family:'Outfit',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--text)}
-.page-subheading{font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:500;color:var(--text4);text-transform:uppercase;letter-spacing:.08em}
+h1,h2,.page-heading{font-family:'Figtree',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.page-subheading{font-family:'Figtree',sans-serif;font-size:.68rem;font-weight:500;color:var(--text4);text-transform:uppercase;letter-spacing:.08em}
 
 /* ============================================================ LAYOUT ============================================================ */
 .main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
@@ -94,7 +102,7 @@ h1,h2,.page-heading{font-family:'Outfit',sans-serif;font-weight:800;letter-spaci
 
 /* ============================================================ CARDS ============================================================ */
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:7px}
-.card-title{font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:8px}
+.card-title{font-family:'Figtree',sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:8px}
 body.light .card-title{color:#333}
 body.light .card-title span[style*="color:#a78bfa"]{display:none}
 body.light .card-title span[style*="color:#60a5fa"]{display:none}
@@ -114,7 +122,7 @@ body.light .margem-hint{color:#6B21A8}
 /* ============================================================ FORMULÁRIOS ============================================================ */
 .field{margin-bottom:8px}
 .field label{display:block;font-size:.72rem;color:var(--text3);margin-bottom:3px;font-weight:500}
-.field input,.field textarea,.item-input,.gest-input,.meta-input{width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);transition:border .15s,background .15s;font-family:'DM Sans',sans-serif;outline:none;font-weight:500}
+.field input,.field textarea,.item-input,.gest-input,.meta-input{width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);transition:border .15s,background .15s;font-family:'Figtree',sans-serif;outline:none;font-weight:500}
 .field input:focus,.field textarea:focus,.item-input:focus,.gest-input:focus,.meta-input:focus{border-color:var(--p);background:var(--card);color:var(--text)}
 body.light .field input,body.light .field textarea,body.light .item-input{background:#fff;border-color:#d0d0cc;color:#111}
 body.light .field input:focus,body.light .field textarea:focus,body.light .item-input:focus{border-color:#6B21A8;background:#fff}
@@ -123,24 +131,24 @@ input[type=number]{-moz-appearance:textfield}
 .note{font-size:.67rem;color:var(--text4);margin-top:3px}
 
 /* Selects */
-.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;border:1px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);outline:none;font-family:'DM Sans',sans-serif}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;border:1px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);outline:none;font-family:'Figtree',sans-serif}
 .modal-field select option{background:var(--card)}
 .modal-field label{display:block;font-size:.74rem;color:var(--text3);margin-bottom:4px;font-weight:500}
 
 /* ============================================================ BOTÕES ============================================================ */
-.btn-calc{width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:4px;font-family:'Outfit',sans-serif;transition:opacity .15s}
+.btn-calc{width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:4px;font-family:'Figtree',sans-serif;transition:opacity .15s}
 .btn-calc:hover{opacity:.85}
-.btn-reset{width:100%;padding:9px;background:transparent;color:var(--text3);border:1px solid var(--border);border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-reset{width:100%;padding:9px;background:transparent;color:var(--text3);border:1px solid var(--border);border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:6px;font-family:'Figtree',sans-serif;transition:all .15s}
 .btn-reset:hover{border-color:var(--text3);color:var(--text)}
-.btn-back{background:var(--card);color:var(--text3);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-size:.76rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-back{background:var(--card);color:var(--text3);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-size:.76rem;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif}
 .btn-back:hover{color:var(--text);border-color:var(--border2)}
-.btn-save{width:100%;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:5px;font-family:'DM Sans',sans-serif}
+.btn-save{width:100%;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:5px;font-family:'Figtree',sans-serif}
 .btn-confirm{flex:1;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer}
 .btn-cancel{flex:1;padding:10px;background:var(--card);color:var(--text3);border:1px solid var(--border);border-radius:9px;font-size:.88rem;font-weight:600;cursor:pointer}
 
 /* ============================================================ TOGGLE ============================================================ */
 .toggle-row{display:flex;gap:6px;margin-bottom:9px}
-.toggle-btn{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text4);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.toggle-btn{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text4);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Figtree',sans-serif}
 .toggle-btn.active{border-color:var(--text);background:var(--text);color:var(--bg)}
 body.light .toggle-btn.active{background:#111;color:#fff;border-color:#111}
 
@@ -150,7 +158,7 @@ body.light .toggle-btn.active{background:#111;color:#fff;border-color:#111}
 @media(max-width:480px){.row4{grid-template-columns:1fr 1fr}}
 .item-list{display:flex;flex-direction:column;gap:5px}
 .item-row{display:grid;grid-template-columns:1fr 32px;gap:5px;align-items:center}
-.add-item{background:none;border:1px dashed var(--border);color:var(--text4);border-radius:8px;padding:6px;font-size:.74rem;cursor:pointer;width:100%;margin-top:5px;transition:all .15s;font-family:'DM Sans',sans-serif}
+.add-item{background:none;border:1px dashed var(--border);color:var(--text4);border-radius:8px;padding:6px;font-size:.74rem;cursor:pointer;width:100%;margin-top:5px;transition:all .15s;font-family:'Figtree',sans-serif}
 .add-item:hover{border-color:var(--text3);color:var(--text3)}
 .remove-btn{background:none;border:none;color:#f87171;width:32px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
 
@@ -178,7 +186,7 @@ body.light .toggle-btn.active{background:#111;color:#fff;border-color:#111}
 .price-card.ml-equal{background:linear-gradient(145deg,#1e3a1e,#2d5a2d);border:1px solid #16a34a44}
 .price-card.ml-none{background:linear-gradient(145deg,#1e1a2e,#2a2040);border:1px solid #333}
 .pc-tag{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:4px}
-.pc-price{font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:5px}
+.pc-price{font-family:'Figtree',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:5px}
 .pc-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.18);font-size:.65rem;font-weight:700;margin-bottom:9px}
 .pc-kpis{display:flex;justify-content:space-around;border-top:1px solid rgba(255,255,255,.1);padding-top:8px}
 .pc-kpi .pkl{font-size:.56rem;opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
@@ -208,11 +216,11 @@ body.light .save-title{color:#333}
 
 /* ============================================================ DASHBOARD ============================================================ */
 .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.dash-header h2{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.dash-header h2{font-family:'Figtree',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
 .pd-item{background:var(--bg2);border-radius:8px;padding:8px 10px}
 .pd-item .pdl{font-size:.6rem;color:var(--text4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
 .pd-item .pdv{font-size:.84rem;font-weight:700;color:var(--text2)}
-.prod-obs{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:7px 10px;font-size:.74rem;color:var(--text2);resize:none;height:48px;outline:none;font-family:'DM Sans',sans-serif;margin-top:3px;display:block}
+.prod-obs{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:7px 10px;font-size:.74rem;color:var(--text2);resize:none;height:48px;outline:none;font-family:'Figtree',sans-serif;margin-top:3px;display:block}
 .btn-del{background:none;border:1px solid var(--border);border-radius:7px;padding:4px 6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
 .btn-del:hover{background:#f8717118;border-color:#f87171}
 .btn-del svg{width:14px;height:14px;stroke:var(--text4);transition:stroke .15s}
@@ -221,8 +229,8 @@ body.light .save-title{color:#333}
 /* ============================================================ CALENDÁRIO ============================================================ */
 .cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .cal-nav{display:flex;align-items:center;gap:12px}
-.cal-nav button{background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.84rem;font-family:'DM Sans',sans-serif}
-.cal-nav h3{font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:700;color:var(--text);min-width:160px;text-align:center}
+.cal-nav button{background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.84rem;font-family:'Figtree',sans-serif}
+.cal-nav h3{font-family:'Figtree',sans-serif;font-size:.98rem;font-weight:700;color:var(--text);min-width:160px;text-align:center}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px}
 .cal-day-header{text-align:center;font-size:.65rem;font-weight:700;color:var(--text4);padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
 .cal-day{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 5px;min-height:68px;cursor:pointer;transition:border .15s;position:relative}
@@ -253,7 +261,7 @@ body.light .cal-event.sazonal{background:#fef3c7;color:#b45309}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;width:100%;max-width:400px;margin:20px}
-.modal h3{font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:800;color:var(--text);margin-bottom:14px}
+.modal h3{font-family:'Figtree',sans-serif;font-size:.98rem;font-weight:800;color:var(--text);margin-bottom:14px}
 .modal-field{margin-bottom:10px}
 .modal-btns{display:flex;gap:8px;margin-top:14px}
 
@@ -285,14 +293,14 @@ body.light
 .login-logo{text-align:center;margin-bottom:28px}
 .login-logo img{height:64px;object-fit:contain;filter:none}
 body.light .login-logo img{filter:none}
-.login-title{font-family:'Outfit',sans-serif;text-align:center;font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:5px}
+.login-title{font-family:'Figtree',sans-serif;text-align:center;font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:5px}
 .login-sub{text-align:center;font-size:.76rem;color:var(--text3);margin-bottom:28px;line-height:1.6}
 .login-field{margin-bottom:12px}
 .login-field label{display:block;font-size:.72rem;color:var(--text3);font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
-.login-input{width:100%;padding:12px 14px;border:1px solid var(--input-border);border-radius:10px;font-size:.95rem;font-weight:600;color:var(--text);background:var(--input-bg);outline:none;transition:border .15s;font-family:'DM Sans',sans-serif}
+.login-input{width:100%;padding:12px 14px;border:1px solid var(--input-border);border-radius:10px;font-size:.95rem;font-weight:600;color:var(--text);background:var(--input-bg);outline:none;transition:border .15s;font-family:'Figtree',sans-serif}
 .login-input:focus{border-color:var(--p)}
 .login-input::placeholder{font-weight:400;color:var(--text4)}
-.btn-login{width:100%;padding:13px;background:var(--text);color:var(--bg);border:none;border-radius:10px;font-size:.92rem;font-weight:800;cursor:pointer;margin-top:5px;font-family:'Outfit',sans-serif;transition:opacity .15s}
+.btn-login{width:100%;padding:13px;background:var(--text);color:var(--bg);border:none;border-radius:10px;font-size:.92rem;font-weight:800;cursor:pointer;margin-top:5px;font-family:'Figtree',sans-serif;transition:opacity .15s}
 .btn-login:hover{opacity:.85}.btn-login:disabled{opacity:.4;cursor:not-allowed}
 .login-erro{background:#f8717110;border:1px solid #f8717130;border-radius:8px;padding:9px 12px;font-size:.76rem;color:#f87171;margin-top:10px;text-align:center;display:none;line-height:1.5}
 .login-loading{display:none;text-align:center;margin-top:10px;font-size:.76rem;color:var(--text3)}
@@ -307,18 +315,18 @@ body.light .login-logo img{filter:none}
 
 /* ============================================================ METAS ============================================================ */
 .meta-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
-.meta-card-title{font-family:'DM Sans',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:10px}
+.meta-card-title{font-family:'Figtree',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:10px}
 .meta-progress-bar{height:8px;background:var(--bg2);border-radius:20px;overflow:hidden;margin:7px 0}
 .meta-progress-fill{height:100%;border-radius:20px;transition:width .5s ease;background:linear-gradient(90deg,#6B21A8,#9333ea)}
 .meta-stat{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;margin-top:5px}
 .meta-stat .ms-label{color:var(--text3)}.meta-stat .ms-value{font-weight:700;color:var(--text)}
 .nota-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
-.nota-display{font-family:'Outfit',sans-serif;font-size:3rem;font-weight:800;text-align:center;color:var(--text);line-height:1}
+.nota-display{font-family:'Figtree',sans-serif;font-size:3rem;font-weight:800;text-align:center;color:var(--text);line-height:1}
 .nota-label{text-align:center;font-size:.68rem;color:var(--text4);margin-top:4px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
 .nota-slider{width:100%;accent-color:var(--p);margin:7px 0}
-.btn-salvar-meta{width:100%;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:7px;font-family:'DM Sans',sans-serif}
-.tempo-display{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:var(--text);text-align:center;margin:7px 0}
-.btn-timer{padding:9px 18px;border:none;border-radius:9px;font-size:.83rem;font-weight:700;cursor:pointer;margin:3px;font-family:'DM Sans',sans-serif}
+.btn-salvar-meta{width:100%;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:7px;font-family:'Figtree',sans-serif}
+.tempo-display{font-family:'Figtree',sans-serif;font-size:2rem;font-weight:800;color:var(--text);text-align:center;margin:7px 0}
+.btn-timer{padding:9px 18px;border:none;border-radius:9px;font-size:.83rem;font-weight:700;cursor:pointer;margin:3px;font-family:'Figtree',sans-serif}
 .btn-timer.start{background:#16a34a;color:#fff}
 .btn-timer.stop{background:#dc2626;color:#fff}
 .btn-timer.reset{background:var(--card);color:var(--text3);border:1px solid var(--border)}
@@ -328,7 +336,7 @@ body.light .login-logo img{filter:none}
 @media(max-width:600px){.gest-summary{grid-template-columns:1fr 1fr}}
 .gest-kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
 .gest-kpi .gk-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:5px}
-.gest-kpi .gk-val{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text)}
+.gest-kpi .gk-val{font-family:'Figtree',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text)}
 .gest-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 @media(max-width:640px){.gest-cols{grid-template-columns:1fr}}
 .gest-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px}
@@ -340,7 +348,37 @@ body.light .login-logo img{filter:none}
 .theme-toggle{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.76rem;color:var(--text3);font-weight:600;transition:all .15s;white-space:nowrap}
 .theme-toggle:hover{border-color:var(--border2);color:var(--text)}
 .btn-home{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.76rem;color:var(--text3);font-weight:600;transition:all .15s;white-space:nowrap}
-.btn-dash{background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.btn-dash{background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Figtree',sans-serif}
+
+/* ===== RESULTADO — sistema de destaque ===== */
+.mk{background:var(--mark);color:var(--mark-fg);padding:3px 10px;border-radius:6px;display:inline-block;font-weight:700}
+.mk2{box-shadow:inset 0 -10px 0 var(--mark-soft);padding:0 4px}
+.r-eb{font-size:.68rem;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase}
+.r-hero{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;margin-bottom:14px}
+.r-hero .v{font-size:2rem;font-weight:700;letter-spacing:-.025em;line-height:1.15;margin-top:7px}
+.r-second{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end;padding-top:15px;border-top:1px solid var(--border);margin-bottom:26px}
+.r-second .v{font-size:1.25rem;font-weight:700;line-height:1.15;margin-top:6px}
+.r-second .quiet{font-size:1.25rem;font-weight:600;color:var(--text2);line-height:1.15;margin-top:6px}
+.r-bar{display:flex;height:36px;border-radius:7px;overflow:hidden;margin:9px 0 12px;background:var(--bg2)}
+.r-bar div{flex-grow:0;flex-basis:0;transition:flex-grow .55s cubic-bezier(.22,.9,.3,1),opacity .18s,filter .18s}
+.r-go .r-bar div{flex-grow:var(--g)}
+.r-go .r-bar div:nth-child(2){transition-delay:55ms}
+.r-go .r-bar div:nth-child(3){transition-delay:110ms}
+.r-go .r-bar div:nth-child(4){transition-delay:165ms}
+.r-go .r-bar div:nth-child(5){transition-delay:220ms}
+.r-bar:hover div{opacity:.32}
+.r-bar div:hover{opacity:1;filter:brightness(1.12)}
+.r-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:28px}
+.r-lg{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--text2)}
+.r-lg i{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.r-lg b{color:var(--text);font-weight:600}
+.brow .br.out{color:var(--out)}
+.r-rv{opacity:0;transform:translateY(8px)}
+.r-go .r-rv{opacity:1;transform:none;transition:opacity .4s cubic-bezier(.22,.9,.3,1),transform .4s cubic-bezier(.22,.9,.3,1)}
+.r-go .r-rv:nth-child(2){transition-delay:50ms}
+.r-go .r-rv:nth-child(3){transition-delay:100ms}
+.r-go .r-rv:nth-child(4){transition-delay:150ms}
+@media(prefers-reduced-motion:reduce){.r-rv{opacity:1;transform:none}.r-bar div{flex-grow:var(--g)}}
 </style>
 </head>
 <body>
@@ -663,10 +701,10 @@ body.light .login-logo img{filter:none}
 
       <!-- BLOCO 1: Custo + Insumos + Frete Full -->
       <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#6B21A844">
-        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
           <span style="width:22px;height:22px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>
           CUSTO DOS PRODUTOS
-          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'DM Sans',sans-serif">obrigatório</span>
+          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'Figtree',sans-serif">obrigatório</span>
         </div>
         <div class="item-list" id="items-list">
           <div class="item-row">
@@ -678,7 +716,7 @@ body.light .login-logo img{filter:none}
 
         <div style="height:1px;background:var(--border);margin:12px 0"></div>
 
-        <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:10px;display:flex;align-items:center;gap:6px">
           <span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>
           INSUMOS / EMBALAGEM
         </div>
@@ -703,10 +741,10 @@ body.light .login-logo img{filter:none}
 
       <!-- BLOCO 2: Frete Entrega -->
       <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#7c3aed44">
-        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
           <span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
           FRETE ENTREGA
-          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'DM Sans',sans-serif">obrigatório</span>
+          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'Figtree',sans-serif">obrigatório</span>
         </div>
         <div class="toggle-row" style="margin-bottom:10px">
           <button class="toggle-btn active" id="btn-manual" onclick="switchFrete('manual')" style="font-size:.74rem;padding:7px">Manual</button>
@@ -745,7 +783,7 @@ body.light .login-logo img{filter:none}
 
       <!-- BLOCO 3: Custos Percentuais -->
       <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#d9770644">
-        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
           <span style="width:22px;height:22px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
           CUSTOS PERCENTUAIS
         </div>
@@ -764,10 +802,10 @@ body.light .login-logo img{filter:none}
 
       <!-- BLOCO 4: Margem Desejada -->
       <div class="margem-card" id="margem-block" style="margin-bottom:0;padding:14px 16px">
-        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:#e9d5ff;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:#e9d5ff;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
           <span style="width:22px;height:22px;background:rgba(255,255,255,.15);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
           MARGEM DESEJADA
-          <span style="font-size:.6rem;font-weight:700;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(220,38,38,.4);border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'DM Sans',sans-serif">obrigatório</span>
+          <span style="font-size:.6rem;font-weight:700;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(220,38,38,.4);border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'Figtree',sans-serif">obrigatório</span>
         </div>
         <div class="field" style="margin-bottom:6px"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" style="font-size:1.4rem;font-weight:800;text-align:center;letter-spacing:-.02em"></div>
         <div class="margem-hint" style="font-size:.72rem">↑ Meta de lucro em % sobre o preço de venda</div>
@@ -775,7 +813,7 @@ body.light .login-logo img{filter:none}
 
       <!-- BLOCO 5: Preço Concorrência / Projeção -->
       <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#16a34a44">
-        <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
           <span style="width:22px;height:22px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
           PREÇO CONCORRÊNCIA / PROJEÇÃO
         </div>
@@ -802,28 +840,70 @@ body.light .login-logo img{filter:none}
       <p style="font-size:.82rem;color:#888;line-height:1.6">Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong></p>
     </div>
     <div id="right-result" style="display:none">
-      <div class="price-grid" id="price-grid">
-        <div class="price-card calc">
-          <div class="pc-tag">Preço Ideal Calculado</div>
-          <div class="pc-price" id="pc-preco">R$ —</div>
-          <div class="pc-badge" style="background:rgba(74,222,128,.2);color:#4ade80">✅ Preço mínimo seguro</div>
-          <div class="pc-kpis">
-            <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="pc-mk">—</div><div class="pks">&gt;1,50</div></div>
-            <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="pc-roi">—</div><div class="pks">&gt;10%</div></div>
-            <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="pc-mg">—</div><div class="pks">&gt;10%</div></div>
+      <!-- Cabeçalho do resultado -->
+      <div class="r-rv">
+        <div class="r-hero">
+          <div>
+            <div class="r-eb">Lucro por unidade</div>
+            <div class="v"><span class="mk" id="hero-lucro-un">R$ —</span></div>
+          </div>
+          <div>
+            <div class="r-eb">Lucro do lote</div>
+            <div class="v"><span class="mk" id="hero-lucro-lote">R$ —</span></div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div class="r-eb">Situação</div>
+            <div style="margin-top:8px"><span class="pc-badge" id="hero-badge" style="margin:0">—</span></div>
           </div>
         </div>
-        <div class="price-card ml-none" id="pc-ml-card">
-          <div class="pc-tag" id="pc-ml-tag">Preço Médio ML</div>
-          <div class="pc-price" id="pc-ml-preco">—</div>
-          <div class="pc-badge" id="pc-ml-badge" style="background:rgba(255,255,255,.1);color:var(--text2)">Informe o preço médio</div>
-          <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
-            <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div><div class="pks">&gt;1,50</div></div>
-            <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div><div class="pks">&gt;10%</div></div>
-            <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="ml-mg">—</div><div class="pks">&gt;10%</div></div>
+        <div class="r-second">
+          <div>
+            <div class="r-eb">ROI</div>
+            <div class="v"><span class="mk2" id="hero-roi">—</span></div>
+          </div>
+          <div>
+            <div class="r-eb">Payout do ML</div>
+            <div class="v"><span class="mk2" id="hero-payout">R$ —</span></div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div class="r-eb" id="hero-preco-lbl">Preço calculado</div>
+            <div class="quiet" id="hero-preco">R$ —</div>
+          </div>
+          <div style="text-align:right">
+            <div class="r-eb">Margem</div>
+            <div class="quiet" id="hero-margem">—</div>
           </div>
         </div>
       </div>
+
+      <!-- Barra de decomposição -->
+      <div class="r-rv" id="hero-bar-wrap">
+        <div class="r-eb">Para onde vai cada real</div>
+        <div class="r-bar">
+          <div id="seg-custo" style="--g:0;background:var(--seg-a)"></div>
+          <div id="seg-frete" style="--g:0;background:var(--seg-b)"></div>
+          <div id="seg-com"   style="--g:0;background:var(--seg-c)"></div>
+          <div id="seg-imp"   style="--g:0;background:var(--seg-d)"></div>
+          <div id="seg-voce"  style="--g:0;background:var(--mark)"></div>
+        </div>
+        <div class="r-legend">
+          <div class="r-lg"><i style="background:var(--seg-a)"></i>Custo <b id="lg-custo">—</b></div>
+          <div class="r-lg"><i style="background:var(--seg-b)"></i>Frete <b id="lg-frete">—</b></div>
+          <div class="r-lg"><i style="background:var(--seg-c)"></i>Comissão <b id="lg-com">—</b></div>
+          <div class="r-lg"><i style="background:var(--seg-d)"></i>Imposto <b id="lg-imp">—</b></div>
+          <div class="r-lg"><i style="background:var(--mark)"></i>Você <b id="lg-voce">—</b></div>
+        </div>
+      </div>
+
+      <!-- IDs preservados para o app.js — ocultos, alimentam a lógica existente -->
+      <div style="display:none">
+        <span id="pc-preco"></span><span id="pc-mk"></span><span id="pc-roi"></span><span id="pc-mg"></span>
+        <div id="price-grid"></div>
+        <div class="price-card" id="pc-ml-card"><span id="pc-ml-tag"></span><span id="pc-ml-preco"></span>
+        <span id="pc-ml-badge"></span><div id="pc-ml-kpis"></div>
+        <span id="ml-mk"></span><span id="ml-roi"></span><span id="ml-mg"></span></div>
+      </div>
+
       <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
       <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
 
@@ -831,14 +911,14 @@ body.light .login-logo img{filter:none}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div class="breakdown" style="margin-bottom:0">
           <div class="bd-title">Detalhamento do Preço</div>
-          <div class="brow"><span class="bl">Custo dos produtos</span><span class="br" id="bd-custo">—</span></div>
-          <div class="brow"><span class="bl">Frete entrega</span><span class="br" id="bd-frete">—</span></div>
-          <div class="brow"><span class="bl">Insumos / Outros</span><span class="br" id="bd-outros">—</span></div>
+          <div class="brow"><span class="bl">Custo dos produtos</span><span class="br out" id="bd-custo">—</span></div>
+          <div class="brow"><span class="bl">Frete entrega</span><span class="br out" id="bd-frete">—</span></div>
+          <div class="brow"><span class="bl">Insumos / Outros</span><span class="br out" id="bd-outros">—</span></div>
           <div class="brow" id="bd-frete-full-row" style="display:none"><span class="bl" style="color:#a78bfa">Frete Full/unidade</span><span class="br" id="bd-frete-full">—</span></div>
           <div class="brow"><span class="bl">Base de cálculo</span><span class="br" id="bd-base">—</span></div>
-          <div class="brow"><span class="bl">Impostos</span><span class="br" id="bd-imp">—</span></div>
-          <div class="brow"><span class="bl">Comissão marketplace</span><span class="br" id="bd-com">—</span></div>
-          <div class="brow"><span class="bl">Comissão afiliados</span><span class="br" id="bd-afi">—</span></div>
+          <div class="brow"><span class="bl">Impostos</span><span class="br out" id="bd-imp">—</span></div>
+          <div class="brow"><span class="bl">Comissão marketplace</span><span class="br out" id="bd-com">—</span></div>
+          <div class="brow"><span class="bl">Comissão afiliados</span><span class="br out" id="bd-afi">—</span></div>
           <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
           <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
         </div>
@@ -864,7 +944,7 @@ body.light .login-logo img{filter:none}
             <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
             <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
             <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
-            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">Lucro bruto</span><span class="br" id="proj-lb" style="color:#4ade80;font-size:1rem">—</span></div>
+            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">Lucro bruto</span><span class="br"><span class="mk" id="proj-lb">—</span></span></div>
             <div class="brow"><span class="bl">Caixa c/ imposto</span><span class="br" id="proj-cx-bruto">—</span></div>
             <div class="brow total"><span class="bl">Caixa líquido</span><span class="br" id="proj-cx">—</span></div>
           </div>
@@ -879,8 +959,8 @@ body.light .login-logo img{filter:none}
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa líquido</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-b">—</span></div>
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:8px 0 2px;border-top:1.5px solid var(--border);margin-top:2px;font-size:.82rem">
               <span style="color:#4ade80;font-weight:700">Lucro bruto</span>
-              <span style="text-align:right;color:#c4b5fd;font-weight:800;font-size:.95rem" id="pd-lb-a">—</span>
-              <span style="text-align:right;font-weight:800;font-size:.95rem" id="pd-lb-b">—</span>
+              <span style="text-align:right"><span class="mk" id="pd-lb-a">—</span></span>
+              <span style="text-align:right"><span class="mk" id="pd-lb-b">—</span></span>
             </div>
             <!-- Payout destacado por cenário -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
@@ -982,7 +1062,7 @@ body.light .login-logo img{filter:none}
   <div class="dash-page">
     <div class="dash-header">
       <button class="btn-back" onclick="showPage('home')">← Voltar</button>
-      <h2 style="font-family:'Outfit',sans-serif"><span style="width:22px;height:22px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;margin-right:7px;vertical-align:middle;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Dashboard de <span>Produtos</span></h2>
+      <h2 style="font-family:'Figtree',sans-serif"><span style="width:22px;height:22px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;margin-right:7px;vertical-align:middle;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Dashboard de <span>Produtos</span></h2>
       <button onclick="exportarExcel()" style="background:linear-gradient(135deg,#166534,#16a34a);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.76rem;font-weight:700;cursor:pointer;white-space:nowrap">📥 Exportar Excel</button>
     </div>
     <div id="dash-content"></div>
@@ -1068,7 +1148,7 @@ body.light .login-logo img{filter:none}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1787975947"></script>
+<script src="app.js?v=1787978439"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
@@ -1781,7 +1861,7 @@ function exportarExcel(){
     <!-- Header + navegação de mês -->
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
       <div>
-        <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
+        <div style="font-family:'Figtree',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
           <span style="width:28px;height:28px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
           Financeiro
         </div>
@@ -1789,7 +1869,7 @@ function exportarExcel(){
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <button onclick="finMudarMes(-1)" style="background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">‹</button>
-        <span id="fin-mes-label" style="font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);min-width:120px;text-align:center">—</span>
+        <span id="fin-mes-label" style="font-family:'Figtree',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);min-width:120px;text-align:center">—</span>
         <button onclick="finMudarMes(1)" style="background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">›</button>
       </div>
     </div>
@@ -1797,19 +1877,19 @@ function exportarExcel(){
     <!-- Resultado do mês -->
     <div class="card" style="padding:18px;margin-bottom:12px;border-color:#16a34a44">
       <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:5px">Resultado do mês</div>
-      <div id="fin-res-valor" style="font-family:'Outfit',sans-serif;font-size:2.1rem;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:14px">R$ 0,00</div>
+      <div id="fin-res-valor" style="font-family:'Figtree',sans-serif;font-size:2.1rem;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:14px">R$ 0,00</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
         <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
           <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Entradas</div>
-          <div id="fin-res-ent" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#4ade80">R$ 0,00</div>
+          <div id="fin-res-ent" style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:#4ade80">R$ 0,00</div>
         </div>
         <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
           <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Saídas</div>
-          <div id="fin-res-sai" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#f87171">R$ 0,00</div>
+          <div id="fin-res-sai" style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:#f87171">R$ 0,00</div>
         </div>
         <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
           <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Fixas</div>
-          <div id="fin-res-fix" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#fbbf24">R$ 0,00</div>
+          <div id="fin-res-fix" style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:#fbbf24">R$ 0,00</div>
         </div>
       </div>
     </div>
@@ -1822,7 +1902,7 @@ function exportarExcel(){
 
     <!-- Lançamentos -->
     <div id="fin-sec-lanc">
-      <button onclick="finAbrirModal()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:12px">+ Novo lançamento</button>
+      <button onclick="finAbrirModal()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;margin-bottom:12px">+ Novo lançamento</button>
       <div id="fin-lista"></div>
     </div>
 
@@ -1830,10 +1910,10 @@ function exportarExcel(){
     <div id="fin-sec-fix" style="display:none">
       <div class="card" style="padding:14px 16px;margin-bottom:12px">
         <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:4px">Total fixas ativas neste mês</div>
-        <div id="fin-total-fixas" style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#f87171;letter-spacing:-.02em">R$ 0,00</div>
+        <div id="fin-total-fixas" style="font-family:'Figtree',sans-serif;font-size:1.5rem;font-weight:800;color:#f87171;letter-spacing:-.02em">R$ 0,00</div>
         <div style="font-size:.68rem;color:var(--text4);margin-top:3px">Descontado do resultado automaticamente todo mês</div>
       </div>
-      <button onclick="finAbrirModalFixa()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:12px">+ Nova conta fixa</button>
+      <button onclick="finAbrirModalFixa()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;margin-bottom:12px">+ Nova conta fixa</button>
       <div id="fin-lista-fixas"></div>
     </div>
 
@@ -1844,7 +1924,7 @@ function exportarExcel(){
 <div id="fin-ov-lanc" onclick="finFecharSeFora(event,'fin-ov-lanc')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:center;justify-content:center;padding:16px">
   <div class="card" style="width:100%;max-width:420px;padding:20px;max-height:88vh;overflow-y:auto;margin:0">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Novo lançamento</div>
+      <div style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Novo lançamento</div>
       <button onclick="finFechar('fin-ov-lanc')" style="background:none;border:none;color:var(--text4);font-size:1.2rem;cursor:pointer;line-height:1">×</button>
     </div>
 
@@ -1874,7 +1954,7 @@ function exportarExcel(){
         <input type="date" id="fin-inp-data">
       </div>
     </div>
-    <button onclick="finSalvarLancamento()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Salvar lançamento</button>
+    <button onclick="finSalvarLancamento()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Salvar lançamento</button>
   </div>
 </div>
 
@@ -1882,7 +1962,7 @@ function exportarExcel(){
 <div id="fin-ov-fixa" onclick="finFecharSeFora(event,'fin-ov-fixa')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:center;justify-content:center;padding:16px">
   <div class="card" style="width:100%;max-width:420px;padding:20px;max-height:88vh;overflow-y:auto;margin:0">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Nova conta fixa</div>
+      <div style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Nova conta fixa</div>
       <button onclick="finFechar('fin-ov-fixa')" style="background:none;border:none;color:var(--text4);font-size:1.2rem;cursor:pointer;line-height:1">×</button>
     </div>
 
@@ -1915,7 +1995,7 @@ function exportarExcel(){
         <select id="fin-fix-conta" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit"></select>
       </div>
     </div>
-    <button onclick="finSalvarNovaFixa()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Salvar conta fixa</button>
+    <button onclick="finSalvarNovaFixa()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Salvar conta fixa</button>
   </div>
 </div>
 
@@ -1929,7 +2009,7 @@ function exportarExcel(){
     <!-- Header -->
     <div style="margin-bottom:18px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div>
-        <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
+        <div style="font-family:'Figtree',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
           <span style="width:28px;height:28px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
           Conciliação ML + Mercado Pago
         </div>
@@ -1939,7 +2019,7 @@ function exportarExcel(){
 
     <!-- UPLOAD -->
     <div class="card" style="padding:16px;margin-bottom:14px;border-color:#0891b244">
-      <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:4px">CARREGAR RELATÓRIOS</div>
+      <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:4px">CARREGAR RELATÓRIOS</div>
       <div style="font-size:.72rem;color:var(--text4);margin-bottom:12px;line-height:1.6">
         <strong style="color:var(--text3)">Mercado Livre:</strong> Menu → Faturamento → Tarifas e Pagamentos → Conciliação (obrigatório, baixar Vendas e Liberações)<br>
         <strong style="color:var(--text3)">Mercado Pago:</strong> Site (PC) → Relatórios → Extrair relatórios de venda e recebimento → baixar em XLS (opcional)
@@ -1959,7 +2039,7 @@ function exportarExcel(){
       <div id="conc-files-lista" style="margin-bottom:12px"></div>
 
       <button id="conc-btn" onclick="conciliarAgora()" disabled
-        style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;opacity:.5;transition:opacity .2s"
+        style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;opacity:.5;transition:opacity .2s"
         onfocus="this.style.opacity='1'" onblur="this.style.opacity=this.disabled?'.5':'1'">
         Conciliar agora
       </button>
@@ -1978,7 +2058,7 @@ function exportarExcel(){
       <!-- Tarifas + MP -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
         <div class="card" style="padding:14px">
-          <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Para onde foi o dinheiro — tarifas cobradas</div>
+          <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Para onde foi o dinheiro — tarifas cobradas</div>
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
               <th style="text-align:left;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Tarifa</th>
@@ -1989,7 +2069,7 @@ function exportarExcel(){
           </table>
         </div>
         <div class="card" style="padding:14px">
-          <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Camada Mercado Pago</div>
+          <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Camada Mercado Pago</div>
           <div id="conc-mp-box"></div>
         </div>
       </div>
@@ -2051,7 +2131,7 @@ function exportarExcel(){
 
     <!-- Explicação das camadas -->
     <div class="card" style="padding:16px;margin-top:14px">
-      <div style="font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Como a conciliação funciona</div>
+      <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Como a conciliação funciona</div>
       <div style="font-size:.74rem;color:var(--text3);line-height:1.75">
         <strong style="color:var(--text2)">Camada 1 — Venda → Liberação:</strong> o ML liberou o que prometeu? Agrupa por Número da operação (cada venda ocupa 2 linhas: item e frete). A "Liberação de envio" vem sem número de operação — liga só pelo Número do envio.<br>
         <strong style="color:var(--text2)">Camada 2 — Tarifas pelo nome:</strong> compara a lista de tarifas da venda com a da liberação. Tarifa que só apareceu na liberação → "Tarifa não prevista" (custo real, não erro de pagamento).<br>
@@ -2068,7 +2148,7 @@ function exportarExcel(){
 
     <!-- Header -->
     <div style="margin-bottom:20px">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
+      <div style="font-family:'Figtree',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
         <span style="width:28px;height:28px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
         Prompt Fotos ML
       </div>
@@ -2077,7 +2157,7 @@ function exportarExcel(){
 
     <!-- Inputs do produto -->
     <div class="card" style="padding:16px;margin-bottom:14px;border-color:#7c3aed44">
-      <div style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+      <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
         <span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></span>
         DADOS DO PRODUTO
       </div>
@@ -2103,7 +2183,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-01')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-01" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-01" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
@@ -2114,7 +2194,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-02')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-02" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-02" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
@@ -2125,7 +2205,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-03')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-03" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-03" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
@@ -2136,7 +2216,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-04')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-04" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-04" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
@@ -2147,7 +2227,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-05')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-05" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-05" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
@@ -2158,7 +2238,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-06')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-06" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-06" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33;margin-bottom:30px">
@@ -2169,7 +2249,7 @@ function exportarExcel(){
           </div>
           <button onclick="copiarPrompt('pf-txt-07')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
         </div>
-        <pre id="pf-txt-07" style="font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+        <pre id="pf-txt-07" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
 
     </div>
