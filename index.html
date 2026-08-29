@@ -896,12 +896,21 @@ body.light .login-logo img{filter:none}
       </div>
 
       <!-- IDs preservados para o app.js — ocultos, alimentam a lógica existente -->
-      <div style="display:none">
-        <span id="pc-preco"></span><span id="pc-mk"></span><span id="pc-roi"></span><span id="pc-mg"></span>
-        <div id="price-grid"></div>
-        <div class="price-card" id="pc-ml-card"><span id="pc-ml-tag"></span><span id="pc-ml-preco"></span>
-        <span id="pc-ml-badge"></span><div id="pc-ml-kpis"></div>
-        <span id="ml-mk"></span><span id="ml-roi"></span><span id="ml-mg"></span></div>
+      <div style="display:none" aria-hidden="true">
+        <div id="price-grid">
+          <div class="price-card calc">
+            <span class="pc-tag"></span>
+            <span class="pc-badge"></span>
+            <span id="pc-preco"></span><span id="pc-mk"></span><span id="pc-roi"></span><span id="pc-mg"></span>
+          </div>
+          <div class="price-card ml-none" id="pc-ml-card">
+            <span class="pc-tag" id="pc-ml-tag"></span>
+            <span class="pc-badge" id="pc-ml-badge"></span>
+            <span id="pc-ml-preco"></span>
+            <div id="pc-ml-kpis"></div>
+            <span id="ml-mk"></span><span id="ml-roi"></span><span id="ml-mg"></span>
+          </div>
+        </div>
       </div>
 
       <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
@@ -1148,7 +1157,7 @@ body.light .login-logo img{filter:none}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1787978439"></script>
+<script src="app.js?v=1787978646"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
