@@ -1494,21 +1494,8 @@ async function inicializarPush(){
   }catch(e){ console.warn('SW registro falhou:', e); }
 }
 
-function atualizarBtnPush(){
-  const btn = document.getElementById('btn-push-cal');
-  const lbl = document.getElementById('btn-push-label');
-  if(!btn||!lbl) return;
-  if(Notification.permission === 'granted'){
-    lbl.textContent = '🔔 Notificações ativas';
-    btn.style.borderColor = '#16a34a44';
-    btn.style.color = '#4ade80';
-  } else if(Notification.permission === 'denied'){
-    lbl.textContent = '🔕 Notificações bloqueadas';
-    btn.style.color = '#f87171';
-  } else {
-    lbl.textContent = 'Ativar notificações';
-  }
-}
+function atualizarBtnPush(){ calChips(); }
+
 
 async function solicitarPermissaoNotificacao(){
   if(!('Notification' in window)){alert('Seu navegador não suporta notificações.');return;}
@@ -1660,6 +1647,7 @@ function nomesCurto(titulo){
 function renderCal(){
   document.getElementById('cal-titulo').textContent=`${meses[calMes]} ${calAno}`;
   calStats();
+  calChips();
   const grid=document.getElementById('cal-grid');
   const eventos=getEventos();
   const hoje=new Date();
@@ -2863,6 +2851,7 @@ async function removerTelefone(){
 
 // Atualiza o banner no calendário conforme estado
 function atualizarBannerWhatsApp(tel){
+  calChips();
   const banner = document.getElementById('wpp-banner');
   if(!banner) return;
   if(tel){
@@ -4252,4 +4241,48 @@ function calStats(){
   s('cal-st-mes', noMes);
   s('cal-st-prox', prox);
   s('cal-st-hoje', deHoje ? deHoje : '—');
+}
+
+
+// ============================================================
+// CALENDÁRIO — menu de novo evento e chips de configuração
+// ============================================================
+function toggleMenuEvento(ev){
+  if(ev) ev.stopPropagation();
+  const m = document.getElementById('menu-evento');
+  if(!m) return;
+  m.style.display = m.style.display === 'block' ? 'none' : 'block';
+}
+function fecharMenuEvento(){
+  const m = document.getElementById('menu-evento');
+  if(m) m.style.display = 'none';
+}
+document.addEventListener('click', function(e){
+  const m = document.getElementById('menu-evento');
+  if(m && m.style.display === 'block' && !e.target.closest('#menu-evento,#btn-novo-ev')) fecharMenuEvento();
+});
+
+// O banner do WhatsApp agora abre pelo chip
+function toggleWppBanner(){
+  const b = document.getElementById('wpp-banner');
+  if(!b) return;
+  const abrindo = b.style.display === 'none' || !b.style.display;
+  b.style.display = abrindo ? 'block' : 'none';
+  if(abrindo) carregarTelefoneWhatsApp();
+}
+
+// Estado visual dos chips
+function calChips(){
+  const tel = getCached('realecom_telefone','null');
+  const dw = document.getElementById('chip-wpp-dot');
+  const tw = document.getElementById('chip-wpp-txt');
+  if(dw) dw.style.background = tel ? 'var(--in)' : 'var(--text4)';
+  if(tw) tw.textContent = tel ? 'WhatsApp ativo' : 'WhatsApp';
+
+  const dp = document.getElementById('chip-push-dot');
+  const lp = document.getElementById('btn-push-label');
+  const ok = ('Notification' in window) && Notification.permission === 'granted';
+  const no = ('Notification' in window) && Notification.permission === 'denied';
+  if(dp) dp.style.background = ok ? 'var(--in)' : no ? 'var(--out)' : 'var(--text4)';
+  if(lp) lp.textContent = ok ? 'Notificações ativas' : no ? 'Notificações bloqueadas' : 'Notificações';
 }
