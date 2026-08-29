@@ -72,14 +72,37 @@ body{font-family:'Figtree',sans-serif;font-variant-numeric:tabular-nums;backgrou
 .page{display:none}.page.active{display:block}
 
 /* ============================================================ SIDEBAR ============================================================ */
-.sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--sb-border);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;z-index:500;transition:background .2s}
-.sb-logo{width:42px;height:42px;background:none;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;cursor:pointer;flex-shrink:0}
+.sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--sb-border);display:flex;flex-direction:column;padding:10px 8px;gap:2px;z-index:500;overflow:hidden;transition:width .18s cubic-bezier(.3,.9,.4,1),box-shadow .18s,background .2s}
+.sidebar:hover{width:196px;box-shadow:8px 0 32px rgba(0,0,0,.3)}
+body.light .sidebar:hover{box-shadow:8px 0 32px rgba(0,0,0,.09)}
+
+/* lista rolável — impede que os últimos itens sumam em tela baixa */
+.sb-wrap{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.sb-lista{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:1px;scrollbar-width:none;scroll-behavior:smooth}
+.sb-lista::-webkit-scrollbar{display:none}
+
+/* indicador de que há mais itens abaixo */
+.sb-fade{position:absolute;left:0;right:0;bottom:0;height:42px;pointer-events:none;background:linear-gradient(180deg,transparent,var(--sb-bg) 72%);opacity:0;transition:opacity .2s}
+.sb-fade.on{opacity:1}
+.sb-more{position:absolute;left:50%;transform:translateX(-50%);bottom:3px;width:22px;height:16px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--text3);opacity:0;transition:opacity .2s;pointer-events:none;cursor:pointer;animation:sbBob 1.6s ease-in-out infinite}
+.sb-more.on{opacity:1;pointer-events:auto}
+@keyframes sbBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(2px)}}
+@media(prefers-reduced-motion:reduce){.sb-more{animation:none}}
+
+/* rodapé sempre visível */
+.sb-pe{flex-shrink:0;border-top:1px solid var(--sb-border);padding-top:7px;margin-top:5px;display:flex;flex-direction:column;gap:1px}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:4px 6px;margin-bottom:7px;cursor:pointer;flex-shrink:0;border-radius:9px}
+.sb-logo img{flex-shrink:0}
 .sb-logo img{width:38px;height:38px;object-fit:contain}
-.sb-item{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative;flex-shrink:0;border:none;background:none}
+.sb-item{display:flex;align-items:center;gap:11px;padding:5px 6px;border-radius:9px;cursor:pointer;transition:background .13s,color .13s;position:relative;flex-shrink:0;border:none;background:none;width:100%;text-align:left;white-space:nowrap;color:var(--text2);font-family:inherit;font-size:.79rem;font-weight:500;overflow:hidden}
+.sb-item>svg,.sb-item>div:first-child,.sb-item>span:first-child{flex-shrink:0}
+.sb-item>svg{width:32px;height:32px;padding:6px}
+.sb-rot{opacity:0;transition:opacity .14s}
+.sidebar:hover .sb-rot{opacity:1;transition-delay:.04s}
 .sb-item:hover{background:var(--sb-hover)}
 .sb-item.active{background:var(--sb-hover)}
 .sb-tooltip{position:absolute;left:52px;background:var(--card);color:var(--text);font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:6px;white-space:nowrap;border:1px solid var(--border);pointer-events:none;opacity:0;transition:opacity .15s;z-index:600;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.sb-item:hover .sb-tooltip{opacity:1}
+.sidebar:not(:hover) .sb-item:hover .sb-tooltip{opacity:1}
 .sb-spacer{flex:1}
 .sb-avatar{width:34px;height:34px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;font-weight:800;cursor:pointer;flex-shrink:0;border:none;position:relative}
 .sb-avatar:hover .sb-tooltip{opacity:1}
@@ -417,98 +440,105 @@ span .mk, div .mk{
 <!-- SIDEBAR GLOBAL -->
 <div class="sidebar" id="sidebar" style="display:none">
   <div class="sb-logo" onclick="showPage('home')">
-    <img src="logcon.png" alt="RealEcom" style="width:34px;height:34px;object-fit:contain">
+    <img src="logcon.png" alt="RealEcom" style="width:32px;height:32px;object-fit:contain"><span class="sb-rot" style="font-size:.84rem;font-weight:700;color:var(--text)">RealEcom</span>
   </div>
+  <div class="sb-wrap">
+  <div class="sb-lista" id="sbLista">
   <button class="sb-item" id="sb-home" onclick="showPage('home')" title="Home">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a89ec8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span class="sb-tooltip">Home</span>
+    <span class="sb-tooltip">Home</span><span class="sb-rot">Home</span>
   </button>
   <button class="sb-item" id="sb-calc" onclick="showPage('calc')" title="Calculadora">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
     </div>
-    <span class="sb-tooltip">Calculadora</span>
+    <span class="sb-tooltip">Calculadora</span><span class="sb-rot">Calculadora</span>
   </button>
   <button class="sb-item" id="sb-dash" onclick="showPage('dash')" title="Dashboard">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     </div>
-    <span class="sb-tooltip">Dashboard</span>
+    <span class="sb-tooltip">Dashboard</span><span class="sb-rot">Dashboard</span>
   </button>
   <button class="sb-item" id="sb-metas" onclick="showPage('metas')" title="Metas" style="display:none">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
     </div>
-    <span class="sb-tooltip">Metas</span>
+    <span class="sb-tooltip">Metas</span><span class="sb-rot">Metas</span>
   </button>
   <button class="sb-item" id="sb-cal" onclick="showPage('cal')" title="Calendário">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     </div>
-    <span class="sb-tooltip">Calendário</span>
+    <span class="sb-tooltip">Calendário</span><span class="sb-rot">Calendário</span>
   </button>
   <button class="sb-item" id="sb-gestao" onclick="showPage('gestao')" title="Calculadora de Giro">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
     </div>
-    <span class="sb-tooltip">Calc. de Giro</span>
+    <span class="sb-tooltip">Calc. de Giro</span><span class="sb-rot">Calc. de Giro</span>
   </button>
   <button class="sb-item" id="sb-simples" onclick="showPage('simples')" title="Simples Nacional">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     </div>
-    <span class="sb-tooltip">Simples Nacional</span>
+    <span class="sb-tooltip">Simples Nacional</span><span class="sb-rot">Simples Nacional</span>
   </button>
   <button class="sb-item" id="sb-pub" onclick="showPage('pub')" title="Publicidade ROAS/ACOS">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
     </div>
-    <span class="sb-tooltip">Publicidade ROAS/ACOS</span>
+    <span class="sb-tooltip">Publicidade ROAS/ACOS</span><span class="sb-rot">Publicidade ROAS/ACOS</span>
   </button>
   <button class="sb-item" id="sb-ncm" onclick="showPage('ncm')" title="Buscador de NCM">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#0f766e,#0d9488);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
     </div>
-    <span class="sb-tooltip">Buscador de NCM</span>
+    <span class="sb-tooltip">Buscador de NCM</span><span class="sb-rot">Buscador de NCM</span>
   </button>
   <a class="sb-item" id="sb-inpi" href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" title="INPI">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
-    <span class="sb-tooltip">INPI</span>
+    <span class="sb-tooltip">INPI</span><span class="sb-rot">INPI</span>
   </a>
   <button class="sb-item" id="sb-fin" onclick="showPage('fin')" title="Financeiro">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
     </div>
-    <span class="sb-tooltip">Financeiro</span>
+    <span class="sb-tooltip">Financeiro</span><span class="sb-rot">Financeiro</span>
   </button>
   <button class="sb-item" id="sb-conc" onclick="showPage('conc')" title="Conciliação ML/MP">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="9" x2="12" y2="9"/></svg>
     </div>
-    <span class="sb-tooltip">Conciliação ML/MP</span>
+    <span class="sb-tooltip">Conciliação ML/MP</span><span class="sb-rot">Conciliação ML/MP</span>
   </button>
   <button class="sb-item" id="sb-prompt" onclick="showPage('prompt')" title="Prompt Fotos">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     </div>
-    <span class="sb-tooltip">Prompt Fotos ML</span>
+    <span class="sb-tooltip">Prompt Fotos ML</span><span class="sb-rot">Prompt Fotos ML</span>
   </button>
-  <div class="sb-spacer"></div>
+  </div>
+    <div class="sb-fade" id="sbFade"></div>
+    <div class="sb-more" id="sbMore" title="Mais ferramentas"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="sb-pe">
   <button class="sb-item" onclick="toggleTheme()" title="Tema">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a89ec8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    <span class="sb-tooltip">Alternar tema</span>
+    <span class="sb-tooltip">Alternar tema</span><span class="sb-rot">Alternar tema</span>
   </button>
   <!-- Botão sair explícito -->
   <button class="sb-item" onclick="sair()" title="Sair da conta" style="margin-bottom:4px">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    <span class="sb-tooltip" style="color:#f87171">Sair da conta</span>
+    <span class="sb-tooltip">Sair da conta</span><span class="sb-rot" style="color:#f87171">Sair da conta</span>
   </button>
   <button class="sb-avatar" id="sb-avatar" title="Conta">
     <span id="sb-iniciais">?</span>
-    <span class="sb-tooltip">Minha conta</span>
+    <span class="sb-tooltip">Minha conta</span><span class="sb-rot">Minha conta</span>
   </button>
+  </div>
 </div>
 
 <div class="notif-container" id="notif-container"></div>
@@ -1165,7 +1195,7 @@ span .mk, div .mk{
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1788021529"></script>
+<script src="app.js?v=1788022303"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
@@ -2273,5 +2303,26 @@ function exportarExcel(){
   </div>
 </div>
 
+<script>
+// Sidebar — mostra que há mais itens abaixo enquanto não chegou ao fim
+(function(){
+  function liga(){
+    var l=document.getElementById('sbLista'), f=document.getElementById('sbFade'), m=document.getElementById('sbMore');
+    if(!l||!f||!m) return;
+    function att(){
+      var mais = l.scrollHeight - l.scrollTop - l.clientHeight > 6;
+      f.classList.toggle('on', mais);
+      m.classList.toggle('on', mais);
+    }
+    l.addEventListener('scroll', att, {passive:true});
+    window.addEventListener('resize', att);
+    m.addEventListener('click', function(){ l.scrollBy({top:150, behavior:'smooth'}); });
+    setTimeout(att, 80); setTimeout(att, 400);
+    window._sbAtt = att;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', liga);
+  else liga();
+})();
+</script>
 </body>
 </html>
