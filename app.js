@@ -754,12 +754,12 @@ function calcular(){
     lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
     document.getElementById('price-grid').style.gridTemplateColumns='1fr';
     document.getElementById('pc-ml-card').style.display='none';
-    document.querySelector('.price-card.calc .pc-tag').textContent='🌐 Preço Médio do Mercado';
+    const _tag2=document.querySelector('.price-card.calc .pc-tag'); if(_tag2)_tag2.textContent='Preço Médio do Mercado';
     document.getElementById('pc-preco').textContent=fmt(precoML);
     document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
     document.getElementById('pc-roi').textContent=fmtP(roi);
     document.getElementById('pc-mg').textContent=fmtP(margemReal);
-    const badge=document.querySelector('.price-card.calc .pc-badge');
+    const badge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
     badge.textContent=margemReal>=10?'✅ Margem saudável':margemReal>=0?'⚠️ Margem baixa':'❌ Prejuízo';
     badge.style.cssText=`display:inline-block;padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:700;margin-bottom:9px;background:${margemReal>=10?'rgba(74,222,128,.2)':margemReal>=0?'rgba(240,160,112,.2)':'rgba(239,68,68,.2)'};color:${margemReal>=10?'#4ade80':margemReal>=0?'#F0A070':'#f87171'}`;
     const fator15=1-0.15-pI-pC-pA;
@@ -781,8 +781,8 @@ function calcular(){
   lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
 
   document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
-  document.querySelector('.price-card.calc .pc-tag').textContent='🎯 Preço Ideal Calculado';
-  const mainBadge=document.querySelector('.price-card.calc .pc-badge');
+  const _tag1=document.querySelector('.price-card.calc .pc-tag'); if(_tag1)_tag1.textContent='Preço Ideal Calculado';
+  const mainBadge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
   mainBadge.textContent='✅ Preço mínimo seguro';
   mainBadge.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:#4ade80;font-size:.67rem;font-weight:700;margin-bottom:9px';
   document.getElementById('pc-preco').textContent=fmt(preco);
@@ -953,7 +953,7 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
 function finalizarCalculo(){
   document.getElementById('right-empty').style.display='none';
   document.getElementById('right-result').style.display='block';
-  renderResultadoHero();
+  try{ renderResultadoHero(); }catch(e){ console.warn('hero:', e); }
   
   // Mostrar caixa de devolução
   if(lastCalc&&lastCalc.payout>0){
