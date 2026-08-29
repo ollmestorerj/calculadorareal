@@ -393,6 +393,22 @@ span .mk, div .mk{
 .pcl-val{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
 .pc-payout{font-size:.68rem;opacity:.8;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1)}
 .pc-payout b{font-weight:700;opacity:1}
+
+/* ===== CABEÇALHO DE PÁGINA — reutilizável ===== */
+.pg-head{position:relative;overflow:hidden;border-radius:13px;padding:22px 22px 20px;margin-bottom:22px;
+  background:linear-gradient(180deg,var(--card),var(--bg));border:1px solid var(--border)}
+.pg-wm{position:absolute;right:-16px;top:-20px;width:138px;height:138px;color:var(--pg);opacity:.07;pointer-events:none}
+.pg-in{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.pg-brand{font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:7px}
+.pg-title{font-size:1.55rem;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1}
+.pg-sub{font-size:.76rem;color:var(--text3);margin-top:6px}
+.pg-stats{display:flex;gap:22px;margin-top:15px;flex-wrap:wrap}
+.pg-sl{font-size:.57rem;letter-spacing:.09em;text-transform:uppercase;color:var(--text4);margin-bottom:3px}
+.pg-sv{font-size:1rem;font-weight:700;color:var(--text)}
+.pg-acts{display:flex;gap:6px;flex-shrink:0}
+.pg-btn{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:var(--bg);border:none;
+  border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+@media(max-width:560px){.pg-title{font-size:1.3rem}.pg-stats{gap:16px}}
 </style>
 </head>
 <body>
@@ -1045,17 +1061,25 @@ span .mk, div .mk{
     <button class="btn-dash" onclick="showPage('metas')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></span>Metas</button>
   </div>
   <div class="dash-page">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px">
-      <div>
-        <div style="font-family:'Figtree',sans-serif;font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-.025em;line-height:1.2">Produtos</div>
-        <div style="font-size:.74rem;color:var(--text4);margin-top:3px" id="dash-sub">—</div>
-      </div>
-      <div style="display:flex;gap:7px;align-items:center">
-        <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
-        <button onclick="exportarExcel()" style="display:inline-flex;align-items:center;gap:6px;background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Exportar
-        </button>
+    <div class="pg-head" style="--pg:var(--in)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Produtos</div>
+          <div class="pg-stats">
+            <div><div class="pg-sl">Salvos</div><div class="pg-sv" id="dash-st-total">—</div></div>
+            <div><div class="pg-sl">Comprados</div><div class="pg-sv" id="dash-st-comp" style="color:var(--in)">—</div></div>
+            <div><div class="pg-sl">Margem média</div><div class="pg-sv" id="dash-st-mg">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+          <button onclick="exportarExcel()" class="pg-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar
+          </button>
+        </div>
       </div>
     </div>
     <div id="dash-content"></div>
@@ -1141,7 +1165,7 @@ span .mk, div .mk{
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1788020674"></script>
+<script src="app.js?v=1788021302"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
