@@ -351,7 +351,15 @@ body.light .login-logo img{filter:none}
 .btn-dash{background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Figtree',sans-serif}
 
 /* ===== RESULTADO — sistema de destaque ===== */
-.mk{background:var(--mark);color:var(--mark-fg);padding:3px 10px;border-radius:6px;display:inline-block;font-weight:700}
+.mk,
+.brow .br .mk, .brow.total .br .mk,
+body.light .brow .br .mk, body.light .brow.total .br .mk,
+.price-card .mk, .pcl-val .mk,
+span .mk, div .mk{
+  background:var(--mark)!important; color:var(--mark-fg)!important;
+  padding:3px 10px;border-radius:6px;display:inline-block;font-weight:700;
+  -webkit-text-fill-color:var(--mark-fg)
+}
 .mk2{box-shadow:inset 0 -10px 0 var(--mark-soft);padding:0 4px}
 .r-eb{font-size:.68rem;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase}
 .r-hero{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;margin-bottom:14px}
@@ -385,7 +393,6 @@ body.light .login-logo img{filter:none}
 .pcl-val{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
 .pc-payout{font-size:.68rem;opacity:.8;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1)}
 .pc-payout b{font-weight:700;opacity:1}
-.price-card .mk{background:var(--mark);color:var(--mark-fg)}
 </style>
 </head>
 <body>
@@ -882,25 +889,6 @@ body.light .login-logo img{filter:none}
         </div>
       </div>
 
-      <!-- Barra de decomposição -->
-      <div class="r-rv" id="hero-bar-wrap">
-        <div class="r-eb">Para onde vai cada real</div>
-        <div class="r-bar">
-          <div id="seg-custo" style="--g:0;background:var(--seg-a)"></div>
-          <div id="seg-frete" style="--g:0;background:var(--seg-b)"></div>
-          <div id="seg-com"   style="--g:0;background:var(--seg-c)"></div>
-          <div id="seg-imp"   style="--g:0;background:var(--seg-d)"></div>
-          <div id="seg-voce"  style="--g:0;background:var(--mark)"></div>
-        </div>
-        <div class="r-legend">
-          <div class="r-lg"><i style="background:var(--seg-a)"></i>Custo <b id="lg-custo">—</b></div>
-          <div class="r-lg"><i style="background:var(--seg-b)"></i>Frete <b id="lg-frete">—</b></div>
-          <div class="r-lg"><i style="background:var(--seg-c)"></i>Comissão <b id="lg-com">—</b></div>
-          <div class="r-lg"><i style="background:var(--seg-d)"></i>Imposto <b id="lg-imp">—</b></div>
-          <div class="r-lg"><i style="background:var(--mark)"></i>Você <b id="lg-voce">—</b></div>
-        </div>
-      </div>
-
       <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
       <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
 
@@ -941,7 +929,7 @@ body.light .login-logo img{filter:none}
             <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
             <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
             <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
-            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">Lucro bruto</span><span class="br"><span class="mk" id="proj-lb">—</span></span></div>
+            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">Lucro bruto</span><span class="br" id="proj-lb">—</span></div>
             <div class="brow"><span class="bl">Caixa c/ imposto</span><span class="br" id="proj-cx-bruto">—</span></div>
             <div class="brow total"><span class="bl">Caixa líquido</span><span class="br" id="proj-cx">—</span></div>
           </div>
@@ -956,8 +944,8 @@ body.light .login-logo img{filter:none}
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa líquido</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-b">—</span></div>
             <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:8px 0 2px;border-top:1.5px solid var(--border);margin-top:2px;font-size:.82rem">
               <span style="color:#4ade80;font-weight:700">Lucro bruto</span>
-              <span style="text-align:right"><span class="mk" id="pd-lb-a">—</span></span>
-              <span style="text-align:right"><span class="mk" id="pd-lb-b">—</span></span>
+              <span style="text-align:right" id="pd-lb-a">—</span>
+              <span style="text-align:right" id="pd-lb-b">—</span>
             </div>
             <!-- Payout destacado por cenário -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
@@ -1145,7 +1133,7 @@ body.light .login-logo img{filter:none}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1787978985"></script>
+<script src="app.js?v=1787979576"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
