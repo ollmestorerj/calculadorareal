@@ -890,6 +890,7 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     elPD.style.color=payoutReal>=0?'#c4b5fd':'#f87171';
   }
   document.getElementById('proj-lb').textContent=fmt(payout*qtd);
+  setTimeout(function(){ marcarAmarelo(['proj-lb']); },0);
   document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+totalImp);
   document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
 
@@ -930,7 +931,7 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     s('pd-cx-b').textContent=fmt(inv+mlPayout*qtd);
     const elLbB=s('pd-lb-b');
     elLbB.textContent=fmt(mlPayout*qtd);
-    elLbB.style.color=mlPayout*qtd>=0?'var(--text2)':'#f87171';
+    setTimeout(function(){ marcarAmarelo(['pd-lb-a','pd-lb-b']); },0);
     // Payout destacado por cenário
     // Payout REAL ML = preço - comissões ML (o que cai na conta antes de pagar custos)
     // lastCalc.preco = preço calculado, payout da variável local = margem em R$ (já subtrai custo+frete)
@@ -4132,36 +4133,26 @@ function renderResultadoHero(){
   const L = lastCalc, S = id => document.getElementById(id);
   const set = (id, txt) => { const e = S(id); if(e) e.textContent = txt; };
 
-  const preco = L.preco||0, qtd = L.qtd||1, custo = L.custo||0;
+  const preco = L.preco||0, custo = L.custo||0;
   const frete = L.frete||0, ins = L.ins||0, precoML = L.precoML||0;
 
-  // ---- cenário A: preço calculado ----
-  const vI = preco*(L.pI||0), vC = preco*(L.pC||0), vA = preco*(L.pA||0);
-  const lucroUn = L.payout||0;
-  set('pc-lucro-un', fmt(lucroUn));
+  // cenário A — preço calculado
+  const vC = preco*(L.pC||0), vA = preco*(L.pA||0);
+  set('pc-lucro-un', fmt(L.payout||0));
   set('pc-payout',   fmt(preco - vC - vA - frete));
 
-  // ---- cenário B: preço médio do mercado ----
+  // cenário B — preço médio do mercado
   if(precoML > 0){
     const mI = precoML*(L.pI||0), mC = precoML*(L.pC||0), mA = precoML*(L.pA||0);
-    const mLucro = precoML - custo - frete - ins - mI - mC - mA;
-    set('ml-lucro-un', fmt(mLucro));
+    set('ml-lucro-un', fmt(precoML - custo - frete - ins - mI - mC - mA));
     set('ml-payout',   fmt(precoML - mC - mA - frete));
   } else {
     set('ml-lucro-un', 'R$ —');
     set('ml-payout',   '—');
   }
 
-  // ---- barra de decomposição ----
-  [['seg-custo','lg-custo',custo],
-   ['seg-frete','lg-frete',frete+ins],
-   ['seg-com','lg-com',vC+vA],
-   ['seg-imp','lg-imp',vI],
-   ['seg-voce','lg-voce',Math.max(lucroUn,0)]
-  ].forEach(function(p){
-    const seg = S(p[0]); if(seg) seg.style.setProperty('--g', Math.max(p[2],0).toFixed(2));
-    const lg = S(p[1]);  if(lg) lg.textContent = fmt(p[2]).replace('R$ ','');
-  });
+  // marca-texto aplicado no elemento — vence qualquer style inline
+  marcarAmarelo(['proj-lb','pd-lb-a','pd-lb-b','pc-lucro-un','ml-lucro-un']);
 
   const painel = document.getElementById('right-result');
   if(painel){
@@ -4169,4 +4160,23 @@ function renderResultadoHero(){
     void painel.offsetWidth;
     requestAnimationFrame(function(){ painel.classList.add('r-go'); });
   }
+}
+
+// Pinta o destaque direto no elemento, com prioridade máxima.
+// Necessário porque o app escreve style.color inline nessas células.
+function marcarAmarelo(ids){
+  const css = getComputedStyle(document.documentElement);
+  const bg = css.getPropertyValue('--mark').trim()    || '#F2D024';
+  const fg = css.getPropertyValue('--mark-fg').trim() || '#1A1500';
+  ids.forEach(function(id){
+    const el = document.getElementById(id);
+    if(!el || !el.textContent || el.textContent === '—') return;
+    el.style.setProperty('background', bg, 'important');
+    el.style.setProperty('color', fg, 'important');
+    el.style.setProperty('-webkit-text-fill-color', fg, 'important');
+    el.style.setProperty('padding', '3px 9px', 'important');
+    el.style.setProperty('border-radius', '6px', 'important');
+    el.style.setProperty('font-weight', '700', 'important');
+    el.style.setProperty('display', 'inline-block', 'important');
+  });
 }
