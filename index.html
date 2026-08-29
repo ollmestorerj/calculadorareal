@@ -433,6 +433,8 @@ span .mk, div .mk{
 .pg-sl{font-size:.57rem;letter-spacing:.09em;text-transform:uppercase;color:var(--text4);margin-bottom:3px}
 .pg-sv{font-size:1rem;font-weight:700;color:var(--text)}
 .pg-acts{display:flex;gap:6px;flex-shrink:0}
+.cal-nav-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.cal-nav-btn:hover{border-color:var(--text3);color:var(--text)}
 .pg-btn{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:var(--bg);border:none;
   border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
 @media(max-width:560px){.pg-title{font-size:1.3rem}.pg-stats{gap:16px}}
@@ -1122,50 +1124,62 @@ span .mk, div .mk{
 
 <!-- ===== CALENDÁRIO ===== -->
 <div id="page-cal" class="page">
-  <div class="app-header">
-    <div style="display:flex;gap:8px;align-items:center">
-      <button class="theme-toggle" onclick="toggleTheme()">☀️ Claro</button>
-      <button class="btn-home" onclick="showPage('home')">🏠</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
-      <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
-      <div style="width:1px;height:26px;background:#444"></div>
-      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</span>
-    </div>
-    <button class="btn-dash" onclick="showPage('metas')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></span>Metas</button>
-  </div>
   <div class="cal-page">
+    <!-- Cabeçalho da página -->
+    <div class="pg-head" style="--pg:#2563eb">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title" id="cal-titulo">—</div>
+          <div class="pg-stats">
+            <div><div class="pg-sl">Eventos no mês</div><div class="pg-sv" id="cal-st-mes">—</div></div>
+            <div><div class="pg-sl">Próximos 7 dias</div><div class="pg-sv" id="cal-st-prox" style="color:#2563eb">—</div></div>
+            <div><div class="pg-sl">Hoje</div><div class="pg-sv" id="cal-st-hoje">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button onclick="navMes(-1)" class="cal-nav-btn" title="Mês anterior">‹</button>
+          <button onclick="navMes(1)" class="cal-nav-btn" title="Próximo mês">›</button>
+          <button onclick="abrirModal(null)" class="pg-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Evento
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Banner sazonalidades no calendário -->
-    <div onclick="showPage('sazonal')" style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border:1.5px solid #6B21A855;border-radius:12px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#F0A070'" onmouseout="this.style.borderColor='#6B21A855'">
+    <div onclick="showPage('sazonal')" style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 15px;margin-bottom:12px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .18s" onmouseover="this.style.borderColor='var(--mark)'" onmouseout="this.style.borderColor='var(--border)'">
       <div style="width:36px;height:36px;background:linear-gradient(135deg,#6B21A8,#F0A070);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/></svg>
       </div>
       <div style="flex:1">
-        <div style="font-size:.8rem;font-weight:700;color:#c4b5fd">Planejamento de Sazonalidades</div>
-        <div style="font-size:.68rem;color:#7a6f9a">Configure lembretes automáticos para Páscoa, Black Friday, Natal e mais</div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text)">Planejamento de Sazonalidades</div>
+        <div style="font-size:.68rem;color:var(--text4);margin-top:2px">Lembretes automáticos para Páscoa, Black Friday, Natal e mais</div>
       </div>
-      <div style="font-size:.75rem;color:#F0A070;font-weight:700;flex-shrink:0">Configurar →</div>
+      <div style="font-size:.73rem;color:var(--text3);font-weight:600;flex-shrink:0">Configurar →</div>
     </div>
 
     <!-- Atalhos rápidos -->
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      <button onclick="abrirModalTemplate('das')" style="background:var(--card);border:1px solid #dc262644;color:#f87171;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <button onclick="abrirModalTemplate('das')" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='var(--text3)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="width:16px;height:16px;background:linear-gradient(135deg,#dc2626,#991b1b);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
         Pagar DAS
       </button>
-      <button onclick="abrirModalTemplate('full')" style="background:var(--card);border:1px solid #7c3aed44;color:#a78bfa;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <button onclick="abrirModalTemplate('full')" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='var(--text3)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="width:16px;height:16px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
         Coleta Full
       </button>
-      <button onclick="abrirModalTemplate('cartao')" style="background:var(--card);border:1px solid #16a34a44;color:#4ade80;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <button onclick="abrirModalTemplate('cartao')" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='var(--text3)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="width:16px;height:16px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
         Pagar Cartão
       </button>
-      <button onclick="abrirModalTemplate('estoque')" style="background:var(--card);border:1px solid #F0A07044;color:#F0A070;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <button onclick="abrirModalTemplate('estoque')" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='var(--text3)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="width:16px;height:16px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
         Ver Estoque
       </button>
-      <button onclick="abrirModalTemplate('fornecedor')" style="background:var(--card);border:1px solid #2563eb44;color:#60a5fa;border-radius:8px;padding:7px 12px;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <button onclick="abrirModalTemplate('fornecedor')" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='var(--text3)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="width:16px;height:16px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
         Fornecedor
       </button>
@@ -1181,15 +1195,6 @@ span .mk, div .mk{
       <div style="font-size:.72rem;color:var(--text3)">Carregando...</div>
     </div>
 
-    <div class="cal-header">
-      <button class="btn-back" onclick="showPage('home')">← Voltar</button>
-      <div class="cal-nav">
-        <button onclick="navMes(-1)">‹</button>
-        <h3 id="cal-titulo">—</h3>
-        <button onclick="navMes(1)">›</button>
-      </div>
-      <button onclick="abrirModal(null)" style="background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer">+ Evento</button>
-    </div>
     <div class="cal-grid" id="cal-grid"></div>
   </div>
 </div>
@@ -1199,7 +1204,7 @@ span .mk, div .mk{
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1788022482"></script>
+<script src="app.js?v=1788022652"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
