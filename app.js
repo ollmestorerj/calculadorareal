@@ -1145,72 +1145,105 @@ function toggleDetail(id){const det=document.getElementById('det-'+id);const btn
 
 async function renderDash(){
   const el=document.getElementById('dash-content');
-  el.innerHTML='<div style="text-align:center;padding:40px;opacity:.4;font-size:.8rem;color:#888">Carregando...</div>';
+  el.innerHTML='<div style="text-align:center;padding:44px;color:var(--text4);font-size:.8rem">Carregando…</div>';
   const prods=await fbGet('produtos','realecom_prods','[]');
-  if(!prods.length){el.innerHTML='<div style="text-align:center;padding:60px 20px;opacity:.25;color:#888"><p style="font-size:2rem">📦</p><br><p style="font-size:.85rem">Nenhum produto salvo ainda.</p></div>';return;}
 
-  function mgBadge(v){
-    if(v===null||v===undefined||isNaN(v))return'<span style="font-size:.72rem;color:var(--text3)">—</span>';
-    const cor=v>=15?'background:#16a34a22;color:#4ade80':v>=10?'background:#F0A07022;color:#F0A070':'background:#dc262622;color:#f87171';
-    return`<span style="${cor};padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:700">${fmtP(v)}</span>`;
+  if(!prods.length){
+    el.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text4)">'
+      +'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="opacity:.4;margin-bottom:12px"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/></svg>'
+      +'<div style="font-size:.85rem">Nenhum produto salvo ainda.</div>'
+      +'<div style="font-size:.74rem;color:var(--text4);margin-top:5px">Faça um cálculo e salve para vê-lo aqui.</div></div>';
+    return;
   }
 
-  function linkChips(p){
-    const links=[p.link1,p.link2,p.link3].filter(l=>l&&l.trim());
-    if(!links.length)return'<span style="font-size:.7rem;color:var(--text3)">—</span>';
-    return links.map((l,i)=>`<a href="${l}" target="_blank" style="display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:6px;font-size:.68rem;color:var(--o);text-decoration:none;white-space:nowrap" title="${l}">🔗 Anúncio ${i+1}</a>`).join(' ');
+  // margem: valor limpo, cor semântica. Sem pílula — a cor já diz.
+  function mg(v){
+    if(v===null||v===undefined||isNaN(v)) return '<span style="color:var(--text4);font-weight:500">—</span>';
+    const c = v>=15 ? 'var(--in)' : v>=10 ? 'var(--text)' : 'var(--out)';
+    return `<span style="color:${c};font-weight:700;font-size:.86rem">${fmtP(v)}</span>`;
   }
 
-  const svgDel=`<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
+  function links(p){
+    const ls=[p.link1,p.link2,p.link3].filter(l=>l&&l.trim());
+    if(!ls.length) return '<span style="color:var(--text4);font-size:.72rem">—</span>';
+    return ls.map((l,i)=>`<a href="${l}" target="_blank" title="${l}" style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border:1px solid var(--border);border-radius:5px;font-size:.66rem;color:var(--text3);text-decoration:none;white-space:nowrap;transition:all .15s" onmouseover="this.style.borderColor='var(--text3)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>${i+1}</a>`).join(' ');
+  }
 
-  const header=`<table style="width:100%;border-collapse:collapse;font-size:.78rem">
-    <thead>
-      <tr style="border-bottom:1.5px solid var(--border)">
-        <th style="padding:8px 10px;text-align:left;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:32%">Produto</th>
-        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:13%">Margem calc.</th>
-        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:13%">Margem ML</th>
-        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:20%">Links</th>
-        <th style="padding:8px 10px;text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);width:22%">Ações</th>
-      </tr>
-    </thead><tbody>`;
+  const ico = {
+    calc:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="12" y1="16" x2="12" y2="16"/></svg>',
+    del :'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>',
+    star:'<svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    chev:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
+  };
+  const btn = 'background:none;border:none;border-radius:6px;padding:5px;cursor:pointer;color:var(--text4);display:inline-flex;align-items:center;justify-content:center;transition:all .15s';
 
-  const rows=prods.map((p,idx)=>{
-    const zebra=idx%2===0?'background:var(--card)':'background:var(--bg2)';
-    const compBadge=p.comprado?'<span style="background:#16a34a22;color:#4ade80;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700;margin-left:5px">✅</span>':'';
-    const detId='det2-'+p.id;
-    return`<tr style="${zebra};border-bottom:1px solid var(--border)">
-      <td style="padding:8px 10px;vertical-align:middle">
-        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${p.nome}${compBadge}</div>
-        <div style="font-size:.68rem;color:var(--text3);margin-top:2px">🏭 ${p.forn} · ${p.cod}</div>
+  const head=`<table style="width:100%;border-collapse:collapse">
+    <thead><tr>
+      <th style="padding:0 12px 9px 2px;text-align:left;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text4);border-bottom:1px solid var(--border)">Produto</th>
+      <th style="padding:0 12px 9px;text-align:right;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text4);border-bottom:1px solid var(--border);white-space:nowrap">Margem calc.</th>
+      <th style="padding:0 12px 9px;text-align:right;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text4);border-bottom:1px solid var(--border);white-space:nowrap">Margem ML</th>
+      <th style="padding:0 12px 9px;text-align:left;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text4);border-bottom:1px solid var(--border)">Links</th>
+      <th style="padding:0 2px 9px;text-align:right;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text4);border-bottom:1px solid var(--border)">Ações</th>
+    </tr></thead><tbody>`;
+
+  const rows=prods.map(p=>{
+    const det='det2-'+p.id;
+    const mlCalc = (p.margemML!==undefined&&p.margemML!==null) ? p.margemML
+      : (p.precoML>0 ? ((p.precoML-p.custoReal-(p.frete||0)-(p.ins||0)-p.precoML*(p.pI||0)-p.precoML*(p.pC||0)-p.precoML*(p.pA||0))/p.precoML)*100 : null);
+    const comp = p.comprado;
+
+    return `<tr style="border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
+      <td style="padding:11px 12px 11px 2px;vertical-align:middle">
+        <div style="display:flex;align-items:center;gap:7px">
+          <div style="font-size:.84rem;font-weight:600;color:var(--text);line-height:1.35">${p.nome}</div>
+          ${comp?'<span style="background:var(--in-bg);color:var(--in);border:1px solid var(--in-line);border-radius:20px;padding:1px 7px;font-size:.58rem;font-weight:600;white-space:nowrap;flex-shrink:0">comprado</span>':''}
+        </div>
+        <div style="font-size:.68rem;color:var(--text4);margin-top:3px">${p.forn} · ${p.cod}</div>
       </td>
-      <td style="padding:8px 10px;text-align:center;vertical-align:middle">${mgBadge(p.margem)}</td>
-      <td style="padding:8px 10px;text-align:center;vertical-align:middle">${mgBadge(p.margemML!==undefined&&p.margemML!==null?p.margemML:(p.precoML>0?((p.precoML-p.custoReal-(p.frete||0)-(p.ins||0)-p.precoML*(p.pI||0)-p.precoML*(p.pC||0)-p.precoML*(p.pA||0))/p.precoML)*100:null))}</td>
-      <td style="padding:8px 10px;text-align:center;vertical-align:middle">${linkChips(p)}</td>
-      <td style="padding:8px 10px;vertical-align:middle">
-        <div style="display:flex;gap:4px;align-items:center;flex-wrap:nowrap">
-          <button onclick="verNaCalculadora(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;font-weight:700;color:var(--o);white-space:nowrap;flex-shrink:0">🧮 Cálculo</button>
-          <button onclick="var r=document.getElementById('${detId}');var open=r.style.display==='table-row';r.style.display=open?'none':'table-row';this.textContent=open?'+ detalhes':'− fechar'" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:.68rem;color:var(--text2);white-space:nowrap;flex-shrink:0">+ detalhes</button>
-          <button onclick="toggleComprado(${p.id})" title="${p.comprado?'Desmarcar':'Marcar como comprado'}" style="background:${p.comprado?'#16a34a22':'none'};border:1px solid ${p.comprado?'#16a34a44':'var(--border)'};border-radius:7px;padding:4px 7px;cursor:pointer;font-size:.68rem;font-weight:700;color:${p.comprado?'#4ade80':'var(--text2)'};flex-shrink:0">${p.comprado?'★':'☆'}</button>
-          <button onclick="deletarProduto(${p.id})" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" class="btn-del">${svgDel}</button>
+      <td style="padding:11px 12px;text-align:right;vertical-align:middle;white-space:nowrap">${mg(p.margem)}</td>
+      <td style="padding:11px 12px;text-align:right;vertical-align:middle;white-space:nowrap">${mg(mlCalc)}</td>
+      <td style="padding:11px 12px;vertical-align:middle">${links(p)}</td>
+      <td style="padding:11px 2px 11px 12px;vertical-align:middle">
+        <div style="display:flex;gap:1px;align-items:center;justify-content:flex-end">
+          <button onclick="verNaCalculadora(${p.id})" title="Abrir na calculadora" style="${btn}" onmouseover="this.style.color='var(--text)';this.style.background='var(--card)'" onmouseout="this.style.color='var(--text4)';this.style.background='none'">${ico.calc}</button>
+          <button onclick="toggleComprado(${p.id})" title="${comp?'Desmarcar':'Marcar como comprado'}" style="${btn};color:${comp?'var(--in)':'var(--text4)'};fill:${comp?'var(--in)':'none'}" onmouseover="if(!${comp})this.style.color='var(--text)'" onmouseout="if(!${comp})this.style.color='var(--text4)'">${ico.star}</button>
+          <button onclick="deletarProduto(${p.id})" title="Remover" style="${btn}" onmouseover="this.style.color='var(--out)'" onmouseout="this.style.color='var(--text4)'">${ico.del}</button>
+          <button id="cv-${p.id}" onclick="var r=document.getElementById('${det}');var o=r.style.display==='table-row';r.style.display=o?'none':'table-row';this.style.transform=o?'':'rotate(180deg)'" title="Detalhes" style="${btn};transition:transform .2s,color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text4)'">${ico.chev}</button>
         </div>
       </td>
     </tr>
-    <tr id="${detId}" style="display:none;background:var(--bg2)">
-      <td colspan="5" style="padding:14px 16px;border-bottom:1px solid var(--border)">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px">
-          <div class="pd-item"><div class="pdl">Preço calc.</div><div class="pdv">${fmt(p.precoCalc)}</div></div>
-          <div class="pd-item"><div class="pdl">Preço médio ML</div><div class="pdv">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
-          <div class="pd-item"><div class="pdl">Custo real</div><div class="pdv">${fmt(p.custoReal)}</div></div>
-          <div class="pd-item"><div class="pdl">Custo ideal</div><div class="pdv" style="color:${p.custoIdeal!==null&&p.custoIdeal>0?'#4ade80':'var(--text3)'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
-          <div class="pd-item"><div class="pdl">Lucro/unid.</div><div class="pdv">${fmt(p.payout)}</div></div>
+    <tr id="${det}" style="display:none">
+      <td colspan="5" style="padding:4px 2px 18px;border-bottom:1px solid var(--border)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:18px;margin-bottom:16px">
+          <div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:4px">Preço calc.</div><div style="font-size:.9rem;font-weight:600">${fmt(p.precoCalc)}</div></div>
+          <div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:4px">Preço médio ML</div><div style="font-size:.9rem;font-weight:600">${p.precoML>0?fmt(p.precoML):'—'}</div></div>
+          <div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:4px">Custo real</div><div style="font-size:.9rem;font-weight:600;color:var(--out)">${fmt(p.custoReal)}</div></div>
+          <div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:4px">Custo ideal</div><div style="font-size:.9rem;font-weight:600;color:${p.custoIdeal!==null&&p.custoIdeal>0?'var(--in)':'var(--text4)'}">${p.custoIdeal!==null?fmt(Math.max(p.custoIdeal,0)):'—'}</div></div>
+          <div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:4px">Lucro/unid.</div><div style="font-size:.9rem"><span class="mk-dash" data-v="${p.payout}">${fmt(p.payout)}</span></div></div>
         </div>
-        <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px">📝 Observações</div>
-        <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações...">${p.obs||''}</textarea>
+        <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:6px">Observações</div>
+        <textarea class="prod-obs" onchange="salvarObs(${p.id},this.value)" placeholder="Anotações…">${p.obs||''}</textarea>
       </td>
     </tr>`;
   }).join('');
 
-  el.innerHTML=header+rows+'</tbody></table>';
+  el.innerHTML=head+rows+'</tbody></table>';
+
+  const sub=document.getElementById('dash-sub');
+  if(sub){
+    const c=prods.filter(p=>p.comprado).length;
+    sub.textContent=prods.length+(prods.length===1?' produto':' produtos')+(c?' · '+c+' comprado'+(c>1?'s':''):'');
+  }
+
+  // marca-texto no lucro por unidade
+  const css=getComputedStyle(document.documentElement);
+  const bg=css.getPropertyValue('--mark').trim(), fg=css.getPropertyValue('--mark-fg').trim();
+  el.querySelectorAll('.mk-dash').forEach(function(s){
+    s.style.setProperty('background',bg,'important');
+    s.style.setProperty('color',fg,'important');
+    s.style.setProperty('-webkit-text-fill-color',fg,'important');
+    s.style.cssText+=';padding:2px 8px;border-radius:5px;font-weight:700;display:inline-block';
+  });
 }
 
 // ============================================================
