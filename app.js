@@ -4129,63 +4129,44 @@ function finFecharSeFora(ev,id){ if(ev.target.id===id) finFechar(id); }
 // ============================================================
 function renderResultadoHero(){
   if(!lastCalc) return;
-  const L = lastCalc;
-  const S = id => document.getElementById(id);
-
-  const preco   = L.preco || 0;
-  const qtd     = L.qtd || 1;
-  const custo   = L.custo || 0;
-  const frete   = L.frete || 0;
-  const ins     = L.ins || 0;
-  const vI      = preco * (L.pI || 0);
-  const vC      = preco * (L.pC || 0);
-  const vA      = preco * (L.pA || 0);
-  const lucroUn = L.payout || 0;
-  const payout  = preco - vC - vA - frete;
-
+  const L = lastCalc, S = id => document.getElementById(id);
   const set = (id, txt) => { const e = S(id); if(e) e.textContent = txt; };
 
-  set('hero-lucro-un',   fmt(lucroUn));
-  set('hero-lucro-lote', fmt(lucroUn * qtd));
-  set('hero-roi',        fmtP(L.roi || 0));
-  set('hero-payout',     fmt(payout));
-  set('hero-preco',      fmt(preco));
-  set('hero-margem',     fmtP((L.pM || 0) * 100));
-  set('hero-preco-lbl',  calcMode === 2 ? 'Preço do mercado' : 'Preço calculado');
+  const preco = L.preco||0, qtd = L.qtd||1, custo = L.custo||0;
+  const frete = L.frete||0, ins = L.ins||0, precoML = L.precoML||0;
 
-  // Situação
-  const m = (L.pM || 0) * 100;
-  const badge = S('hero-badge');
-  if(badge){
-    const bom = m >= 15, ok = m >= 10;
-    badge.textContent = bom ? 'Margem saudável' : ok ? 'Margem apertada' : m >= 0 ? 'Margem baixa' : 'Prejuízo';
-    badge.style.cssText = 'display:inline-block;padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:600;margin:0;'
-      + (bom ? 'background:var(--in-bg);color:var(--in);border:1px solid var(--in-line)'
-             : ok ? 'background:var(--mark-soft);color:var(--text2);border:1px solid var(--border)'
-                  : 'background:transparent;color:var(--out);border:1px solid var(--out)');
+  // ---- cenário A: preço calculado ----
+  const vI = preco*(L.pI||0), vC = preco*(L.pC||0), vA = preco*(L.pA||0);
+  const lucroUn = L.payout||0;
+  set('pc-lucro-un', fmt(lucroUn));
+  set('pc-payout',   fmt(preco - vC - vA - frete));
+
+  // ---- cenário B: preço médio do mercado ----
+  if(precoML > 0){
+    const mI = precoML*(L.pI||0), mC = precoML*(L.pC||0), mA = precoML*(L.pA||0);
+    const mLucro = precoML - custo - frete - ins - mI - mC - mA;
+    set('ml-lucro-un', fmt(mLucro));
+    set('ml-payout',   fmt(precoML - mC - mA - frete));
+  } else {
+    set('ml-lucro-un', 'R$ —');
+    set('ml-payout',   '—');
   }
 
-  // Barra — proporção real de cada parcela do preço
-  const outros = ins;
-  const partes = [
-    ['seg-custo','lg-custo', custo],
-    ['seg-frete','lg-frete', frete + outros],
-    ['seg-com',  'lg-com',   vC + vA],
-    ['seg-imp',  'lg-imp',   vI],
-    ['seg-voce', 'lg-voce',  Math.max(lucroUn, 0)]
-  ];
-  partes.forEach(([segId, lgId, valor]) => {
-    const seg = S(segId);
-    if(seg) seg.style.setProperty('--g', Math.max(valor, 0).toFixed(2));
-    const lg = S(lgId);
-    if(lg) lg.textContent = fmt(valor).replace('R$ ', '');
+  // ---- barra de decomposição ----
+  [['seg-custo','lg-custo',custo],
+   ['seg-frete','lg-frete',frete+ins],
+   ['seg-com','lg-com',vC+vA],
+   ['seg-imp','lg-imp',vI],
+   ['seg-voce','lg-voce',Math.max(lucroUn,0)]
+  ].forEach(function(p){
+    const seg = S(p[0]); if(seg) seg.style.setProperty('--g', Math.max(p[2],0).toFixed(2));
+    const lg = S(p[1]);  if(lg) lg.textContent = fmt(p[2]).replace('R$ ','');
   });
 
-  // Dispara a animação
   const painel = document.getElementById('right-result');
   if(painel){
     painel.classList.remove('r-go');
     void painel.offsetWidth;
-    requestAnimationFrame(() => painel.classList.add('r-go'));
+    requestAnimationFrame(function(){ painel.classList.add('r-go'); });
   }
 }
