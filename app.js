@@ -1175,7 +1175,7 @@ async function renderDash(){
     star:'<svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
     chev:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
   };
-  const btn = 'background:none;border:none;border-radius:6px;padding:5px;cursor:pointer;color:var(--text4);display:inline-flex;align-items:center;justify-content:center;transition:all .15s';
+  const ib = 'background:none;border:1px solid transparent;border-radius:7px;padding:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s';
 
   const head=`<table style="width:100%;border-collapse:collapse">
     <thead><tr>
@@ -1204,11 +1204,11 @@ async function renderDash(){
       <td style="padding:11px 12px;text-align:right;vertical-align:middle;white-space:nowrap">${mg(mlCalc)}</td>
       <td style="padding:11px 12px;vertical-align:middle">${links(p)}</td>
       <td style="padding:11px 2px 11px 12px;vertical-align:middle">
-        <div style="display:flex;gap:1px;align-items:center;justify-content:flex-end">
-          <button onclick="verNaCalculadora(${p.id})" title="Abrir na calculadora" style="${btn}" onmouseover="this.style.color='var(--text)';this.style.background='var(--card)'" onmouseout="this.style.color='var(--text4)';this.style.background='none'">${ico.calc}</button>
-          <button onclick="toggleComprado(${p.id})" title="${comp?'Desmarcar':'Marcar como comprado'}" style="${btn};color:${comp?'var(--in)':'var(--text4)'};fill:${comp?'var(--in)':'none'}" onmouseover="if(!${comp})this.style.color='var(--text)'" onmouseout="if(!${comp})this.style.color='var(--text4)'">${ico.star}</button>
-          <button onclick="deletarProduto(${p.id})" title="Remover" style="${btn}" onmouseover="this.style.color='var(--out)'" onmouseout="this.style.color='var(--text4)'">${ico.del}</button>
-          <button id="cv-${p.id}" onclick="var r=document.getElementById('${det}');var o=r.style.display==='table-row';r.style.display=o?'none':'table-row';this.style.transform=o?'':'rotate(180deg)'" title="Detalhes" style="${btn};transition:transform .2s,color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text4)'">${ico.chev}</button>
+        <div style="display:flex;gap:4px;align-items:center;justify-content:flex-end">
+          <button onclick="verNaCalculadora(${p.id})" title="Abrir na calculadora" style="display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 11px;cursor:pointer;font-size:.7rem;font-weight:600;color:var(--text);white-space:nowrap;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='var(--mark)';this.style.background='var(--mark-soft)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--card)'">${ico.calc} Cálculo</button>
+          <button onclick="toggleComprado(${p.id})" title="${comp?'Desmarcar compra':'Marcar como comprado'}" style="${ib};color:${comp?'var(--in)':'var(--text3)'};fill:${comp?'var(--in)':'none'};background:${comp?'var(--in-bg)':'none'};border-color:${comp?'var(--in-line)':'transparent'}" onmouseover="this.style.borderColor='var(--in-line)';this.style.color='var(--in)'" onmouseout="this.style.borderColor='${comp?'var(--in-line)':'transparent'}';this.style.color='${comp?'var(--in)':'var(--text3)'}'">${ico.star}</button>
+          <button onclick="deletarProduto(${p.id})" title="Remover produto" style="${ib};color:var(--text3)" onmouseover="this.style.color='var(--out)';this.style.borderColor='var(--out)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='transparent'">${ico.del}</button>
+          <button onclick="var r=document.getElementById('${det}');var o=r.style.display==='table-row';r.style.display=o?'none':'table-row';this.style.transform=o?'':'rotate(180deg)'" title="Ver detalhes" style="${ib};color:var(--text3);transition:transform .2s,color .15s,border-color .15s" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='transparent'">${ico.chev}</button>
         </div>
       </td>
     </tr>
@@ -1229,11 +1229,13 @@ async function renderDash(){
 
   el.innerHTML=head+rows+'</tbody></table>';
 
-  const sub=document.getElementById('dash-sub');
-  if(sub){
-    const c=prods.filter(p=>p.comprado).length;
-    sub.textContent=prods.length+(prods.length===1?' produto':' produtos')+(c?' · '+c+' comprado'+(c>1?'s':''):'');
-  }
+  const comp=prods.filter(p=>p.comprado).length;
+  const comMg=prods.filter(p=>p.margem!==undefined&&p.margem!==null&&!isNaN(p.margem));
+  const mgMedia=comMg.length?comMg.reduce(function(s,p){return s+parseFloat(p.margem);},0)/comMg.length:null;
+  const st=function(id,v){const e=document.getElementById(id);if(e)e.textContent=v;};
+  st('dash-st-total',prods.length);
+  st('dash-st-comp',comp);
+  st('dash-st-mg',mgMedia!==null?fmtP(mgMedia):'—');
 
   // marca-texto no lucro por unidade
   const css=getComputedStyle(document.documentElement);
