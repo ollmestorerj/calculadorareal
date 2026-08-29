@@ -1659,6 +1659,7 @@ function nomesCurto(titulo){
 
 function renderCal(){
   document.getElementById('cal-titulo').textContent=`${meses[calMes]} ${calAno}`;
+  calStats();
   const grid=document.getElementById('cal-grid');
   const eventos=getEventos();
   const hoje=new Date();
@@ -4224,4 +4225,31 @@ function marcarAmarelo(ids){
     el.style.setProperty('font-weight', '700', 'important');
     el.style.setProperty('display', 'inline-block', 'important');
   });
+}
+
+
+
+// Estatísticas do cabeçalho do calendário
+function calStats(){
+  const evs = getEventos();
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const hojeStr = hoje.toISOString().split('T')[0];
+  const em7 = new Date(hoje.getTime() + 7*864e5);
+
+  const noMes = evs.filter(function(e){
+    const d = new Date(e.data+'T00:00:00');
+    return d.getMonth()===calMes && d.getFullYear()===calAno;
+  }).length;
+
+  const prox = evs.filter(function(e){
+    const d = new Date(e.data+'T00:00:00');
+    return d >= hoje && d <= em7;
+  }).length;
+
+  const deHoje = evs.filter(function(e){ return e.data===hojeStr; }).length;
+
+  const s = function(id, v){ const el=document.getElementById(id); if(el) el.textContent=v; };
+  s('cal-st-mes', noMes);
+  s('cal-st-prox', prox);
+  s('cal-st-hoje', deHoje ? deHoje : '—');
 }
