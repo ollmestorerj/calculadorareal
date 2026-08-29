@@ -600,7 +600,7 @@ function showPage(p,bypassCheck){
 
   // Destaca item ativo na sidebar
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
-  const mapa={calc:'sb-calc',dash:'sb-dash',metas:'sb-metas',cal:'sb-cal',gestao:'sb-gestao',simples:'sb-simples',pub:'sb-pub',ncm:'sb-ncm',home:'sb-home'};
+  const mapa={calc:'sb-calc',dash:'sb-dash',metas:'sb-metas',cal:'sb-cal',gestao:'sb-gestao',simples:'sb-simples',pub:'sb-pub',ncm:'sb-ncm',home:'sb-home',conc:'sb-conc',prompt:'sb-prompt',fin:'sb-fin'};
   if(mapa[p]){const el=document.getElementById(mapa[p]);if(el)el.classList.add('active');}
 
   if(p==='dash')renderDash();
@@ -611,6 +611,7 @@ function showPage(p,bypassCheck){
   if(p==='pub'){switchPubMode('dash');renderHistoricoPublicidade();}
   if(p==='sazonal'){renderSazonalGrid();}
   if(p==='ncm'){renderHistoricoNCM();}
+  if(p==='fin'){finInit();}
   if(p!=='login') registrarAtividade('nav_'+p);
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
@@ -3813,3 +3814,309 @@ function concToast(msg, tipo){
   c.appendChild(d);
   setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 3500);
 }
+
+
+// ============================================================
+// FINANCEIRO — entradas, saídas e contas fixas
+// Lógica do racional original, adaptada ao design system da
+// Calculadora e ao armazenamento isolado por usuário.
+// ============================================================
+
+const FIN_CATS = {
+  ent: [
+    {id:'lucro-loja', label:'Lucro Loja',   cor:'#16a34a'},
+    {id:'mentoria',   label:'Mentoria',     cor:'#0891b2'},
+    {id:'curso',      label:'Curso',        cor:'#7c3aed'},
+    {id:'outros-ent', label:'Outros',       cor:'#6b7280'}
+  ],
+  sai: [
+    {id:'despesa',    label:'Despesa',      cor:'#dc2626'},
+    {id:'banco',      label:'Banco',        cor:'#d97706'},
+    {id:'fornecedor', label:'Fornecedor',   cor:'#7c3aed'},
+    {id:'sai-ment',   label:'Mentoria',     cor:'#0891b2'},
+    {id:'outros-sai', label:'Outros',       cor:'#6b7280'}
+  ]
+};
+
+const FIN_CONTAS = ['CC Sicoob','CC Itaú','CC Santander','CC STONE','CC Caixa',
+                    'CC Mercado Pago','CC Nubank','Dinheiro','Outro'];
+
+const FIN_MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+let _finMes  = {m:new Date().getMonth()+1, a:new Date().getFullYear()};
+let _finAba  = 'lanc';       // 'lanc' | 'fix'
+let _finDir  = 'ent';        // direção no modal
+let _finCat  = null;
+let _finLanc = [];
+let _finFix  = [];
+let _finCarregado = false;
+
+// ---------- carga ----------
+async function finInit(){
+  if(_finCarregado){ finRender(); return; }
+  _finLanc = await fbGet('financeiro_lanc','realecom_fin_lanc','[]');
+  _finFix  = await fbGet('financeiro_fix','realecom_fin_fix','[]');
+  _finCarregado = true;
+  finPreencherSelects();
+  finRender();
+}
+
+function finPreencherSelects(){
+  const opts = '<option value="">Selecione...</option>' +
+    FIN_CONTAS.map(c=>`<option>${c}</option>`).join('');
+  ['fin-inp-conta','fin-fix-conta'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = opts;
+  });
+}
+
+function finSalvarLanc(){ setCached('realecom_fin_lanc',_finLanc); fbSet('financeiro_lanc',_finLanc); }
+function finSalvarFix(){  setCached('realecom_fin_fix',_finFix);   fbSet('financeiro_fix',_finFix); }
+
+// ---------- helpers ----------
+function finBrl(v){
+  const abs = Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return (v<0?'−':'') + 'R$ ' + abs;
+}
+function finFmtData(iso){
+  const d = new Date(iso+'T12:00:00');
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+}
+function finMesRef(){ return _finMes.a+'-'+String(_finMes.m).padStart(2,'0'); }
+function finLabelMes(){ return FIN_MESES[_finMes.m-1]+' '+_finMes.a; }
+
+function finMudarMes(d){
+  _finMes.m += d;
+  if(_finMes.m>12){ _finMes.m=1;  _finMes.a++; }
+  if(_finMes.m<1) { _finMes.m=12; _finMes.a--; }
+  finRender();
+}
+
+function finLancDoMes(){
+  return _finLanc.filter(l=>{
+    const d = new Date(l.data+'T12:00:00');
+    return d.getMonth()+1===_finMes.m && d.getFullYear()===_finMes.a;
+  });
+}
+
+// Uma fixa conta no mês se já começou e (se for dívida) ainda não terminou
+function finFixasAtivas(){
+  const ref = finMesRef();
+  return _finFix.filter(f=>{
+    if(f.inicio && ref < f.inicio) return false;
+    if(f.tipo==='divida' && f.termino && ref > f.termino) return false;
+    return true;
+  });
+}
+
+function finCatInfo(id){
+  return [...FIN_CATS.ent,...FIN_CATS.sai].find(c=>c.id===id) || {label:id,cor:'#6b7280'};
+}
+
+// ---------- render ----------
+function finRender(){
+  const lbl = document.getElementById('fin-mes-label');
+  if(lbl) lbl.textContent = finLabelMes();
+
+  const todos = finLancDoMes();
+  const ents  = todos.filter(l=>l.dir==='ent');
+  const sais  = todos.filter(l=>l.dir==='sai');
+  const totEnt = ents.reduce((s,l)=>s+l.val,0);
+  const totSai = sais.reduce((s,l)=>s+l.val,0);
+  const totFix = finFixasAtivas().reduce((s,f)=>s+f.val,0);
+  const res    = totEnt - totSai - totFix;
+
+  const set=(id,txt,cor)=>{ const e=document.getElementById(id); if(e){ e.textContent=txt; if(cor) e.style.color=cor; } };
+  set('fin-res-valor', finBrl(res), res>=0?'#4ade80':'#f87171');
+  set('fin-res-ent', finBrl(totEnt), '#4ade80');
+  set('fin-res-sai', finBrl(-totSai), '#f87171');
+  set('fin-res-fix', finBrl(-totFix), '#fbbf24');
+
+  finRenderLista(todos);
+  finRenderFixas();
+}
+
+function finRenderLista(items){
+  const el = document.getElementById('fin-lista');
+  if(!el) return;
+  const ordenados = [...items].sort((a,b)=> new Date(b.data)-new Date(a.data));
+  if(!ordenados.length){
+    el.innerHTML = '<div style="text-align:center;padding:36px 20px;color:var(--text4);font-size:.8rem">'
+      +'Nenhum lançamento em '+finLabelMes()+'.<br>Clique em <strong style="color:var(--text2)">+ Novo lançamento</strong> para começar.</div>';
+    return;
+  }
+  el.innerHTML = ordenados.map(l=>{
+    const c = finCatInfo(l.cat);
+    const cor = l.dir==='ent' ? '#4ade80' : '#f87171';
+    const sinal = l.dir==='ent' ? 1 : -1;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:6px">'
+      +'<span style="width:32px;height:32px;border-radius:8px;background:'+c.cor+'22;border:1px solid '+c.cor+'44;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+        +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="'+c.cor+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
+        +(l.dir==='ent'?'<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>':'<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>')
+        +'</svg></span>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:.78rem;font-weight:700;color:var(--text)">'+c.label+'</div>'
+        +'<div style="font-size:.68rem;color:var(--text4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(l.desc||l.conta||'—')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0">'
+        +'<div style="font-size:.85rem;font-weight:800;color:'+cor+'">'+finBrl(l.val*sinal)+'</div>'
+        +'<div style="font-size:.64rem;color:var(--text4)">'+finFmtData(l.data)+'</div>'
+      +'</div>'
+      +'<button onclick="finExcluirLanc(\''+l.id+'\')" title="Excluir" style="background:none;border:none;color:var(--text4);cursor:pointer;padding:4px;font-size:.9rem;flex-shrink:0">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+function finRenderFixas(){
+  const el = document.getElementById('fin-lista-fixas');
+  if(!el) return;
+  const ativas = finFixasAtivas();
+  const tot = document.getElementById('fin-total-fixas');
+  if(tot) tot.textContent = finBrl(-ativas.reduce((s,f)=>s+f.val,0));
+
+  if(!_finFix.length){
+    el.innerHTML = '<div style="text-align:center;padding:36px 20px;color:var(--text4);font-size:.8rem">'
+      +'Nenhuma conta fixa cadastrada.<br>Clique em <strong style="color:var(--text2)">+ Nova conta fixa</strong>.</div>';
+    return;
+  }
+  el.innerHTML = _finFix.map(f=>{
+    const ativa = ativas.includes(f);
+    const badge = f.tipo==='divida'
+      ? '<span style="background:#dc262622;color:#f87171;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700">Dívida</span>'
+      : '<span style="background:#d9770622;color:#fbbf24;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700">Operacional</span>';
+    const term = (f.tipo==='divida' && f.termino)
+      ? 'até '+FIN_MESES[parseInt(f.termino.split('-')[1])-1].substring(0,3)+'/'+f.termino.split('-')[0]
+      : 'recorrente';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:6px;opacity:'+(ativa?'1':'.45')+'">'
+      +'<div style="min-width:0;flex:1">'
+        +'<div style="font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:3px">'+f.desc+'</div>'
+        +'<div style="font-size:.66rem;color:var(--text4)">'+badge+' · '+term+' · dia '+(f.dia||'—')+' · '+(f.conta||'—')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;margin-left:10px">'
+        +'<div style="font-size:.85rem;font-weight:800;color:#f87171">'+finBrl(-f.val)+'</div>'
+        +'<div style="font-size:.62rem;color:var(--text4);margin-top:2px">'+(ativa?'ativa este mês':'inativa')+'</div>'
+      +'</div>'
+      +'<button onclick="finExcluirFixa(\''+f.id+'\')" title="Remover" style="background:none;border:none;color:var(--text4);cursor:pointer;padding:4px;font-size:.9rem;flex-shrink:0;margin-left:6px">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+// ---------- abas ----------
+function finAba(aba){
+  _finAba = aba;
+  const secL = document.getElementById('fin-sec-lanc');
+  const secF = document.getElementById('fin-sec-fix');
+  if(secL) secL.style.display = aba==='lanc' ? 'block' : 'none';
+  if(secF) secF.style.display = aba==='fix'  ? 'block' : 'none';
+  const bL = document.getElementById('fin-aba-lanc');
+  const bF = document.getElementById('fin-aba-fix');
+  if(bL) bL.className = 'toggle-btn' + (aba==='lanc'?' active':'');
+  if(bF) bF.className = 'toggle-btn' + (aba==='fix' ?' active':'');
+}
+
+// ---------- modal lançamento ----------
+function finAbrirModal(){
+  _finCat = null;
+  ['fin-inp-val','fin-inp-desc'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
+  const c = document.getElementById('fin-inp-conta'); if(c) c.value='';
+  const d = document.getElementById('fin-inp-data');  if(d) d.value = new Date().toISOString().split('T')[0];
+  finSetDir('ent');
+  const ov = document.getElementById('fin-ov-lanc'); if(ov) ov.style.display='flex';
+}
+
+function finSetDir(d){
+  _finDir = d; _finCat = null;
+  const bE = document.getElementById('fin-tab-ent');
+  const bS = document.getElementById('fin-tab-sai');
+  if(bE){ bE.style.background = d==='ent'?'#16a34a22':'transparent'; bE.style.borderColor = d==='ent'?'#16a34a':'var(--border)'; bE.style.color = d==='ent'?'#4ade80':'var(--text4)'; }
+  if(bS){ bS.style.background = d==='sai'?'#dc262622':'transparent'; bS.style.borderColor = d==='sai'?'#dc2626':'var(--border)'; bS.style.color = d==='sai'?'#f87171':'var(--text4)'; }
+  finRenderCats();
+}
+
+function finRenderCats(){
+  const el = document.getElementById('fin-cats');
+  if(!el) return;
+  el.innerHTML = FIN_CATS[_finDir].map(c=>{
+    const on = _finCat===c.id;
+    return '<button onclick="finSelCat(\''+c.id+'\')" style="padding:9px 8px;border-radius:8px;border:1.5px solid '+(on?c.cor:'var(--border)')+';background:'+(on?c.cor+'18':'var(--input-bg)')+';color:'+(on?c.cor:'var(--text3)')+';font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit">'+c.label+'</button>';
+  }).join('');
+}
+
+function finSelCat(id){ _finCat = id; finRenderCats(); }
+
+function finSalvarLancamento(){
+  if(!_finCat){ alert('Selecione a categoria.'); return; }
+  const val = parseFloat((document.getElementById('fin-inp-val')||{}).value);
+  if(!val || val<=0){ alert('Informe um valor válido.'); return; }
+  const data = (document.getElementById('fin-inp-data')||{}).value;
+  if(!data){ alert('Selecione a data.'); return; }
+
+  _finLanc.push({
+    id: Date.now().toString(),
+    dir: _finDir, cat: _finCat, val: val,
+    desc: ((document.getElementById('fin-inp-desc')||{}).value||'').trim(),
+    conta: (document.getElementById('fin-inp-conta')||{}).value||'',
+    data: data
+  });
+  finSalvarLanc();
+
+  // vai para o mês do lançamento
+  const d = new Date(data+'T12:00:00');
+  _finMes = {m:d.getMonth()+1, a:d.getFullYear()};
+
+  finFechar('fin-ov-lanc');
+  finAba('lanc');
+  finRender();
+}
+
+function finExcluirLanc(id){
+  if(!confirm('Excluir este lançamento?')) return;
+  _finLanc = _finLanc.filter(l=>l.id!==id);
+  finSalvarLanc();
+  finRender();
+}
+
+// ---------- modal fixa ----------
+function finAbrirModalFixa(){
+  ['fin-fix-desc','fin-fix-val','fin-fix-termino','fin-fix-dia'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
+  const t = document.getElementById('fin-fix-tipo'); if(t) t.value='divida';
+  const c = document.getElementById('fin-fix-conta'); if(c) c.value='';
+  finToggleTermino();
+  const ov = document.getElementById('fin-ov-fixa'); if(ov) ov.style.display='flex';
+}
+
+function finToggleTermino(){
+  const t = document.getElementById('fin-fix-tipo');
+  const campo = document.getElementById('fin-campo-termino');
+  if(t && campo) campo.style.display = t.value==='divida' ? 'block' : 'none';
+}
+
+function finSalvarNovaFixa(){
+  const desc = ((document.getElementById('fin-fix-desc')||{}).value||'').trim();
+  const val  = parseFloat((document.getElementById('fin-fix-val')||{}).value);
+  if(!desc || !val || val<=0){ alert('Preencha a descrição e o valor.'); return; }
+  const tipo = (document.getElementById('fin-fix-tipo')||{}).value;
+  _finFix.push({
+    id: Date.now().toString(),
+    desc: desc, val: val, tipo: tipo,
+    termino: tipo==='divida' ? ((document.getElementById('fin-fix-termino')||{}).value||null) : null,
+    dia: parseInt((document.getElementById('fin-fix-dia')||{}).value) || null,
+    conta: (document.getElementById('fin-fix-conta')||{}).value||''
+  });
+  finSalvarFix();
+  finFechar('fin-ov-fixa');
+  finAba('fix');
+  finRender();
+}
+
+function finExcluirFixa(id){
+  if(!confirm('Remover esta conta fixa?')) return;
+  _finFix = _finFix.filter(f=>f.id!==id);
+  finSalvarFix();
+  finRender();
+}
+
+// ---------- util ----------
+function finFechar(id){ const e=document.getElementById(id); if(e) e.style.display='none'; }
+function finFecharSeFora(ev,id){ if(ev.target.id===id) finFechar(id); }
