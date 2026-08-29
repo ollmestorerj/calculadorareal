@@ -305,7 +305,7 @@ async function esqueceuSenha(){
     el.style.display='block';
     el.style.background='#05291622';
     el.style.borderColor='#16a34a44';
-    el.style.color='#4ade80';
+    el.style.color='var(--in)';
     el.textContent='📧 E-mail de recuperação enviado! Verifique sua caixa de entrada.';
     document.getElementById('login-erro').style.display='none';
   }catch(e){
@@ -388,7 +388,7 @@ function entrarNoApp(dados, pagina){
     // Calendário home — eventos de hoje e próximos
     const hoje=new Date();hoje.setHours(0,0,0,0);
     const hojeStr=hoje.toISOString().split('T')[0];
-    const cores={full:'#a78bfa',conta:'#f87171',entrega:'#4ade80',outro:'#F0A070'};
+    const cores={full:'var(--text2)',conta:'var(--out)',entrega:'var(--in)',outro:'#F0A070'};
     const proximos=evs.filter(e=>{
       const d=new Date(e.data+'T00:00:00');
       return d>=hoje;
@@ -761,10 +761,10 @@ function calcular(){
     document.getElementById('pc-mg').textContent=fmtP(margemReal);
     const badge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
     badge.textContent=margemReal>=10?'✅ Margem saudável':margemReal>=0?'⚠️ Margem baixa':'❌ Prejuízo';
-    badge.style.cssText=`display:inline-block;padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:700;margin-bottom:9px;background:${margemReal>=10?'rgba(74,222,128,.2)':margemReal>=0?'rgba(240,160,112,.2)':'rgba(239,68,68,.2)'};color:${margemReal>=10?'#4ade80':margemReal>=0?'#F0A070':'#f87171'}`;
+    badge.style.cssText=`display:inline-block;padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:700;margin-bottom:9px;background:${margemReal>=10?'rgba(74,222,128,.2)':margemReal>=0?'rgba(240,160,112,.2)':'rgba(239,68,68,.2)'};color:${margemReal>=10?'var(--in)':margemReal>=0?'#F0A070':'var(--out)'}`;
     const fator15=1-0.15-pI-pC-pA;
     const custoMax15=fator15>0?(precoML*fator15-frete-ins):null;
-    document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'#4ade80':margemReal>=0?'#F0A070':'#f87171'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:#f87171">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'#4ade80':'#f87171'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
+    document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'var(--in)':margemReal>=0?'#F0A070':'var(--out)'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:#f87171">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'var(--in)':'var(--out)'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
     if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(precoML));verificarFaixaFrete();}
     preencherDetalhes(custo,frete,ins,base,vI,vC,vA,0,precoML,payout,qtd,inv,vI*qtd);
     document.getElementById('bottom-wrapper').style.display='flex';
@@ -887,7 +887,7 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     // Imposto (vI) NÃO é descontado pelo ML — é recolhido separadamente pelo vendedor
     const payoutReal=preco-vC-vA-frete;
     elPD.textContent=fmt(payoutReal);
-    elPD.style.color=payoutReal>=0?'#c4b5fd':'#f87171';
+    elPD.style.color=payoutReal>=0?'var(--text2)':'var(--out)';
   }
   document.getElementById('proj-lb').textContent=fmt(payout*qtd);
   setTimeout(function(){ marcarAmarelo(['proj-lb']); },0);
@@ -926,7 +926,7 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     s('pd-fat-b').textContent=fmt(precoML*qtd);
     const elPayB=s('pd-pay-b');
     elPayB.textContent=fmt(mlPayout);
-    elPayB.style.color=mlPayout>=0?'var(--text2)':'#f87171';
+    elPayB.style.color=mlPayout>=0?'var(--text2)':'var(--out)';
     s('pd-cx-bruto-b').textContent=fmt(inv+mlPayout*qtd+mlImp);
     s('pd-cx-b').textContent=fmt(inv+mlPayout*qtd);
     const elLbB=s('pd-lb-b');
@@ -941,9 +941,9 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     // Cenário B usa o mesmo frete físico do produto
     const payoutRealB = precoML - mlvC - mlvA - frete;
     const elPA=s('pd-payout-destaque-a');
-    if(elPA){elPA.textContent=fmt(payoutRealA);elPA.style.color=payoutRealA>=0?'#c4b5fd':'#f87171';}
+    if(elPA){elPA.textContent=fmt(payoutRealA);elPA.style.color=payoutRealA>=0?'var(--text2)':'var(--out)';}
     const elPB=s('pd-payout-destaque-b');
-    if(elPB){elPB.textContent=fmt(payoutRealB);elPB.style.color=payoutRealB>=0?'#4ade80':'#f87171';}
+    if(elPB){elPB.textContent=fmt(payoutRealB);elPB.style.color=payoutRealB>=0?'var(--in)':'var(--out)';}
   }else{
     if(header)header.style.display='none';
     if(simple)simple.style.display='block';
@@ -1601,13 +1601,13 @@ function navMes(dir){calMes+=dir;if(calMes>11){calMes=0;calAno++;}if(calMes<0){c
 
 // Cores por tipo para pills — dark mode
 const tipoCores={
-  full:        {bg:'#7c3aed18',color:'#a78bfa',dot:'#7c3aed'},
-  conta:       {bg:'#dc262618',color:'#f87171',dot:'#dc2626'},
-  entrega:     {bg:'#16a34a18',color:'#4ade80',dot:'#16a34a'},
+  full:        {bg:'#7c3aed18',color:'var(--text2)',dot:'#7c3aed'},
+  conta:       {bg:'#dc262618',color:'var(--out)',dot:'#dc2626'},
+  entrega:     {bg:'#16a34a18',color:'var(--in)',dot:'#16a34a'},
   outro:       {bg:'#F0A07018',color:'#F0A070',dot:'#F0A070'},
-  sazonal:     {bg:'#d9770618',color:'#fbbf24',dot:'#d97706'},
-  giro_pedido: {bg:'#7c3aed18',color:'#a78bfa',dot:'#7c3aed'},
-  giro_entrega:{bg:'#16a34a18',color:'#4ade80',dot:'#16a34a'},
+  sazonal:     {bg:'#d9770618',color:'var(--text2)',dot:'#d97706'},
+  giro_pedido: {bg:'#7c3aed18',color:'var(--text2)',dot:'#7c3aed'},
+  giro_entrega:{bg:'#16a34a18',color:'var(--in)',dot:'#16a34a'},
 };
 
 // Cores por tipo para pills — light mode
@@ -1751,7 +1751,7 @@ const msgFull={5:'📦 Coleta Full em 5 dias! Vai enviar? Se não for presta ate
 function mostrarNotifMsg(ev,mensagem,diffDias){
   const container=document.getElementById('notif-container');
   const ti=tipoInfo[ev.tipo];
-  const urgencia=diffDias===0?'#f87171':diffDias===1?'#F0A070':'#a78bfa';
+  const urgencia=diffDias===0?'var(--out)':diffDias===1?'#F0A070':'var(--text2)';
   const div=document.createElement('div');div.className=`notif ${ev.tipo}`;div.style.borderColor=urgencia;
   div.innerHTML=`<div class="notif-icon">${ti.icon}</div><div class="notif-body"><div class="notif-title" style="color:${urgencia}">${mensagem}</div><div class="notif-sub">${ev.data.split('-').reverse().join('/')}${ev.hora?' às '+ev.hora:''}${ev.obs?' — '+ev.obs:''}</div></div><button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
   container.appendChild(div);
@@ -2235,9 +2235,15 @@ function renderResultadoPublicidade(preco, margemAds){
     if(al){al.style.display='block';al.textContent='⚠️ A margem que você quer garantir é igual ou maior que a margem do produto — não sobra nada para investir em anúncios. Reduza a margem desejada ou melhore o custo do produto.';}
     return;
   }
+  const ph=document.getElementById('pub-head-stats'); if(ph) ph.style.display='flex';
+  const ps=function(id,v){const e=document.getElementById(id); if(e) e.textContent=v;};
+  ps('hd-pub-roas', roas.toFixed(1)+'x');
+  ps('hd-pub-acos', acos.toFixed(1)+'%');
+  ps('hd-pub-verba', fmt(margemAds));
   document.getElementById('pub-roas').textContent = roas.toFixed(1)+'x';
   document.getElementById('pub-acos').textContent = acos.toFixed(1)+'%';
   document.getElementById('pub-margem-ads').textContent = fmt(margemAds);
+  pintarMarca('pub-margem-ads');
   document.getElementById('pub-exp-roas').textContent = fmt(preco);
   document.getElementById('pub-exp-acos').textContent = acos.toFixed(1)+'%';
   document.getElementById('pub-exp-margem').textContent = fmt(margemAds);
@@ -2334,10 +2340,16 @@ function calcularSimples(){
   const fmtPct=v=>(v*100).toFixed(2).replace('.',',')+' %';
   const fmtRange=f=>'R$ '+(f.min).toLocaleString('pt-BR',{maximumFractionDigits:0})+' – R$ '+(f.max).toLocaleString('pt-BR',{maximumFractionDigits:0});
 
+  const hs=document.getElementById('sn-head-stats'); if(hs) hs.style.display='flex';
+  const sh=function(id,v){const e=document.getElementById(id); if(e) e.textContent=v;};
+  sh('hd-sn-faixa', faixaObj.faixa.replace(' Faixa',''));
+  sh('hd-sn-aliq', fmtPct(aliqEfetiva));
+  sh('hd-sn-das', fmt(das));
   document.getElementById('sn-faixa').textContent        =faixaObj.faixa;
   document.getElementById('sn-faixa-range').textContent  =fmtRange(faixaObj);
   document.getElementById('sn-aliq-efetiva').textContent =fmtPct(aliqEfetiva);
-  document.getElementById('sn-das').textContent          =fmt(das);
+  document.getElementById('sn-das').innerHTML = '<span id="sn-das-mk">'+fmt(das)+'</span>';
+  pintarMarca('sn-das-mk');
   document.getElementById('sn-d-rbt12').textContent      =fmt(rbt12);
   document.getElementById('sn-d-nominal').textContent    =fmtPct(faixaObj.nominal);
   document.getElementById('sn-d-deducao').textContent    =fmt(faixaObj.deducao);
@@ -2346,11 +2358,11 @@ function calcularSimples(){
   document.getElementById('sn-d-das').textContent        =fmt(das);
 
   const tributos=[
-    {nome:'IRPJ',   pct:faixaObj.irpj,   cor:'#60a5fa'},
-    {nome:'CSLL',   pct:faixaObj.csll,   cor:'#a78bfa'},
+    {nome:'IRPJ',   pct:faixaObj.irpj,   cor:'var(--text2)'},
+    {nome:'CSLL',   pct:faixaObj.csll,   cor:'var(--text2)'},
     {nome:'Cofins', pct:faixaObj.cofins, cor:'#f472b6'},
     {nome:'PIS',    pct:faixaObj.pis,    cor:'#fb923c'},
-    {nome:'CPP',    pct:faixaObj.cpp,    cor:'#4ade80'},
+    {nome:'CPP',    pct:faixaObj.cpp,    cor:'var(--in)'},
     {nome:'ICMS',   pct:faixaObj.icms,   cor:'#facc15'},
   ].filter(t=>t.pct>0);
 
@@ -2478,7 +2490,7 @@ function recalcularMetas(){
     if(circle){
       circle.style.strokeDashoffset=offset;
       circle.style.transition='stroke-dashoffset .8s ease';
-      if(pct>=100)circle.setAttribute('stroke','#4ade80');
+      if(pct>=100)circle.setAttribute('stroke','var(--in)');
     }
     const pctEl=document.getElementById('pct-'+prefix+'-num');
     if(pctEl)pctEl.textContent=pct+'%';
@@ -2490,7 +2502,7 @@ function recalcularMetas(){
     }
     const resumoEl=document.getElementById('resumo-'+prefix);
     if(resumoEl){
-      const cor=pct>=100?'#4ade80':pct>=50?'#F0A070':'#c4b5fd';
+      const cor=pct>=100?'var(--in)':pct>=50?'#F0A070':'var(--text2)';
       resumoEl.innerHTML=`<span style="color:${cor};font-weight:700">${pct>=100?'🎉':'📍'} ${prefix==='semana'?'Esta semana':prefix==='quinzena'?'Quinzena':'Este mês'}:</span> `+
         `${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?` · <strong style="color:#4ade80">${comp} comprado${comp>1?'s':''}</strong>`:''}.  `+
         (faltam>0?`Faltam <strong style="color:var(--o)">${faltam}</strong> para bater a meta.`:`<strong style="color:#4ade80">Meta atingida!</strong>`);
@@ -2545,18 +2557,18 @@ function calcRanqueamento(){
 
   const elLucro=document.getElementById('rank-lucro');
   elLucro.textContent=fmt(lucroTotal);
-  elLucro.style.color=lucroTotal>=0?'#4ade80':'#f87171';
+  elLucro.style.color=lucroTotal>=0?'var(--in)':'var(--out)';
 
   const elImpacto=document.getElementById('rank-impacto');
   if(impacto!==null){
     elImpacto.textContent=fmt(Math.abs(impacto));
-    elImpacto.style.color=impacto>0?'#f87171':'#4ade80';
+    elImpacto.style.color=impacto>0?'var(--out)':'var(--in)';
     document.getElementById('rank-impacto-label').textContent=impacto>0?'Deixou de ganhar':'Ganho extra vs preço ideal';
   }
 
   const elPayUnit=document.getElementById('rank-pay-unit');
   elPayUnit.textContent=fmt(payoutRank)+'/unid.';
-  elPayUnit.style.color=payoutRank>=0?'#4ade80':'#f87171';
+  elPayUnit.style.color=payoutRank>=0?'var(--in)':'var(--out)';
 }
 
 function calcDevolucao(){
@@ -2884,7 +2896,7 @@ function atualizarBannerWhatsApp(tel){
     banner.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="width:36px;height:36px;background:#16a34a22;border:1px solid #16a34a44;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#4ade80"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--in)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </div>
         <div style="flex:1">
           <div style="font-size:.82rem;font-weight:700;color:var(--text)">Receba lembretes no WhatsApp</div>
@@ -3106,7 +3118,7 @@ function copiarPrompt(id){
     if(!b) return;
     const orig = b.innerHTML;
     b.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copiado!';
-    b.style.color = '#4ade80';
+    b.style.color = 'var(--in)';
     b.style.borderColor = '#16a34a44';
     setTimeout(()=>{ b.innerHTML = orig; b.style.color = ''; b.style.borderColor = ''; }, 1800);
   });
@@ -3676,7 +3688,7 @@ function concRenderArquivos(){
   el.innerHTML = tipos.map(function(t){
     var tem = !!_concFiles[t];
     return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'
-      +'<span style="width:10px;height:10px;border-radius:50%;background:'+(tem?'#4ade80':'var(--border)')+';flex-shrink:0"></span>'
+      +'<span style="width:10px;height:10px;border-radius:50%;background:'+(tem?'var(--in)':'var(--border)')+';flex-shrink:0"></span>'
       +'<span style="font-size:.76rem;color:'+(tem?'var(--text)':'var(--text4)')+';flex:1">'+labels[t]+'</span>'
       +(tem?'<button onclick="concRemoverArquivo(\''+t+'\')" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:.8rem" title="Remover">×</button>':'')
       +'</div>';
@@ -3726,11 +3738,11 @@ function concRenderResultado(r){
   var kpis = document.getElementById('conc-kpis');
   if(kpis) kpis.innerHTML =
     kpiCard('Operações',''+k.totalOperacoes)+
-    kpiCard('OK ✓',''+k.ok,'conformidade '+k.taxaConformidade+'%','#16a34a')+
+    kpiCard('OK',''+k.ok,'conformidade '+k.taxaConformidade+'%','var(--in)')+
     kpiCard('Aguardando',''+k.pendentes,'prazo ML')+
-    kpiCard('Tarifa não prevista',''+k.tarifaNaoPrevista,(k.impactoTarifaNaoPrevista?'−R$ '+Math.abs(k.impactoTarifaNaoPrevista).toFixed(2):''),'#d97706')+
-    kpiCard('Devoluções',''+k.devolucoes,(k.impactoDevolucoes?'−R$ '+Math.abs(k.impactoDevolucoes).toFixed(2):''),'#6B21A8')+
-    kpiCard('⚠️ Recebeu a menos',''+k.aMenos,(k.impactoAMenos?'−R$ '+Math.abs(k.impactoAMenos).toFixed(2):''),'#dc2626')+
+    kpiCard('Tarifa não prevista',''+k.tarifaNaoPrevista,(k.impactoTarifaNaoPrevista?'−R$ '+Math.abs(k.impactoTarifaNaoPrevista).toFixed(2):''),'var(--text)')+
+    kpiCard('Devoluções',''+k.devolucoes,(k.impactoDevolucoes?'−R$ '+Math.abs(k.impactoDevolucoes).toFixed(2):''),'var(--text)')+
+    kpiCard('Recebeu a menos',''+k.aMenos,(k.impactoAMenos?'−R$ '+Math.abs(k.impactoAMenos).toFixed(2):''),'var(--out)')+
     kpiCard('Recebeu a mais',''+k.aMais,(k.impactoAMais?'+R$ '+k.impactoAMais.toFixed(2):''));
 
   // Avisos
@@ -3754,7 +3766,7 @@ function concRenderResultado(r){
     mpBox.innerHTML =
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
       +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">OPERAÇÕES CASADAS</div><div style="font-size:1.1rem;font-weight:800;color:#4ade80">'+mp.operacoesCasadas+'</div></div>'
-      +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">DIVERGÊNCIAS MP</div><div style="font-size:1.1rem;font-weight:800;color:'+(mp.divergenciasMP?'#f87171':'#4ade80')+'">'+mp.divergenciasMP+'</div></div>'
+      +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">DIVERGÊNCIAS MP</div><div style="font-size:1.1rem;font-weight:800;color:'+(mp.divergenciasMP?'var(--out)':'var(--in)')+'">'+mp.divergenciasMP+'</div></div>'
       +'</div>'
       +'<div style="font-size:.74rem;color:var(--text3);margin-bottom:5px">Saques: R$ '+mp.saques.total.toFixed(2)+' · '+mp.saques.aprovados+' aprovados</div>'
       +'<div style="font-size:.74rem;color:var(--text3)">Disputas: '+mp.disputas.claims+' reclamações · '+mp.disputas.refunds+' devoluções · Retido: R$ '+mp.disputas.valorRetido.toFixed(2)+'</div>';
@@ -3978,10 +3990,15 @@ function finRender(){
   const res    = totEnt - totSai - totFix;
 
   const set=(id,txt,cor)=>{ const e=document.getElementById(id); if(e){ e.textContent=txt; if(cor) e.style.color=cor; } };
-  set('fin-res-valor', finBrl(res), res>=0?'#4ade80':'#f87171');
-  set('fin-res-ent', finBrl(totEnt), '#4ade80');
-  set('fin-res-sai', finBrl(-totSai), '#f87171');
-  set('fin-res-fix', finBrl(-totFix), '#fbbf24');
+  set('fin-res-valor', finBrl(res), res>=0?'var(--in)':'var(--out)');
+  set('hd-fin-ent', finBrl(totEnt));
+  set('hd-fin-sai', finBrl(-totSai));
+  const hr=document.getElementById('hd-fin-res');
+  if(hr){ hr.textContent=finBrl(res); hr.style.color = res>=0?'var(--in)':'var(--out)'; }
+  pintarMarca('fin-res-valor');
+  set('fin-res-ent', finBrl(totEnt), 'var(--in)');
+  set('fin-res-sai', finBrl(-totSai), 'var(--out)');
+  set('fin-res-fix', finBrl(-totFix), 'var(--text2)');
 
   finRenderLista(todos);
   finRenderFixas();
@@ -3998,7 +4015,7 @@ function finRenderLista(items){
   }
   el.innerHTML = ordenados.map(l=>{
     const c = finCatInfo(l.cat);
-    const cor = l.dir==='ent' ? '#4ade80' : '#f87171';
+    const cor = l.dir==='ent' ? 'var(--in)' : 'var(--out)';
     const sinal = l.dir==='ent' ? 1 : -1;
     return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:6px">'
       +'<span style="width:32px;height:32px;border-radius:8px;background:'+c.cor+'22;border:1px solid '+c.cor+'44;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
@@ -4079,8 +4096,8 @@ function finSetDir(d){
   _finDir = d; _finCat = null;
   const bE = document.getElementById('fin-tab-ent');
   const bS = document.getElementById('fin-tab-sai');
-  if(bE){ bE.style.background = d==='ent'?'#16a34a22':'transparent'; bE.style.borderColor = d==='ent'?'#16a34a':'var(--border)'; bE.style.color = d==='ent'?'#4ade80':'var(--text4)'; }
-  if(bS){ bS.style.background = d==='sai'?'#dc262622':'transparent'; bS.style.borderColor = d==='sai'?'#dc2626':'var(--border)'; bS.style.color = d==='sai'?'#f87171':'var(--text4)'; }
+  if(bE){ bE.style.background = d==='ent'?'#16a34a22':'transparent'; bE.style.borderColor = d==='ent'?'#16a34a':'var(--border)'; bE.style.color = d==='ent'?'var(--in)':'var(--text4)'; }
+  if(bS){ bS.style.background = d==='sai'?'#dc262622':'transparent'; bS.style.borderColor = d==='sai'?'#dc2626':'var(--border)'; bS.style.color = d==='sai'?'var(--out)':'var(--text4)'; }
   finRenderCats();
 }
 
@@ -4298,4 +4315,21 @@ function calChips(){
   const no = ('Notification' in window) && Notification.permission === 'denied';
   if(dp) dp.style.background = ok ? 'var(--in)' : no ? 'var(--out)' : 'var(--text4)';
   if(lp) lp.textContent = ok ? 'Notificações ativas' : no ? 'Notificações bloqueadas' : 'Notificações';
+}
+
+
+// Aplica o destaque amarelo com prioridade máxima (vence style inline)
+function pintarMarca(id){
+  const el = document.getElementById(id);
+  if(!el || !el.textContent || el.textContent === '—') return;
+  const cs = getComputedStyle(document.documentElement);
+  const bg = cs.getPropertyValue('--mark').trim();
+  const fg = cs.getPropertyValue('--mark-fg').trim();
+  el.style.setProperty('background', bg, 'important');
+  el.style.setProperty('color', fg, 'important');
+  el.style.setProperty('-webkit-text-fill-color', fg, 'important');
+  el.style.setProperty('padding', '3px 10px', 'important');
+  el.style.setProperty('border-radius', '6px', 'important');
+  el.style.setProperty('display', 'inline-block', 'important');
+  el.style.setProperty('font-weight', '700', 'important');
 }
