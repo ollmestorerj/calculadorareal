@@ -379,6 +379,13 @@ body.light .login-logo img{filter:none}
 .r-go .r-rv:nth-child(3){transition-delay:100ms}
 .r-go .r-rv:nth-child(4){transition-delay:150ms}
 @media(prefers-reduced-motion:reduce){.r-rv{opacity:1;transform:none}.r-bar div{flex-grow:var(--g)}}
+
+.pc-lucro{margin:11px 0 10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14)}
+.pcl-lbl{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.75;margin-bottom:5px}
+.pcl-val{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
+.pc-payout{font-size:.68rem;opacity:.8;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1)}
+.pc-payout b{font-weight:700;opacity:1}
+.price-card .mk{background:var(--mark);color:var(--mark-fg)}
 </style>
 </head>
 <body>
@@ -840,39 +847,38 @@ body.light .login-logo img{filter:none}
       <p style="font-size:.82rem;color:#888;line-height:1.6">Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong></p>
     </div>
     <div id="right-result" style="display:none">
-      <!-- Cabeçalho do resultado -->
-      <div class="r-rv">
-        <div class="r-hero">
-          <div>
-            <div class="r-eb">Lucro por unidade</div>
-            <div class="v"><span class="mk" id="hero-lucro-un">R$ —</span></div>
+      <!-- Comparação: seu preço x preço do mercado -->
+      <div class="price-grid r-rv" id="price-grid">
+        <div class="price-card calc">
+          <div class="pc-tag">Preço Ideal Calculado</div>
+          <div class="pc-price" id="pc-preco">R$ —</div>
+          <div class="pc-badge">Preço mínimo seguro</div>
+          <div class="pc-lucro">
+            <div class="pcl-lbl">Lucro por unidade</div>
+            <div class="pcl-val"><span class="mk" id="pc-lucro-un">R$ —</span></div>
           </div>
-          <div>
-            <div class="r-eb">Lucro do lote</div>
-            <div class="v"><span class="mk" id="hero-lucro-lote">R$ —</span></div>
+          <div class="pc-kpis">
+            <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="pc-mk">—</div></div>
+            <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="pc-roi">—</div></div>
+            <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="pc-mg">—</div></div>
           </div>
-          <div style="margin-left:auto;text-align:right">
-            <div class="r-eb">Situação</div>
-            <div style="margin-top:8px"><span class="pc-badge" id="hero-badge" style="margin:0">—</span></div>
-          </div>
+          <div class="pc-payout">Payout do ML <b id="pc-payout">—</b></div>
         </div>
-        <div class="r-second">
-          <div>
-            <div class="r-eb">ROI</div>
-            <div class="v"><span class="mk2" id="hero-roi">—</span></div>
+
+        <div class="price-card ml-none" id="pc-ml-card">
+          <div class="pc-tag" id="pc-ml-tag">Preço Médio ML</div>
+          <div class="pc-price" id="pc-ml-preco">—</div>
+          <div class="pc-badge" id="pc-ml-badge">Informe o preço médio</div>
+          <div class="pc-lucro">
+            <div class="pcl-lbl">Lucro por unidade</div>
+            <div class="pcl-val"><span class="mk" id="ml-lucro-un">R$ —</span></div>
           </div>
-          <div>
-            <div class="r-eb">Payout do ML</div>
-            <div class="v"><span class="mk2" id="hero-payout">R$ —</span></div>
+          <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
+            <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div></div>
+            <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div></div>
+            <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="ml-mg">—</div></div>
           </div>
-          <div style="margin-left:auto;text-align:right">
-            <div class="r-eb" id="hero-preco-lbl">Preço calculado</div>
-            <div class="quiet" id="hero-preco">R$ —</div>
-          </div>
-          <div style="text-align:right">
-            <div class="r-eb">Margem</div>
-            <div class="quiet" id="hero-margem">—</div>
-          </div>
+          <div class="pc-payout">Payout do ML <b id="ml-payout">—</b></div>
         </div>
       </div>
 
@@ -892,24 +898,6 @@ body.light .login-logo img{filter:none}
           <div class="r-lg"><i style="background:var(--seg-c)"></i>Comissão <b id="lg-com">—</b></div>
           <div class="r-lg"><i style="background:var(--seg-d)"></i>Imposto <b id="lg-imp">—</b></div>
           <div class="r-lg"><i style="background:var(--mark)"></i>Você <b id="lg-voce">—</b></div>
-        </div>
-      </div>
-
-      <!-- IDs preservados para o app.js — ocultos, alimentam a lógica existente -->
-      <div style="display:none" aria-hidden="true">
-        <div id="price-grid">
-          <div class="price-card calc">
-            <span class="pc-tag"></span>
-            <span class="pc-badge"></span>
-            <span id="pc-preco"></span><span id="pc-mk"></span><span id="pc-roi"></span><span id="pc-mg"></span>
-          </div>
-          <div class="price-card ml-none" id="pc-ml-card">
-            <span class="pc-tag" id="pc-ml-tag"></span>
-            <span class="pc-badge" id="pc-ml-badge"></span>
-            <span id="pc-ml-preco"></span>
-            <div id="pc-ml-kpis"></div>
-            <span id="ml-mk"></span><span id="ml-roi"></span><span id="ml-mg"></span>
-          </div>
         </div>
       </div>
 
@@ -1157,7 +1145,7 @@ body.light .login-logo img{filter:none}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1787978646"></script>
+<script src="app.js?v=1787978985"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
