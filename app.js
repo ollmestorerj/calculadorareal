@@ -1175,6 +1175,16 @@ async function renderDash(){
     star:'<svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
     chev:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
   };
+  window.dashToggle = window.dashToggle || function(id, ev){
+    if(ev && ev.target.closest('button,a,textarea')) return;   // clique em ação não abre
+    const r = document.getElementById('det2-'+id);
+    if(!r) return;
+    const abrindo = r.style.display !== 'table-row';
+    r.style.display = abrindo ? 'table-row' : 'none';
+    const c = document.getElementById('cv-'+id);
+    if(c) c.style.transform = abrindo ? 'rotate(180deg)' : '';
+  };
+
   const ib = 'background:none;border:1px solid transparent;border-radius:7px;padding:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s';
 
   const head=`<table style="width:100%;border-collapse:collapse">
@@ -1192,10 +1202,10 @@ async function renderDash(){
       : (p.precoML>0 ? ((p.precoML-p.custoReal-(p.frete||0)-(p.ins||0)-p.precoML*(p.pI||0)-p.precoML*(p.pC||0)-p.precoML*(p.pA||0))/p.precoML)*100 : null);
     const comp = p.comprado;
 
-    return `<tr style="border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
+    return `<tr onclick="dashToggle(${p.id},event)" style="border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
       <td style="padding:11px 12px 11px 2px;vertical-align:middle">
         <div style="display:flex;align-items:center;gap:7px">
-          <div style="font-size:.84rem;font-weight:600;color:var(--text);line-height:1.35">${p.nome}</div>
+          <div style="font-size:.84rem;font-weight:600;color:var(--text);line-height:1.35;transition:color .15s" onmouseover="this.style.color='var(--mark)'" onmouseout="this.style.color='var(--text)'">${p.nome}</div>
           ${comp?'<span style="background:var(--in-bg);color:var(--in);border:1px solid var(--in-line);border-radius:20px;padding:1px 7px;font-size:.58rem;font-weight:600;white-space:nowrap;flex-shrink:0">comprado</span>':''}
         </div>
         <div style="font-size:.68rem;color:var(--text4);margin-top:3px">${p.forn} · ${p.cod}</div>
@@ -1208,7 +1218,7 @@ async function renderDash(){
           <button onclick="verNaCalculadora(${p.id})" title="Abrir na calculadora" style="display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 11px;cursor:pointer;font-size:.7rem;font-weight:600;color:var(--text);white-space:nowrap;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='var(--mark)';this.style.background='var(--mark-soft)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--card)'">${ico.calc} Cálculo</button>
           <button onclick="toggleComprado(${p.id})" title="${comp?'Desmarcar compra':'Marcar como comprado'}" style="${ib};color:${comp?'var(--in)':'var(--text3)'};fill:${comp?'var(--in)':'none'};background:${comp?'var(--in-bg)':'none'};border-color:${comp?'var(--in-line)':'transparent'}" onmouseover="this.style.borderColor='var(--in-line)';this.style.color='var(--in)'" onmouseout="this.style.borderColor='${comp?'var(--in-line)':'transparent'}';this.style.color='${comp?'var(--in)':'var(--text3)'}'">${ico.star}</button>
           <button onclick="deletarProduto(${p.id})" title="Remover produto" style="${ib};color:var(--text3)" onmouseover="this.style.color='var(--out)';this.style.borderColor='var(--out)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='transparent'">${ico.del}</button>
-          <button onclick="var r=document.getElementById('${det}');var o=r.style.display==='table-row';r.style.display=o?'none':'table-row';this.style.transform=o?'':'rotate(180deg)'" title="Ver detalhes" style="${ib};color:var(--text3);transition:transform .2s,color .15s,border-color .15s" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='transparent'">${ico.chev}</button>
+          <button id="cv-${p.id}" onclick="dashToggle(${p.id})" title="Ver detalhes" style="${ib};color:var(--text3);transition:transform .2s,color .15s,border-color .15s" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='transparent'">${ico.chev}</button>
         </div>
       </td>
     </tr>
