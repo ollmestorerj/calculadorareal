@@ -2009,20 +2009,25 @@ function calcularGiro(){
   const fmtN = n => n.toLocaleString('pt-BR');
 
   document.getElementById('giro-estoque-atual').textContent = fmtN(estoqueAtual);
+  const hs=document.getElementById('giro-head-stats'); if(hs) hs.style.display='flex';
+  const sh=function(id,v){const e=document.getElementById(id); if(e) e.textContent=v;};
+  sh('hd-estoque', fmtN(estoqueAtual)+' un');
+  sh('hd-dias', diasRestantes+(diasRestantes===1?' dia':' dias'));
+  sh('hd-custo', custoUnit>0?fmt(custoUnit):'—');
   const elDias = document.getElementById('giro-dias-restantes');
   elDias.textContent = diasRestantes;
-  elDias.style.color = prazo>0&&diasRestantes<=prazo ? '#f87171' : diasRestantes<=10 ? '#F0A070' : '#4ade80';
+  elDias.style.color = prazo>0&&diasRestantes<=prazo ? 'var(--out)' : diasRestantes<=10 ? 'var(--text)' : 'var(--in)';
   document.getElementById('giro-custo-unit').textContent = custoUnit>0 ? fmt(custoUnit) : '—';
 
   const alerta = document.getElementById('giro-alerta');
   if(prazo>0&&diasRestantes<=prazo){
-    alerta.style.cssText='background:#7f1d1d33;border:1px solid #ef444455;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#f87171;font-weight:700';
+    alerta.style.cssText='background:transparent;border:1px solid var(--out);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--out);font-weight:600';
     alerta.textContent=`⚠️ Atenção! Seu estoque acaba em ${diasRestantes} dias mas o novo lote chega em ${prazo} dias. Faça o pedido agora!`;
   }else if(prazo>0&&diasRestantes<=prazo*1.5){
-    alerta.style.cssText='background:#7c2d1233;border:1px solid #F0A07055;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#F0A070;font-weight:600';
+    alerta.style.cssText='background:var(--mark-soft);border:1px solid var(--mark);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--text);font-weight:600';
     alerta.textContent=`⏳ Fique de olho — você tem ${diasRestantes} dias de estoque. Prepare-se para pedir em breve.`;
   }else{
-    alerta.style.cssText='background:#05291622;border:1px solid #16a34a44;border-radius:9px;padding:9px 13px;font-size:.78rem;color:#4ade80;font-weight:600';
+    alerta.style.cssText='background:var(--in-bg);border:1px solid var(--in-line);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--in);font-weight:600';
     alerta.textContent=`✅ Estoque tranquilo por ${diasRestantes} dias.`;
   }
 
@@ -2056,7 +2061,15 @@ function calcularGiro(){
     dataEntrega.setDate(dataEntrega.getDate()+prazo);
     const dataEntregaStr = dataEntrega.toISOString().split('T')[0];
     const dataEntregaFmt = dataEntrega.toLocaleDateString('pt-BR');
-    elData.textContent  = dataPedidoFmt;
+    elData.innerHTML = '<span id="giro-data-mk">'+dataPedidoFmt+'</span>';
+    const dm=document.getElementById('giro-data-mk');
+    if(dm){
+      const cs=getComputedStyle(document.documentElement);
+      dm.style.setProperty('background',cs.getPropertyValue('--mark').trim(),'important');
+      dm.style.setProperty('color',cs.getPropertyValue('--mark-fg').trim(),'important');
+      dm.style.setProperty('-webkit-text-fill-color',cs.getPropertyValue('--mark-fg').trim(),'important');
+      dm.style.cssText+=';padding:3px 10px;border-radius:6px;display:inline-block;font-weight:700';
+    }
     elLabel.textContent = diasAtePonto===0 ? '🔴 Peça HOJE!' : `em ${diasAtePonto} dias`;
     if(estoqueAtual<=pontoRep){
       elMsg.textContent=`Seu estoque já está no ponto de reposição. Faça o pedido agora! O lote chegaria em ${dataEntregaFmt}.`;
