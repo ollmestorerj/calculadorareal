@@ -409,6 +409,12 @@ body.light .login-logo img{filter:none}
     </div>
     <span class="sb-tooltip">INPI</span>
   </a>
+  <button class="sb-item" id="sb-fin" onclick="showPage('fin')" title="Financeiro">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    </div>
+    <span class="sb-tooltip">Financeiro</span>
+  </button>
   <button class="sb-item" id="sb-conc" onclick="showPage('conc')" title="Conciliação ML/MP">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="9" x2="12" y2="9"/></svg>
@@ -572,7 +578,7 @@ body.light .login-logo img{filter:none}
     </div>
 
     <!-- Cards médios: 8 ferramentas em 2 fileiras de 4 -->
-    <div class="home-tools-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:780px">
+    <div class="home-tools-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:780px">
 
       <div class="home-card" onclick="showPage('cal')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #2563eb40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
@@ -604,6 +610,11 @@ body.light .login-logo img{filter:none}
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Marca registrada</div>
       </a>
+      <div class="home-card" onclick="showPage('fin')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #16a34a40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Financeiro</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Entradas e saídas</div>
+      </div>
       <div class="home-card" onclick="showPage('conc')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0891b240"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Conciliação</div>
@@ -1057,7 +1068,7 @@ body.light .login-logo img{filter:none}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1787783602"></script>
+<script src="app.js?v=1787975947"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
@@ -1763,6 +1774,151 @@ function exportarExcel(){
   }
 })();
 </script>
+<!-- ===== FINANCEIRO ===== -->
+<div id="page-fin" class="page">
+  <div style="max-width:900px;margin:0 auto;padding:20px 18px">
+
+    <!-- Header + navegação de mês -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div>
+        <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px">
+          <span style="width:28px;height:28px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+          Financeiro
+        </div>
+        <div style="font-size:.74rem;color:var(--text4);text-transform:uppercase;letter-spacing:.08em">Entradas, saídas e contas fixas</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="finMudarMes(-1)" style="background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">‹</button>
+        <span id="fin-mes-label" style="font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);min-width:120px;text-align:center">—</span>
+        <button onclick="finMudarMes(1)" style="background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">›</button>
+      </div>
+    </div>
+
+    <!-- Resultado do mês -->
+    <div class="card" style="padding:18px;margin-bottom:12px;border-color:#16a34a44">
+      <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:5px">Resultado do mês</div>
+      <div id="fin-res-valor" style="font-family:'Outfit',sans-serif;font-size:2.1rem;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:14px">R$ 0,00</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Entradas</div>
+          <div id="fin-res-ent" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#4ade80">R$ 0,00</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Saídas</div>
+          <div id="fin-res-sai" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#f87171">R$ 0,00</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Fixas</div>
+          <div id="fin-res-fix" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#fbbf24">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Abas -->
+    <div class="toggle-row" style="margin-bottom:12px">
+      <button class="toggle-btn active" id="fin-aba-lanc" onclick="finAba('lanc')" style="font-size:.76rem;padding:8px">Lançamentos</button>
+      <button class="toggle-btn" id="fin-aba-fix" onclick="finAba('fix')" style="font-size:.76rem;padding:8px">Contas fixas</button>
+    </div>
+
+    <!-- Lançamentos -->
+    <div id="fin-sec-lanc">
+      <button onclick="finAbrirModal()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:12px">+ Novo lançamento</button>
+      <div id="fin-lista"></div>
+    </div>
+
+    <!-- Contas fixas -->
+    <div id="fin-sec-fix" style="display:none">
+      <div class="card" style="padding:14px 16px;margin-bottom:12px">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:4px">Total fixas ativas neste mês</div>
+        <div id="fin-total-fixas" style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#f87171;letter-spacing:-.02em">R$ 0,00</div>
+        <div style="font-size:.68rem;color:var(--text4);margin-top:3px">Descontado do resultado automaticamente todo mês</div>
+      </div>
+      <button onclick="finAbrirModalFixa()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:12px">+ Nova conta fixa</button>
+      <div id="fin-lista-fixas"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL — novo lançamento -->
+<div id="fin-ov-lanc" onclick="finFecharSeFora(event,'fin-ov-lanc')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="width:100%;max-width:420px;padding:20px;max-height:88vh;overflow-y:auto;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Novo lançamento</div>
+      <button onclick="finFechar('fin-ov-lanc')" style="background:none;border:none;color:var(--text4);font-size:1.2rem;cursor:pointer;line-height:1">×</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <button id="fin-tab-ent" onclick="finSetDir('ent')" style="padding:9px;border-radius:8px;border:1.5px solid #16a34a;background:#16a34a22;color:#4ade80;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Entrada</button>
+      <button id="fin-tab-sai" onclick="finSetDir('sai')" style="padding:9px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text4);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Saída</button>
+    </div>
+
+    <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:7px">Categoria</div>
+    <div id="fin-cats" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px"></div>
+
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor (R$)</label>
+      <input type="number" id="fin-inp-val" placeholder="0,00" step="0.01" inputmode="decimal" style="font-size:1.2rem;font-weight:700">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Descrição (opcional)</label>
+      <input type="text" id="fin-inp-desc" placeholder="Ex: repasse ML, compra de estoque...">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Conta</label>
+        <select id="fin-inp-conta" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit"></select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Data</label>
+        <input type="date" id="fin-inp-data">
+      </div>
+    </div>
+    <button onclick="finSalvarLancamento()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Salvar lançamento</button>
+  </div>
+</div>
+
+<!-- MODAL — nova conta fixa -->
+<div id="fin-ov-fixa" onclick="finFecharSeFora(event,'fin-ov-fixa')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="width:100%;max-width:420px;padding:20px;max-height:88vh;overflow-y:auto;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Nova conta fixa</div>
+      <button onclick="finFechar('fin-ov-fixa')" style="background:none;border:none;color:var(--text4);font-size:1.2rem;cursor:pointer;line-height:1">×</button>
+    </div>
+
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Descrição</label>
+      <input type="text" id="fin-fix-desc" placeholder="Ex: Contabilidade, empréstimo...">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor mensal (R$)</label>
+      <input type="number" id="fin-fix-val" placeholder="0,00" step="0.01" inputmode="decimal" style="font-size:1.1rem;font-weight:700">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Tipo</label>
+      <select id="fin-fix-tipo" onchange="finToggleTermino()" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit">
+        <option value="divida">Dívida — tem data de fim</option>
+        <option value="op">Operacional — recorrente</option>
+      </select>
+    </div>
+    <div class="field" id="fin-campo-termino" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Termina em</label>
+      <input type="month" id="fin-fix-termino">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Dia do vencimento</label>
+        <input type="number" id="fin-fix-dia" placeholder="Ex: 5" min="1" max="31" inputmode="numeric">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Conta debitada</label>
+        <select id="fin-fix-conta" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit"></select>
+      </div>
+    </div>
+    <button onclick="finSalvarNovaFixa()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Salvar conta fixa</button>
+  </div>
+</div>
+
 <!-- ===== CONCILIAÇÃO ML + MP ===== -->
 <div id="page-conc" class="page">
   <div style="max-width:1400px;margin:0 auto;padding:20px 18px">
