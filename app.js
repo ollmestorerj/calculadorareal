@@ -388,7 +388,7 @@ function entrarNoApp(dados, pagina){
     // Calendário home — eventos de hoje e próximos
     const hoje=new Date();hoje.setHours(0,0,0,0);
     const hojeStr=hoje.toISOString().split('T')[0];
-    const cores={full:'var(--text2)',conta:'var(--out)',entrega:'var(--in)',outro:'#F0A070'};
+    const cores={full:'var(--text2)',conta:'var(--out)',entrega:'var(--in)',outro:'var(--text2)'};
     const proximos=evs.filter(e=>{
       const d=new Date(e.data+'T00:00:00');
       return d>=hoje;
@@ -407,7 +407,7 @@ function entrarNoApp(dados, pagina){
           const diffDias=Math.round((d-hoje)/(864e5));
           const label=isHoje?'Hoje':diffDias===1?'Amanhã':'Em '+diffDias+' dias';
           return`<div style="display:flex;gap:6px;align-items:center">
-            <div style="width:3px;height:26px;background:${cores[e.tipo]||'#F0A070'};border-radius:2px;flex-shrink:0"></div>
+            <div style="width:3px;height:26px;background:${cores[e.tipo]||'var(--text2)'};border-radius:2px;flex-shrink:0"></div>
             <div>
               <div style="font-size:.72rem;font-weight:600;color:var(--text)">${e.titulo}</div>
               <div style="font-size:.65rem;color:var(--text3)">${label}</div>
@@ -633,10 +633,10 @@ function verificarFaixaFrete(){
   if(!lastCalc||freteSel_col===undefined){aviso.style.display='none';return;}
   const colCorreta=getPrecoIdx(lastCalc.preco);
   if(freteSel_col===colCorreta){
-    aviso.style.cssText='display:block;margin-top:6px;background:#05291622;border:1px solid #16a34a55;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#4ade80;line-height:1.5';
+    aviso.style.cssText='display:block;margin-top:6px;background:#05291622;border:1px solid #16a34a55;border-radius:9px;padding:8px 11px;font-size:.76rem;color:var(--in);line-height:1.5';
     aviso.textContent=`✅ Faixa correta! O preço calculado (${fmt(lastCalc.preco)}) está dentro da faixa ${precoLabels[colCorreta]}.`;
   }else{
-    aviso.style.cssText='display:block;margin-top:6px;background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:8px 11px;font-size:.76rem;color:#f87171;line-height:1.5';
+    aviso.style.cssText='display:block;margin-top:6px;background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:8px 11px;font-size:.76rem;color:var(--out);line-height:1.5';
     aviso.textContent=`⚠️ Atenção: o preço calculado (${fmt(lastCalc.preco)}) corresponde à faixa ${precoLabels[getPrecoIdx(lastCalc.preco)]}, mas você selecionou ${precoLabels[freteSel_col]}.`;
   }
 }
@@ -715,7 +715,7 @@ function setMode(m){
     b1.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b1.style.color='#fff';
     b2.style.background='none';b2.style.color='#4a3f6b';
     mb.style.display='block';mlInput.placeholder='Obrigatório';
-    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171;font-size:.65rem">(obrigatório)</span>';
+    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:var(--out);font-size:.65rem">(obrigatório)</span>';
     document.getElementById('mode-desc').innerHTML='<strong style="color:var(--text3)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
     document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
     document.getElementById('pc-ml-card').style.display='block';
@@ -723,7 +723,7 @@ function setMode(m){
     b2.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b2.style.color='#fff';
     b1.style.background='none';b1.style.color='#4a3f6b';
     mb.style.display='none';mlInput.placeholder='Obrigatório';
-    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:#f87171">*</span>';
+    mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:var(--out)">*</span>';
     document.getElementById('mode-desc').innerHTML='<strong style="color:var(--text3)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
   }
 }
@@ -761,10 +761,10 @@ function calcular(){
     document.getElementById('pc-mg').textContent=fmtP(margemReal);
     const badge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
     badge.textContent=margemReal>=10?'✅ Margem saudável':margemReal>=0?'⚠️ Margem baixa':'❌ Prejuízo';
-    badge.style.cssText=`display:inline-block;padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:700;margin-bottom:9px;background:${margemReal>=10?'rgba(74,222,128,.2)':margemReal>=0?'rgba(240,160,112,.2)':'rgba(239,68,68,.2)'};color:${margemReal>=10?'var(--in)':margemReal>=0?'#F0A070':'var(--out)'}`;
+    badge.style.cssText=`display:inline-block;padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:700;margin-bottom:9px;background:${margemReal>=10?'rgba(74,222,128,.2)':margemReal>=0?'rgba(240,160,112,.2)':'rgba(239,68,68,.2)'};color:${margemReal>=10?'var(--in)':margemReal>=0?'var(--text2)':'var(--out)'}`;
     const fator15=1-0.15-pI-pC-pA;
     const custoMax15=fator15>0?(precoML*fator15-frete-ins):null;
-    document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'var(--in)':margemReal>=0?'#F0A070':'var(--out)'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:#f87171">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'var(--in)':'var(--out)'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
+    document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'var(--in)':margemReal>=0?'var(--text2)':'var(--out)'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:var(--out)">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'var(--in)':'var(--out)'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
     if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(precoML));verificarFaixaFrete();}
     preencherDetalhes(custo,frete,ins,base,vI,vC,vA,0,precoML,payout,qtd,inv,vI*qtd);
     document.getElementById('bottom-wrapper').style.display='flex';
@@ -784,7 +784,7 @@ function calcular(){
   const _tag1=document.querySelector('.price-card.calc .pc-tag'); if(_tag1)_tag1.textContent='Preço Ideal Calculado';
   const mainBadge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
   mainBadge.textContent='✅ Preço mínimo seguro';
-  mainBadge.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:#4ade80;font-size:.67rem;font-weight:700;margin-bottom:9px';
+  mainBadge.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:var(--in);font-size:.67rem;font-weight:700;margin-bottom:9px';
   document.getElementById('pc-preco').textContent=fmt(preco);
   document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
   document.getElementById('pc-roi').textContent=fmtP(roi);
@@ -809,17 +809,17 @@ function calcular(){
       document.getElementById('explain-text').innerHTML=`Preço médio ML igual ao seu preço mínimo. Você pode vender nesse valor mantendo a margem definida.`;
     }else if(diff>0){
       mlCard.className='price-card ml-cheaper';
-      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:#4ade80;font-size:.67rem;font-weight:700;margin-bottom:9px';
+      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:var(--in);font-size:.67rem;font-weight:700;margin-bottom:9px';
       document.getElementById('pc-ml-badge').textContent=`✅ ${pct}% acima do seu mínimo`;
       document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
-      document.getElementById('explain-text').innerHTML=`O mercado paga <strong style="color:#4ade80">${pct}% a mais</strong> que seu preço mínimo. Você pode ser mais competitivo ou vender no preço médio e aumentar a margem.`;
+      document.getElementById('explain-text').innerHTML=`O mercado paga <strong style="color:var(--in)">${pct}% a mais</strong> que seu preço mínimo. Você pode ser mais competitivo ou vender no preço médio e aumentar a margem.`;
     }else{
       mlCard.className='price-card ml-pricier';
-      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.2);color:#f87171;font-size:.67rem;font-weight:700;margin-bottom:9px';
+      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.2);color:var(--out);font-size:.67rem;font-weight:700;margin-bottom:9px';
       document.getElementById('pc-ml-badge').textContent=`⚠️ ${pct}% abaixo do seu mínimo`;
       document.getElementById('pc-ml-tag').textContent='⚠️ Preço Médio ML';
       const custoIdeal=precoML*fator-frete-ins;
-      document.getElementById('explain-text').innerHTML=`Preço médio ML está <strong style="color:#f87171">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, compre por no máximo <strong style="color:#4ade80">${fmt(Math.max(custoIdeal,0))}</strong>.`;
+      document.getElementById('explain-text').innerHTML=`Preço médio ML está <strong style="color:var(--out)">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, compre por no máximo <strong style="color:var(--in)">${fmt(Math.max(custoIdeal,0))}</strong>.`;
     }
     document.getElementById('bottom-wrapper').style.display='flex';
   }else{
@@ -842,7 +842,7 @@ function calcular(){
       const baseNova=custo+freteNovo+ins,precoMinNovo=baseNova/fator;
       if(precoMinNovo<=limitePreco){alerta={freteNovo,limitePreco,ganhoFrete:frete-freteNovo};break;}
     }
-    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:#f87171">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:#4ade80">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:#4ade80">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:var(--text2)">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:#4ade80">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
+    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:var(--out)">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:var(--in)">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:var(--in)">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:var(--text2)">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:var(--in)">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
     else{alertBox.style.display='none';}
   }else{alertBox.style.display='none';}
 
@@ -1272,7 +1272,7 @@ const DATAS_SAZONAIS = [
   {id:'volta_aulas_jul_26', titulo:'Volta às Aulas — Julho',   data:'2026-07-01', dias:[30,15],    icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 20V10a8 8 0 0 1 16 0v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z\"/><path d=\"M9 20v-5a3 3 0 0 1 6 0v5\"/><line x1=\"8\" y1=\"10\" x2=\"16\" y2=\"10\"/></svg></span>', cor:'#7c3aed'},
   {id:'pais_26',            titulo:'Dia dos Pais',             data:'2026-08-09', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44z\"/><path d=\"M10.59 4.59l.6 3.4-3.4-.6z\"/></svg></span>', cor:'#16a34a'},
   {id:'criancas_26',        titulo:'Dia das Crianças',         data:'2026-10-12', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#6B21A8'},
-  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'#F0A070'},
+  {id:'verao_26',           titulo:'Início do Verão',          data:'2026-09-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'var(--text2)'},
   {id:'blackfriday_26',     titulo:'Black Friday',             data:'2026-11-27', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#4a3f6b,#2d2460);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"23\"/><path d=\"M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"/></svg></span>', cor:'#4a3f6b'},
   {id:'natal_26',           titulo:'Natal',                    data:'2026-12-25', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#16a34a'},
   // 2027
@@ -1285,7 +1285,7 @@ const DATAS_SAZONAIS = [
   {id:'volta_aulas_jul_27', titulo:'Volta às Aulas — Julho',   data:'2027-07-01', dias:[30,15],    icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 20V10a8 8 0 0 1 16 0v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z\"/><path d=\"M9 20v-5a3 3 0 0 1 6 0v5\"/><line x1=\"8\" y1=\"10\" x2=\"16\" y2=\"10\"/></svg></span>', cor:'#7c3aed'},
   {id:'pais_27',            titulo:'Dia dos Pais',             data:'2027-08-08', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44z\"/><path d=\"M10.59 4.59l.6 3.4-3.4-.6z\"/></svg></span>', cor:'#16a34a'},
   {id:'criancas_27',        titulo:'Dia das Crianças',         data:'2027-10-12', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#6B21A8'},
-  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'#F0A070'},
+  {id:'verao_27',           titulo:'Início do Verão',          data:'2027-09-21', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg></span>', cor:'var(--text2)'},
   {id:'blackfriday_27',     titulo:'Black Friday',             data:'2027-11-26', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#4a3f6b,#2d2460);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"23\"/><path d=\"M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"/></svg></span>', cor:'#4a3f6b'},
   {id:'natal_27',           titulo:'Natal',                    data:'2027-12-25', dias:[45,30,15], icon:'<span style=\"width:32px;height:32px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg></span>', cor:'#16a34a'},
 ];
@@ -1445,15 +1445,15 @@ function mostrarNotifSazonal(ev){
   const container = document.getElementById('notif-container');
   const div = document.createElement('div');
   div.className='notif outro';
-  div.style.borderColor='#F0A070';
+  div.style.borderColor='var(--text2)';
   div.style.maxWidth='340px';
   div.innerHTML=`
     <div class="notif-body" style="width:100%">
-      <div class="notif-title" style="color:#F0A070;margin-bottom:4px">${ev.titulo.replace(/ em \d+ dias/,'')}</div>
+      <div class="notif-title" style="color:var(--text2);margin-bottom:4px">${ev.titulo.replace(/ em \d+ dias/,'')}</div>
       <div class="notif-sub" style="margin-bottom:10px">${ev.obs}</div>
       <div style="display:flex;gap:8px">
-        <button onclick="confirmarSazonal('sim','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#16a34a22;border:1px solid #16a34a55;color:#4ade80;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">✅ Sim, vou participar</button>
-        <button onclick="confirmarSazonal('nao','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#7f1d1d22;border:1px solid #ef444455;color:#f87171;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">❌ Não vou participar</button>
+        <button onclick="confirmarSazonal('sim','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#16a34a22;border:1px solid #16a34a55;color:var(--in);border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">✅ Sim, vou participar</button>
+        <button onclick="confirmarSazonal('nao','${ev.sazonalId}',this)" style="flex:1;padding:6px;background:#7f1d1d22;border:1px solid #ef444455;color:var(--out);border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer">❌ Não vou participar</button>
       </div>
     </div>
     <button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
@@ -1604,7 +1604,7 @@ const tipoCores={
   full:        {bg:'#7c3aed18',color:'var(--text2)',dot:'#7c3aed'},
   conta:       {bg:'#dc262618',color:'var(--out)',dot:'#dc2626'},
   entrega:     {bg:'#16a34a18',color:'var(--in)',dot:'#16a34a'},
-  outro:       {bg:'#F0A07018',color:'#F0A070',dot:'#F0A070'},
+  outro:       {bg:'#F0A07018',color:'var(--text2)',dot:'var(--text2)'},
   sazonal:     {bg:'#d9770618',color:'var(--text2)',dot:'#d97706'},
   giro_pedido: {bg:'#7c3aed18',color:'var(--text2)',dot:'#7c3aed'},
   giro_entrega:{bg:'#16a34a18',color:'var(--in)',dot:'#16a34a'},
@@ -1693,7 +1693,7 @@ function abrirModal(data,evId){
   let btnDel=document.getElementById('btn-del-ev');
   if(!btnDel){
     btnDel=document.createElement('button');btnDel.id='btn-del-ev';btnDel.className='btn-cancel';
-    btnDel.style.cssText='background:#ff3b3018;border-color:#ff3b3055;color:#f87171;margin-right:auto';
+    btnDel.style.cssText='background:#ff3b3018;border-color:#ff3b3055;color:var(--out);margin-right:auto';
     btnDel.textContent='🗑 Excluir';btnDel.onclick=()=>excluirEvento();
     document.querySelector('.modal-btns').prepend(btnDel);
   }
@@ -1751,7 +1751,7 @@ const msgFull={5:'📦 Coleta Full em 5 dias! Vai enviar? Se não for presta ate
 function mostrarNotifMsg(ev,mensagem,diffDias){
   const container=document.getElementById('notif-container');
   const ti=tipoInfo[ev.tipo];
-  const urgencia=diffDias===0?'var(--out)':diffDias===1?'#F0A070':'var(--text2)';
+  const urgencia=diffDias===0?'var(--out)':diffDias===1?'var(--text2)':'var(--text2)';
   const div=document.createElement('div');div.className=`notif ${ev.tipo}`;div.style.borderColor=urgencia;
   div.innerHTML=`<div class="notif-icon">${ti.icon}</div><div class="notif-body"><div class="notif-title" style="color:${urgencia}">${mensagem}</div><div class="notif-sub">${ev.data.split('-').reverse().join('/')}${ev.hora?' às '+ev.hora:''}${ev.obs?' — '+ev.obs:''}</div></div><button class="notif-close" onclick="this.parentElement.remove()">×</button>`;
   container.appendChild(div);
@@ -2211,7 +2211,7 @@ function renderResultadoPublicidade(preco, margemAds){
   if(!alerta){
     alerta = document.createElement('div');
     alerta.id = 'pub-alerta';
-    alerta.style.cssText = 'background:#7f1d1d22;border:1px solid #ef444455;border-radius:10px;padding:10px 14px;font-size:.78rem;color:#f87171;margin-top:8px;line-height:1.5;display:none';
+    alerta.style.cssText = 'background:#7f1d1d22;border:1px solid #ef444455;border-radius:10px;padding:10px 14px;font-size:.78rem;color:var(--out);margin-top:8px;line-height:1.5;display:none';
     res.parentNode.insertBefore(alerta, res);
   }
   if(margemAds<=0||preco<=0){
@@ -2295,7 +2295,7 @@ function renderHistoricoPublicidade(){
       <div style="font-weight:700;color:var(--text);font-size:.82rem">${h.nome}</div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.78rem;align-items:center">
         <span>ROAS: <strong style="color:#c4b5fd">${h.roas}</strong></span>
-        <span>ACOS: <strong style="color:#4ade80">${h.acos}</strong></span>
+        <span>ACOS: <strong style="color:var(--in)">${h.acos}</strong></span>
         <span>Margem ads: <strong style="color:var(--o)">${h.margem}</strong></span>
         <button onclick="removerAnalisePublicidade(${h.id})" style="background:none;border:none;color:#4a3f6b;cursor:pointer;font-size:.85rem;padding:2px 5px" title="Remover">×</button>
       </div>
@@ -2329,7 +2329,7 @@ function calcularSimples(){
   const faixaObj=SN_ANEXO1.find(f=>rbt12>=f.min&&rbt12<=f.max);
   if(!faixaObj){
     res.style.display='none';empty.style.display='block';
-    empty.innerHTML='<div style="font-size:2.5rem">⚠️</div><p style="font-size:.8rem;color:#f87171;margin-top:8px">Faturamento acima do limite do Simples Nacional (R$ 4,8 milhões/ano)</p>';
+    empty.innerHTML='<div style="font-size:2.5rem">⚠️</div><p style="font-size:.8rem;color:var(--out);margin-top:8px">Faturamento acima do limite do Simples Nacional (R$ 4,8 milhões/ano)</p>';
     return;
   }
 
@@ -2498,14 +2498,14 @@ function recalcularMetas(){
     const infoEl=document.getElementById('info-'+prefix);
     if(infoEl){
       infoEl.innerHTML=`<strong style="color:var(--text);font-size:.75rem">${qtd}/${meta}</strong> produtos<br>`+
-        (comp>0?`<span style="color:#4ade80">⭐ ${comp} comprado${comp>1?'s':''}</span>`:'<span style="color:var(--text3)">nenhum comprado</span>');
+        (comp>0?`<span style="color:var(--in)">⭐ ${comp} comprado${comp>1?'s':''}</span>`:'<span style="color:var(--text3)">nenhum comprado</span>');
     }
     const resumoEl=document.getElementById('resumo-'+prefix);
     if(resumoEl){
-      const cor=pct>=100?'var(--in)':pct>=50?'#F0A070':'var(--text2)';
+      const cor=pct>=100?'var(--in)':pct>=50?'var(--text2)':'var(--text2)';
       resumoEl.innerHTML=`<span style="color:${cor};font-weight:700">${pct>=100?'🎉':'📍'} ${prefix==='semana'?'Esta semana':prefix==='quinzena'?'Quinzena':'Este mês'}:</span> `+
-        `${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?` · <strong style="color:#4ade80">${comp} comprado${comp>1?'s':''}</strong>`:''}.  `+
-        (faltam>0?`Faltam <strong style="color:var(--o)">${faltam}</strong> para bater a meta.`:`<strong style="color:#4ade80">Meta atingida!</strong>`);
+        `${qtd} produto${qtd!==1?'s':''} analisado${qtd!==1?'s':''}${comp>0?` · <strong style="color:var(--in)">${comp} comprado${comp>1?'s':''}</strong>`:''}.  `+
+        (faltam>0?`Faltam <strong style="color:var(--o)">${faltam}</strong> para bater a meta.`:`<strong style="color:var(--in)">Meta atingida!</strong>`);
     }
     return {pct,qtd,comp};
   }
@@ -2887,10 +2887,10 @@ function atualizarBannerWhatsApp(tel){
           <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font-size:.82rem;font-weight:700;color:#4ade80">✅ WhatsApp ativo</div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--in)">✅ WhatsApp ativo</div>
           <div style="font-size:.7rem;color:var(--text3)">${formatado} · lembretes automáticos ativados</div>
         </div>
-        <button onclick="removerTelefone()" style="background:#7f1d1d22;border:1px solid #ef444444;color:#f87171;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">Remover</button>
+        <button onclick="removerTelefone()" style="background:#7f1d1d22;border:1px solid #ef444444;color:var(--out);border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">Remover</button>
       </div>`;
   } else {
     banner.innerHTML = `
@@ -3690,7 +3690,7 @@ function concRenderArquivos(){
     return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'
       +'<span style="width:10px;height:10px;border-radius:50%;background:'+(tem?'var(--in)':'var(--border)')+';flex-shrink:0"></span>'
       +'<span style="font-size:.76rem;color:'+(tem?'var(--text)':'var(--text4)')+';flex:1">'+labels[t]+'</span>'
-      +(tem?'<button onclick="concRemoverArquivo(\''+t+'\')" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:.8rem" title="Remover">×</button>':'')
+      +(tem?'<button onclick="concRemoverArquivo(\''+t+'\')" style="background:none;border:none;color:var(--out);cursor:pointer;font-size:.8rem" title="Remover">×</button>':'')
       +'</div>';
   }).join('');
   // Habilitar botão conciliar
@@ -3756,7 +3756,7 @@ function concRenderResultado(r){
   if(tbT) tbT.innerHTML = r.tarifas.map(function(t){
     return '<tr><td style="text-align:left;font-size:.75rem;color:var(--text2)">'+t.nome+'</td>'
       +'<td style="font-size:.75rem;color:var(--text3)">'+t.ops+'</td>'
-      +'<td style="font-size:.75rem;font-weight:700;color:#f87171">−R$ '+t.total.toFixed(2).replace('.',',')+'</td></tr>';
+      +'<td style="font-size:.75rem;font-weight:700;color:var(--out)">−R$ '+t.total.toFixed(2).replace('.',',')+'</td></tr>';
   }).join('');
 
   // Mercado Pago
@@ -3765,7 +3765,7 @@ function concRenderResultado(r){
     var mp = r.mercadoPago;
     mpBox.innerHTML =
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
-      +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">OPERAÇÕES CASADAS</div><div style="font-size:1.1rem;font-weight:800;color:#4ade80">'+mp.operacoesCasadas+'</div></div>'
+      +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">OPERAÇÕES CASADAS</div><div style="font-size:1.1rem;font-weight:800;color:var(--in)">'+mp.operacoesCasadas+'</div></div>'
       +'<div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:.62rem;color:var(--text4);margin-bottom:3px">DIVERGÊNCIAS MP</div><div style="font-size:1.1rem;font-weight:800;color:'+(mp.divergenciasMP?'var(--out)':'var(--in)')+'">'+mp.divergenciasMP+'</div></div>'
       +'</div>'
       +'<div style="font-size:.74rem;color:var(--text3);margin-bottom:5px">Saques: R$ '+mp.saques.total.toFixed(2)+' · '+mp.saques.aprovados+' aprovados</div>'
@@ -3791,16 +3791,16 @@ function concRenderTabela(linhas, filtroStatus, filtroBusca){
 
   var ST = ConciliacaoML.STATUS;
   var corStatus = {};
-  corStatus[ST.OK]='background:#16a34a22;color:#4ade80';
+  corStatus[ST.OK]='background:#16a34a22;color:var(--in)';
   corStatus[ST.PENDENTE]='background:var(--bg2);color:var(--text4)';
   corStatus[ST.COMPETENCIA]='background:#2563eb22;color:#60a5fa';
   corStatus[ST.TARIFA]='background:#d9770622;color:#fbbf24';
   corStatus[ST.DEVOLUCAO]='background:#6B21A822;color:#c4b5fd';
-  corStatus[ST.MENOS]='background:#dc262622;color:#f87171;font-weight:700';
+  corStatus[ST.MENOS]='background:#dc262622;color:var(--out);font-weight:700';
   corStatus[ST.MAIS]='background:#0891b222;color:#22d3ee';
 
   function fmt(n){ return n===undefined||n===null?'—':(n>=0?'':'-')+'R$ '+Math.abs(n).toFixed(2).replace('.',','); }
-  function fmtD(n){ return n===undefined?'—':(n>0.1?'<span style="color:#f87171">+R$ '+n.toFixed(2).replace('.',',')+'</span>':n<-0.1?'<span style="color:#f87171">−R$ '+Math.abs(n).toFixed(2).replace('.',',')+'</span>':'<span style="color:#4ade80">R$ 0,00</span>'); }
+  function fmtD(n){ return n===undefined?'—':(n>0.1?'<span style="color:var(--out)">+R$ '+n.toFixed(2).replace('.',',')+'</span>':n<-0.1?'<span style="color:var(--out)">−R$ '+Math.abs(n).toFixed(2).replace('.',',')+'</span>':'<span style="color:var(--in)">R$ 0,00</span>'); }
 
   var tbody = document.getElementById('conc-tbody');
   if(!tbody) return;
@@ -3871,7 +3871,7 @@ function concToast(msg, tipo){
   if(!c) return;
   var d = document.createElement('div');
   d.style.cssText='padding:8px 14px;border-radius:8px;font-size:.78rem;font-weight:600;margin-bottom:6px;'
-    +(tipo==='err'?'background:#dc262622;border:1px solid #dc262644;color:#f87171':'background:#16a34a22;border:1px solid #16a34a44;color:#4ade80');
+    +(tipo==='err'?'background:#dc262622;border:1px solid #dc262644;color:var(--out)':'background:#16a34a22;border:1px solid #16a34a44;color:var(--in)');
   d.textContent = msg;
   c.appendChild(d);
   setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 3500);
@@ -4050,7 +4050,7 @@ function finRenderFixas(){
   el.innerHTML = _finFix.map(f=>{
     const ativa = ativas.includes(f);
     const badge = f.tipo==='divida'
-      ? '<span style="background:#dc262622;color:#f87171;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700">Dívida</span>'
+      ? '<span style="background:#dc262622;color:var(--out);border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700">Dívida</span>'
       : '<span style="background:#d9770622;color:#fbbf24;border-radius:20px;padding:1px 7px;font-size:.6rem;font-weight:700">Operacional</span>';
     const term = (f.tipo==='divida' && f.termino)
       ? 'até '+FIN_MESES[parseInt(f.termino.split('-')[1])-1].substring(0,3)+'/'+f.termino.split('-')[0]
@@ -4061,7 +4061,7 @@ function finRenderFixas(){
         +'<div style="font-size:.66rem;color:var(--text4)">'+badge+' · '+term+' · dia '+(f.dia||'—')+' · '+(f.conta||'—')+'</div>'
       +'</div>'
       +'<div style="text-align:right;flex-shrink:0;margin-left:10px">'
-        +'<div style="font-size:.85rem;font-weight:800;color:#f87171">'+finBrl(-f.val)+'</div>'
+        +'<div style="font-size:.85rem;font-weight:800;color:var(--out)">'+finBrl(-f.val)+'</div>'
         +'<div style="font-size:.62rem;color:var(--text4);margin-top:2px">'+(ativa?'ativa este mês':'inativa')+'</div>'
       +'</div>'
       +'<button onclick="finExcluirFixa(\''+f.id+'\')" title="Remover" style="background:none;border:none;color:var(--text4);cursor:pointer;padding:4px;font-size:.9rem;flex-shrink:0;margin-left:6px">×</button>'
@@ -4223,28 +4223,45 @@ function renderResultadoHero(){
   // ---- preço de compra ideal ----
   const boxC = S('compra-box');
   const fator = 1 - pI - pC - pA - pM;
+  const ebEco = S('compra-eco-lbl');
   if(precoML > 0 && fator > 0){
-    const compraIdeal = precoML * fator - frete - ins;
-    const dif = custo - compraIdeal;
-    set('compra-titulo', 'Para vender a ' + fmt(precoML) + ' com ' + fmtP(pM*100) + ' de margem, compre por até');
-    set('compra-valor', fmt(Math.max(compraIdeal, 0)));
-
+    const mLucro2 = precoML - base - precoML*pI - precoML*pC - precoML*pA;
     const hoje = S('compra-hoje');
-    if(hoje){
-      if(dif > 0.01){
-        hoje.innerHTML = 'Hoje você paga ' + fmt(custo)
-          + ' — precisa negociar <b style="color:var(--out)">' + fmt(dif) + ' a menos</b> por unidade';
-      } else if(dif < -0.01){
-        hoje.innerHTML = 'Hoje você paga ' + fmt(custo)
-          + ' — já está <b style="color:var(--in)">' + fmt(Math.abs(dif)) + ' abaixo</b> do necessário';
-      } else {
-        hoje.textContent = 'Hoje você paga ' + fmt(custo) + ' — exatamente no ponto';
+    const eco  = S('compra-economia');
+
+    if(precoML < preco){
+      // ---- mercado paga MENOS: o alvo é negociar a compra ----
+      const compraIdeal = precoML * fator - frete - ins;
+      const dif = custo - compraIdeal;
+      set('compra-titulo', 'Para vender a ' + fmt(precoML) + ' com ' + fmtP(pM*100) + ' de margem, compre por até');
+      set('compra-valor', fmt(Math.max(compraIdeal, 0)));
+      if(hoje){
+        hoje.innerHTML = dif > 0.01
+          ? 'Hoje você paga ' + fmt(custo) + ' — precisa negociar <b style="color:var(--out)">' + fmt(dif) + ' a menos</b> por unidade'
+          : 'Hoje você paga ' + fmt(custo) + ' — já está no ponto';
       }
-    }
-    const eco = S('compra-economia');
-    if(eco){
-      eco.textContent = dif > 0 ? fmt(dif * qtd) : '—';
-      eco.style.color = dif > 0 ? 'var(--in)' : 'var(--text4)';
+      if(ebEco) ebEco.textContent = 'Economia no lote';
+      if(eco){
+        eco.textContent = dif > 0 ? fmt(dif * qtd) : '—';
+        eco.style.color = dif > 0 ? 'var(--in)' : 'var(--text4)';
+      }
+    } else {
+      // ---- mercado paga MAIS: o ganho é o extra por unidade ----
+      const extra = mLucro2 - (L.payout || 0);
+      const margemReal = precoML > 0 ? (mLucro2 / precoML) * 100 : 0;
+      const espaco = precoML - preco;
+      set('compra-titulo', 'Vendendo a ' + fmt(precoML) + ', o preço do mercado, você ganha a mais');
+      set('compra-valor', fmt(Math.max(extra, 0)));
+      if(hoje){
+        hoje.innerHTML = 'Margem real de <b style="color:var(--in)">' + fmtP(margemReal) + '</b> em vez de '
+          + fmtP(pM*100) + ' · dá para baixar até ' + fmt(preco)
+          + ' <span style="color:var(--text4)">(' + fmt(espaco) + ' de folga)</span>';
+      }
+      if(ebEco) ebEco.textContent = 'Ganho extra no lote';
+      if(eco){
+        eco.textContent = extra > 0 ? fmt(extra * qtd) : '—';
+        eco.style.color = extra > 0 ? 'var(--in)' : 'var(--text4)';
+      }
     }
     if(boxC) boxC.style.display = 'flex';
     pintarMarca('compra-valor');
