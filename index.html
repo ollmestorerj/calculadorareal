@@ -444,6 +444,50 @@ span .mk, div .mk{
 .pg-btn{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:var(--bg);border:none;
   border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
 @media(max-width:560px){.pg-title{font-size:1.3rem}.pg-stats{gap:16px}}
+
+/* ===== resultado: payout no card, compra e simulação ===== */
+.pc-duo{display:flex;gap:14px;margin:11px 0 10px;padding:9px 0;
+  border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15)}
+.pc-duo>div{flex:1;min-width:0}
+.pc-duo .pcl-lbl{font-size:.58rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:5px}
+.pc-duo .pcl-val{font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+
+.info{width:15px;height:15px;border-radius:50%;border:1px solid var(--text4);color:var(--text4);
+  font-size:.6rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;
+  cursor:help;position:relative;flex-shrink:0;margin-left:5px;vertical-align:middle}
+.info:hover{border-color:var(--text2);color:var(--text2)}
+.info .tip{position:absolute;left:50%;transform:translateX(-50%);bottom:24px;width:280px;
+  background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 13px;
+  font-size:.74rem;font-weight:400;color:var(--text2);line-height:1.6;text-align:left;
+  opacity:0;visibility:hidden;transition:opacity .15s;z-index:60;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);text-transform:none;letter-spacing:0}
+.info:hover .tip{opacity:1;visibility:visible}
+.info .tip b{color:var(--text);font-weight:600}
+
+.compra-box{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:15px 17px;margin-bottom:9px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.compra-txt{flex:1;min-width:200px}
+.compra-val{font-size:1.7rem;font-weight:700;letter-spacing:-.03em;line-height:1;margin-top:8px}
+.compra-hoje{font-size:.74rem;color:var(--text3);margin-top:7px}
+.compra-eco{text-align:right;min-width:130px}
+.compra-eco-val{font-size:1.35rem;font-weight:700;color:var(--in);letter-spacing:-.02em;margin-top:6px}
+
+.sim-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;margin-bottom:9px}
+.sim-tab{width:100%;border-collapse:collapse}
+.sim-tab th{font-size:.58rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text4);
+  padding:0 9px 8px 0;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+.sim-tab th:first-child{text-align:left}
+.sim-tab td{padding:10px 9px 10px 0;text-align:right;font-size:.84rem;font-weight:600;
+  border-bottom:1px solid var(--bg2);white-space:nowrap}
+.sim-tab td:first-child{text-align:left}
+.sim-tab tr:last-child td{border-bottom:none}
+.sim-tab tr.atual td{background:var(--mark-soft)}
+.sim-tab tr.atual td:first-child{border-radius:7px 0 0 7px}
+.sim-tab tr.atual td:last-child{border-radius:0 7px 7px 0}
+.mg-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.74rem;font-weight:700;
+  background:var(--bg2);color:var(--text2)}
+tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
+.sim-nota{font-size:.7rem;color:var(--text4);margin-top:10px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -918,36 +962,73 @@ span .mk, div .mk{
           <div class="pc-tag">Preço Ideal Calculado</div>
           <div class="pc-price" id="pc-preco">R$ —</div>
           <div class="pc-badge">Preço mínimo seguro</div>
-          <div class="pc-lucro">
-            <div class="pcl-lbl">Lucro por unidade</div>
-            <div class="pcl-val"><span class="mk" id="pc-lucro-un">R$ —</span></div>
+          <div class="pc-duo">
+            <div>
+              <div class="pcl-lbl">Lucro por unidade</div>
+              <div class="pcl-val"><span class="mk" id="pc-lucro-un">R$ —</span></div>
+            </div>
+            <div>
+              <div class="pcl-lbl">Payout do ML</div>
+              <div class="pcl-val" id="pc-payout">R$ —</div>
+            </div>
           </div>
           <div class="pc-kpis">
             <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="pc-mk">—</div></div>
             <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="pc-roi">—</div></div>
             <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="pc-mg">—</div></div>
           </div>
-          <div class="pc-payout">Payout do ML <b id="pc-payout">—</b></div>
         </div>
 
         <div class="price-card ml-none" id="pc-ml-card">
           <div class="pc-tag" id="pc-ml-tag">Preço Médio ML</div>
           <div class="pc-price" id="pc-ml-preco">—</div>
           <div class="pc-badge" id="pc-ml-badge">Informe o preço médio</div>
-          <div class="pc-lucro">
-            <div class="pcl-lbl">Lucro por unidade</div>
-            <div class="pcl-val"><span class="mk" id="ml-lucro-un">R$ —</span></div>
+          <div class="pc-duo">
+            <div>
+              <div class="pcl-lbl">Lucro por unidade</div>
+              <div class="pcl-val"><span class="mk" id="ml-lucro-un">R$ —</span></div>
+            </div>
+            <div>
+              <div class="pcl-lbl">Payout do ML</div>
+              <div class="pcl-val" id="ml-payout">R$ —</div>
+            </div>
           </div>
           <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
             <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div></div>
             <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div></div>
             <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="ml-mg">—</div></div>
           </div>
-          <div class="pc-payout">Payout do ML <b id="ml-payout">—</b></div>
         </div>
       </div>
 
-      <div class="explain-box"><div class="ex-title">📖 Análise</div><span id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></div>
+      <!-- Preço de compra ideal -->
+      <div class="compra-box r-rv" id="compra-box" style="display:none">
+        <div class="compra-txt">
+          <div class="eb" id="compra-titulo">—
+            <span class="info">i<span class="tip" id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></span>
+          </div>
+          <div class="compra-val"><span class="mk" id="compra-valor">R$ —</span></div>
+          <div class="compra-hoje" id="compra-hoje">—</div>
+        </div>
+        <div class="compra-eco">
+          <div class="eb">Economia no lote</div>
+          <div class="compra-eco-val" id="compra-economia">—</div>
+        </div>
+      </div>
+
+      <!-- Simulação de margens -->
+      <div class="sim-box r-rv" id="sim-box" style="display:none">
+        <div class="bd-title">Se você quisesse outra margem</div>
+        <div style="overflow-x:auto">
+          <table class="sim-tab">
+            <thead><tr>
+              <th>Margem</th><th>Preço de venda</th><th>Lucro/unid.</th><th>Payout ML</th><th>Comprar por até</th>
+            </tr></thead>
+            <tbody id="sim-corpo"></tbody>
+          </table>
+        </div>
+        <div class="sim-nota" id="sim-nota"></div>
+      </div>
       <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
 
       <!-- Detalhamento + Projeção lado a lado -->
@@ -1175,7 +1256,7 @@ span .mk, div .mk{
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1788205522"></script>
+<script src="app.js?v=1788364353"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
