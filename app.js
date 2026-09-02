@@ -4333,3 +4333,84 @@ function pintarMarca(id){
   el.style.setProperty('display', 'inline-block', 'important');
   el.style.setProperty('font-weight', '700', 'important');
 }
+
+// ============================================================
+// CONTROLE DE VERSÃO — a versão vem do Firestore, gravada pelo
+// botão "Atualizar app de todos" no painel admin.
+// ============================================================
+let _versaoConhecida = null;
+
+async function checarVersao(){
+  try{
+    const db = await getDB();
+    const doc = await db.collection('config').doc('app').get();
+    if(!doc.exists) return;
+    const v = doc.data().versao;
+    if(!v) return;
+
+    // primeira leitura: só memoriza
+    if(_versaoConhecida === null){
+      _versaoConhecida = v;
+      const guardada = localStorage.getItem('realecom_versao');
+      if(guardada && guardada !== v){
+        localStorage.setItem('realecom_versao', v);
+        return recarregarApp(v);
+      }
+      localStorage.setItem('realecom_versao', v);
+      return;
+    }
+    if(v !== _versaoConhecida){
+      _versaoConhecida = v;
+      localStorage.setItem('realecom_versao', v);
+      recarregarApp(v);
+    }
+  }catch(e){ /* offline ou sem permissão — segue normal */ }
+}
+
+async function recarregarApp(v){
+  avisarAtualizacao();
+  try{
+    if('caches' in window){
+      const nomes = await caches.keys();
+      await Promise.all(nomes
+        .filter(n => !n.includes('firebase') && !n.includes('firestore'))
+        .map(n => caches.delete(n)));
+    }
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs
+        .filter(r => r.scope && !r.scope.includes('firebase-messaging'))
+        .map(r => r.unregister().catch(()=>{})));
+    }
+  }catch(e){}
+  setTimeout(function(){
+    const u = new URL(location.href);
+    u.searchParams.set('_v', v);
+    location.replace(u.toString());
+  }, 1800);
+}
+
+function avisarAtualizacao(){
+  if(document.getElementById('aviso-versao')) return;
+  const d = document.createElement('div');
+  d.id = 'aviso-versao';
+  d.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:9999;'
+    + 'background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 18px;'
+    + 'font-size:.8rem;font-weight:600;color:var(--text);box-shadow:0 10px 32px rgba(0,0,0,.3);'
+    + 'display:flex;align-items:center;gap:9px;font-family:inherit';
+  d.innerHTML = '<span style="width:14px;height:14px;border:2px solid var(--text4);border-top-color:var(--text);'
+    + 'border-radius:50%;display:inline-block;animation:girar .7s linear infinite"></span>'
+    + 'Atualizando para a versão mais recente…';
+  document.body.appendChild(d);
+  if(!document.getElementById('css-girar')){
+    const s = document.createElement('style');
+    s.id = 'css-girar';
+    s.textContent = '@keyframes girar{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+}
+
+// checa ao entrar, ao voltar para a aba e a cada minuto
+setTimeout(checarVersao, 2500);
+document.addEventListener('visibilitychange', function(){ if(!document.hidden) checarVersao(); });
+setInterval(checarVersao, 60000);
