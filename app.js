@@ -4198,26 +4198,88 @@ function renderResultadoHero(){
   const L = lastCalc, S = id => document.getElementById(id);
   const set = (id, txt) => { const e = S(id); if(e) e.textContent = txt; };
 
-  const preco = L.preco||0, custo = L.custo||0;
-  const frete = L.frete||0, ins = L.ins||0, precoML = L.precoML||0;
+  const preco   = L.preco   || 0;
+  const custo   = L.custo   || 0;
+  const frete   = L.frete   || 0;
+  const ins     = L.ins     || 0;
+  const precoML = L.precoML || 0;
+  const qtd     = L.qtd     || 1;
+  const pI = L.pI || 0, pC = L.pC || 0, pA = L.pA || 0, pM = L.pM || 0;
+  const base = custo + frete + ins;
 
-  // cenário A — preço calculado
-  const vC = preco*(L.pC||0), vA = preco*(L.pA||0);
-  set('pc-lucro-un', fmt(L.payout||0));
-  set('pc-payout',   fmt(preco - vC - vA - frete));
+  // ---- payout dentro de cada card ----
+  set('pc-lucro-un', fmt(L.payout || 0));
+  set('pc-payout',   fmt(preco - preco*pC - preco*pA - frete));
 
-  // cenário B — preço médio do mercado
   if(precoML > 0){
-    const mI = precoML*(L.pI||0), mC = precoML*(L.pC||0), mA = precoML*(L.pA||0);
-    set('ml-lucro-un', fmt(precoML - custo - frete - ins - mI - mC - mA));
-    set('ml-payout',   fmt(precoML - mC - mA - frete));
+    const mLucro = precoML - base - precoML*pI - precoML*pC - precoML*pA;
+    set('ml-lucro-un', fmt(mLucro));
+    set('ml-payout',   fmt(precoML - precoML*pC - precoML*pA - frete));
   } else {
     set('ml-lucro-un', 'R$ —');
-    set('ml-payout',   '—');
+    set('ml-payout',   'R$ —');
   }
 
-  // marca-texto aplicado no elemento — vence qualquer style inline
-  marcarAmarelo(['proj-lb','pd-lb-a','pd-lb-b','pc-lucro-un','ml-lucro-un']);
+  // ---- preço de compra ideal ----
+  const boxC = S('compra-box');
+  const fator = 1 - pI - pC - pA - pM;
+  if(precoML > 0 && fator > 0){
+    const compraIdeal = precoML * fator - frete - ins;
+    const dif = custo - compraIdeal;
+    set('compra-titulo', 'Para vender a ' + fmt(precoML) + ' com ' + fmtP(pM*100) + ' de margem, compre por até');
+    set('compra-valor', fmt(Math.max(compraIdeal, 0)));
+
+    const hoje = S('compra-hoje');
+    if(hoje){
+      if(dif > 0.01){
+        hoje.innerHTML = 'Hoje você paga ' + fmt(custo)
+          + ' — precisa negociar <b style="color:var(--out)">' + fmt(dif) + ' a menos</b> por unidade';
+      } else if(dif < -0.01){
+        hoje.innerHTML = 'Hoje você paga ' + fmt(custo)
+          + ' — já está <b style="color:var(--in)">' + fmt(Math.abs(dif)) + ' abaixo</b> do necessário';
+      } else {
+        hoje.textContent = 'Hoje você paga ' + fmt(custo) + ' — exatamente no ponto';
+      }
+    }
+    const eco = S('compra-economia');
+    if(eco){
+      eco.textContent = dif > 0 ? fmt(dif * qtd) : '—';
+      eco.style.color = dif > 0 ? 'var(--in)' : 'var(--text4)';
+    }
+    if(boxC) boxC.style.display = 'flex';
+    pintarMarca('compra-valor');
+  } else {
+    if(boxC) boxC.style.display = 'none';
+  }
+
+  // ---- simulação de margens ----
+  const corpo = S('sim-corpo'), boxS = S('sim-box');
+  if(corpo && base > 0){
+    const alvos = [0, .10, .15, .20];
+    const atual = Math.round(pM * 100);
+    corpo.innerHTML = alvos.map(function(m){
+      const f = 1 - pI - pC - pA - m;
+      if(f <= 0) return '';
+      const p      = base / f;
+      const lucro  = p * m;
+      const payout = p - p*pC - p*pA - frete;
+      const compra = precoML > 0 ? precoML * f - frete - ins : null;
+      const eAtual = Math.round(m * 100) === atual;
+      return '<tr' + (eAtual ? ' class="atual"' : '') + '>'
+        + '<td><span class="mg-pill">' + Math.round(m*100) + ' %</span></td>'
+        + '<td>' + fmt(p) + '</td>'
+        + '<td' + (m === 0 ? ' style="color:var(--text4);font-weight:500"' : '') + '>' + fmt(lucro) + '</td>'
+        + '<td>' + fmt(payout) + '</td>'
+        + '<td>' + (compra !== null ? fmt(Math.max(compra,0)) : '<span style="color:var(--text4);font-weight:500">—</span>') + '</td>'
+        + '</tr>';
+    }).join('');
+    set('sim-nota', precoML > 0
+      ? 'A linha destacada é a margem que você escolheu. “Comprar por até” considera a venda no preço do mercado, ' + fmt(precoML) + '.'
+      : 'A linha destacada é a margem que você escolheu. Informe o preço médio do mercado para ver quanto pagar no fornecedor.');
+    if(boxS) boxS.style.display = 'block';
+  } else if(boxS){
+    boxS.style.display = 'none';
+  }
 
   const painel = document.getElementById('right-result');
   if(painel){
