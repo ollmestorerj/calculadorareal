@@ -230,8 +230,8 @@ async function fazerLogin(){
   const btn=document.getElementById('btn-login');
   const loading=document.getElementById('login-loading');
   btn.disabled=true;
-  document.getElementById('login-erro').style.display='none';
-  document.getElementById('login-validade').style.display='none';
+  (function(){const el=document.getElementById('login-erro');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('login-validade');if(el)el.style.display='none';})();
   loading.style.display='block';
 
   try{
@@ -307,7 +307,7 @@ async function esqueceuSenha(){
     el.style.borderColor='#16a34a44';
     el.style.color='var(--in)';
     el.textContent='📧 E-mail de recuperação enviado! Verifique sua caixa de entrada.';
-    document.getElementById('login-erro').style.display='none';
+    (function(){const el=document.getElementById('login-erro');if(el)el.style.display='none';})();
   }catch(e){
     mostrarErroLogin('Não foi possível enviar o e-mail. Verifique se o endereço está correto.');
   }
@@ -607,7 +607,7 @@ function showPage(p,bypassCheck){
   if(p==='cal'){renderCal();carregarTelefoneWhatsApp();}
   if(p==='metas')carregarMetas();
   if(p==='gestao')calcularGestao();
-  if(p==='simples'){document.getElementById('sn-resultado').style.display='none';document.getElementById('sn-empty').style.display='block';}
+  if(p==='simples'){(function(){const el=document.getElementById('sn-resultado');if(el)el.style.display='none';})();(function(){const el=document.getElementById('sn-empty');if(el)el.style.display='block';})();}
   if(p==='pub'){switchPubMode('dash');renderHistoricoPublicidade();}
   if(p==='sazonal'){renderSazonalGrid();}
   if(p==='ncm'){renderHistoricoNCM();}
@@ -641,19 +641,19 @@ function verificarFaixaFrete(){
   }
 }
 
-function selFrete(col,val){freteSel=val;freteSel_col=col;renderTable(col);document.getElementById('frete-badge').style.display='block';document.getElementById('frete-val').textContent=fmt(val);verificarFaixaFrete();}
+function selFrete(col,val){freteSel=val;freteSel_col=col;renderTable(col);(function(){const el=document.getElementById('frete-badge');if(el)el.style.display='block';})();(function(){const el=document.getElementById('frete-val');if(el)el.textContent=fmt(val);})();verificarFaixaFrete();}
 
 function calcPeso(){
   const pr=parseFloat(document.getElementById('peso').value)||0;
   const c=parseFloat(document.getElementById('comp').value)||0,l=parseFloat(document.getElementById('larg').value)||0,a=parseFloat(document.getElementById('alt').value)||0;
   const pv=(c*l*a)/6000;pesoUsado=Math.max(pr,pv);freteSel=0;freteSel_col=undefined;
-  document.getElementById('frete-badge').style.display='none';
+  (function(){const el=document.getElementById('frete-badge');if(el)el.style.display='none';})();
   const pi=document.getElementById('peso-info'),fs=document.getElementById('frete-section');
   if(pr>0||pv>0){
     pi.style.display='flex';
-    document.getElementById('pi-real').textContent=pr>0?fmtKg(pr):'—';
-    document.getElementById('pi-vol').textContent=pv>0?fmtKg(pv):'—';
-    document.getElementById('pi-usado').textContent=fmtKg(pesoUsado)+(pv>pr&&pv>0?' (vol.)':' (real)');
+    (function(){const el=document.getElementById('pi-real');if(el)el.textContent=pr>0?fmtKg(pr):'—';})();
+    (function(){const el=document.getElementById('pi-vol');if(el)el.textContent=pv>0?fmtKg(pv):'—';})();
+    (function(){const el=document.getElementById('pi-usado');if(el)el.textContent=fmtKg(pesoUsado)+(pv>pr&&pv>0?' (vol.)':' (real)');})();
     fs.style.display='block';renderTable(-1);
   }else{pi.style.display='none';fs.style.display='none';}
 }
@@ -676,7 +676,13 @@ function renderTable(selCol){
   tbl.innerHTML=h+'</tbody>';
 }
 
-function switchFrete(mode){freteMode=mode;document.getElementById('tab-dim').style.display=mode==='dim'?'block':'none';document.getElementById('tab-manual').style.display=mode==='manual'?'block':'none';document.getElementById('btn-dim').className='toggle-btn'+(mode==='dim'?' active':'');document.getElementById('btn-manual').className='toggle-btn'+(mode==='manual'?' active':'');}
+function switchFrete(mode){
+  freteMode=mode;
+  const td=document.getElementById('tab-dim'); if(td)td.style.display=mode==='dim'?'block':'none';
+  const tm=document.getElementById('tab-manual'); if(tm)tm.style.display=mode==='manual'?'block':'none';
+  const bd=document.getElementById('btn-dim'); if(bd)bd.className='toggle-btn'+(mode==='dim'?' active':'');
+  const bm=document.getElementById('btn-manual'); if(bm)bm.className='toggle-btn'+(mode==='manual'?' active':'');
+}
 
 // Toggle Frete Full visível
 let _freteFullVisivel = false;
@@ -716,15 +722,15 @@ function setMode(m){
     b2.style.background='none';b2.style.color='#4a3f6b';
     mb.style.display='block';mlInput.placeholder='Obrigatório';
     mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:var(--out);font-size:.65rem">(obrigatório)</span>';
-    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--text3)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';
-    document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
-    document.getElementById('pc-ml-card').style.display='block';
+    (function(){const el=document.getElementById('mode-desc');if(el)el.innerHTML='<strong style="color:var(--text3)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.';})();
+    (function(){const el=document.getElementById('price-grid');if(el)el.style.gridTemplateColumns='1fr 1fr';})();
+    (function(){const el=document.getElementById('pc-ml-card');if(el)el.style.display='block';})();
   }else{
     b2.style.background='linear-gradient(135deg,#6B21A8,#F0A070)';b2.style.color='#fff';
     b1.style.background='none';b1.style.color='#4a3f6b';
     mb.style.display='none';mlInput.placeholder='Obrigatório';
     mlLabel.innerHTML='💛 Preço Médio ML (R$) <span style="color:var(--out)">*</span>';
-    document.getElementById('mode-desc').innerHTML='<strong style="color:var(--text3)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';
+    (function(){const el=document.getElementById('mode-desc');if(el)el.innerHTML='<strong style="color:var(--text3)">Modo Pelo Mercado:</strong> Informe o preço médio ML e descubra sua margem real.';})();
   }
 }
 
@@ -763,22 +769,22 @@ function _calcularInterno(){
     const markup=custo>0?precoML/custo:0;
     const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
     lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
-    document.getElementById('price-grid').style.gridTemplateColumns='1fr';
-    document.getElementById('pc-ml-card').style.display='none';
+    (function(){const el=document.getElementById('price-grid');if(el)el.style.gridTemplateColumns='1fr';})();
+    (function(){const el=document.getElementById('pc-ml-card');if(el)el.style.display='none';})();
     const _tag2=document.querySelector('.price-card.calc .pc-tag'); if(_tag2)_tag2.textContent='Preço Médio do Mercado';
-    document.getElementById('pc-preco').textContent=fmt(precoML);
-    document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
-    document.getElementById('pc-roi').textContent=fmtP(roi);
-    document.getElementById('pc-mg').textContent=fmtP(margemReal);
+    (function(){const el=document.getElementById('pc-preco');if(el)el.textContent=fmt(precoML);})();
+    (function(){const el=document.getElementById('pc-mk');if(el)el.textContent=markup.toFixed(2).replace('.',',');})();
+    (function(){const el=document.getElementById('pc-roi');if(el)el.textContent=fmtP(roi);})();
+    (function(){const el=document.getElementById('pc-mg');if(el)el.textContent=fmtP(margemReal);})();
     const badge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
     badge.textContent=margemReal>=10?'✅ Margem saudável':margemReal>=0?'⚠️ Margem baixa':'❌ Prejuízo';
     badge.style.cssText=`display:inline-block;padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:700;margin-bottom:9px;background:${margemReal>=10?'rgba(74,222,128,.2)':margemReal>=0?'rgba(240,160,112,.2)':'rgba(239,68,68,.2)'};color:${margemReal>=10?'var(--in)':margemReal>=0?'var(--text2)':'var(--out)'}`;
     const fator15=1-0.15-pI-pC-pA;
     const custoMax15=fator15>0?(precoML*fator15-frete-ins):null;
-    document.getElementById('explain-text').innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'var(--in)':margemReal>=0?'var(--text2)':'var(--out)'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:var(--out)">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'var(--in)':'var(--out)'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;
+    (function(){const el=document.getElementById('explain-text');if(el)el.innerHTML=`Vendendo a <strong style="color:var(--o)">${fmt(precoML)}</strong>, sua margem real seria <strong style="color:${margemReal>=10?'var(--in)':margemReal>=0?'var(--text2)':'var(--out)'}">${fmtP(margemReal)}</strong>. ${margemReal<0?'Você está vendendo com <strong style="color:var(--out)">prejuízo</strong>.':margemReal<10?'Margem abaixo de 10% — avalie se vale a pena.':'Margem dentro de um bom patamar.'}<br><br>💡 Para ter 15% de margem vendendo a ${fmt(precoML)}, compre por no máximo <strong style="color:${custoMax15!==null&&custoMax15>0?'var(--in)':'var(--out)'}">${custoMax15!==null&&custoMax15>0?fmt(custoMax15):'Inviável com os custos atuais'}</strong>.`;})();
     if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(precoML));verificarFaixaFrete();}
     preencherDetalhes(custo,frete,ins,base,vI,vC,vA,0,precoML,payout,qtd,inv,vI*qtd);
-    document.getElementById('bottom-wrapper').style.display='flex';
+    (function(){const el=document.getElementById('bottom-wrapper');if(el)el.style.display='flex';})();
     finalizarCalculo();return;
   }
 
@@ -791,57 +797,57 @@ function _calcularInterno(){
   const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
   lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
 
-  document.getElementById('price-grid').style.gridTemplateColumns='1fr 1fr';
+  (function(){const el=document.getElementById('price-grid');if(el)el.style.gridTemplateColumns='1fr 1fr';})();
   const _tag1=document.querySelector('.price-card.calc .pc-tag'); if(_tag1)_tag1.textContent='Preço Ideal Calculado';
   const mainBadge=document.querySelector('.price-card.calc .pc-badge')||document.createElement('span');
   mainBadge.textContent='✅ Preço mínimo seguro';
   mainBadge.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:var(--in);font-size:.67rem;font-weight:700;margin-bottom:9px';
-  document.getElementById('pc-preco').textContent=fmt(preco);
-  document.getElementById('pc-mk').textContent=markup.toFixed(2).replace('.',',');
-  document.getElementById('pc-roi').textContent=fmtP(roi);
-  document.getElementById('pc-mg').textContent=fmtP(pM*100);
+  (function(){const el=document.getElementById('pc-preco');if(el)el.textContent=fmt(preco);})();
+  (function(){const el=document.getElementById('pc-mk');if(el)el.textContent=markup.toFixed(2).replace('.',',');})();
+  (function(){const el=document.getElementById('pc-roi');if(el)el.textContent=fmtP(roi);})();
+  (function(){const el=document.getElementById('pc-mg');if(el)el.textContent=fmtP(pM*100);})();
 
   const mlCard=document.getElementById('pc-ml-card');mlCard.style.display='block';
   if(precoML>0){
     const mlvI=precoML*pI,mlvC=precoML*pC,mlvA=precoML*pA;
     const mlPayout=precoML-base-mlvI-mlvC-mlvA;
     const mlMarkup=custo>0?precoML/custo:0,mlRoi=inv>0?(mlPayout*qtd/inv)*100:0,mlMargem=(mlPayout/precoML)*100;
-    document.getElementById('pc-ml-preco').textContent=fmt(precoML);
-    document.getElementById('ml-mk').textContent=mlMarkup.toFixed(2).replace('.',',');
-    document.getElementById('ml-roi').textContent=fmtP(mlRoi);
-    document.getElementById('ml-mg').textContent=fmtP(mlMargem);
-    document.getElementById('pc-ml-kpis').style.opacity='1';
+    (function(){const el=document.getElementById('pc-ml-preco');if(el)el.textContent=fmt(precoML);})();
+    (function(){const el=document.getElementById('ml-mk');if(el)el.textContent=mlMarkup.toFixed(2).replace('.',',');})();
+    (function(){const el=document.getElementById('ml-roi');if(el)el.textContent=fmtP(mlRoi);})();
+    (function(){const el=document.getElementById('ml-mg');if(el)el.textContent=fmtP(mlMargem);})();
+    (function(){const el=document.getElementById('pc-ml-kpis');if(el)el.style.opacity='1';})();
     const diff=precoML-preco,pct=Math.abs((diff/preco)*100).toFixed(1);
     if(Math.abs(diff)<0.01){
       mlCard.className='price-card ml-equal';
-      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(139,92,246,.25);color:#c4b5fd;font-size:.67rem;font-weight:700;margin-bottom:9px';
-      document.getElementById('pc-ml-badge').textContent='= Igual ao preço calculado';
-      document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
-      document.getElementById('explain-text').innerHTML=`Preço médio ML igual ao seu preço mínimo. Você pode vender nesse valor mantendo a margem definida.`;
+      (function(){const el=document.getElementById('pc-ml-badge');if(el)el.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(139,92,246,.25);color:#c4b5fd;font-size:.67rem;font-weight:700;margin-bottom:9px';})();
+      (function(){const el=document.getElementById('pc-ml-badge');if(el)el.textContent='= Igual ao preço calculado';})();
+      (function(){const el=document.getElementById('pc-ml-tag');if(el)el.textContent='💛 Preço Médio ML';})();
+      (function(){const el=document.getElementById('explain-text');if(el)el.innerHTML=`Preço médio ML igual ao seu preço mínimo. Você pode vender nesse valor mantendo a margem definida.`;})();
     }else if(diff>0){
       mlCard.className='price-card ml-cheaper';
-      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:var(--in);font-size:.67rem;font-weight:700;margin-bottom:9px';
-      document.getElementById('pc-ml-badge').textContent=`✅ ${pct}% acima do seu mínimo`;
-      document.getElementById('pc-ml-tag').textContent='💛 Preço Médio ML';
-      document.getElementById('explain-text').innerHTML=`O mercado paga <strong style="color:var(--in)">${pct}% a mais</strong> que seu preço mínimo. Você pode ser mais competitivo ou vender no preço médio e aumentar a margem.`;
+      (function(){const el=document.getElementById('pc-ml-badge');if(el)el.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(74,222,128,.2);color:var(--in);font-size:.67rem;font-weight:700;margin-bottom:9px';})();
+      (function(){const el=document.getElementById('pc-ml-badge');if(el)el.textContent=`✅ ${pct}% acima do seu mínimo`;})();
+      (function(){const el=document.getElementById('pc-ml-tag');if(el)el.textContent='💛 Preço Médio ML';})();
+      (function(){const el=document.getElementById('explain-text');if(el)el.innerHTML=`O mercado paga <strong style="color:var(--in)">${pct}% a mais</strong> que seu preço mínimo. Você pode ser mais competitivo ou vender no preço médio e aumentar a margem.`;})();
     }else{
       mlCard.className='price-card ml-pricier';
-      document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.2);color:var(--out);font-size:.67rem;font-weight:700;margin-bottom:9px';
-      document.getElementById('pc-ml-badge').textContent=`⚠️ ${pct}% abaixo do seu mínimo`;
-      document.getElementById('pc-ml-tag').textContent='⚠️ Preço Médio ML';
+      (function(){const el=document.getElementById('pc-ml-badge');if(el)el.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.2);color:var(--out);font-size:.67rem;font-weight:700;margin-bottom:9px';})();
+      (function(){const el=document.getElementById('pc-ml-badge');if(el)el.textContent=`⚠️ ${pct}% abaixo do seu mínimo`;})();
+      (function(){const el=document.getElementById('pc-ml-tag');if(el)el.textContent='⚠️ Preço Médio ML';})();
       const custoIdeal=precoML*fator-frete-ins;
-      document.getElementById('explain-text').innerHTML=`Preço médio ML está <strong style="color:var(--out)">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, compre por no máximo <strong style="color:var(--in)">${fmt(Math.max(custoIdeal,0))}</strong>.`;
+      (function(){const el=document.getElementById('explain-text');if(el)el.innerHTML=`Preço médio ML está <strong style="color:var(--out)">${pct}% abaixo</strong> do seu mínimo. Para vender a ${fmt(precoML)} com a mesma margem, compre por no máximo <strong style="color:var(--in)">${fmt(Math.max(custoIdeal,0))}</strong>.`;})();
     }
-    document.getElementById('bottom-wrapper').style.display='flex';
+    (function(){const el=document.getElementById('bottom-wrapper');if(el)el.style.display='flex';})();
   }else{
     mlCard.className='price-card ml-none';
-    document.getElementById('pc-ml-preco').textContent='—';
-    document.getElementById('pc-ml-badge').style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:var(--text2);font-size:.67rem;font-weight:700;margin-bottom:9px';
-    document.getElementById('pc-ml-badge').textContent='Informe o preço médio';
-    document.getElementById('pc-ml-kpis').style.opacity='.25';
+    (function(){const el=document.getElementById('pc-ml-preco');if(el)el.textContent='—';})();
+    (function(){const el=document.getElementById('pc-ml-badge');if(el)el.style.cssText='display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:var(--text2);font-size:.67rem;font-weight:700;margin-bottom:9px';})();
+    (function(){const el=document.getElementById('pc-ml-badge');if(el)el.textContent='Informe o preço médio';})();
+    (function(){const el=document.getElementById('pc-ml-kpis');if(el)el.style.opacity='.25';})();
     ['ml-mk','ml-roi','ml-mg'].forEach(id=>document.getElementById(id).textContent='—');
-    document.getElementById('explain-text').innerHTML=`Este é o menor preço que cobre todos os seus custos com a margem definida. Informe o <strong style="color:var(--o)">Preço Médio ML</strong> para ver o comparativo.`;
-    document.getElementById('bottom-wrapper').style.display='none';
+    (function(){const el=document.getElementById('explain-text');if(el)el.innerHTML=`Este é o menor preço que cobre todos os seus custos com a margem definida. Informe o <strong style="color:var(--o)">Preço Médio ML</strong> para ver o comparativo.`;})();
+    (function(){const el=document.getElementById('bottom-wrapper');if(el)el.style.display='none';})();
   }
 
   const alertBox=document.getElementById('frete-alert-box');
@@ -853,7 +859,7 @@ function _calcularInterno(){
       const baseNova=custo+freteNovo+ins,precoMinNovo=baseNova/fator;
       if(precoMinNovo<=limitePreco){alerta={freteNovo,limitePreco,ganhoFrete:frete-freteNovo};break;}
     }
-    if(alerta){alertBox.style.display='block';document.getElementById('frete-alert-content').innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:var(--out)">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:var(--in)">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:var(--in)">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:var(--text2)">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:var(--in)">${fmt(alerta.ganhoFrete)}</strong>.</div>`;}
+    if(alerta){alertBox.style.display='block';(function(){const el=document.getElementById('frete-alert-content');if(el)el.innerHTML=`<div class="brow"><span class="bl">Frete atual</span><span class="br" style="color:var(--out)">${fmt(frete)}</span></div><div class="brow"><span class="bl">Frete vendendo até ${fmt(alerta.limitePreco)}</span><span class="br" style="color:var(--in)">${fmt(alerta.freteNovo)}</span></div><div class="brow total"><span class="bl">Economia</span><span class="br" style="color:var(--in)">${fmt(alerta.ganhoFrete)}</span></div><div style="margin-top:8px;font-size:.78rem;color:var(--text2)">Vendendo por até <strong style="color:var(--o)">${fmt(alerta.limitePreco)}</strong> seu frete cai <strong style="color:var(--in)">${fmt(alerta.ganhoFrete)}</strong>.</div>`;})();}
     else{alertBox.style.display='none';}
   }else{alertBox.style.display='none';}
 
@@ -862,8 +868,8 @@ function _calcularInterno(){
 }
 
 function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv,totalImp){
-  document.getElementById('bd-custo').textContent=fmt(custo);
-  document.getElementById('bd-frete').textContent=fmt(frete);
+  (function(){const el=document.getElementById('bd-custo');if(el)el.textContent=fmt(custo);})();
+  (function(){const el=document.getElementById('bd-frete');if(el)el.textContent=fmt(frete);})();
   const freteFullUnit=lastCalc&&lastCalc.freteFullUnit||0;
   const insSemFull=ins-freteFullUnit;
   const elBdFull=document.getElementById('bd-frete-full');
@@ -872,21 +878,21 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     if(freteFullUnit>0){elBdFull.textContent=fmt(freteFullUnit);elBdFullRow.style.display='flex';}
     else{elBdFullRow.style.display='none';}
   }
-  document.getElementById('bd-outros').textContent=fmt(insSemFull>0?insSemFull:ins);
-  document.getElementById('bd-base').textContent=fmt(base);
-  document.getElementById('bd-imp').textContent=fmt(vI);
-  document.getElementById('bd-com').textContent=fmt(vC);
-  document.getElementById('bd-afi').textContent=fmt(vA);
-  document.getElementById('bd-mar').textContent=fmt(vM);
-  document.getElementById('bd-preco').textContent=fmt(preco);
+  (function(){const el=document.getElementById('bd-outros');if(el)el.textContent=fmt(insSemFull>0?insSemFull:ins);})();
+  (function(){const el=document.getElementById('bd-base');if(el)el.textContent=fmt(base);})();
+  (function(){const el=document.getElementById('bd-imp');if(el)el.textContent=fmt(vI);})();
+  (function(){const el=document.getElementById('bd-com');if(el)el.textContent=fmt(vC);})();
+  (function(){const el=document.getElementById('bd-afi');if(el)el.textContent=fmt(vA);})();
+  (function(){const el=document.getElementById('bd-mar');if(el)el.textContent=fmt(vM);})();
+  (function(){const el=document.getElementById('bd-preco');if(el)el.textContent=fmt(preco);})();
 
   // Projeção — Preço Calculado
-  document.getElementById('proj-qtd').textContent=qtd;
-  document.getElementById('proj-cu').textContent=fmt(custo);
-  document.getElementById('proj-inv').textContent=fmt(inv);
-  document.getElementById('proj-imp').textContent=fmt(totalImp);
-  document.getElementById('proj-fat').textContent=fmt(preco*qtd);
-  document.getElementById('proj-pay').textContent=fmt(payout);
+  (function(){const el=document.getElementById('proj-qtd');if(el)el.textContent=qtd;})();
+  (function(){const el=document.getElementById('proj-cu');if(el)el.textContent=fmt(custo);})();
+  (function(){const el=document.getElementById('proj-inv');if(el)el.textContent=fmt(inv);})();
+  (function(){const el=document.getElementById('proj-imp');if(el)el.textContent=fmt(totalImp);})();
+  (function(){const el=document.getElementById('proj-fat');if(el)el.textContent=fmt(preco*qtd);})();
+  (function(){const el=document.getElementById('proj-pay');if(el)el.textContent=fmt(payout);})();
   // payout aqui = margem em R$ (já subtraiu custo+frete+ins)
   // Payout REAL ML = preco - totalImp(vI) - vC*preco - vA*preco = o que cai na conta
   // Como preencherDetalhes recebe vI,vC,vA e preco, calcular aqui:
@@ -900,10 +906,10 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     elPD.textContent=fmt(payoutReal);
     elPD.style.color=payoutReal>=0?'var(--text2)':'var(--out)';
   }
-  document.getElementById('proj-lb').textContent=fmt(payout*qtd);
+  (function(){const el=document.getElementById('proj-lb');if(el)el.textContent=fmt(payout*qtd);})();
   setTimeout(function(){ marcarAmarelo(['proj-lb']); },0);
-  document.getElementById('proj-cx-bruto').textContent=fmt(inv+payout*qtd+totalImp);
-  document.getElementById('proj-cx').textContent=fmt(inv+payout*qtd);
+  (function(){const el=document.getElementById('proj-cx-bruto');if(el)el.textContent=fmt(inv+payout*qtd+totalImp);})();
+  (function(){const el=document.getElementById('proj-cx');if(el)el.textContent=fmt(inv+payout*qtd);})();
 
   // Projeção — Preço Médio ML (grid 3 colunas)
   const precoML=lastCalc&&lastCalc.precoML||0;
@@ -921,27 +927,27 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
     if(double)double.style.display='block';
 
     const s=id=>document.getElementById(id);
+    const set=(id,txt)=>{const el=s(id);if(el)el.textContent=txt;};
     // Coluna A — Preço Margem
-    s('pd-cu-a').textContent=fmt(custo);
-    s('pd-inv-a').textContent=fmt(inv);
-    s('pd-imp-a').textContent=fmt(totalImp);
-    s('pd-fat-a').textContent=fmt(preco*qtd);
-    s('pd-pay-a').textContent=fmt(payout);
-    s('pd-cx-bruto-a').textContent=fmt(inv+payout*qtd+totalImp);
-    s('pd-cx-a').textContent=fmt(inv+payout*qtd);
-    s('pd-lb-a').textContent=fmt(payout*qtd);
+    set('pd-cu-a',fmt(custo));
+    set('pd-inv-a',fmt(inv));
+    set('pd-imp-a',fmt(totalImp));
+    set('pd-fat-a',fmt(preco*qtd));
+    set('pd-pay-a',fmt(payout));
+    set('pd-cx-bruto-a',fmt(inv+payout*qtd+totalImp));
+    set('pd-cx-a',fmt(inv+payout*qtd));
+    set('pd-lb-a',fmt(payout*qtd));
     // Coluna B — Preço Médio
-    s('pd-cu-b').textContent=fmt(custo);
-    s('pd-inv-b').textContent=fmt(inv);
-    s('pd-imp-b').textContent=fmt(mlImp);
-    s('pd-fat-b').textContent=fmt(precoML*qtd);
+    set('pd-cu-b',fmt(custo));
+    set('pd-inv-b',fmt(inv));
+    set('pd-imp-b',fmt(mlImp));
+    set('pd-fat-b',fmt(precoML*qtd));
     const elPayB=s('pd-pay-b');
-    elPayB.textContent=fmt(mlPayout);
-    elPayB.style.color=mlPayout>=0?'var(--text2)':'var(--out)';
-    s('pd-cx-bruto-b').textContent=fmt(inv+mlPayout*qtd+mlImp);
-    s('pd-cx-b').textContent=fmt(inv+mlPayout*qtd);
+    if(elPayB){elPayB.textContent=fmt(mlPayout);elPayB.style.color=mlPayout>=0?'var(--text2)':'var(--out)';}
+    set('pd-cx-bruto-b',fmt(inv+mlPayout*qtd+mlImp));
+    set('pd-cx-b',fmt(inv+mlPayout*qtd));
     const elLbB=s('pd-lb-b');
-    elLbB.textContent=fmt(mlPayout*qtd);
+    if(elLbB){elLbB.textContent=fmt(mlPayout*qtd);}
     setTimeout(function(){ marcarAmarelo(['pd-lb-a','pd-lb-b']); },0);
     // Payout destacado por cenário
     // Payout REAL ML = preço - comissões ML (o que cai na conta antes de pagar custos)
@@ -963,8 +969,8 @@ function preencherDetalhes(custo,frete,ins,base,vI,vC,vA,vM,preco,payout,qtd,inv
 }
 
 function finalizarCalculo(){
-  document.getElementById('right-empty').style.display='none';
-  document.getElementById('right-result').style.display='block';
+  (function(){const el=document.getElementById('right-empty');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('right-result');if(el)el.style.display='block';})();
   try{ renderResultadoHero(); }catch(e){ console.warn('hero:', e); }
   
   // Mostrar caixa de devolução
@@ -988,9 +994,9 @@ function resetar(){
   if(linksDiv) linksDiv.style.display = 'none';
 
   // Limpa painel direito
-  document.getElementById('right-empty').style.display='flex';
-  document.getElementById('right-result').style.display='none';
-  document.getElementById('bottom-wrapper').style.display='none';
+  (function(){const el=document.getElementById('right-empty');if(el)el.style.display='flex';})();
+  (function(){const el=document.getElementById('right-result');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('bottom-wrapper');if(el)el.style.display='none';})();
 
   // Custo dos produtos — reseta para 1 item vazio
   const list=document.getElementById('items-list');
@@ -998,10 +1004,10 @@ function resetar(){
 
   // Frete por dimensões
   ['peso','comp','larg','alt'].forEach(id=>{document.getElementById(id).value='';});
-  document.getElementById('peso-info').style.display='none';
-  document.getElementById('frete-section').style.display='none';
-  document.getElementById('frete-badge').style.display='none';
-  document.getElementById('frete-aviso').style.display='none';
+  (function(){const el=document.getElementById('peso-info');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('frete-section');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('frete-badge');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('frete-aviso');if(el)el.style.display='none';})();
 
   // Frete manual
   document.getElementById('frete-manual').value='';
@@ -1010,7 +1016,7 @@ function resetar(){
   document.getElementById('insumos').value='';
   document.getElementById('frete-full').value='';
   document.getElementById('frete-full-qtd').value='';
-  document.getElementById('frete-full-result').style.display='none';
+  (function(){const el=document.getElementById('frete-full-result');if(el)el.style.display='none';})();
   // Reset toggle frete full
   _freteFullVisivel = false;
   const _panel = document.getElementById('frete-full-panel');
@@ -1034,7 +1040,7 @@ function resetar(){
   document.getElementById('dev-taxa').value='';
   document.getElementById('rank-preco').value='';
   document.getElementById('rank-qtd').value='';
-  document.getElementById('rank-resultado').style.display='none';
+  (function(){const el=document.getElementById('rank-resultado');if(el)el.style.display='none';})();
 
   // Reset variáveis globais
   pesoUsado=0;freteSel=0;freteSel_col=undefined;lastCalc=null;
@@ -1077,8 +1083,8 @@ async function atualizarProduto(){
   setCached('realecom_prods',prods);
   fbSet('produtos',prods);
   _prodEditId=null;
-  document.getElementById('btn-atualizar').style.display='none';
-  document.getElementById('btn-salvar-prod').style.display='';
+  (function(){const el=document.getElementById('btn-atualizar');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('btn-salvar-prod');if(el)el.style.display='';})();
   alert('✅ Produto atualizado no Dashboard!');
 }
 
@@ -1135,7 +1141,7 @@ async function salvarProduto(){
   _prodEditId=null;
   const btnUpdate=document.getElementById('btn-atualizar');
   if(btnUpdate)btnUpdate.style.display='none';
-  document.getElementById('btn-salvar-prod').style.display='';
+  (function(){const el=document.getElementById('btn-salvar-prod');if(el)el.style.display='';})();
   alert('✅ Produto salvo no Dashboard!');
 }
 
@@ -1656,7 +1662,7 @@ function nomesCurto(titulo){
 }
 
 function renderCal(){
-  document.getElementById('cal-titulo').textContent=`${meses[calMes]} ${calAno}`;
+  (function(){const el=document.getElementById('cal-titulo');if(el)el.textContent=`${meses[calMes]} ${calAno}`;})();
   calStats();
   calChips();
   const grid=document.getElementById('cal-grid');
@@ -1700,7 +1706,7 @@ function abrirModal(data,evId){
   document.getElementById('ev-local').value=ev?(ev.local||''):'';
   document.getElementById('ev-tipo').value=ev?ev.tipo:'full';
   document.getElementById('ev-push').checked=ev?!!ev.push:true;
-  document.getElementById('modal-title').textContent=ev?'✏️ Editar Evento':(data?`📅 Novo Evento — ${data.split('-').reverse().join('/')}`:'📅 Novo Evento');
+  (function(){const el=document.getElementById('modal-title');if(el)el.textContent=ev?'✏️ Editar Evento':(data?`📅 Novo Evento — ${data.split('-').reverse().join('/')}`:'📅 Novo Evento');})();
   let btnDel=document.getElementById('btn-del-ev');
   if(!btnDel){
     btnDel=document.createElement('button');btnDel.id='btn-del-ev';btnDel.className='btn-cancel';
@@ -1898,7 +1904,7 @@ function verNaCalculadora(id){
     if(document.getElementById('save-link3'))document.getElementById('save-link3').value=p.link3||'';
     // Abre seção de links se houver algum preenchido
     if((p.link1||p.link2||p.link3)&&document.getElementById('links-anuncio')){
-      document.getElementById('links-anuncio').style.display='flex';
+      (function(){const el=document.getElementById('links-anuncio');if(el)el.style.display='flex';})();
     }
     // Mostra botão atualizar e esconde salvar
     const btnAtualizar=document.getElementById('btn-atualizar');
@@ -2027,7 +2033,7 @@ function calcularGiro(){
   const diasRestantes = Math.floor(estoqueAtual / vendasDia);
   const fmtN = n => n.toLocaleString('pt-BR');
 
-  document.getElementById('giro-estoque-atual').textContent = fmtN(estoqueAtual);
+  (function(){const el=document.getElementById('giro-estoque-atual');if(el)el.textContent=fmtN(estoqueAtual);})();
   const hs=document.getElementById('giro-head-stats'); if(hs) hs.style.display='flex';
   const sh=function(id,v){const e=document.getElementById(id); if(e) e.textContent=v;};
   sh('hd-estoque', fmtN(estoqueAtual)+' un');
@@ -2036,7 +2042,7 @@ function calcularGiro(){
   const elDias = document.getElementById('giro-dias-restantes');
   elDias.textContent = diasRestantes;
   elDias.style.color = prazo>0&&diasRestantes<=prazo ? 'var(--out)' : diasRestantes<=10 ? 'var(--text)' : 'var(--in)';
-  document.getElementById('giro-custo-unit').textContent = custoUnit>0 ? fmt(custoUnit) : '—';
+  (function(){const el=document.getElementById('giro-custo-unit');if(el)el.textContent=custoUnit>0 ? fmt(custoUnit) : '—';})();
 
   const alerta = document.getElementById('giro-alerta');
   if(prazo>0&&diasRestantes<=prazo){
@@ -2052,17 +2058,17 @@ function calcularGiro(){
 
   function cenario(d){const q=vendasDia*d;return{qtd:q,valor:q*custoUnit};}
   const c5=cenario(5),c10=cenario(10),c15=cenario(15),c30=cenario(30);
-  document.getElementById('giro-c5-qtd').textContent  = fmtN(c5.qtd)+' unid.';
-  document.getElementById('giro-c5-val').textContent   = custoUnit>0?fmt(c5.valor):'—';
-  document.getElementById('giro-c10-qtd').textContent = fmtN(c10.qtd)+' unid.';
-  document.getElementById('giro-c10-val').textContent  = custoUnit>0?fmt(c10.valor):'—';
-  document.getElementById('giro-c15-qtd').textContent = fmtN(c15.qtd)+' unid.';
-  document.getElementById('giro-c15-val').textContent  = custoUnit>0?fmt(c15.valor):'—';
-  document.getElementById('giro-c30-qtd').textContent = fmtN(c30.qtd)+' unid.';
-  document.getElementById('giro-c30-val').textContent  = custoUnit>0?fmt(c30.valor):'—';
+  (function(){const el=document.getElementById('giro-c5-qtd');if(el)el.textContent=fmtN(c5.qtd)+' unid.';})();
+  (function(){const el=document.getElementById('giro-c5-val');if(el)el.textContent=custoUnit>0?fmt(c5.valor):'—';})();
+  (function(){const el=document.getElementById('giro-c10-qtd');if(el)el.textContent=fmtN(c10.qtd)+' unid.';})();
+  (function(){const el=document.getElementById('giro-c10-val');if(el)el.textContent=custoUnit>0?fmt(c10.valor):'—';})();
+  (function(){const el=document.getElementById('giro-c15-qtd');if(el)el.textContent=fmtN(c15.qtd)+' unid.';})();
+  (function(){const el=document.getElementById('giro-c15-val');if(el)el.textContent=custoUnit>0?fmt(c15.valor):'—';})();
+  (function(){const el=document.getElementById('giro-c30-qtd');if(el)el.textContent=fmtN(c30.qtd)+' unid.';})();
+  (function(){const el=document.getElementById('giro-c30-val');if(el)el.textContent=custoUnit>0?fmt(c30.valor):'—';})();
 
   const pontoRep = prazo>0 ? vendasDia*prazo : 0;
-  document.getElementById('giro-ponto-rep').textContent = fmtN(pontoRep);
+  (function(){const el=document.getElementById('giro-ponto-rep');if(el)el.textContent=fmtN(pontoRep);})();
 
   const btnCal  = document.getElementById('btn-add-cal');
   const elData  = document.getElementById('giro-ponto-data');
@@ -2190,13 +2196,13 @@ function selecionarProdutoPublicidade(prods){
   const idx = document.getElementById('pub-produto-sel').value;
   const preview = document.getElementById('pub-preview');
   const lucroEl = document.getElementById('pub-lucro-dash');
-  if(idx===''){preview.style.display='none';document.getElementById('pub-resultado').style.display='none';return;}
+  if(idx===''){preview.style.display='none';(function(){const el=document.getElementById('pub-resultado');if(el)el.style.display='none';})();return;}
   const p = prods[parseInt(idx)];
   preview.style.display='grid';
-  document.getElementById('pub-pre-custo').textContent  = fmt(p.custoReal||0);
-  document.getElementById('pub-pre-preco').textContent  = fmt(p.precoCalc||0);
-  document.getElementById('pub-pre-margem').textContent = (p.margem||0).toFixed(1)+'%';
-  document.getElementById('pub-pre-payout').textContent = fmt(p.payout||0);
+  (function(){const el=document.getElementById('pub-pre-custo');if(el)el.textContent=fmt(p.custoReal||0);})();
+  (function(){const el=document.getElementById('pub-pre-preco');if(el)el.textContent=fmt(p.precoCalc||0);})();
+  (function(){const el=document.getElementById('pub-pre-margem');if(el)el.textContent=(p.margem||0).toFixed(1)+'%';})();
+  (function(){const el=document.getElementById('pub-pre-payout');if(el)el.textContent=fmt(p.payout||0);})();
   if(lucroEl) lucroEl.value = '';
   calcularPublicidadeDash(p);
 }
@@ -2218,7 +2224,7 @@ function calcularPublicidadeManual(){
   const comissao = (parseFloat(document.getElementById('pub-m-comissao').value)||0)/100;
   const imposto  = (parseFloat(document.getElementById('pub-m-imposto').value)||0)/100;
   const lucro    = (parseFloat(document.getElementById('pub-m-lucro').value)||0)/100;
-  if(!preco||!custo){document.getElementById('pub-resultado').style.display='none';return;}
+  if(!preco||!custo){(function(){const el=document.getElementById('pub-resultado');if(el)el.style.display='none';})();return;}
   const custos = custo + taxafrete + preco*(comissao+imposto);
   const margemAds = preco - custos - (preco*lucro);
   renderResultadoPublicidade(preco, margemAds);
@@ -2259,13 +2265,13 @@ function renderResultadoPublicidade(preco, margemAds){
   ps('hd-pub-roas', roas.toFixed(1)+'x');
   ps('hd-pub-acos', acos.toFixed(1)+'%');
   ps('hd-pub-verba', fmt(margemAds));
-  document.getElementById('pub-roas').textContent = roas.toFixed(1)+'x';
-  document.getElementById('pub-acos').textContent = acos.toFixed(1)+'%';
-  document.getElementById('pub-margem-ads').textContent = fmt(margemAds);
+  (function(){const el=document.getElementById('pub-roas');if(el)el.textContent=roas.toFixed(1)+'x';})();
+  (function(){const el=document.getElementById('pub-acos');if(el)el.textContent=acos.toFixed(1)+'%';})();
+  (function(){const el=document.getElementById('pub-margem-ads');if(el)el.textContent=fmt(margemAds);})();
   pintarMarca('pub-margem-ads');
-  document.getElementById('pub-exp-roas').textContent = fmt(preco);
-  document.getElementById('pub-exp-acos').textContent = acos.toFixed(1)+'%';
-  document.getElementById('pub-exp-margem').textContent = fmt(margemAds);
+  (function(){const el=document.getElementById('pub-exp-roas');if(el)el.textContent=fmt(preco);})();
+  (function(){const el=document.getElementById('pub-exp-acos');if(el)el.textContent=acos.toFixed(1)+'%';})();
+  (function(){const el=document.getElementById('pub-exp-margem');if(el)el.textContent=fmt(margemAds);})();
   // Mostra campo de nome só no modo manual
   const nomeWrap=document.getElementById('pub-save-nome-wrap');
   if(nomeWrap) nomeWrap.style.display=pubMode==='manual'?'block':'none';
@@ -2280,9 +2286,9 @@ function toggleGlossario(){
 }
 
 function salvarAnalisePublicidade(){
-  const roas=document.getElementById('pub-roas').textContent;
-  const acos=document.getElementById('pub-acos').textContent;
-  const margem=document.getElementById('pub-margem-ads').textContent;
+  const roas=(document.getElementById('pub-roas')||{}).textContent||'—';
+  const acos=(document.getElementById('pub-acos')||{}).textContent||'—';
+  const margem=(document.getElementById('pub-margem-ads')||{}).textContent||'—';
   if(roas==='—'){alert('Calcule primeiro antes de salvar.');return;}
 
   let nome='';
@@ -2364,17 +2370,17 @@ function calcularSimples(){
   sh('hd-sn-faixa', faixaObj.faixa.replace(' Faixa',''));
   sh('hd-sn-aliq', fmtPct(aliqEfetiva));
   sh('hd-sn-das', fmt(das));
-  document.getElementById('sn-faixa').textContent        =faixaObj.faixa;
-  document.getElementById('sn-faixa-range').textContent  =fmtRange(faixaObj);
-  document.getElementById('sn-aliq-efetiva').textContent =fmtPct(aliqEfetiva);
-  document.getElementById('sn-das').innerHTML = '<span id="sn-das-mk">'+fmt(das)+'</span>';
+  (function(){const el=document.getElementById('sn-faixa');if(el)el.textContent=faixaObj.faixa;})();
+  (function(){const el=document.getElementById('sn-faixa-range');if(el)el.textContent=fmtRange(faixaObj);})();
+  (function(){const el=document.getElementById('sn-aliq-efetiva');if(el)el.textContent=fmtPct(aliqEfetiva);})();
+  (function(){const el=document.getElementById('sn-das');if(el)el.innerHTML='<span id="sn-das-mk">'+fmt(das)+'</span>';})();
   pintarMarca('sn-das-mk');
-  document.getElementById('sn-d-rbt12').textContent      =fmt(rbt12);
-  document.getElementById('sn-d-nominal').textContent    =fmtPct(faixaObj.nominal);
-  document.getElementById('sn-d-deducao').textContent    =fmt(faixaObj.deducao);
-  document.getElementById('sn-d-efetiva').textContent    =fmtPct(aliqEfetiva);
-  document.getElementById('sn-d-mensal').textContent     =fmt(mensal);
-  document.getElementById('sn-d-das').textContent        =fmt(das);
+  (function(){const el=document.getElementById('sn-d-rbt12');if(el)el.textContent=fmt(rbt12);})();
+  (function(){const el=document.getElementById('sn-d-nominal');if(el)el.textContent=fmtPct(faixaObj.nominal);})();
+  (function(){const el=document.getElementById('sn-d-deducao');if(el)el.textContent=fmt(faixaObj.deducao);})();
+  (function(){const el=document.getElementById('sn-d-efetiva');if(el)el.textContent=fmtPct(aliqEfetiva);})();
+  (function(){const el=document.getElementById('sn-d-mensal');if(el)el.textContent=fmt(mensal);})();
+  (function(){const el=document.getElementById('sn-d-das');if(el)el.textContent=fmt(das);})();
 
   const tributos=[
     {nome:'IRPJ',   pct:faixaObj.irpj,   cor:'var(--text2)'},
@@ -2385,7 +2391,8 @@ function calcularSimples(){
     {nome:'ICMS',   pct:faixaObj.icms,   cor:'#facc15'},
   ].filter(t=>t.pct>0);
 
-  document.getElementById('sn-tributos').innerHTML=tributos.map(t=>`
+  const elTrib=document.getElementById('sn-tributos');
+  if(elTrib) elTrib.innerHTML=tributos.map(t=>`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;border-top:3px solid ${t.cor}">
       <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${t.cor};margin-bottom:4px">${t.nome}</div>
       <div style="font-size:.82rem;font-weight:800;color:var(--text)">${fmt(das*t.pct)}</div>
@@ -2462,7 +2469,7 @@ function salvarMetas(){
 }
 
 function atualizarNota(v){
-  document.getElementById('nota-display').textContent=parseFloat(v).toFixed(1).replace('.',',');
+  (function(){const el=document.getElementById('nota-display');if(el)el.textContent=parseFloat(v).toFixed(1).replace('.',',');})();
 }
 
 function recalcularMetas(){
@@ -2477,10 +2484,10 @@ function recalcularMetas(){
   const metaQuinzena=metaSemana*2;
   const metaMes=metaSemana*4;
 
-  document.getElementById('meta-resumo').style.display='block';
-  document.getElementById('meta-val-semana').textContent=metaSemana+' produtos';
-  document.getElementById('meta-val-quinzena').textContent=metaQuinzena+' produtos';
-  document.getElementById('meta-val-mes').textContent=metaMes+' produtos';
+  (function(){const el=document.getElementById('meta-resumo');if(el)el.style.display='block';})();
+  (function(){const el=document.getElementById('meta-val-semana');if(el)el.textContent=metaSemana+' produtos';})();
+  (function(){const el=document.getElementById('meta-val-quinzena');if(el)el.textContent=metaQuinzena+' produtos';})();
+  (function(){const el=document.getElementById('meta-val-mes');if(el)el.textContent=metaMes+' produtos';})();
 
   const m=getCached('realecom_metas','{}');
   const dataInicio=m.dataInicio?new Date(m.dataInicio):new Date();
@@ -2529,7 +2536,7 @@ function recalcularMetas(){
     return {pct,qtd,comp};
   }
 
-  document.getElementById('resumo-geral').style.display='block';
+  (function(){const el=document.getElementById('resumo-geral');if(el)el.style.display='block';})();
   const s=atualizarGrafico('semana',prodsSemana,metaSemana,314);
   const q=atualizarGrafico('quinzena',prodsQuinzena,metaQuinzena,314);
   const mn=atualizarGrafico('mes',prodsMes,metaMes,314);
@@ -2572,7 +2579,7 @@ function calcRanqueamento(){
   const impacto=lastCalc.payout>0?(lastCalc.payout-payoutRank)*qtdRank:null;
 
   res.style.display='block';
-  document.getElementById('rank-fat').textContent=fmt(fatTotal);
+  (function(){const el=document.getElementById('rank-fat');if(el)el.textContent=fmt(fatTotal);})();
 
   const elLucro=document.getElementById('rank-lucro');
   elLucro.textContent=fmt(lucroTotal);
@@ -2582,7 +2589,7 @@ function calcRanqueamento(){
   if(impacto!==null){
     elImpacto.textContent=fmt(Math.abs(impacto));
     elImpacto.style.color=impacto>0?'var(--out)':'var(--in)';
-    document.getElementById('rank-impacto-label').textContent=impacto>0?'Deixou de ganhar':'Ganho extra vs preço ideal';
+    (function(){const el=document.getElementById('rank-impacto-label');if(el)el.textContent=impacto>0?'Deixou de ganhar':'Ganho extra vs preço ideal';})();
   }
 
   const elPayUnit=document.getElementById('rank-pay-unit');
@@ -2807,10 +2814,10 @@ function _executarBuscaNCM(query){
 
 function selecionarNCM(cod, desc, score, salvarHist=true){
   ncmSelecionado = {cod, desc};
-  document.getElementById('ncm-detalhe').style.display='block';
-  document.getElementById('ncm-detalhe-empty').style.display='none';
-  document.getElementById('ncm-codigo-display').textContent=cod;
-  document.getElementById('ncm-desc-display').textContent=desc;
+  (function(){const el=document.getElementById('ncm-detalhe');if(el)el.style.display='block';})();
+  (function(){const el=document.getElementById('ncm-detalhe-empty');if(el)el.style.display='none';})();
+  (function(){const el=document.getElementById('ncm-codigo-display');if(el)el.textContent=cod;})();
+  (function(){const el=document.getElementById('ncm-desc-display');if(el)el.textContent=desc;})();
 
   if(salvarHist){
     const query=document.getElementById('ncm-input').value.trim();
