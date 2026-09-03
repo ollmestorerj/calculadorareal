@@ -729,6 +729,15 @@ function setMode(m){
 }
 
 function calcular(){
+  try{
+    _calcularInterno();
+  }catch(e){
+    console.error('Erro em calcular():', e);
+    mostrarErroTela('Não foi possível calcular. ' + (e.message||''));
+  }
+}
+
+function _calcularInterno(){
   const custo=sumItems();
   const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
   // Frete de coleta Full por unidade
@@ -1877,6 +1886,7 @@ function verNaCalculadora(id){
 
   // Preenche campos do save-card com dados do produto
   setTimeout(()=>{
+   try{
     if(document.getElementById('save-nome'))document.getElementById('save-nome').value=p.nome||'';
     if(document.getElementById('save-forn'))document.getElementById('save-forn').value=p.forn||'';
     if(document.getElementById('save-cod'))document.getElementById('save-cod').value=p.cod||'';
@@ -1893,10 +1903,12 @@ function verNaCalculadora(id){
     const btnSalvar=document.getElementById('btn-salvar-prod');
     if(btnAtualizar)btnAtualizar.style.display='';
     if(btnSalvar)btnSalvar.style.display='none';
+   }catch(e){ console.error('verNaCalculadora (save-card):', e); }
   },200);
 
   // Pequeno delay para garantir que a página renderizou
   setTimeout(()=>{
+   try{
     // Reseta tudo antes de preencher
     resetar();
 
@@ -1967,6 +1979,10 @@ function verNaCalculadora(id){
     // Executa o cálculo
     calcular();
 
+   }catch(e){
+    console.error('verNaCalculadora (cálculo):', e);
+    mostrarErroTela('Erro ao carregar o produto na calculadora. ' + (e.message||''));
+   }
   }, 100);
 }
 
@@ -4493,3 +4509,41 @@ function avisarAtualizacao(){
 setTimeout(checarVersao, 2500);
 document.addEventListener('visibilitychange', function(){ if(!document.hidden) checarVersao(); });
 setInterval(checarVersao, 60000);
+
+
+// ============================================================
+// REDE DE SEGURANÇA — nenhum erro deve falhar em silêncio.
+// Mostra um aviso visível na tela, junto com o log no console,
+// para que qualquer travamento seja diagnosticável na hora.
+// ============================================================
+function mostrarErroTela(msg){
+  let box = document.getElementById('erro-app-toast');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'erro-app-toast';
+    box.style.cssText = 'position:fixed;left:50%;bottom:22px;transform:translateX(-50%);'
+      + 'max-width:92vw;z-index:99999;background:#3D1512;border:1px solid #8A2E27;'
+      + 'color:#FFD9D5;border-radius:10px;padding:12px 16px;font-size:.82rem;'
+      + 'font-weight:600;box-shadow:0 12px 34px rgba(0,0,0,.4);font-family:inherit;'
+      + 'display:flex;align-items:center;gap:10px';
+    document.body.appendChild(box);
+  }
+  box.innerHTML = '<span style="font-size:1.1rem;flex-shrink:0">⚠️</span>'
+    + '<span style="flex:1">' + msg + '</span>'
+    + '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:#FFD9D5;'
+    + 'font-size:1rem;cursor:pointer;flex-shrink:0;line-height:1">×</button>';
+  box.style.display = 'flex';
+  clearTimeout(box._timer);
+  box._timer = setTimeout(() => { if(box.parentElement) box.remove(); }, 9000);
+}
+
+// Captura qualquer erro não tratado em qualquer parte do app
+window.addEventListener('error', function(ev){
+  console.error('Erro não tratado:', ev.error || ev.message);
+  mostrarErroTela('Algo deu errado: ' + (ev.message || 'erro desconhecido')
+    + '. Recarregue a página se o problema continuar.');
+});
+window.addEventListener('unhandledrejection', function(ev){
+  console.error('Promise rejeitada:', ev.reason);
+  mostrarErroTela('Algo deu errado ao carregar dados. Recarregue a página se persistir.');
+});
