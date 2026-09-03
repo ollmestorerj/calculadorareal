@@ -733,7 +733,9 @@ function calcular(){
     _calcularInterno();
   }catch(e){
     console.error('Erro em calcular():', e);
-    mostrarErroTela('Não foi possível calcular. ' + (e.message||''));
+    // Extrai a primeira linha do stack que aponta para app.js — mostra a linha exata do erro
+    const linha = (e.stack||'').split('\n').map(l=>l.trim()).find(l=>l.includes('app.js'));
+    mostrarErroTela('Não foi possível calcular. ' + (e.message||'') + (linha?' — ['+linha.replace(/^at\s*/,'')+']':''));
   }
 }
 
@@ -1981,7 +1983,8 @@ function verNaCalculadora(id){
 
    }catch(e){
     console.error('verNaCalculadora (cálculo):', e);
-    mostrarErroTela('Erro ao carregar o produto na calculadora. ' + (e.message||''));
+    const linha = (e.stack||'').split('\n').map(l=>l.trim()).find(l=>l.includes('app.js'));
+    mostrarErroTela('Erro ao carregar o produto na calculadora. ' + (e.message||'') + (linha?' — ['+linha.replace(/^at\s*/,'')+']':''));
    }
   }, 100);
 }
