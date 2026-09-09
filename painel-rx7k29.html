@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Admin — RealEcom</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -300,423 +303,69 @@ tr:hover td{background:#1a1428}
 // ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
 // Todo app aberto detecta e recarrega sozinho em até 1 minuto.
 // ============================================================
-async function forcarAtualizacaoGeral(){
-  if(!confirm('Isto faz o app recarregar em todos os navegadores abertos.\n\nConfirma?')) return;
-  const btn = document.getElementById('btn-push-versao');
-  const txt = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Enviando…';
-  try{
-    const v = new Date().toISOString().replace(/[^0-9]/g,'').slice(0,14);
-    await db.collection('config').doc('app').set({
-      versao: v,
-      atualizadoEm: Date.now(),
-      por: 'painel'
-    }, {merge:true});
-    btn.textContent = '✓ Enviado';
-    btn.style.background = '#166534';
-    setTimeout(()=>{ btn.textContent = txt; btn.disabled = false; }, 2600);
-  }catch(e){
-    alert('Erro: ' + e.message);
-    btn.textContent = txt; btn.disabled = false;
-  }
-}
+
 
 // ============================================================
 // CONTAS — excluir, restaurar, migrar e-mail
 // ============================================================
-const SUBCOLECOES = ['produtos','eventos','metas','financeiro_lanc','financeiro_fix','sazonalidades'];
 
-async function excluirConta(email){
-  if(!confirm('Mover a conta de ' + email + ' para a lixeira?\n\nOs dados são preservados e podem ser restaurados.')) return;
-  await db.collection('usuarios').doc(email).set({
-    excluido: true, ativo: false, excluidoEm: Date.now()
-  }, {merge:true});
-  carregarTudo();
-}
 
-async function restaurarConta(email){
-  if(!confirm('Restaurar a conta de ' + email + '?')) return;
-  await db.collection('usuarios').doc(email).set({
-    excluido: false, ativo: true, restauradoEm: Date.now()
-  }, {merge:true});
-  carregarTudo();
-}
 
-async function excluirDefinitivo(email){
-  if(!confirm('APAGAR DEFINITIVAMENTE a conta de ' + email + '?\n\nTodos os produtos, eventos, metas e lançamentos serão perdidos.\nEsta ação não tem volta.')) return;
-  if(prompt('Para confirmar, digite EXCLUIR:') !== 'EXCLUIR') return;
-  try{
-    for(const c of SUBCOLECOES){
-      const snap = await db.collection('usuarios').doc(email).collection(c).get();
-      for(const d of snap.docs) await d.ref.delete();
-    }
-    await db.collection('usuarios').doc(email).delete();
-    alert('Conta apagada.');
-    carregarTudo();
-  }catch(e){ alert('Erro: ' + e.message); }
-}
 
-function abrirTrocaEmail(email){
-  document.getElementById('mig-de').value = email;
-  document.getElementById('mig-para').value = '';
-  document.getElementById('mig-status').style.display = 'none';
-  document.getElementById('modal-email').style.display = 'flex';
-}
 
-async function migrarEmail(){
-  const de = document.getElementById('mig-de').value.trim().toLowerCase();
-  const para = document.getElementById('mig-para').value.trim().toLowerCase();
-  const st = document.getElementById('mig-status');
-  const btn = document.getElementById('btn-migrar');
 
-  if(!para || !para.includes('@')){ alert('Informe um e-mail válido.'); return; }
-  if(de === para){ alert('Os e-mails são iguais.'); return; }
 
-  const existe = await db.collection('usuarios').doc(para).get();
-  if(existe.exists){ alert('Já existe uma conta com ' + para + '.'); return; }
-  if(!confirm('Migrar todos os dados de ' + de + ' para ' + para + '?')) return;
 
-  btn.disabled = true;
-  st.style.display = 'block';
-  const log = m => { st.textContent = m; };
 
-  try{
-    log('Copiando o cadastro…');
-    const doc = await db.collection('usuarios').doc(de).get();
-    if(!doc.exists) throw new Error('Conta de origem não encontrada.');
-    await db.collection('usuarios').doc(para).set({
-      ...doc.data(), emailAnterior: de, migradoEm: Date.now()
-    });
 
-    for(const c of SUBCOLECOES){
-      log('Copiando ' + c + '…');
-      const snap = await db.collection('usuarios').doc(de).collection(c).get();
-      for(const d of snap.docs){
-        await db.collection('usuarios').doc(para).collection(c).doc(d.id).set(d.data());
-      }
-    }
 
-    log('Removendo a conta antiga…');
-    for(const c of SUBCOLECOES){
-      const snap = await db.collection('usuarios').doc(de).collection(c).get();
-      for(const d of snap.docs) await d.ref.delete();
-    }
-    await db.collection('usuarios').doc(de).delete();
 
-    log('Concluído.');
-    alert('Dados migrados para ' + para + '.\n\nAgora cadastre esse e-mail na aba "Cadastrar" para o usuário conseguir fazer login.');
-    document.getElementById('modal-email').style.display = 'none';
-    carregarTudo();
-  }catch(e){
-    log('Erro: ' + e.message);
-    alert('Erro na migração: ' + e.message);
-  }
-  btn.disabled = false;
-}
-
-function renderLixeira(){
-  const el = document.getElementById('lista-lixeira');
-  if(!el) return;
-  const lixo = usuarios.filter(u => u.excluido);
-  if(!lixo.length){
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:.82rem">A lixeira está vazia.</div>';
-    return;
-  }
-  el.innerHTML = '<table><thead><tr><th>E-mail</th><th>Nome</th><th>Plano</th><th>Excluída em</th><th>Ações</th></tr></thead><tbody>'
-    + lixo.map(u => {
-        const em = u.excluidoEm ? new Date(u.excluidoEm).toLocaleDateString('pt-BR') : '—';
-        const id = u.email || u.id;
-        return '<tr><td style="font-size:.76rem">' + id + '</td>'
-          + '<td style="font-size:.76rem">' + (u.nome || '—') + '</td>'
-          + '<td style="font-size:.74rem">' + (u.plano || '—') + '</td>'
-          + '<td style="font-size:.74rem;color:var(--text3)">' + em + '</td>'
-          + '<td><button class="btn-edit" style="border-color:#16a34a;color:#4ade80" onclick="restaurarConta(\'' + id + '\')">Restaurar</button> '
-          + '<button class="btn-danger" onclick="excluirDefinitivo(\'' + id + '\')">Apagar de vez</button></td></tr>';
-      }).join('')
-    + '</tbody></table>';
-}
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
 // ============================================================
 // ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
 // Todo app aberto detecta e recarrega sozinho em até 1 minuto.
 // ============================================================
-async function forcarAtualizacaoGeral(){
-  if(!confirm('Isto faz o app recarregar em todos os navegadores abertos.\n\nConfirma?')) return;
-  const btn = document.getElementById('btn-push-versao');
-  const txt = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Enviando…';
-  try{
-    const v = new Date().toISOString().replace(/[^0-9]/g,'').slice(0,14);
-    await db.collection('config').doc('app').set({
-      versao: v,
-      atualizadoEm: Date.now(),
-      por: 'painel'
-    }, {merge:true});
-    btn.textContent = '✓ Enviado';
-    btn.style.background = '#166534';
-    setTimeout(()=>{ btn.textContent = txt; btn.disabled = false; }, 2600);
-  }catch(e){
-    alert('Erro: ' + e.message);
-    btn.textContent = txt; btn.disabled = false;
-  }
-}
+
 
 // ============================================================
 // CONTAS — excluir, restaurar, migrar e-mail
 // ============================================================
-const SUBCOLECOES = ['produtos','eventos','metas','financeiro_lanc','financeiro_fix','sazonalidades'];
 
-async function excluirConta(email){
-  if(!confirm('Mover a conta de ' + email + ' para a lixeira?\n\nOs dados são preservados e podem ser restaurados.')) return;
-  await db.collection('usuarios').doc(email).set({
-    excluido: true, ativo: false, excluidoEm: Date.now()
-  }, {merge:true});
-  carregarTudo();
-}
 
-async function restaurarConta(email){
-  if(!confirm('Restaurar a conta de ' + email + '?')) return;
-  await db.collection('usuarios').doc(email).set({
-    excluido: false, ativo: true, restauradoEm: Date.now()
-  }, {merge:true});
-  carregarTudo();
-}
 
-async function excluirDefinitivo(email){
-  if(!confirm('APAGAR DEFINITIVAMENTE a conta de ' + email + '?\n\nTodos os produtos, eventos, metas e lançamentos serão perdidos.\nEsta ação não tem volta.')) return;
-  if(prompt('Para confirmar, digite EXCLUIR:') !== 'EXCLUIR') return;
-  try{
-    for(const c of SUBCOLECOES){
-      const snap = await db.collection('usuarios').doc(email).collection(c).get();
-      for(const d of snap.docs) await d.ref.delete();
-    }
-    await db.collection('usuarios').doc(email).delete();
-    alert('Conta apagada.');
-    carregarTudo();
-  }catch(e){ alert('Erro: ' + e.message); }
-}
 
-function abrirTrocaEmail(email){
-  document.getElementById('mig-de').value = email;
-  document.getElementById('mig-para').value = '';
-  document.getElementById('mig-status').style.display = 'none';
-  document.getElementById('modal-email').style.display = 'flex';
-}
 
-async function migrarEmail(){
-  const de = document.getElementById('mig-de').value.trim().toLowerCase();
-  const para = document.getElementById('mig-para').value.trim().toLowerCase();
-  const st = document.getElementById('mig-status');
-  const btn = document.getElementById('btn-migrar');
 
-  if(!para || !para.includes('@')){ alert('Informe um e-mail válido.'); return; }
-  if(de === para){ alert('Os e-mails são iguais.'); return; }
 
-  const existe = await db.collection('usuarios').doc(para).get();
-  if(existe.exists){ alert('Já existe uma conta com ' + para + '.'); return; }
-  if(!confirm('Migrar todos os dados de ' + de + ' para ' + para + '?')) return;
 
-  btn.disabled = true;
-  st.style.display = 'block';
-  const log = m => { st.textContent = m; };
 
-  try{
-    log('Copiando o cadastro…');
-    const doc = await db.collection('usuarios').doc(de).get();
-    if(!doc.exists) throw new Error('Conta de origem não encontrada.');
-    await db.collection('usuarios').doc(para).set({
-      ...doc.data(), emailAnterior: de, migradoEm: Date.now()
-    });
 
-    for(const c of SUBCOLECOES){
-      log('Copiando ' + c + '…');
-      const snap = await db.collection('usuarios').doc(de).collection(c).get();
-      for(const d of snap.docs){
-        await db.collection('usuarios').doc(para).collection(c).doc(d.id).set(d.data());
-      }
-    }
 
-    log('Removendo a conta antiga…');
-    for(const c of SUBCOLECOES){
-      const snap = await db.collection('usuarios').doc(de).collection(c).get();
-      for(const d of snap.docs) await d.ref.delete();
-    }
-    await db.collection('usuarios').doc(de).delete();
 
-    log('Concluído.');
-    alert('Dados migrados para ' + para + '.\n\nAgora cadastre esse e-mail na aba "Cadastrar" para o usuário conseguir fazer login.');
-    document.getElementById('modal-email').style.display = 'none';
-    carregarTudo();
-  }catch(e){
-    log('Erro: ' + e.message);
-    alert('Erro na migração: ' + e.message);
-  }
-  btn.disabled = false;
-}
-
-function renderLixeira(){
-  const el = document.getElementById('lista-lixeira');
-  if(!el) return;
-  const lixo = usuarios.filter(u => u.excluido);
-  if(!lixo.length){
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:.82rem">A lixeira está vazia.</div>';
-    return;
-  }
-  el.innerHTML = '<table><thead><tr><th>E-mail</th><th>Nome</th><th>Plano</th><th>Excluída em</th><th>Ações</th></tr></thead><tbody>'
-    + lixo.map(u => {
-        const em = u.excluidoEm ? new Date(u.excluidoEm).toLocaleDateString('pt-BR') : '—';
-        const id = u.email || u.id;
-        return '<tr><td style="font-size:.76rem">' + id + '</td>'
-          + '<td style="font-size:.76rem">' + (u.nome || '—') + '</td>'
-          + '<td style="font-size:.74rem">' + (u.plano || '—') + '</td>'
-          + '<td style="font-size:.74rem;color:var(--text3)">' + em + '</td>'
-          + '<td><button class="btn-edit" style="border-color:#16a34a;color:#4ade80" onclick="restaurarConta(\'' + id + '\')">Restaurar</button> '
-          + '<button class="btn-danger" onclick="excluirDefinitivo(\'' + id + '\')">Apagar de vez</button></td></tr>';
-      }).join('')
-    + '</tbody></table>';
-}
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
 // ============================================================
 // ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
 // Todo app aberto detecta e recarrega sozinho em até 1 minuto.
 // ============================================================
-async function forcarAtualizacaoGeral(){
-  if(!confirm('Isto faz o app recarregar em todos os navegadores abertos.\n\nConfirma?')) return;
-  const btn = document.getElementById('btn-push-versao');
-  const txt = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Enviando…';
-  try{
-    const v = new Date().toISOString().replace(/[^0-9]/g,'').slice(0,14);
-    await db.collection('config').doc('app').set({
-      versao: v,
-      atualizadoEm: Date.now(),
-      por: 'painel'
-    }, {merge:true});
-    btn.textContent = '✓ Enviado';
-    btn.style.background = '#166534';
-    setTimeout(()=>{ btn.textContent = txt; btn.disabled = false; }, 2600);
-  }catch(e){
-    alert('Erro: ' + e.message);
-    btn.textContent = txt; btn.disabled = false;
-  }
-}
+
 
 // ============================================================
 // CONTAS — excluir, restaurar, migrar e-mail
 // ============================================================
-const SUBCOLECOES = ['produtos','eventos','metas','financeiro_lanc','financeiro_fix','sazonalidades'];
 
-async function excluirConta(email){
-  if(!confirm('Mover a conta de ' + email + ' para a lixeira?\n\nOs dados são preservados e podem ser restaurados.')) return;
-  await db.collection('usuarios').doc(email).set({
-    excluido: true, ativo: false, excluidoEm: Date.now()
-  }, {merge:true});
-  carregarTudo();
-}
 
-async function restaurarConta(email){
-  if(!confirm('Restaurar a conta de ' + email + '?')) return;
-  await db.collection('usuarios').doc(email).set({
-    excluido: false, ativo: true, restauradoEm: Date.now()
-  }, {merge:true});
-  carregarTudo();
-}
 
-async function excluirDefinitivo(email){
-  if(!confirm('APAGAR DEFINITIVAMENTE a conta de ' + email + '?\n\nTodos os produtos, eventos, metas e lançamentos serão perdidos.\nEsta ação não tem volta.')) return;
-  if(prompt('Para confirmar, digite EXCLUIR:') !== 'EXCLUIR') return;
-  try{
-    for(const c of SUBCOLECOES){
-      const snap = await db.collection('usuarios').doc(email).collection(c).get();
-      for(const d of snap.docs) await d.ref.delete();
-    }
-    await db.collection('usuarios').doc(email).delete();
-    alert('Conta apagada.');
-    carregarTudo();
-  }catch(e){ alert('Erro: ' + e.message); }
-}
 
-function abrirTrocaEmail(email){
-  document.getElementById('mig-de').value = email;
-  document.getElementById('mig-para').value = '';
-  document.getElementById('mig-status').style.display = 'none';
-  document.getElementById('modal-email').style.display = 'flex';
-}
 
-async function migrarEmail(){
-  const de = document.getElementById('mig-de').value.trim().toLowerCase();
-  const para = document.getElementById('mig-para').value.trim().toLowerCase();
-  const st = document.getElementById('mig-status');
-  const btn = document.getElementById('btn-migrar');
 
-  if(!para || !para.includes('@')){ alert('Informe um e-mail válido.'); return; }
-  if(de === para){ alert('Os e-mails são iguais.'); return; }
 
-  const existe = await db.collection('usuarios').doc(para).get();
-  if(existe.exists){ alert('Já existe uma conta com ' + para + '.'); return; }
-  if(!confirm('Migrar todos os dados de ' + de + ' para ' + para + '?')) return;
 
-  btn.disabled = true;
-  st.style.display = 'block';
-  const log = m => { st.textContent = m; };
 
-  try{
-    log('Copiando o cadastro…');
-    const doc = await db.collection('usuarios').doc(de).get();
-    if(!doc.exists) throw new Error('Conta de origem não encontrada.');
-    await db.collection('usuarios').doc(para).set({
-      ...doc.data(), emailAnterior: de, migradoEm: Date.now()
-    });
 
-    for(const c of SUBCOLECOES){
-      log('Copiando ' + c + '…');
-      const snap = await db.collection('usuarios').doc(de).collection(c).get();
-      for(const d of snap.docs){
-        await db.collection('usuarios').doc(para).collection(c).doc(d.id).set(d.data());
-      }
-    }
 
-    log('Removendo a conta antiga…');
-    for(const c of SUBCOLECOES){
-      const snap = await db.collection('usuarios').doc(de).collection(c).get();
-      for(const d of snap.docs) await d.ref.delete();
-    }
-    await db.collection('usuarios').doc(de).delete();
 
-    log('Concluído.');
-    alert('Dados migrados para ' + para + '.\n\nAgora cadastre esse e-mail na aba "Cadastrar" para o usuário conseguir fazer login.');
-    document.getElementById('modal-email').style.display = 'none';
-    carregarTudo();
-  }catch(e){
-    log('Erro: ' + e.message);
-    alert('Erro na migração: ' + e.message);
-  }
-  btn.disabled = false;
-}
-
-function renderLixeira(){
-  const el = document.getElementById('lista-lixeira');
-  if(!el) return;
-  const lixo = usuarios.filter(u => u.excluido);
-  if(!lixo.length){
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:.82rem">A lixeira está vazia.</div>';
-    return;
-  }
-  el.innerHTML = '<table><thead><tr><th>E-mail</th><th>Nome</th><th>Plano</th><th>Excluída em</th><th>Ações</th></tr></thead><tbody>'
-    + lixo.map(u => {
-        const em = u.excluidoEm ? new Date(u.excluidoEm).toLocaleDateString('pt-BR') : '—';
-        const id = u.email || u.id;
-        return '<tr><td style="font-size:.76rem">' + id + '</td>'
-          + '<td style="font-size:.76rem">' + (u.nome || '—') + '</td>'
-          + '<td style="font-size:.74rem">' + (u.plano || '—') + '</td>'
-          + '<td style="font-size:.74rem;color:var(--text3)">' + em + '</td>'
-          + '<td><button class="btn-edit" style="border-color:#16a34a;color:#4ade80" onclick="restaurarConta(\'' + id + '\')">Restaurar</button> '
-          + '<button class="btn-danger" onclick="excluirDefinitivo(\'' + id + '\')">Apagar de vez</button></td></tr>';
-      }).join('')
-    + '</tbody></table>';
-}
 </script>
 <script>
 const SENHA_ADMIN = 'pingpong';
@@ -863,8 +512,7 @@ function filtrarPlano(plano,el){
 
 function renderUsuarios(){
   // contas na lixeira não aparecem aqui
-  const _todos = usuarios;
-  usuarios = usuarios.filter(u => !u.excluido);
+  const usuarios = todosUsuarios.filter(u => !u.excluido);
   const agora=Date.now();
   const tbody=document.getElementById('tbody-usuarios');
   const busca=(document.getElementById('busca-usuario')?.value||'').toLowerCase();
@@ -908,7 +556,6 @@ function renderUsuarios(){
       </td>
     </tr>`;
   }).join('');
-  usuarios = _todos;
 }
 
 function renderFinanceiro(){
@@ -1204,6 +851,28 @@ function preencherEdicao(email,plano,validade,obs){
 // ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
 // Todo app aberto detecta e recarrega sozinho em até 1 minuto.
 // ============================================================
+
+
+// ============================================================
+// CONTAS — excluir, restaurar, migrar e-mail
+// ============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================================
+// ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
+// Todo app aberto detecta e recarrega sozinho em até 1 minuto.
+// ============================================================
 async function forcarAtualizacaoGeral(){
   if(!confirm('Isto faz o app recarregar em todos os navegadores abertos.\n\nConfirma?')) return;
   const btn = document.getElementById('btn-push-versao');
@@ -1228,6 +897,7 @@ async function forcarAtualizacaoGeral(){
 // ============================================================
 // CONTAS — excluir, restaurar, migrar e-mail
 // ============================================================
+
 const SUBCOLECOES = ['produtos','eventos','metas','financeiro_lanc','financeiro_fix','sazonalidades'];
 
 async function excluirConta(email){
@@ -1321,7 +991,7 @@ async function migrarEmail(){
 function renderLixeira(){
   const el = document.getElementById('lista-lixeira');
   if(!el) return;
-  const lixo = usuarios.filter(u => u.excluido);
+  const lixo = todosUsuarios.filter(u => u.excluido);
   if(!lixo.length){
     el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:.82rem">A lixeira está vazia.</div>';
     return;
@@ -1339,6 +1009,7 @@ function renderLixeira(){
       }).join('')
     + '</tbody></table>';
 }
+
 </script>
 <div id="modal-email" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:3000;align-items:center;justify-content:center;padding:18px">
   <div class="card" style="width:100%;max-width:460px;margin:0">
