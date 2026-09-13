@@ -16,7 +16,6 @@ const ZAPI_URL      = `https://api.z-api.io/instances/${ZAPI_INSTANCE}/token/${Z
 // Envia mensagem WhatsApp via Z-API
 // ============================================================
 async function enviarWhatsApp(telefone, mensagem) {
-  // Formata número: remove tudo que não é número, garante 55 na frente
   let numero = telefone.replace(/\D/g, '');
   if (!numero.startsWith('55')) numero = '55' + numero;
 
@@ -74,7 +73,6 @@ function montarMensagem(ev, diffDias) {
     return msgs[diffDias];
   }
 
-  // Evento genérico
   const icones = { conta: '💰', entrega: '🚚', outro: '📌', sazonal: '📅', giro_pedido: '🛒', giro_entrega: '📦' };
   const icone = icones[ev.tipo] || '📌';
 
@@ -100,11 +98,9 @@ exports.notificacoesWhatsApp = functions
       const usuario = doc.data();
       const email   = doc.id;
 
-      // Pula usuários sem telefone ou conta inativa
       if (!usuario.telefone) continue;
       if (usuario.ativo === false) continue;
 
-      // Carrega eventos do usuário
       let eventos = [];
       try {
         const evDoc = await db.collection('usuarios').doc(email)
@@ -117,13 +113,10 @@ exports.notificacoesWhatsApp = functions
         continue;
       }
 
-      // Verifica cada evento
       for (const ev of eventos) {
         if (!ev.data) continue;
 
         const diff = diasAte(ev.data);
-
-        // Regras de quando notificar (igual ao frontend)
         let deveNotificar = false;
 
         if (ev.titulo === 'Pagamento DAS' && diff >= 0 && diff <= 5) {
@@ -146,11 +139,107 @@ exports.notificacoesWhatsApp = functions
         const enviado = await enviarWhatsApp(usuario.telefone, mensagem);
         if (enviado) totalEnviados++;
 
-        // Pequena pausa para não sobrecarregar a Z-API
         await new Promise(r => setTimeout(r, 300));
       }
     }
 
     console.log(`✅ Concluído. Total enviados: ${totalEnviados}`);
     return null;
+  });
+
+
+// ============================================================
+// ML ANALYZER — OAuth Mercado Livre
+// Configure o Client Secret rodando no terminal:
+//   firebase functions:config:set ml.client_secret="SUA_CHAVE_SECRETA"
+// ============================================================
+const ML_CLIENT_ID = '3936370948601703';
+const ML_REDIRECT  = 'https://www.google.com';
+const ML_TOKEN_URL = 'https://api.mercadolibre.com/oauth/token';
+
+exports.mlTokenExchange = functions
+  .region('southamerica-east1')
+  .https.onCall(async (data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError('unauthenticated', 'Faça login primeiro');
+    }
+    const { code } = data;
+    if (!code) {
+      throw new functions.https.HttpsError('invalid-argument', 'Código obrigatório');
+    }
+    const CLIENT_SECRET = functions.config().ml?.client_secret;
+    if (!CLIENT_SECRET) {
+      throw new functions.https.HttpsError('internal', 'Client Secret não configurado no servidor');
+    }
+    const resp = await fetch(ML_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type:    'authorization_code',
+        client_id:     ML_CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code:          code,
+        redirect_uri:  ML_REDIRECT,
+      }).toString(),
+    });
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      throw new functions.https.HttpsError('internal', `Erro ML ${resp.status}: ${errText}`);
+    }
+    const tokenData = await resp.json();
+    await admin.firestore()
+      .collection('users').doc(context.auth.uid)
+      .collection('mlTokens').doc('main')
+      .set({
+        access_token:  tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        user_id:       tokenData.user_id,
+        expires_at:    admin.firestore.Timestamp.fromMillis(Date.now() + tokenData.expires_in * 1000),
+        updated_at:    admin.firestore.FieldValue.serverTimestamp(),
+      });
+    return { success: true, user_id: tokenData.user_id };
+  });
+
+
+exports.mlTokenRefresh = functions
+  .region('southamerica-east1')
+  .https.onCall(async (data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError('unauthenticated', 'Faça login primeiro');
+    }
+    const CLIENT_SECRET = functions.config().ml?.client_secret;
+    if (!CLIENT_SECRET) {
+      throw new functions.https.HttpsError('internal', 'Client Secret não configurado');
+    }
+    const snap = await admin.firestore()
+      .collection('users').doc(context.auth.uid)
+      .collection('mlTokens').doc('main').get();
+    if (!snap.exists) {
+      throw new functions.https.HttpsError('not-found', 'Token não encontrado. Reconecte sua conta ML.');
+    }
+    const { refresh_token } = snap.data();
+    const resp = await fetch(ML_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type:    'refresh_token',
+        client_id:     ML_CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        refresh_token: refresh_token,
+      }).toString(),
+    });
+    if (!resp.ok) {
+      throw new functions.https.HttpsError('internal', 'Erro ao renovar token. Reconecte sua conta ML.');
+    }
+    const tokenData = await resp.json();
+    await admin.firestore()
+      .collection('users').doc(context.auth.uid)
+      .collection('mlTokens').doc('main')
+      .update({
+        access_token:  tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        expires_at:    admin.firestore.Timestamp.fromMillis(Date.now() + tokenData.expires_in * 1000),
+        updated_at:    admin.firestore.FieldValue.serverTimestamp(),
+      });
+    return { success: true };
   });
