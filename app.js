@@ -977,6 +977,25 @@ function finalizarCalculo(){
   if(lastCalc&&lastCalc.payout>0){
     calcDevolucao();
   }
+
+  rolarParaResultado();
+}
+
+// Depois de calcular, leva a pessoa para o início do resultado.
+// No celular (colunas empilhadas), rola a página inteira para o topo.
+// No desktop (colunas lado a lado), rola só o painel de resultado.
+function rolarParaResultado(){
+  try{
+    const ehMobile = window.innerWidth <= 900;
+    if(ehMobile){
+      const pagina = document.querySelector('#page-calc.active') || document.getElementById('page-calc');
+      if(pagina) pagina.scrollIntoView({behavior:'smooth', block:'start'});
+      window.scrollTo({top:0, behavior:'smooth'});
+    }else{
+      const painel = document.getElementById('right-result');
+      if(painel) painel.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }catch(e){ console.warn('rolarParaResultado:', e); }
 }
 
 function resetar(){
