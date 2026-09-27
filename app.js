@@ -600,7 +600,7 @@ function showPage(p,bypassCheck){
 
   // Destaca item ativo na sidebar
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
-  const mapa={calc:'sb-calc',dash:'sb-dash',metas:'sb-metas',cal:'sb-cal',gestao:'sb-gestao',simples:'sb-simples',pub:'sb-pub',ncm:'sb-ncm',home:'sb-home',conc:'sb-conc',prompt:'sb-prompt',fin:'sb-fin'};
+  const mapa={calc:'sb-calc',dash:'sb-dash',metas:'sb-metas',cal:'sb-cal',gestao:'sb-gestao',simples:'sb-simples',pub:'sb-pub',ncm:'sb-ncm',home:'sb-home',conc:'sb-conc',prompt:'sb-prompt',fin:'sb-fin',aulas:'sb-aulas'};
   if(mapa[p]){const el=document.getElementById(mapa[p]);if(el)el.classList.add('active');}
 
   if(p==='dash')renderDash();
@@ -612,6 +612,7 @@ function showPage(p,bypassCheck){
   if(p==='sazonal'){renderSazonalGrid();}
   if(p==='ncm'){renderHistoricoNCM();}
   if(p==='fin'){finInit();}
+  if(p==='aulas'){renderAulas();}
   if(p!=='login') registrarAtividade('nav_'+p);
   // Salvar página atual para restaurar no F5
   if(p!=='login')localStorage.setItem('realecom_pagina',p);
@@ -4576,3 +4577,190 @@ window.addEventListener('unhandledrejection', function(ev){
   console.error('Promise rejeitada:', ev.reason);
   mostrarErroTela('Algo deu errado ao carregar dados. Recarregue a página se persistir.');
 });
+
+// ============================================================
+// CENTRAL DE AULAS — dados e progresso
+// Progresso salvo por conta via fbGet/fbSet (isolado por usuário,
+// sincroniza entre dispositivos).
+// ============================================================
+const AULAS_MODULOS = [
+  {
+    badge: "BLOCO 1", cor: '#ea580c',
+    titulo: "Estrutura", contagem: "12 aulas",
+    grupos: [
+      { nome: null, aulas: [
+        { titulo: "O Marketplace", desc: "Como funciona um marketplace e onde o Mercado Livre se encaixa.", url: "https://drive.google.com/file/d/1IdqJ7I89Mr6uhBtZDETZgX9rFNQy_MDI/view", tipo: 'video' },
+        { titulo: "O Mercado Livre", desc: "Visão geral da plataforma — como ela pensa e como você deve pensar nela.", url: "https://drive.google.com/file/d/1Lf_zBamuQqWhp8W2coGyHUJ8N1r2hVu3/view", tipo: 'video' },
+        { titulo: "O Varejo", desc: "Entendendo o jogo do varejo antes de entrar no Mercado Livre.", url: "https://drive.google.com/file/d/1YdwBPwX0ufV8n-M4GURqRzLn8gpHRAeB/view", tipo: 'video' },
+        { titulo: "Entendendo o Caminho no Mercado Livre", desc: "O mapa geral da jornada dentro da plataforma.", url: "https://drive.google.com/file/d/1L-kBYNvwxBZDBo-7OmF1lWQOpLz96t6o/view", tipo: 'video' },
+        { titulo: "Estrutura da Operação", desc: "Por que estrutura vem antes de produto — o mapa da base.", url: "https://drive.google.com/file/d/1_zbx6vZP0pj_wUH07ueXZLlxhgt3MhG5/view", tipo: 'video' },
+        { titulo: "Endereço Fiscal e Prep Center", desc: "Por que São Paulo e como o Prep Center entra na sua operação.", url: "https://drive.google.com/file/d/14ubnGqheRVKGxYanichMzhQr8tFLoIwi/view", tipo: 'video' },
+        { titulo: "Documentação e Organização", desc: "Inscrição estadual, certificado digital e como organizar tudo.", url: "https://drive.google.com/file/d/17cUr0RMp2ZPcO7lv2gd60-zBhlekNI_8/view", tipo: 'video' },
+        { titulo: "CNPJ", desc: "Enquadramento, CNAEs e o raciocínio pra montar a empresa certa.", url: "https://drive.google.com/file/d/1TBrPvcVds_pwqsJwJyO-PzJ54l1MKMw4/view", tipo: 'video' },
+        { titulo: "Logísticas", desc: "Correios, Agências, Coleta, Flex e Full — as 5 modalidades explicadas.", url: "https://drive.google.com/file/d/13eTE2bZ2GodF7djAXrIvh-ZWKqYQWIo5/view", tipo: 'video' },
+        { titulo: "Criando a Conta", desc: "Configuração da conta do Mercado Livre com mentalidade de empresa.", url: "https://drive.google.com/file/d/1MxS-iyJTk4q7yZZQCkscF97V_ngZbf2V/view", tipo: 'video' },
+        { titulo: "Programa Decola", desc: "Reputação e o programa de aceleração do Mercado Livre.", url: "https://drive.google.com/file/d/1Go4c1-5PXHTLZ7BTCAuBX_8Vb1wKOZdc/view", tipo: 'video' },
+        { titulo: "Criando Anúncio pra Ativar o Decola", desc: "Aplicando na prática o que ativa o programa de reputação.", url: "https://drive.google.com/file/d/1gA_q5XMocjzd_FDYTQTRRKoP4_5Ywqr2/view", tipo: 'video' },
+      ]},
+    ]
+  },
+  {
+    badge: "BLOCO 2", cor: '#7c3aed',
+    titulo: "O que Vender", contagem: "6 itens",
+    grupos: [
+      { nome: "Demanda", aulas: [
+        { titulo: "Triângulo da Viabilidade — Demanda", desc: "Apresentação de apoio: premissas, indicadores e pesquisa de mercado.", url: "https://drive.google.com/file/d/1XskxK1YdCyj4oSL5wdQIssjS23qFBAQN/view", tipo: 'doc' },
+        { titulo: "Prática de Demanda", desc: "Aplicando o conceito de demanda em produtos reais.", url: "https://drive.google.com/file/d/1_07MnoTAWL-kX0p2zpZ28SuDrrZ0la7r/view", tipo: 'video' },
+        { titulo: "Pesquisa de Mercado", desc: "Como pesquisar demanda de verdade antes de comprar.", url: "https://drive.google.com/file/d/1P6kTa81oliI9hMdX16tIOvQlLivc8Dtc/view", tipo: 'video' },
+      ]},
+      { nome: "Pricing", aulas: [
+        { titulo: "Pesquisa de Mercado + Precificação", desc: "Juntando demanda e margem na prática.", url: "https://drive.google.com/file/d/1K1h18Rivr0adC9Q3HeeUdenkKHbww2tI/view", tipo: 'video' },
+        { titulo: "Pricing — Indicadores", desc: "Margem de contribuição, markup, ROI e lucro líquido.", url: "https://drive.google.com/file/d/1bA5FSr51k9ck4uU-3CBGNv8I7T18w8nB/view", tipo: 'doc' },
+      ]},
+      { nome: "Estratégia de Posicionamento", aulas: [
+        { titulo: "Playbook — Estratégia e Posicionamento", desc: "Referência completa do Triângulo da Viabilidade — tamanho de mercado, dinâmica competitiva e estratégia.", url: "https://drive.google.com/file/d/1mhkXqPRKBeX8UJ7ItzXLy1NsDGGQTcyW/view", tipo: 'doc' },
+      ]},
+    ]
+  },
+  {
+    badge: "BLOCO 3", cor: '#ea580c',
+    titulo: "Como Vender", contagem: "1 aula",
+    grupos: [
+      { nome: null, aulas: [
+        { titulo: "Anúncio Campeão", desc: "Como montar um anúncio pronto pra vender no Mercado Livre.", url: "https://drive.google.com/file/d/1PiRMRnLPAAaBvW2PPrn_y_yjvoiisGJ0/view", tipo: 'video' },
+      ]},
+    ]
+  },
+  {
+    badge: "EXTRA", cor: '#7c3aed',
+    titulo: "Material Complementar", contagem: "3 arquivos",
+    grupos: [
+      { nome: null, aulas: [
+        { titulo: "Estudo de Produto", desc: "Planilha pra registrar demanda, viabilidade e ROI de cada produto avaliado.", url: "https://docs.google.com/spreadsheets/d/1XnrDxGatpjWR2DI1d56GhgFk3HVtxgx9j_KNozR5wyY/edit", tipo: 'sheet' },
+        { titulo: "Lista de Fornecedores", desc: "Fornecedores por categoria — utilidades domésticas, decoração, ferramentas e mais.", url: "https://docs.google.com/spreadsheets/d/1-6lbjukQdxUin_Qz-Fq3BKM-0sUtNHPsguUuw41Am9M/edit", tipo: 'sheet' },
+        { titulo: "Prompts de Imagem pra Anúncio", desc: "7 prompts prontos pra gerar as imagens do seu anúncio no Mercado Livre.", url: "https://drive.google.com/file/d/1NF2h9CtB9U0EJIK8gR3TIzF-bDtlLqgk/view", tipo: 'doc' },
+      ]},
+    ]
+  },
+];
+
+let _aulasAssistidas = [];
+let _aulasCarregadas = false;
+let _aulasAbertos = {}; // { indiceModulo: true/false } — estado de expandido/fechado
+
+function _aulaId(url){ return url; } // a URL já é única, serve de identificador estável
+
+async function renderAulas(){
+  const el = document.getElementById('aulas-content');
+  if(!el) return;
+  if(!_aulasCarregadas){
+    el.innerHTML = '<div style="text-align:center;padding:44px;color:var(--text4);font-size:.8rem">Carregando…</div>';
+    _aulasAssistidas = await fbGet('aulas_progresso','realecom_aulas_progresso','[]');
+    _aulasCarregadas = true;
+    // abre o primeiro módulo que ainda não foi 100% concluído
+    AULAS_MODULOS.forEach((m, i) => {
+      const total = m.grupos.reduce((s,g)=>s+g.aulas.length,0);
+      const feitas = m.grupos.reduce((s,g)=>s+g.aulas.filter(a=>_aulasAssistidas.includes(_aulaId(a.url))).length,0);
+      if(!(i in _aulasAbertos)) _aulasAbertos[i] = feitas < total && !AULAS_MODULOS.slice(0,i).some((mm,ii)=>{
+        const t2=mm.grupos.reduce((s,g)=>s+g.aulas.length,0), f2=mm.grupos.reduce((s,g)=>s+g.aulas.filter(a=>_aulasAssistidas.includes(_aulaId(a.url))).length,0);
+        return f2<t2;
+      });
+    });
+  }
+  _renderAulasDom();
+  _atualizarStatsAulas();
+}
+
+function _iconeAula(tipo){
+  if(tipo==='video') return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+  if(tipo==='sheet') return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg>';
+  return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>';
+}
+
+function _renderAulasDom(){
+  const el = document.getElementById('aulas-content');
+  if(!el) return;
+
+  const html = AULAS_MODULOS.map((m, mi) => {
+    const total = m.grupos.reduce((s,g)=>s+g.aulas.length,0);
+    const feitas = m.grupos.reduce((s,g)=>s+g.aulas.filter(a=>_aulasAssistidas.includes(_aulaId(a.url))).length,0);
+    const pct = total>0 ? Math.round(feitas/total*100) : 0;
+    const aberto = !!_aulasAbertos[mi];
+
+    const gruposHtml = m.grupos.map(g => {
+      const itensHtml = g.aulas.map(a => {
+        const assistida = _aulasAssistidas.includes(_aulaId(a.url));
+        return `<div class="aula-item${assistida?' assistida':''}">
+          <div class="aula-check" onclick="toggleAulaAssistida(${JSON.stringify(a.url)})" title="${assistida?'Marcar como não assistida':'Marcar como assistida'}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="aula-icon">${_iconeAula(a.tipo)}</div>
+          <a class="aula-corpo" href="${a.url}" target="_blank" rel="noopener" style="text-decoration:none">
+            <div class="aula-titulo">${a.titulo}</div>
+            <div class="aula-desc">${a.desc}</div>
+          </a>
+          <svg class="aula-abrir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>`;
+      }).join('');
+      const cabecalhoGrupo = g.nome ? `<div class="aula-subgrupo-titulo">${g.nome}</div>` : '';
+      return cabecalhoGrupo + itensHtml;
+    }).join('');
+
+    return `<div class="aula-modulo${aberto?' aberto':''}">
+      <div class="aula-modulo-header" onclick="toggleAulaModulo(${mi})">
+        <span class="aula-badge" style="background:${m.cor}"></span>
+        <div style="flex:1;min-width:0">
+          <div class="aula-modulo-titulo">${m.titulo}</div>
+          <div class="aula-modulo-sub">${m.badge} · ${m.contagem}</div>
+        </div>
+        <span class="aula-modulo-progresso">${feitas}/${total}</span>
+        <svg class="aula-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="aula-modulo-bar"><div class="aula-modulo-bar-fill" style="width:${pct}%"></div></div>
+      <div class="aula-modulo-conteudo">${gruposHtml}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = html;
+}
+
+function toggleAulaModulo(mi){
+  _aulasAbertos[mi] = !_aulasAbertos[mi];
+  _renderAulasDom();
+}
+
+async function toggleAulaAssistida(url){
+  const id = _aulaId(url);
+  const idx = _aulasAssistidas.indexOf(id);
+  if(idx === -1) _aulasAssistidas.push(id);
+  else _aulasAssistidas.splice(idx, 1);
+  setCached('realecom_aulas_progresso', _aulasAssistidas);
+  fbSet('aulas_progresso', _aulasAssistidas);
+  _renderAulasDom();
+  _atualizarStatsAulas();
+}
+
+function _atualizarStatsAulas(){
+  const todasAulas = [];
+  AULAS_MODULOS.forEach(m => m.grupos.forEach(g => g.aulas.forEach(a => todasAulas.push(a))));
+  const total = todasAulas.length;
+  const feitas = todasAulas.filter(a => _aulasAssistidas.includes(_aulaId(a.url))).length;
+  const pct = total>0 ? Math.round(feitas/total*100) : 0;
+  const proxima = todasAulas.find(a => !_aulasAssistidas.includes(_aulaId(a.url)));
+
+  const set = (id, txt) => { const e = document.getElementById(id); if(e) e.textContent = txt; };
+  set('aulas-st-feitas', feitas + ' de ' + total);
+  set('aulas-st-pct', pct + '%');
+  set('aulas-st-prox', proxima ? proxima.titulo : 'Curso concluído');
+
+  const elPct = document.getElementById('aulas-st-pct');
+  if(elPct){
+    const cs = getComputedStyle(document.documentElement);
+    elPct.style.setProperty('background', cs.getPropertyValue('--mark').trim(), 'important');
+    elPct.style.setProperty('color', cs.getPropertyValue('--mark-fg').trim(), 'important');
+    elPct.style.setProperty('-webkit-text-fill-color', cs.getPropertyValue('--mark-fg').trim(), 'important');
+    elPct.style.setProperty('padding', '2px 9px', 'important');
+    elPct.style.setProperty('border-radius', '6px', 'important');
+    elPct.style.setProperty('display', 'inline-block', 'important');
+  }
+}
