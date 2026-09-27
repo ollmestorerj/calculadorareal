@@ -4691,7 +4691,7 @@ function _renderAulasDom(){
       const itensHtml = g.aulas.map(a => {
         const assistida = _aulasAssistidas.includes(_aulaId(a.url));
         return `<div class="aula-item${assistida?' assistida':''}">
-          <div class="aula-check" onclick="toggleAulaAssistida(${JSON.stringify(a.url)})" title="${assistida?'Marcar como não assistida':'Marcar como assistida'}">
+          <div class="aula-check" data-url="${a.url.replace(/"/g,'&quot;')}" onclick="toggleAulaAssistida(this.dataset.url)" title="${assistida?'Marcar como não assistida':'Marcar como assistida'}">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="aula-icon">${_iconeAula(a.tipo)}</div>
