@@ -4585,17 +4585,20 @@ window.addEventListener('unhandledrejection', function(ev){
 // ============================================================
 const AULAS_MODULOS = [
   {
-    badge: "BLOCO 1", cor: '#ea580c',
-    titulo: "Estrutura", contagem: "12 aulas",
+    badge: "BLOCO 1", cor: "#ea580c",
+    titulo: "Estrutura", contagem: "15 aulas",
     grupos: [
       { nome: null, aulas: [
+        { titulo: "Introdução", desc: "Abertura do curso e ponto de partida da jornada.", url: "https://drive.google.com/file/d/1QGcdDIs0qI2C7rSwKufturU_rS7zMHl9/view", tipo: 'video' },
         { titulo: "O Marketplace", desc: "Como funciona um marketplace e onde o Mercado Livre se encaixa.", url: "https://drive.google.com/file/d/1IdqJ7I89Mr6uhBtZDETZgX9rFNQy_MDI/view", tipo: 'video' },
         { titulo: "O Mercado Livre", desc: "Visão geral da plataforma — como ela pensa e como você deve pensar nela.", url: "https://drive.google.com/file/d/1Lf_zBamuQqWhp8W2coGyHUJ8N1r2hVu3/view", tipo: 'video' },
         { titulo: "O Varejo", desc: "Entendendo o jogo do varejo antes de entrar no Mercado Livre.", url: "https://drive.google.com/file/d/1YdwBPwX0ufV8n-M4GURqRzLn8gpHRAeB/view", tipo: 'video' },
-        { titulo: "Entendendo o Caminho no Mercado Livre", desc: "O mapa geral da jornada dentro da plataforma.", url: "https://drive.google.com/file/d/1L-kBYNvwxBZDBo-7OmF1lWQOpLz96t6o/view", tipo: 'video' },
+        { titulo: "Objetivos", desc: "Definindo o que você quer alcançar no Mercado Livre.", url: "https://drive.google.com/file/d/1ooCM-1EJ_jj8fysNN0NyW9SP6DwMyn97/view", tipo: 'video' },
         { titulo: "Estrutura da Operação", desc: "Por que estrutura vem antes de produto — o mapa da base.", url: "https://drive.google.com/file/d/1_zbx6vZP0pj_wUH07ueXZLlxhgt3MhG5/view", tipo: 'video' },
-        { titulo: "Endereço Fiscal e Prep Center", desc: "Por que São Paulo e como o Prep Center entra na sua operação.", url: "https://drive.google.com/file/d/14ubnGqheRVKGxYanichMzhQr8tFLoIwi/view", tipo: 'video' },
+        { titulo: "Alinhamento de Expectativas", desc: "Alinhando o que esperar do processo e do resultado.", url: "https://drive.google.com/file/d/1wmKUK7CpMD774XvqMfeKLJNimUws9lGp/view", tipo: 'video' },
+        { titulo: "Entendendo o Caminho no Mercado Livre", desc: "O mapa geral da jornada dentro da plataforma.", url: "https://drive.google.com/file/d/1L-kBYNvwxBZDBo-7OmF1lWQOpLz96t6o/view", tipo: 'video' },
         { titulo: "Documentação e Organização", desc: "Inscrição estadual, certificado digital e como organizar tudo.", url: "https://drive.google.com/file/d/17cUr0RMp2ZPcO7lv2gd60-zBhlekNI_8/view", tipo: 'video' },
+        { titulo: "Endereço Fiscal e Prep Center", desc: "Por que São Paulo e como o Prep Center entra na sua operação.", url: "https://drive.google.com/file/d/14ubnGqheRVKGxYanichMzhQr8tFLoIwi/view", tipo: 'video' },
         { titulo: "CNPJ", desc: "Enquadramento, CNAEs e o raciocínio pra montar a empresa certa.", url: "https://drive.google.com/file/d/1TBrPvcVds_pwqsJwJyO-PzJ54l1MKMw4/view", tipo: 'video' },
         { titulo: "Logísticas", desc: "Correios, Agências, Coleta, Flex e Full — as 5 modalidades explicadas.", url: "https://drive.google.com/file/d/13eTE2bZ2GodF7djAXrIvh-ZWKqYQWIo5/view", tipo: 'video' },
         { titulo: "Criando a Conta", desc: "Configuração da conta do Mercado Livre com mentalidade de empresa.", url: "https://drive.google.com/file/d/1MxS-iyJTk4q7yZZQCkscF97V_ngZbf2V/view", tipo: 'video' },
@@ -4605,7 +4608,7 @@ const AULAS_MODULOS = [
     ]
   },
   {
-    badge: "BLOCO 2", cor: '#7c3aed',
+    badge: "BLOCO 2", cor: "#7c3aed",
     titulo: "O que Vender", contagem: "6 itens",
     grupos: [
       { nome: "Demanda", aulas: [
@@ -4623,16 +4626,20 @@ const AULAS_MODULOS = [
     ]
   },
   {
-    badge: "BLOCO 3", cor: '#ea580c',
-    titulo: "Como Vender", contagem: "1 aula",
+    badge: "BLOCO 3", cor: "#ea580c",
+    titulo: "Como Vender", contagem: "5 aulas",
     grupos: [
       { nome: null, aulas: [
-        { titulo: "Anúncio Campeão", desc: "Como montar um anúncio pronto pra vender no Mercado Livre.", url: "https://drive.google.com/file/d/1PiRMRnLPAAaBvW2PPrn_y_yjvoiisGJ0/view", tipo: 'video' },
+        { titulo: "Passo a Passo do Anúncio", desc: "O passo a passo para montar um anúncio no Mercado Livre.", url: "https://drive.google.com/file/d/11rA5vS7rpIslEC4r3-147VzV2u7LLlTK/view", tipo: 'video' },
+        { titulo: "Anúncio Campeão", desc: "Como montar um anúncio pronto pra vender no Mercado Livre.", url: "https://drive.google.com/file/d/1LqBSIV-OQab2P_Qr5n3jBgS3xtbMdIWZ/view", tipo: 'video' },
+        { titulo: "Execução, Ajuste, Medição", desc: "O ciclo de executar, ajustar e medir os resultados.", url: "https://drive.google.com/file/d/1ofoYDRdgNezYrQCGa83zim2_8g3AVVk_/view", tipo: 'video' },
+        { titulo: "Acelerador Real", desc: "Conheça o Acelerador Real.", url: "https://drive.google.com/file/d/1fauitsrV3hGK6puqcq3xNmYA6GFIOqkN/view", tipo: 'video' },
+        { titulo: "Finalização", desc: "Encerramento do curso.", url: "https://drive.google.com/file/d/1BJsVRK4QDWmPfaHE7d5Vf7dDwot6Ztc6/view", tipo: 'video' },
       ]},
     ]
   },
   {
-    badge: "EXTRA", cor: '#7c3aed',
+    badge: "EXTRA", cor: "#7c3aed",
     titulo: "Material Complementar", contagem: "3 arquivos",
     grupos: [
       { nome: null, aulas: [
@@ -4648,14 +4655,27 @@ let _aulasAssistidas = [];
 let _aulasCarregadas = false;
 let _aulasAbertos = {}; // { indiceModulo: true/false } — estado de expandido/fechado
 
-function _aulaId(url){ return url; } // a URL já é única, serve de identificador estável
+// Arquivos do Drive que foram reenviados com ID novo: o progresso do ID antigo passa para o novo.
+const AULAS_ALIASES = {
+  '1PiRMRnLPAAaBvW2PPrn_y_yjvoiisGJ0': '1LqBSIV-OQab2P_Qr5n3jBgS3xtbMdIWZ'
+};
+
+// Identificador estável de cada aula: o ID do arquivo no Drive.
+// Assim o progresso não se perde se o formato do link mudar ou se um vídeo for reenviado.
+function _aulaId(url){
+  const m = String(url).match(/\/d\/([A-Za-z0-9_-]+)/);
+  const id = m ? m[1] : String(url);
+  return AULAS_ALIASES[id] || id;
+}
 
 async function renderAulas(){
   const el = document.getElementById('aulas-content');
   if(!el) return;
   if(!_aulasCarregadas){
     el.innerHTML = '<div style="text-align:center;padding:44px;color:var(--text4);font-size:.8rem">Carregando…</div>';
-    _aulasAssistidas = await fbGet('aulas_progresso','realecom_aulas_progresso','[]');
+    const _salvo = await fbGet('aulas_progresso','realecom_aulas_progresso','[]');
+    // converte progresso antigo (link inteiro) para o ID do arquivo e remove repetidos
+    _aulasAssistidas = Array.from(new Set((Array.isArray(_salvo) ? _salvo : []).map(_aulaId)));
     _aulasCarregadas = true;
     // abre o primeiro módulo que ainda não foi 100% concluído
     AULAS_MODULOS.forEach((m, i) => {
