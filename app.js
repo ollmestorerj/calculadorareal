@@ -999,13 +999,18 @@ function rolarParaResultado(){
   }catch(e){ console.warn('rolarParaResultado:', e); }
 }
 
-function resetar(){
-  // Reseta modo edição — CRÍTICO: sem isso, salvar após "Novo Cálculo" atualiza o produto anterior
-  _prodEditId = null;
-  const btnAtualizar = document.getElementById('btn-atualizar');
-  const btnSalvar = document.getElementById('btn-salvar-prod');
-  if(btnAtualizar) btnAtualizar.style.display = 'none';
-  if(btnSalvar) btnSalvar.style.display = '';
+function resetar(preservarEdicao){
+  // Reseta modo edição — CRÍTICO: sem isso, salvar após "Novo Cálculo" atualiza o produto anterior.
+  // Exceção: verNaCalculadora() chama resetar(true) só para limpar os campos antes de
+  // repovoar com o snapshot do produto — nesse caso o modo edição não pode ser apagado,
+  // senão "Atualizar produto" nunca mais funciona depois de abrir um produto salvo.
+  if(!preservarEdicao){
+    _prodEditId = null;
+    const btnAtualizar = document.getElementById('btn-atualizar');
+    const btnSalvar = document.getElementById('btn-salvar-prod');
+    if(btnAtualizar) btnAtualizar.style.display = 'none';
+    if(btnSalvar) btnSalvar.style.display = '';
+  }
   // Limpa campos do save-card
   ['save-nome','save-forn','save-cod','save-obs','save-link1','save-link2','save-link3']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
@@ -1937,8 +1942,8 @@ function verNaCalculadora(id){
   // Pequeno delay para garantir que a página renderizou
   setTimeout(()=>{
    try{
-    // Reseta tudo antes de preencher
-    resetar();
+    // Reseta tudo antes de preencher, SEM apagar o modo edição que acabamos de ativar
+    resetar(true);
 
     if(!s){
       // Produto antigo sem snapshot — preenche só o que temos
