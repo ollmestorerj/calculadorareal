@@ -4586,7 +4586,7 @@ window.addEventListener('unhandledrejection', function(ev){
 const AULAS_MODULOS = [
   {
     badge: "BLOCO 1", cor: "#ea580c",
-    titulo: "Estrutura", contagem: "15 aulas",
+    titulo: "Estrutura", contagem: "16 aulas",
     grupos: [
       { nome: null, aulas: [
         { titulo: "Introdução", desc: "Abertura do curso e ponto de partida da jornada.", url: "https://drive.google.com/file/d/1QGcdDIs0qI2C7rSwKufturU_rS7zMHl9/view", tipo: 'video' },
@@ -4600,6 +4600,7 @@ const AULAS_MODULOS = [
         { titulo: "Documentação e Organização", desc: "Inscrição estadual, certificado digital e como organizar tudo.", url: "https://drive.google.com/file/d/17cUr0RMp2ZPcO7lv2gd60-zBhlekNI_8/view", tipo: 'video' },
         { titulo: "Endereço Fiscal e Prep Center", desc: "Por que São Paulo e como o Prep Center entra na sua operação.", url: "https://drive.google.com/file/d/14ubnGqheRVKGxYanichMzhQr8tFLoIwi/view", tipo: 'video' },
         { titulo: "CNPJ", desc: "Enquadramento, CNAEs e o raciocínio pra montar a empresa certa.", url: "https://drive.google.com/file/d/1TBrPvcVds_pwqsJwJyO-PzJ54l1MKMw4/view", tipo: 'video' },
+        { titulo: "Abrindo o MEI", desc: "Passo a passo prático para abrir o MEI.", url: "https://drive.google.com/file/d/1_qkzN6ig36ve6sGB_qvDIMYpwSvf_3yX/view", tipo: 'video' },
         { titulo: "Logísticas", desc: "Correios, Agências, Coleta, Flex e Full — as 5 modalidades explicadas.", url: "https://drive.google.com/file/d/13eTE2bZ2GodF7djAXrIvh-ZWKqYQWIo5/view", tipo: 'video' },
         { titulo: "Criando a Conta", desc: "Configuração da conta do Mercado Livre com mentalidade de empresa.", url: "https://drive.google.com/file/d/1MxS-iyJTk4q7yZZQCkscF97V_ngZbf2V/view", tipo: 'video' },
         { titulo: "Programa Decola", desc: "Reputação e o programa de aceleração do Mercado Livre.", url: "https://drive.google.com/file/d/1Go4c1-5PXHTLZ7BTCAuBX_8Vb1wKOZdc/view", tipo: 'video' },
@@ -4609,15 +4610,18 @@ const AULAS_MODULOS = [
   },
   {
     badge: "BLOCO 2", cor: "#7c3aed",
-    titulo: "O que Vender", contagem: "6 itens",
+    titulo: "O que Vender", contagem: "9 itens",
     grupos: [
       { nome: "Demanda", aulas: [
         { titulo: "Triângulo da Viabilidade — Demanda", desc: "Apresentação de apoio: premissas, indicadores e pesquisa de mercado.", url: "https://drive.google.com/file/d/1XskxK1YdCyj4oSL5wdQIssjS23qFBAQN/view", tipo: 'doc' },
+        { titulo: "Introdução", desc: "Abertura do módulo de Demanda — o que você vai aprender a seguir.", url: "https://drive.google.com/file/d/1YqUQtSvaM1GjDfEFJXj-C7RRBfJLq54c/view", tipo: 'video' },
+        { titulo: "Entendendo o que é Demanda", desc: "O conceito de demanda e por que ele decide se um produto vale a pena vender.", url: "https://drive.google.com/file/d/1e2XBPgn1dnHeD1fSM49Q6s1I-E1V_1M_/view", tipo: 'video' },
+        { titulo: "Como Achar Fornecedores", desc: "Onde e como encontrar fornecedores confiáveis para o seu produto.", url: "https://drive.google.com/file/d/1tcbs4uAfpf2GWiIHmAJsIqRKp5PVUTNQ/view", tipo: 'video' },
         { titulo: "Prática de Demanda", desc: "Aplicando o conceito de demanda em produtos reais.", url: "https://drive.google.com/file/d/1_07MnoTAWL-kX0p2zpZ28SuDrrZ0la7r/view", tipo: 'video' },
-        { titulo: "Pesquisa de Mercado", desc: "Como pesquisar demanda de verdade antes de comprar.", url: "https://drive.google.com/file/d/1P6kTa81oliI9hMdX16tIOvQlLivc8Dtc/view", tipo: 'video' },
       ]},
       { nome: "Pricing", aulas: [
-        { titulo: "Pesquisa de Mercado + Precificação", desc: "Juntando demanda e margem na prática.", url: "https://drive.google.com/file/d/1K1h18Rivr0adC9Q3HeeUdenkKHbww2tI/view", tipo: 'video' },
+        { titulo: "Precificação — Teoria", desc: "A teoria por trás da precificação antes de colocar a mão na massa.", url: "https://drive.google.com/file/d/13azgqD2OnD5bfd8bPhMRWS-uj7ZZE5mJ/view", tipo: 'video' },
+        { titulo: "Pesquisa de Mercado Completa", desc: "Pesquisa de mercado aplicada à demanda e à precificação, na prática.", url: "https://drive.google.com/file/d/1P6kTa81oliI9hMdX16tIOvQlLivc8Dtc/view", tipo: 'video' },
         { titulo: "Pricing — Indicadores", desc: "Margem de contribuição, markup, ROI e lucro líquido.", url: "https://drive.google.com/file/d/1bA5FSr51k9ck4uU-3CBGNv8I7T18w8nB/view", tipo: 'doc' },
       ]},
       { nome: "Estratégia de Posicionamento", aulas: [
@@ -4657,7 +4661,10 @@ let _aulasAbertos = {}; // { indiceModulo: true/false } — estado de expandido/
 
 // Arquivos do Drive que foram reenviados com ID novo: o progresso do ID antigo passa para o novo.
 const AULAS_ALIASES = {
-  '1PiRMRnLPAAaBvW2PPrn_y_yjvoiisGJ0': '1LqBSIV-OQab2P_Qr5n3jBgS3xtbMdIWZ'
+  '1PiRMRnLPAAaBvW2PPrn_y_yjvoiisGJ0': '1LqBSIV-OQab2P_Qr5n3jBgS3xtbMdIWZ',
+  // vídeo antigo de Pricing foi apagado; quem já tinha assistido ganha
+  // crédito automático no vídeo que o substitui (mesmo conteúdo, só mudou de pasta)
+  '1K1h18Rivr0adC9Q3HeeUdenkKHbww2tI': '1P6kTa81oliI9hMdX16tIOvQlLivc8Dtc'
 };
 
 // Identificador estável de cada aula: o ID do arquivo no Drive.
