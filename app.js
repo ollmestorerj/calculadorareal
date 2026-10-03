@@ -279,7 +279,12 @@ async function fazerLogin(){
     const el=document.getElementById('login-validade');
     el.style.display='block';
     el.textContent=`✅ Bem-vindo, ${dados.nome||email}!`;
-    setTimeout(()=>entrarNoApp({nome:dados.nome||email,validade:dados.validade||'—',email}),900);
+    // NÃO chama entrarNoApp() aqui. O signInWithEmailAndPassword acima já dispara
+    // o onAuthStateChanged global, que é quem entra no app — com a trava _jaEntrou
+    // certa e lendo a página/dados da extensão direito. Chamar aqui TAMBÉM criava
+    // uma corrida: as duas chamadas disparavam quase juntas, e a desta função
+    // (900ms depois, sem saber da extensão) sempre vencia por último e jogava
+    // o usuário de volta pra home — mesmo depois do preço já ter sido preenchido.
 
   }catch(e){
     loading.style.display='none';
