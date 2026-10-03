@@ -1068,6 +1068,8 @@ function resetar(preservarEdicao){
   // Taxas
   document.getElementById('impostos').value='';
   document.getElementById('comissao').value='';
+  _taxasML={classico:TAXA_PADRAO_ML.classico,premium:TAXA_PADRAO_ML.premium,exata:false};
+  marcarTipoAnuncio(null);
   document.getElementById('afiliados').value='';
   document.getElementById('margem').value='';
 
@@ -2016,6 +2018,7 @@ function verNaCalculadora(id){
     // Restaura taxas
     if(s.impostos)document.getElementById('impostos').value=s.impostos;
     if(s.comissao)document.getElementById('comissao').value=s.comissao;
+    sincronizarTipoAnuncio();
     if(s.afiliados)document.getElementById('afiliados').value=s.afiliados;
     if(s.margem)document.getElementById('margem').value=s.margem;
 
@@ -4832,9 +4835,55 @@ function _atualizarStatsAulas(){
 }
 
 // ============================================================
-// DADOS DA EXTENSÃO — preenche o Preço Médio ML a partir do
-// botão "Enviar para a Calculadora" lido na página do Mercado Livre.
-// Chega como parâmetro na URL: ?precoML=48.90&nome=...&ml=1
+// TIPO DE ANÚNCIO — Clássico / Premium ao lado da Comissão ML.
+// Sem a extensão usa a taxa padrão; quando a extensão manda a
+// taxa exata da categoria (API do Mercado Livre), usa essa.
+// ============================================================
+var TAXA_PADRAO_ML = { classico: 11.5, premium: 16.5 };
+var _taxasML = { classico: 11.5, premium: 16.5, exata: false };
+
+function marcarTipoAnuncio(tipo){
+  const bc = document.getElementById('btn-tipo-classico');
+  const bp = document.getElementById('btn-tipo-premium');
+  if(bc) bc.className = 'toggle-btn' + (tipo === 'classico' ? ' active' : '');
+  if(bp) bp.className = 'toggle-btn' + (tipo === 'premium' ? ' active' : '');
+  const nota = document.getElementById('tipo-anuncio-nota');
+  if(nota){
+    if(!tipo){ nota.style.display = 'none'; }
+    else{
+      nota.style.display = 'block';
+      nota.textContent = _taxasML.exata
+        ? 'Taxa exata da categoria, direto do Mercado Livre.'
+        : 'Taxa padrão — varia por categoria, confira a sua.';
+    }
+  }
+}
+
+function selTipoAnuncio(tipo){
+  const campo = document.getElementById('comissao');
+  const taxa = _taxasML[tipo];
+  if(!campo || !taxa) return;
+  campo.value = String(Math.round(taxa * 100) / 100);
+  marcarTipoAnuncio(tipo);
+}
+
+// Digitou a comissão na mão: marca o botão só se o valor bater com um dos tipos
+function sincronizarTipoAnuncio(){
+  const campo = document.getElementById('comissao');
+  const v = campo ? parseFloat(campo.value) : NaN;
+  let tipo = null;
+  if(!isNaN(v)){
+    if(Math.abs(v - _taxasML.classico) < 0.005) tipo = 'classico';
+    else if(Math.abs(v - _taxasML.premium) < 0.005) tipo = 'premium';
+  }
+  marcarTipoAnuncio(tipo);
+}
+
+// ============================================================
+// DADOS DA EXTENSÃO — preenche Preço Médio ML e Comissão ML a
+// partir do botão "Enviar para a Calculadora" (página do ML).
+// URL: ?ml=1&precoML=48.90&nome=...&tipo=classico|premium
+//      &taxaC=12.5&taxaP=17.5   (taxas só vêm se a API respondeu)
 // ============================================================
 function lerDadosDaExtensao(){
   try{
@@ -4842,7 +4891,16 @@ function lerDadosDaExtensao(){
     if(params.get('ml') !== '1') return null;
     const preco = parseFloat((params.get('precoML')||'').replace(',', '.'));
     if(!preco || preco <= 0) return null;
-    return { preco, nome: params.get('nome') || '' };
+    const taxa = k => {
+      const v = parseFloat((params.get(k)||'').replace(',', '.'));
+      return (v > 0 && v < 40) ? v : null;
+    };
+    const tipo = params.get('tipo');
+    return {
+      preco, nome: params.get('nome') || '',
+      tipo: (tipo === 'classico' || tipo === 'premium') ? tipo : null,
+      taxaC: taxa('taxaC'), taxaP: taxa('taxaP')
+    };
   }catch(e){ return null; }
 }
 
@@ -4851,9 +4909,20 @@ function aplicarDadosDaExtensao(dados){
     const campo = document.getElementById('preco-ml');
     if(campo) campo.value = dados.preco.toFixed(2);
 
+    if(dados.taxaC && dados.taxaP){
+      _taxasML = { classico: dados.taxaC, premium: dados.taxaP, exata: true };
+    }
+    let extra = '';
+    if(dados.tipo){
+      selTipoAnuncio(dados.tipo);
+      extra = ' Anúncio ' + (dados.tipo === 'premium' ? 'Premium' : 'Clássico')
+        + ' — comissão ' + String(_taxasML[dados.tipo]).replace('.', ',') + '%'
+        + (_taxasML.exata ? '' : ' (padrão)') + '.';
+    }
+
     mostrarAvisoSucesso(
       'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
-      + ': ' + fmt(dados.preco) + '. Preencha o restante e calcule.'
+      + ': ' + fmt(dados.preco) + '.' + extra + ' Preencha o restante e calcule.'
     );
 
     // Limpa a URL para não repreencher se a página for recarregada
