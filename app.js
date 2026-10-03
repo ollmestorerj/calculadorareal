@@ -423,8 +423,17 @@ function entrarNoApp(dados, pagina){
   registrarAtividade('login');
   inicializarPush();
   setTimeout(()=>{
+    // Dados vindos da extensão do Mercado Livre (botão "Enviar para a Calculadora")
+    const dadosExt = lerDadosDaExtensao();
+    if(dadosExt) pagina = 'calc';
+
     showPage(pagina||'home', true);
-    setTimeout(()=>verificarConfirmacoesSazonais(), 800);
+
+    if(dadosExt){
+      setTimeout(() => aplicarDadosDaExtensao(dadosExt), 200);
+    } else {
+      setTimeout(()=>verificarConfirmacoesSazonais(), 800);
+    }
   }, 50);
 }
 
@@ -4551,6 +4560,26 @@ setInterval(checarVersao, 60000);
 // Mostra um aviso visível na tela, junto com o log no console,
 // para que qualquer travamento seja diagnosticável na hora.
 // ============================================================
+function mostrarAvisoSucesso(msg){
+  let box = document.getElementById('sucesso-app-toast');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'sucesso-app-toast';
+    box.style.cssText = 'position:fixed;left:50%;bottom:22px;transform:translateX(-50%);'
+      + 'max-width:92vw;z-index:99999;background:var(--in-bg);border:1px solid var(--in-line);'
+      + 'color:var(--in);border-radius:10px;padding:12px 16px;font-size:.82rem;'
+      + 'font-weight:600;box-shadow:0 12px 34px rgba(0,0,0,.25);font-family:inherit;'
+      + 'display:flex;align-items:center;gap:10px';
+    document.body.appendChild(box);
+  }
+  box.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>'
+    + '<span style="flex:1;color:var(--text)">' + msg + '</span>'
+    + '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text4);'
+    + 'font-size:1rem;cursor:pointer;flex-shrink:0;line-height:1">×</button>';
+  clearTimeout(box._timer);
+  box._timer = setTimeout(() => { if(box.parentElement) box.remove(); }, 7000);
+}
+
 function mostrarErroTela(msg){
   let box = document.getElementById('erro-app-toast');
   if(!box){
@@ -4795,4 +4824,34 @@ function _atualizarStatsAulas(){
     elPct.style.setProperty('border-radius', '6px', 'important');
     elPct.style.setProperty('display', 'inline-block', 'important');
   }
+}
+
+// ============================================================
+// DADOS DA EXTENSÃO — preenche o Preço Médio ML a partir do
+// botão "Enviar para a Calculadora" lido na página do Mercado Livre.
+// Chega como parâmetro na URL: ?precoML=48.90&nome=...&ml=1
+// ============================================================
+function lerDadosDaExtensao(){
+  try{
+    const params = new URLSearchParams(location.search);
+    if(params.get('ml') !== '1') return null;
+    const preco = parseFloat((params.get('precoML')||'').replace(',', '.'));
+    if(!preco || preco <= 0) return null;
+    return { preco, nome: params.get('nome') || '' };
+  }catch(e){ return null; }
+}
+
+function aplicarDadosDaExtensao(dados){
+  try{
+    const campo = document.getElementById('preco-ml');
+    if(campo) campo.value = dados.preco.toFixed(2);
+
+    mostrarAvisoSucesso(
+      'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
+      + ': ' + fmt(dados.preco) + '. Preencha o restante e calcule.'
+    );
+
+    // Limpa a URL para não repreencher se a página for recarregada
+    window.history.replaceState({}, document.title, location.pathname);
+  }catch(e){ console.warn('aplicarDadosDaExtensao:', e); }
 }
