@@ -281,10 +281,9 @@ async function fazerLogin(){
     el.textContent=`✅ Bem-vindo, ${dados.nome||email}!`;
     // NÃO chama entrarNoApp() aqui. O signInWithEmailAndPassword acima já dispara
     // o onAuthStateChanged global, que é quem entra no app — com a trava _jaEntrou
-    // certa e lendo a página/dados da extensão direito. Chamar aqui TAMBÉM criava
-    // uma corrida: as duas chamadas disparavam quase juntas, e a desta função
-    // (900ms depois, sem saber da extensão) sempre vencia por último e jogava
-    // o usuário de volta pra home — mesmo depois do preço já ter sido preenchido.
+    // certa. Chamar aqui TAMBÉM criava uma corrida: as duas chamadas disparavam
+    // quase juntas, e a desta função (900ms depois) sempre vencia por último e
+    // jogava o usuário de volta pra home.
 
   }catch(e){
     loading.style.display='none';
@@ -428,14 +427,14 @@ function entrarNoApp(dados, pagina){
   registrarAtividade('login');
   inicializarPush();
   setTimeout(()=>{
-    // Dados vindos da extensão do Mercado Livre (botão "Enviar para a Calculadora")
-    const dadosExt = lerDadosDaExtensao();
-    if(dadosExt) pagina = 'calc';
+    // Cálculo vindo da extensão (botão "Abrir na Calculadora" no anúncio do ML)
+    const calcExt = lerCalculoDaExtensao();
+    if(calcExt) pagina = 'calc';
 
     showPage(pagina||'home', true);
 
-    if(dadosExt){
-      setTimeout(() => aplicarDadosDaExtensao(dadosExt), 200);
+    if(calcExt){
+      setTimeout(() => aplicarCalculoDaExtensao(calcExt), 200);
     } else {
       setTimeout(()=>verificarConfirmacoesSazonais(), 800);
     }
@@ -4832,31 +4831,63 @@ function _atualizarStatsAulas(){
 }
 
 // ============================================================
-// DADOS DA EXTENSÃO — preenche o Preço Médio ML a partir do
-// botão "Enviar para a Calculadora" lido na página do Mercado Livre.
-// Chega como parâmetro na URL: ?precoML=48.90&nome=...&ml=1
+// CÁLCULO VINDO DA EXTENSÃO — o painel da extensão, no anúncio do
+// Mercado Livre, tem o botão "Abrir na Calculadora". Ele abre esta
+// página com os valores que o usuário digitou lá:
+//   ?calc=1&custo=&frete=&ins=&imp=&com=&mar=&preco=&nome=&link=
+// Aqui só se preenche os campos e roda o cálculo normal. Nada é
+// buscado em lugar nenhum: são os números que o próprio usuário digitou.
 // ============================================================
-function lerDadosDaExtensao(){
+function lerCalculoDaExtensao(){
   try{
-    const params = new URLSearchParams(location.search);
-    if(params.get('ml') !== '1') return null;
-    const preco = parseFloat((params.get('precoML')||'').replace(',', '.'));
-    if(!preco || preco <= 0) return null;
-    return { preco, nome: params.get('nome') || '' };
+    const p = new URLSearchParams(location.search);
+    if(p.get('calc') !== '1') return null;
+    const n = k => { const v = parseFloat((p.get(k)||'').replace(',', '.')); return (isFinite(v) && v > 0) ? v : 0; };
+    const link = p.get('link') || '';
+    return {
+      custo: n('custo'), frete: n('frete'), ins: n('ins'),
+      imp: n('imp'), com: n('com'), mar: n('mar'), preco: n('preco'),
+      nome: (p.get('nome') || '').slice(0, 200),
+      link: /^https:\/\/[a-z0-9.-]*mercadolivre\.com\.br\//i.test(link) ? link.slice(0, 500) : ''
+    };
   }catch(e){ return null; }
 }
 
-function aplicarDadosDaExtensao(dados){
+function aplicarCalculoDaExtensao(d){
   try{
-    const campo = document.getElementById('preco-ml');
-    if(campo) campo.value = dados.preco.toFixed(2);
-
-    mostrarAvisoSucesso(
-      'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
-      + ': ' + fmt(dados.preco) + '. Preencha o restante e calcule.'
-    );
-
     // Limpa a URL para não repreencher se a página for recarregada
     window.history.replaceState({}, document.title, location.pathname);
-  }catch(e){ console.warn('aplicarDadosDaExtensao:', e); }
+
+    resetar();
+    const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v > 0 ? String(v) : ''; };
+
+    const item = document.querySelector('.item-input');
+    if(item) item.value = d.custo > 0 ? String(d.custo) : '';
+    switchFrete('manual');
+    set('frete-manual', d.frete);
+    set('insumos', d.ins);
+    set('impostos', d.imp);
+    set('comissao', d.com);
+    set('margem', d.mar);
+    set('preco-ml', d.preco);
+
+    // Com margem → modo Por Margem; sem margem mas com preço → modo Pelo Mercado
+    const modo = d.mar > 0 ? 1 : (d.preco > 0 ? 2 : 0);
+    if(modo) setMode(modo);
+    if(modo && d.custo > 0) calcular();
+
+    const nome = document.getElementById('save-nome');
+    if(nome && d.nome) nome.value = d.nome;
+    const link = document.getElementById('save-link1');
+    if(link && d.link){
+      link.value = d.link;
+      const sec = document.getElementById('links-anuncio');
+      if(sec) sec.style.display = 'block';
+    }
+
+    mostrarAvisoSucesso(
+      (modo && d.custo > 0 ? 'Cálculo trazido do anúncio' : 'Valores trazidos do anúncio')
+      + (d.nome ? ' — "' + d.nome + '"' : '') + '. Confira e salve o produto.'
+    );
+  }catch(e){ console.warn('aplicarCalculoDaExtensao:', e); }
 }
