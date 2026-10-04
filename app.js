@@ -4943,9 +4943,6 @@ async function aplicarDadosDaExtensao(dados){
     if(r.erro){
       txtTaxa = 'Comissão e frete não carregados (' + r.erro + ').';
       txtFrete = '';
-    }else if(r.conectado === false){
-      txtTaxa = 'Comissão e frete não carregados: conecte sua conta do Mercado Livre no ML Analyzer.';
-      txtFrete = '';
     }else{
       if(r.taxas){
         _taxasML = { classico: r.taxas.classico, premium: r.taxas.premium };
@@ -4963,12 +4960,40 @@ async function aplicarDadosDaExtensao(dados){
         switchFrete('manual');
         const cf = document.getElementById('frete-manual');
         if(cf) cf.value = r.frete.toFixed(2);
-        txtFrete = ' Frete ' + fmt(r.frete) + ' (custo para a sua conta, segundo o Mercado Livre).';
+        txtFrete = ' Frete ' + fmt(r.frete) + ' (custo do frete grátis, segundo o Mercado Livre).';
       }else{
-        txtFrete = ' Frete não carregado (' + (r.freteStatus || 'sem resposta') + ').';
+        txtFrete = r.freteStatus === 'mesmo motivo' ? ' Frete também não.' : ' Frete não carregado (' + (r.freteStatus || 'sem resposta') + ').';
       }
     }
     if(dados.tipo) marcarTipoAnuncio(dados.tipo);
     mostrarAvisoSucesso(inicio + ' ' + txtTaxa + txtFrete);
   }catch(e){ console.warn('aplicarDadosDaExtensao:', e); }
 }
+
+// ============================================================
+// CONEXÃO DA CALCULADORA COM O MERCADO LIVRE (conta da casa)
+// Uso único do administrador: abrir a Calculadora logado com
+// ?mlservico=CODIGO (o código que o Mercado Livre devolve depois
+// da autorização). Não tem relação com o ML Analyzer.
+// ============================================================
+(function conectarMLServicoSeSolicitado(){
+  let code = null;
+  try{ code = new URLSearchParams(location.search).get('mlservico'); }catch(e){}
+  if(!code) return;
+  window.history.replaceState({}, document.title, location.pathname);
+  try{
+    ensureFirebase();
+    let feito = false;
+    firebase.auth().onAuthStateChanged(async user => {
+      if(!user || feito) return;
+      feito = true;
+      try{
+        const fn = firebase.app().functions('southamerica-east1').httpsCallable('mlServicoConectar');
+        await fn({ code });
+        alert('Conta do Mercado Livre conectada à Calculadora. A extensão já pode buscar comissão e frete.');
+      }catch(e){
+        alert('Não foi possível conectar: ' + ((e && e.message) || 'erro desconhecido'));
+      }
+    });
+  }catch(e){ console.warn('mlservico:', e); }
+})();
