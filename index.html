@@ -950,12 +950,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
           </div>
           <div class="field" style="margin-bottom:0">
             <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:5px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg></span>Comissão ML (%)</label>
-            <input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1" oninput="sincronizarTipoAnuncio()">
-            <div class="toggle-row" style="margin:7px 0 0;gap:5px">
-              <button type="button" class="toggle-btn" id="btn-tipo-classico" onclick="selTipoAnuncio('classico')" style="font-size:.7rem;padding:5px">Clássico</button>
-              <button type="button" class="toggle-btn" id="btn-tipo-premium" onclick="selTipoAnuncio('premium')" style="font-size:.7rem;padding:5px">Premium</button>
-            </div>
-            <div id="tipo-anuncio-nota" style="display:none;font-size:.63rem;color:var(--text3);margin-top:5px;line-height:1.4"></div>
+            <input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1">
           </div>
         </div>
         <input type="hidden" id="afiliados" value="0">
@@ -1327,8 +1322,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
-<script src="app.js?v=1791077381"></script>
+<script src="app.js?v=1791001381"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
