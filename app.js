@@ -4877,10 +4877,11 @@ function selTipoAnuncio(tipo){
 function sincronizarTipoAnuncio(){}
 
 // ============================================================
-// DADOS DA EXTENSÃO — preenche Preço Médio ML e Comissão ML a
-// partir do botão "Enviar para a Calculadora" (página do ML).
-// URL: ?ml=1&precoML=48.90&nome=...&tipo=classico|premium
-//      &taxaC=12.5&taxaP=17.5   (taxas só vêm se a API respondeu)
+// DADOS DA EXTENSÃO — botão "Enviar para a Calculadora" (página do ML).
+// URL: ?ml=1&precoML=48.90&nome=...&tipo=classico|premium&cat=MLB123&item=MLB456
+// Preço e tipo vêm da página. Comissão e frete vêm do Mercado Livre
+// pela Cloud Function mlDadosAnuncio (usa a conta ML conectada do
+// usuário). O que o ML não entregar fica em branco — nunca valor padrão.
 // ============================================================
 function lerDadosDaExtensao(){
   try{
@@ -4888,40 +4889,86 @@ function lerDadosDaExtensao(){
     if(params.get('ml') !== '1') return null;
     const preco = parseFloat((params.get('precoML')||'').replace(',', '.'));
     if(!preco || preco <= 0) return null;
-    const taxa = k => {
-      const v = parseFloat((params.get(k)||'').replace(',', '.'));
-      return (v > 0 && v < 40) ? v : null;
-    };
     const tipo = params.get('tipo');
+    const id = k => { const v = params.get(k) || ''; return /^MLB\d+$/.test(v) ? v : null; };
     return {
       preco, nome: params.get('nome') || '',
       tipo: (tipo === 'classico' || tipo === 'premium') ? tipo : null,
-      taxaC: taxa('taxaC'), taxaP: taxa('taxaP')
+      cat: id('cat'), item: id('item')
     };
   }catch(e){ return null; }
 }
 
-function aplicarDadosDaExtensao(dados){
+async function buscarDadosMLNoServidor(dados){
+  if(!dados.cat) return { erro: 'categoria do anúncio não identificada' };
+  try{
+    ensureFirebase();
+    if(typeof firebase.app().functions !== 'function') return { erro: 'recarregue a página (Ctrl+Shift+R)' };
+    // currentUser pode estar nulo logo após abrir a aba — espera o login assentar
+    const user = await new Promise(resolve => {
+      const u = firebase.auth().currentUser;
+      if(u){ resolve(u); return; }
+      let parar = null;
+      parar = firebase.auth().onAuthStateChanged(x => { if(x){ if(parar) parar(); resolve(x); } });
+      setTimeout(() => { if(parar) parar(); resolve(firebase.auth().currentUser); }, 6000);
+    });
+    if(!user) return { erro: 'login não confirmado' };
+    const fn = firebase.app().functions('southamerica-east1').httpsCallable('mlDadosAnuncio');
+    const r = await fn({ categoria: dados.cat, preco: dados.preco, itemId: dados.item });
+    return r.data || { erro: 'resposta vazia' };
+  }catch(e){
+    console.warn('mlDadosAnuncio:', e);
+    return { erro: (e && e.message) || 'falha ao consultar o servidor' };
+  }
+}
+
+async function aplicarDadosDaExtensao(dados){
   try{
     const campo = document.getElementById('preco-ml');
     if(campo) campo.value = dados.preco.toFixed(2);
-
-    _taxasML = (dados.taxaC && dados.taxaP) ? { classico: dados.taxaC, premium: dados.taxaP } : null;
-    let extra = '';
-    if(dados.tipo){
-      selTipoAnuncio(dados.tipo);
-      extra = ' Anúncio ' + (dados.tipo === 'premium' ? 'Premium' : 'Clássico')
-        + (_taxasML
-            ? ' — comissão ' + String(_taxasML[dados.tipo]).replace('.', ',') + '%.'
-            : ' — comissão não carregada, informe a da categoria.');
-    }
-
-    mostrarAvisoSucesso(
-      'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
-      + ': ' + fmt(dados.preco) + '.' + extra + ' Preencha o restante e calcule.'
-    );
+    _taxasML = null;
+    if(dados.tipo) marcarTipoAnuncio(dados.tipo);
 
     // Limpa a URL para não repreencher se a página for recarregada
     window.history.replaceState({}, document.title, location.pathname);
+
+    const inicio = 'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
+      + ': ' + fmt(dados.preco) + '.';
+    const rotulo = dados.tipo === 'premium' ? 'Premium' : dados.tipo === 'classico' ? 'Clássico' : '';
+    mostrarAvisoSucesso(inicio + ' Buscando comissão e frete no Mercado Livre...');
+
+    const r = await buscarDadosMLNoServidor(dados);
+    let txtTaxa, txtFrete;
+
+    if(r.erro){
+      txtTaxa = 'Comissão e frete não carregados (' + r.erro + ').';
+      txtFrete = '';
+    }else if(r.conectado === false){
+      txtTaxa = 'Comissão e frete não carregados: conecte sua conta do Mercado Livre no ML Analyzer.';
+      txtFrete = '';
+    }else{
+      if(r.taxas){
+        _taxasML = { classico: r.taxas.classico, premium: r.taxas.premium };
+        const pct = v => String(v).replace('.', ',') + '%';
+        if(dados.tipo){
+          selTipoAnuncio(dados.tipo);
+          txtTaxa = 'Anúncio ' + rotulo + ' — comissão ' + pct(r.taxas[dados.tipo]) + '.';
+        }else{
+          txtTaxa = 'Comissão da categoria: Clássico ' + pct(r.taxas.classico) + ', Premium ' + pct(r.taxas.premium) + ' — escolha o tipo.';
+        }
+      }else{
+        txtTaxa = 'Comissão não carregada (' + (r.taxaStatus || 'sem resposta') + ').';
+      }
+      if(r.frete > 0){
+        switchFrete('manual');
+        const cf = document.getElementById('frete-manual');
+        if(cf) cf.value = r.frete.toFixed(2);
+        txtFrete = ' Frete ' + fmt(r.frete) + ' (custo para a sua conta, segundo o Mercado Livre).';
+      }else{
+        txtFrete = ' Frete não carregado (' + (r.freteStatus || 'sem resposta') + ').';
+      }
+    }
+    if(dados.tipo) marcarTipoAnuncio(dados.tipo);
+    mostrarAvisoSucesso(inicio + ' ' + txtTaxa + txtFrete);
   }catch(e){ console.warn('aplicarDadosDaExtensao:', e); }
 }
