@@ -1068,8 +1068,6 @@ function resetar(preservarEdicao){
   // Taxas
   document.getElementById('impostos').value='';
   document.getElementById('comissao').value='';
-  _taxasML=null;
-  marcarTipoAnuncio(null);
   document.getElementById('afiliados').value='';
   document.getElementById('margem').value='';
 
@@ -2018,7 +2016,6 @@ function verNaCalculadora(id){
     // Restaura taxas
     if(s.impostos)document.getElementById('impostos').value=s.impostos;
     if(s.comissao)document.getElementById('comissao').value=s.comissao;
-    sincronizarTipoAnuncio();
     if(s.afiliados)document.getElementById('afiliados').value=s.afiliados;
     if(s.margem)document.getElementById('margem').value=s.margem;
 
@@ -4835,53 +4832,9 @@ function _atualizarStatsAulas(){
 }
 
 // ============================================================
-// TIPO DE ANÚNCIO — Clássico / Premium ao lado da Comissão ML.
-// Não existe taxa padrão: a comissão só é preenchida sozinha
-// quando a extensão manda a taxa exata da categoria. Sem ela,
-// o botão só marca o tipo e o usuário digita a comissão.
-// ============================================================
-var _taxasML = null;      // { classico, premium } — só quando veio a taxa exata
-var _tipoAnuncio = null;  // 'classico' | 'premium' | null
-
-function marcarTipoAnuncio(tipo){
-  _tipoAnuncio = tipo || null;
-  const bc = document.getElementById('btn-tipo-classico');
-  const bp = document.getElementById('btn-tipo-premium');
-  if(bc) bc.className = 'toggle-btn' + (tipo === 'classico' ? ' active' : '');
-  if(bp) bp.className = 'toggle-btn' + (tipo === 'premium' ? ' active' : '');
-  const nota = document.getElementById('tipo-anuncio-nota');
-  if(nota){
-    if(!tipo){ nota.style.display = 'none'; }
-    else{
-      nota.style.display = 'block';
-      nota.textContent = _taxasML
-        ? 'Taxa exata da categoria, direto do Mercado Livre.'
-        : 'Digite a comissão da categoria deste anúncio.';
-    }
-  }
-}
-
-function selTipoAnuncio(tipo){
-  marcarTipoAnuncio(tipo);
-  const campo = document.getElementById('comissao');
-  if(!campo) return;
-  if(_taxasML && _taxasML[tipo]){
-    campo.value = String(Math.round(_taxasML[tipo] * 100) / 100);
-  }else if(!campo.value){
-    campo.focus();
-  }
-}
-
-// Mantida por compatibilidade com o oninput do campo — a comissão digitada
-// na mão nunca é alterada nem desmarca o tipo escolhido.
-function sincronizarTipoAnuncio(){}
-
-// ============================================================
-// DADOS DA EXTENSÃO — botão "Enviar para a Calculadora" (página do ML).
-// URL: ?ml=1&precoML=48.90&nome=...&tipo=classico|premium&cat=MLB123&item=MLB456
-// Preço e tipo vêm da página. Comissão e frete vêm do Mercado Livre
-// pela Cloud Function mlDadosAnuncio (usa a conta ML conectada do
-// usuário). O que o ML não entregar fica em branco — nunca valor padrão.
+// DADOS DA EXTENSÃO — preenche o Preço Médio ML a partir do
+// botão "Enviar para a Calculadora" lido na página do Mercado Livre.
+// Chega como parâmetro na URL: ?precoML=48.90&nome=...&ml=1
 // ============================================================
 function lerDadosDaExtensao(){
   try{
@@ -4889,111 +4842,21 @@ function lerDadosDaExtensao(){
     if(params.get('ml') !== '1') return null;
     const preco = parseFloat((params.get('precoML')||'').replace(',', '.'));
     if(!preco || preco <= 0) return null;
-    const tipo = params.get('tipo');
-    const id = k => { const v = params.get(k) || ''; return /^MLB\d+$/.test(v) ? v : null; };
-    return {
-      preco, nome: params.get('nome') || '',
-      tipo: (tipo === 'classico' || tipo === 'premium') ? tipo : null,
-      cat: id('cat'), item: id('item')
-    };
+    return { preco, nome: params.get('nome') || '' };
   }catch(e){ return null; }
 }
 
-async function buscarDadosMLNoServidor(dados){
-  if(!dados.cat) return { erro: 'categoria do anúncio não identificada' };
-  try{
-    ensureFirebase();
-    if(typeof firebase.app().functions !== 'function') return { erro: 'recarregue a página (Ctrl+Shift+R)' };
-    // currentUser pode estar nulo logo após abrir a aba — espera o login assentar
-    const user = await new Promise(resolve => {
-      const u = firebase.auth().currentUser;
-      if(u){ resolve(u); return; }
-      let parar = null;
-      parar = firebase.auth().onAuthStateChanged(x => { if(x){ if(parar) parar(); resolve(x); } });
-      setTimeout(() => { if(parar) parar(); resolve(firebase.auth().currentUser); }, 6000);
-    });
-    if(!user) return { erro: 'login não confirmado' };
-    const fn = firebase.app().functions('southamerica-east1').httpsCallable('mlDadosAnuncio');
-    const r = await fn({ categoria: dados.cat, preco: dados.preco, itemId: dados.item });
-    return r.data || { erro: 'resposta vazia' };
-  }catch(e){
-    console.warn('mlDadosAnuncio:', e);
-    return { erro: (e && e.message) || 'falha ao consultar o servidor' };
-  }
-}
-
-async function aplicarDadosDaExtensao(dados){
+function aplicarDadosDaExtensao(dados){
   try{
     const campo = document.getElementById('preco-ml');
     if(campo) campo.value = dados.preco.toFixed(2);
-    _taxasML = null;
-    if(dados.tipo) marcarTipoAnuncio(dados.tipo);
+
+    mostrarAvisoSucesso(
+      'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
+      + ': ' + fmt(dados.preco) + '. Preencha o restante e calcule.'
+    );
 
     // Limpa a URL para não repreencher se a página for recarregada
     window.history.replaceState({}, document.title, location.pathname);
-
-    const inicio = 'Preço do concorrente carregado' + (dados.nome ? ' — "' + dados.nome + '"' : '')
-      + ': ' + fmt(dados.preco) + '.';
-    const rotulo = dados.tipo === 'premium' ? 'Premium' : dados.tipo === 'classico' ? 'Clássico' : '';
-    mostrarAvisoSucesso(inicio + ' Buscando comissão e frete no Mercado Livre...');
-
-    const r = await buscarDadosMLNoServidor(dados);
-    let txtTaxa, txtFrete;
-
-    if(r.erro){
-      txtTaxa = 'Comissão e frete não carregados (' + r.erro + ').';
-      txtFrete = '';
-    }else{
-      if(r.taxas){
-        _taxasML = { classico: r.taxas.classico, premium: r.taxas.premium };
-        const pct = v => String(v).replace('.', ',') + '%';
-        if(dados.tipo){
-          selTipoAnuncio(dados.tipo);
-          txtTaxa = 'Anúncio ' + rotulo + ' — comissão ' + pct(r.taxas[dados.tipo]) + '.';
-        }else{
-          txtTaxa = 'Comissão da categoria: Clássico ' + pct(r.taxas.classico) + ', Premium ' + pct(r.taxas.premium) + ' — escolha o tipo.';
-        }
-      }else{
-        txtTaxa = 'Comissão não carregada (' + (r.taxaStatus || 'sem resposta') + ').';
-      }
-      if(r.frete > 0){
-        switchFrete('manual');
-        const cf = document.getElementById('frete-manual');
-        if(cf) cf.value = r.frete.toFixed(2);
-        txtFrete = ' Frete ' + fmt(r.frete) + ' (custo do frete grátis, segundo o Mercado Livre).';
-      }else{
-        txtFrete = r.freteStatus === 'mesmo motivo' ? ' Frete também não.' : ' Frete não carregado (' + (r.freteStatus || 'sem resposta') + ').';
-      }
-    }
-    if(dados.tipo) marcarTipoAnuncio(dados.tipo);
-    mostrarAvisoSucesso(inicio + ' ' + txtTaxa + txtFrete);
   }catch(e){ console.warn('aplicarDadosDaExtensao:', e); }
 }
-
-// ============================================================
-// CONEXÃO DA CALCULADORA COM O MERCADO LIVRE (conta da casa)
-// Uso único do administrador: abrir a Calculadora logado com
-// ?mlservico=CODIGO (o código que o Mercado Livre devolve depois
-// da autorização). Não tem relação com o ML Analyzer.
-// ============================================================
-(function conectarMLServicoSeSolicitado(){
-  let code = null;
-  try{ code = new URLSearchParams(location.search).get('mlservico'); }catch(e){}
-  if(!code) return;
-  window.history.replaceState({}, document.title, location.pathname);
-  try{
-    ensureFirebase();
-    let feito = false;
-    firebase.auth().onAuthStateChanged(async user => {
-      if(!user || feito) return;
-      feito = true;
-      try{
-        const fn = firebase.app().functions('southamerica-east1').httpsCallable('mlServicoConectar');
-        await fn({ code });
-        alert('Conta do Mercado Livre conectada à Calculadora. A extensão já pode buscar comissão e frete.');
-      }catch(e){
-        alert('Não foi possível conectar: ' + ((e && e.message) || 'erro desconhecido'));
-      }
-    });
-  }catch(e){ console.warn('mlservico:', e); }
-})();
