@@ -37,6 +37,25 @@ a{color:inherit;text-decoration:none}
 footer{text-align:center;margin-top:32px}
 footer img{height:26px;opacity:.85}
 footer p{font-size:.74rem;color:var(--text3);margin-top:8px}
+/* ===== Fundos (escolher um: body.bg-galpao | bg-brilho | bg-grade) ===== */
+body{position:relative;overflow-x:hidden}
+main{position:relative;z-index:1}
+.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none}
+body.bg-galpao .bgfx{bottom:auto;height:480px;background:linear-gradient(180deg,rgba(15,15,18,.35),rgba(15,15,18,.7)),url(fundo-galpao.jpg) center top/cover no-repeat;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 100%);mask-image:linear-gradient(180deg,#000 45%,transparent 100%)}
+body.bg-brilho .bgfx{background:
+  radial-gradient(520px 380px at 85% -5%,rgba(249,115,22,.30),transparent 70%),
+  radial-gradient(520px 420px at -10% 40%,rgba(124,58,237,.28),transparent 70%),
+  radial-gradient(480px 360px at 110% 95%,rgba(249,115,22,.16),transparent 70%),
+  radial-gradient(circle at 1px 1px,rgba(255,255,255,.06) 1px,transparent 0) 0 0/22px 22px,
+  var(--bg)}
+body.bg-grade .bgfx{background:
+  radial-gradient(600px 420px at 50% -10%,rgba(249,115,22,.22),transparent 70%),
+  linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px) 0 0/32px 32px,
+  linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px) 0 0/32px 32px,
+  var(--bg);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 95%);mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 95%)}
+.lk{backdrop-filter:blur(6px);background:rgba(24,24,30,.82)}
+.lk.destaque{background:rgba(30,30,38,.9)}
 </style>
 <!-- Meta Pixel -->
 <script>
@@ -46,7 +65,8 @@ fbq('track','PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=26411729151817592&ev=PageView&noscript=1"/></noscript>
 </head>
-<body>
+<body class="bg-brilho">
+<div class="bgfx"></div>
 <main>
   <div class="top">
     <img class="avatar" src="filipe.jpg" alt="Filipe Melchior" width="104" height="104">
