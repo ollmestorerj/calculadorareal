@@ -726,7 +726,79 @@ function switchFrete(mode){
   const tm=document.getElementById('tab-manual'); if(tm)tm.style.display=mode==='manual'?'block':'none';
   const bd=document.getElementById('btn-dim'); if(bd)bd.className='toggle-btn'+(mode==='dim'?' active':'');
   const bm=document.getElementById('btn-manual'); if(bm)bm.className='toggle-btn'+(mode==='manual'?' active':'');
+  const tf=document.getElementById('tab-flex'); if(tf)tf.style.display=mode==='flex'?'block':'none';
+  const bf=document.getElementById('btn-flex'); if(bf)bf.className='toggle-btn'+(mode==='flex'?' active':'');
+  if(mode==='flex') flexInfo();
 }
+
+// ============================================================
+// TESTE FLEX — só aparece na conta do admin
+// Frete líquido = o que a empresa de Flex cobra − o que o ML paga (por distância)
+// + custo fixo do ML por unidade em produtos abaixo de R$ 79 (depende do preço final)
+// ============================================================
+const FLEX_ADMIN='ollmestorerj@gmail.com';
+const FLEX_ZONAS={curta:'Curta',media:'Média',longa:'Longa'};
+let flexCfg={zona:'curta',curta:{ml:'',emp:''},media:{ml:'',emp:''},longa:{ml:'',emp:''}};
+let _flexSalvarT=null;
+function mlCustoFixo(p){return p<19?6.25:p<49?6.65:p<79?7.75:0;}
+function mlFaixaTxt(p){return p<19?'abaixo de R$ 19':p<49?'R$ 19 a R$ 48,99':p<79?'R$ 49 a R$ 78,99':'R$ 79 ou mais (sem custo fixo)';}
+function flexLiquido(z){const c=flexCfg[z||flexCfg.zona]||{};return (parseFloat(c.emp)||0)-(parseFloat(c.ml)||0);}
+// Menor preço que dá a margem pedida, já com o custo fixo da faixa onde esse preço cai
+function flexPrecoMin(base0,fator){
+  const faixas=[[0,19,6.25],[19,49,6.65],[49,79,7.75],[79,1e12,0]];
+  for(const f of faixas){const p=(base0+f[2])/fator;if(p>=f[0]&&p<f[1])return{preco:p,fixo:f[2]};}
+  return{preco:79,fixo:0}; // na virada de R$ 79 o custo fixo some: R$ 79 já dá a margem
+}
+function flexZona(z){flexCfg.zona=z;flexSalvar();flexInfo();}
+function flexInput(el){flexCfg[el.dataset.z][el.dataset.k]=el.value;flexSalvar();flexInfo();}
+function flexSalvar(){
+  try{const k=localKey('realecom_flex');if(k)localStorage.setItem(k,JSON.stringify(flexCfg));}catch(e){}
+  clearTimeout(_flexSalvarT);_flexSalvarT=setTimeout(function(){fbSet('flex',flexCfg);},800);
+}
+function flexPreencherCampos(){
+  document.querySelectorAll('#tab-flex input[data-z]').forEach(function(el){el.value=(flexCfg[el.dataset.z]||{})[el.dataset.k]||'';});
+  document.querySelectorAll('#tab-flex input[name=flex-zona]').forEach(function(r){r.checked=r.value===flexCfg.zona;});
+}
+async function flexCarregar(){
+  try{
+    const d=await fbGet('flex','realecom_flex','null');
+    if(d&&typeof d==='object')flexCfg=Object.assign(flexCfg,d);
+  }catch(e){}
+  flexPreencherCampos();flexInfo();
+}
+function flexInfo(){
+  const el=document.getElementById('flex-info');if(!el)return;
+  const z=flexCfg.zona,c=flexCfg[z]||{},liq=flexLiquido(z);
+  el.innerHTML='Distância <b>'+FLEX_ZONAS[z]+'</b>: empresa cobra <b>'+fmt(parseFloat(c.emp)||0)+'</b> − ML paga <b>'+fmt(parseFloat(c.ml)||0)+'</b> = frete líquido <b style="color:'+(liq>0?'var(--out)':'var(--in)')+'">'+fmt(liq)+'</b><br>'
+    +'Abaixo de R$ 79 o ML ainda cobra um <b>custo fixo por venda</b>: R$ 6,25 (até R$ 18,99) · R$ 6,65 (R$ 19 a 48,99) · R$ 7,75 (R$ 49 a 78,99). A calculadora soma sozinha, conforme o preço.';
+}
+function flexResumo(){
+  const box=document.getElementById('flex-zonas');if(!box)return;
+  if(freteMode!=='flex'||!lastCalc){box.innerHTML='';return;}
+  const L=lastCalc,fator=1-L.pI-L.pC-L.pA-(calcMode===1?L.pM:0),pv=1-L.pI-L.pC-L.pA;
+  let h='<table><thead><tr><th>Distância</th><th>Frete líq.</th>'+(calcMode===1?'<th>Preço mínimo</th>':'')+(L.precoML>0?'<th>Lucro a '+fmt(L.precoML)+'</th>':'')+'</tr></thead><tbody>';
+  Object.keys(FLEX_ZONAS).forEach(function(z){
+    const liq=flexLiquido(z),base0=L.custo+L.ins+liq;
+    let cel='';
+    if(calcMode===1){const r=fator>0?flexPrecoMin(base0,fator):null;cel+='<td>'+(r?fmt(r.preco):'—')+'</td>';}
+    if(L.precoML>0){const lucro=L.precoML*pv-base0-mlCustoFixo(L.precoML);cel+='<td style="color:'+(lucro>=0?'var(--in)':'var(--out)')+'">'+fmt(lucro)+'</td>';}
+    h+='<tr'+(z===flexCfg.zona?' class="sel"':'')+'><td>'+FLEX_ZONAS[z]+'</td><td>'+fmt(liq)+'</td>'+cel+'</tr>';
+  });
+  box.innerHTML=h+'</tbody></table><div style="font-size:.66rem;color:var(--text4);margin-top:6px">Custo fixo usado no preço calculado: <b style="color:var(--text2)">'+fmt(L.flexFixo||0)+'</b> ('+mlFaixaTxt(L.preco)+'). A linha em destaque é a distância selecionada.</div>';
+}
+(function(){
+  function ligar(){
+    try{
+      ensureFirebase();
+      firebase.auth().onAuthStateChanged(function(u){
+        const ok=!!(u&&u.email===FLEX_ADMIN);
+        const b=document.getElementById('btn-flex');if(b)b.style.display=ok?'':'none';
+        if(ok)flexCarregar();else if(freteMode==='flex')switchFrete('manual');
+      });
+    }catch(e){setTimeout(ligar,1000);}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ligar);else ligar();
+})();
 
 // Toggle Frete Full visível
 let _freteFullVisivel = false;
@@ -781,6 +853,7 @@ function setMode(m){
 function calcular(){
   try{
     _calcularInterno();
+    if(freteMode==='flex'){ try{ flexResumo(); }catch(_){} }
   }catch(e){
     console.error('Erro em calcular():', e);
     // Extrai a primeira linha do stack que aponta para app.js — mostra a linha exata do erro
@@ -791,7 +864,7 @@ function calcular(){
 
 function _calcularInterno(){
   const custo=sumItems();
-  const frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteSel;
+  let frete=freteMode==='manual'?(parseFloat(document.getElementById('frete-manual').value)||0):freteMode==='flex'?flexLiquido():freteSel;
   // Frete de coleta Full por unidade
   const freteFullTotal=parseFloat(document.getElementById('frete-full').value)||0;
   const freteFullQtd=parseInt(document.getElementById('frete-full-qtd').value)||1;
@@ -803,6 +876,16 @@ function _calcularInterno(){
   const pM=(parseFloat(document.getElementById('margem').value)||0)/100;
   const qtd=parseInt(document.getElementById('quantidade').value)||1;
   const precoML=parseFloat(document.getElementById('preco-ml').value)||0;
+  // Flex: soma o custo fixo do ML da faixa de preço (abaixo de R$ 79)
+  let _flexPreco=null,_flexFixo=0;
+  if(freteMode==='flex'){
+    if(calcMode===2){_flexFixo=mlCustoFixo(precoML);}
+    else{
+      const _f=1-pI-pC-pA-pM;
+      if(_f>0){const r=flexPrecoMin(custo+frete+ins,_f);_flexPreco=r.preco;_flexFixo=r.fixo;}
+    }
+    frete+=_flexFixo;
+  }
   const base=custo+frete+ins;
 
   if(calcMode===2){
@@ -812,7 +895,7 @@ function _calcularInterno(){
     const margemReal=(payout/precoML)*100;
     const markup=custo>0?precoML/custo:0;
     const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
-    lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
+    lastCalc={preco:precoML,base,pI,pC,pA,pM:margemReal/100,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv,flexFixo:_flexFixo};
     (function(){const el=document.getElementById('price-grid');if(el)el.style.gridTemplateColumns='1fr';})();
     (function(){const el=document.getElementById('pc-ml-card');if(el)el.style.display='none';})();
     const _tag2=document.querySelector('.price-card.calc .pc-tag'); if(_tag2)_tag2.textContent='Preço Médio do Mercado';
@@ -834,12 +917,12 @@ function _calcularInterno(){
 
   const fator=1-pI-pC-pA-pM;
   if(fator<=0){alert('A soma dos percentuais é ≥ 100%. Revise os valores.');return;}
-  const preco=base/fator;
+  const preco=_flexPreco!==null?_flexPreco:base/fator;
   if(pesoUsado>0&&freteMode==='dim'){renderTable(getPrecoIdx(preco));verificarFaixaFrete();}
   const vI=preco*pI,vC=preco*pC,vA=preco*pA,vM=preco*pM;
   const payout=preco-base-vI-vC-vA,markup=custo>0?preco/custo:0;
   const inv=custo*qtd,roi=inv>0?(payout*qtd/inv)*100:0;
-  lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv};
+  lastCalc={preco,base,pI,pC,pA,pM,custo,frete,ins,freteFullUnit,qtd,precoML,markup,roi,payout,inv,flexFixo:_flexFixo};
 
   (function(){const el=document.getElementById('price-grid');if(el)el.style.gridTemplateColumns='1fr 1fr';})();
   const _tag1=document.querySelector('.price-card.calc .pc-tag'); if(_tag1)_tag1.textContent='Preço Ideal Calculado';
