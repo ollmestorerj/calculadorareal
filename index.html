@@ -605,6 +605,12 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
     </div>
     <span class="sb-tooltip">Prompt Fotos ML</span><span class="sb-rot">Prompt Fotos ML</span>
   </button>
+  <button class="sb-item" id="sb-etiq" onclick="showPage('etiq')" title="Etiquetas">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#0284c7,#0369a1);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M18 5v14M21 5v14"/></svg>
+    </div>
+    <span class="sb-tooltip">Etiquetas</span><span class="sb-rot">Etiquetas</span>
+  </button>
   <button class="sb-item" id="sb-aulas" onclick="showPage('aulas')" title="Central de Aulas">
     <div style="width:36px;height:36px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/></svg>
@@ -813,6 +819,11 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #7c3aed40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
         <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Prompt Fotos</div>
         <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Gerar prompts ML</div>
+      </div>
+      <div class="home-card" onclick="showPage('etiq')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0284c7,#0369a1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0284c740"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M18 5v14M21 5v14"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Etiquetas</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">TXT do ML em PDF</div>
       </div>
       <div class="home-card" onclick="showPage('aulas')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #db277740"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/></svg></div>
@@ -1353,7 +1364,8 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="app.js?v=1792603220"></script>
+<script src="app.js?v=1794424127"></script>
+<script src="etiquetas.js?v=1794424127"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');
@@ -2409,6 +2421,133 @@ function exportarExcel(){
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ===== ETIQUETAS (TXT do ML → PDF) ===== -->
+<div id="page-etiq" class="page">
+  <style>
+  #zpl-tool{max-width:900px;margin:0 auto;padding:20px 18px 40px}
+  #zpl-tool *{box-sizing:border-box}
+  #zpl-tool .zpl-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+  #zpl-tool .zpl-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin:0 0 10px}
+  #zpl-tool .zpl-drop{display:block;width:100%;border:2px dashed var(--border2);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;background:none;color:var(--text);font-family:inherit;transition:border-color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+  #zpl-tool .zpl-drop:hover,#zpl-tool .zpl-drop.over{border-color:var(--text3);background:var(--bg2)}
+  #zpl-tool .zpl-drop svg{width:32px;height:32px;color:var(--text3)}
+  #zpl-tool .zpl-drop b{display:block;font-size:.9rem;margin:8px 0 4px}
+  #zpl-tool .zpl-drop span{font-size:.74rem;color:var(--text3)}
+  #zpl-tool .zpl-file-input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+  #zpl-tool .zpl-file-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--text)}
+  #zpl-tool .zpl-file-row .name{font-weight:600;word-break:break-all}
+  #zpl-tool .zpl-tag{font-size:.68rem;font-weight:700;border:1px solid var(--border2);border-radius:999px;padding:2px 10px;color:var(--text3)}
+  #zpl-tool .zpl-link{background:none;border:0;color:var(--text3);text-decoration:underline;cursor:pointer;font:inherit;font-size:.76rem;padding:0}
+  #zpl-tool .zpl-err{color:var(--out);font-size:.8rem;margin-top:10px}
+  #zpl-tool .zpl-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  #zpl-tool .zpl-stat{flex:1;min-width:120px;border:1px solid var(--border);border-radius:10px;padding:9px 12px}
+  #zpl-tool .zpl-stat small{display:block;font-size:.68rem;color:var(--text3)}
+  #zpl-tool .zpl-stat strong{font-size:1.25rem;font-weight:800;color:var(--text)}
+  #zpl-tool .zpl-stat.hl strong{background:var(--mark);color:var(--mark-fg);padding:0 6px;border-radius:6px}
+  #zpl-tool table{width:100%;border-collapse:collapse;font-size:.76rem;color:var(--text2)}
+  #zpl-tool th{text-align:left;font-weight:700;color:var(--text3);padding:6px 8px;border-bottom:1px solid var(--border)}
+  #zpl-tool th.n{text-align:right}
+  #zpl-tool td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+  #zpl-tool td.n{text-align:right;font-weight:700;white-space:nowrap;color:var(--text)}
+  #zpl-tool .zpl-tbl{max-height:220px;overflow:auto}
+  #zpl-tool .zpl-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+  #zpl-tool .zpl-size{border:1.5px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;background:none;color:var(--text);font:inherit;text-align:left;display:flex;gap:10px;align-items:center}
+  #zpl-tool .zpl-size:hover{border-color:var(--text4)}
+  #zpl-tool .zpl-size.on{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
+  #zpl-tool .zpl-ico{flex:none;width:44px;height:30px;display:flex;align-items:center;justify-content:center;gap:2px;color:var(--text3)}
+  #zpl-tool .zpl-ico i{display:block;border:1.5px solid currentColor;border-radius:2px}
+  #zpl-tool .zpl-size b{display:block;font-size:.84rem;white-space:nowrap}
+  #zpl-tool .zpl-size small{color:var(--text3);font-size:.7rem}
+  #zpl-tool .zpl-note{font-size:.74rem;color:var(--text3);margin:12px 0 0;line-height:1.5}
+  #zpl-tool .zpl-scale{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:.76rem;color:var(--text3)}
+  #zpl-tool .zpl-scale input{flex:1;accent-color:var(--text)}
+  #zpl-tool .zpl-scale output{font-weight:700;min-width:44px;text-align:right;color:var(--text)}
+  #zpl-tool .zpl-prev{display:flex;justify-content:center;align-items:center;padding:18px;background:var(--bg2);border-radius:10px;min-height:150px}
+  #zpl-tool .zpl-prev canvas{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25);max-width:100%;height:auto}
+  #zpl-tool .zpl-nav{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:10px;font-size:.76rem;color:var(--text3)}
+  #zpl-tool .zpl-nav button{background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  #zpl-tool .zpl-nav button:disabled{opacity:.35;cursor:default}
+  #zpl-tool .zpl-nav svg{width:16px;height:16px}
+  #zpl-tool .zpl-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  #zpl-tool .zpl-btn{background:var(--text);color:var(--bg);border:0;border-radius:9px;padding:12px 22px;font-family:'Figtree',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  #zpl-tool .zpl-btn:disabled{opacity:.35;cursor:default}
+  #zpl-tool .zpl-btn svg{width:17px;height:17px}
+  #zpl-tool .zpl-tip{font-size:.74rem;color:var(--text3);line-height:1.5}
+  #zpl-tool .zpl-hide{display:none!important}
+  </style>
+  <div id="zpl-tool">
+
+    <div class="pg-head" style="--pg:#0284c7">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><path d="M3 5v14M7 5v14M10 5v14M14 5v14M17 5v14M21 5v14"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Etiquetas</div>
+          <div class="pg-sub">TXT de etiquetas do Mercado Livre (produto ou volume) em PDF, sem limite de quantidade</div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="zpl-card">
+      <p class="zpl-lbl">1. Arquivo</p>
+      <input type="file" id="zpl-file" class="zpl-file-input" multiple tabindex="-1" aria-hidden="true">
+      <button type="button" class="zpl-drop" id="zpl-drop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg>
+        <b>Toque para escolher o TXT</b>
+        <span>No computador também dá para arrastar o arquivo aqui</span>
+      </button>
+      <div class="zpl-file-row zpl-hide" id="zpl-file-row">
+        <span class="name" id="zpl-file-name"></span>
+        <span class="zpl-tag" id="zpl-kind"></span>
+        <button class="zpl-link" id="zpl-clear" type="button">trocar arquivo</button>
+      </div>
+      <div class="zpl-err zpl-hide" id="zpl-err"></div>
+    </div>
+
+    <div class="zpl-card zpl-hide" id="zpl-summary">
+      <p class="zpl-lbl">Conteúdo do arquivo</p>
+      <div class="zpl-stats">
+        <div class="zpl-stat hl"><small>Etiquetas</small><strong id="zpl-total">0</strong></div>
+        <div class="zpl-stat"><small id="zpl-groups-lbl">Produtos diferentes</small><strong id="zpl-prods">0</strong></div>
+        <div class="zpl-stat"><small>Folhas no PDF</small><strong id="zpl-sheets">0</strong></div>
+      </div>
+      <div class="zpl-tbl"><table><thead><tr id="zpl-thead"></tr></thead><tbody id="zpl-tbody"></tbody></table></div>
+    </div>
+
+    <div class="zpl-card">
+      <p class="zpl-lbl">2. Tamanho da etiqueta</p>
+      <div class="zpl-sizes" id="zpl-sizes"></div>
+      <p class="zpl-note" id="zpl-size-note">Etiqueta de volume é reconhecida sozinha pelo arquivo e sai em 10 × 15 cm.</p>
+      <div class="zpl-scale">
+        <span style="white-space:nowrap">Tamanho do conteúdo</span>
+        <input type="range" id="zpl-scale" min="60" max="100" step="5" value="100">
+        <output id="zpl-scale-out">100%</output>
+      </div>
+    </div>
+
+    <div class="zpl-card">
+      <p class="zpl-lbl">3. Prévia</p>
+      <div class="zpl-prev"><canvas id="zpl-canvas" width="10" height="10"></canvas></div>
+      <div class="zpl-nav zpl-hide" id="zpl-nav">
+        <button type="button" id="zpl-prev" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <span id="zpl-page">Folha 1 de 1</span>
+        <button type="button" id="zpl-next" aria-label="Próxima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+    </div>
+
+    <div class="zpl-actions">
+      <button class="zpl-btn" id="zpl-gen" type="button" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Baixar PDF
+      </button>
+      <span class="zpl-tip">Na hora de imprimir, use <b>tamanho real (100%)</b> e não "ajustar à página".</span>
+    </div>
   </div>
 </div>
 
